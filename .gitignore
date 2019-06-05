@@ -4,10 +4,6 @@
 *.obj
 *.idb
 *.pdb
-SoD_SP_Public/Next Version/TextEdit/language.txt
-SoD_SP_Public/Next Version/TextEdit/Rus/language.txt
-SoD_SP_Public/Next Version/TextEdit/txtedit.exe
-SoD_SP_Public/Next Version/TextEdit/txtedit.ini
 *.dll
 *.sdf
 *.opensdf
