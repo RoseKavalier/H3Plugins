@@ -2,6 +2,20 @@
 
 Welcome to the home of the Heroes of Might and Magic III **H3API** headers and plugins made using them. This repository will also be used to distribute the **SoD_SP** plugin which is coded using the same headers.
 
+## Description
+
+**H3.LodTable**
+>Modifies the LOD tables to provide room for additional LOD or PAC files. By default, all folders of active HDmod plugins are browsed to add **.pac** or **.lod** game archives. You may also add archives from your own folders by using the HDmod variables created by the plugin. Included with SoD_SP.
+
+**H3.TextColor**
+>Adds over 100 colors to game text using a simple tag **{~color}**_your text here_**}**. Included with SoD_SP.
+
+**H3.Battlefields**
+>Adds custom battlefield backgrounds when fighting on the adventure map. Requires **H3.LodTable** plugin.
+
+**SoD_SP**
+>Description is available [here](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#).
+
 ## Download Releases
 
 Releases are available [here](https://github.com/RoseKavalier/H3Plugins/releases).
