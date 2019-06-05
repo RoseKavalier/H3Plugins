@@ -1,0 +1,183 @@
+Version 1.16.0
+[+] Option for AI to gain the correct amount of skeletons from Necromancy
+[+] Fixed a bug where heroes and map items could be cloned
+[+] Corrected movement bug when using Angel Wings
+[+] Maps may now have more than 255 Garrisons and Mines
+ NOTE: such maps will be forced to use SoD_SP 1.16.0 or more recent
+[+] Mapmaker options and features are now available through Unleashed mapeditor
+ NOTE: for more information, refer to Unleashed mapeditor documentation
+[ ] SoD_SP assets are now loaded through LOD using H3.LodTable.dll
+ NOTE: for more information, refer to H3.LodTable documentation
+[ ] Text color is now handled by H3.TextColor.dll
+ NOTE: for more information, refer to H3.TextColor documentation
+[ ] RMB battle dialog option now only works on opposing creatures
+[ ] Improved battle move order move prediction
+[ ] Corrected and improved code to be future-proofed against HDmod updates
+
+[*] Rewritten using H3API headers
+[*] Auto-installer now done with Inno Setup, also provides uninstaller
+[*] Russian Text completely updated (thanks igrik)
+[*] German and Greek Text completely updated (thanks igrik)
+
+Version 1.15d
+[+]  Fixed a bug with HDmod Costumes where hero path would not reflect new artifacts
+[ ]  Hero movement through Numpad is restored with Numlock (HW plugin change)
+[ ]  Multiplayer icon in main menu is back, but multiplayer is still disabled as long as SoD_SP is active
+[-]  Fixed a memory leak in Advanced Combat Information dialog
+[-]  Added missing hook for Anchor Bug fix on some special terrains
+[-]  Repaired several broken components due to HDmod updates
+
+[*] Updated Russian text (thanks daemon_n)
+
+Version 1.15c
+[ ] Lobby chat icon is no longer drawn
+[-] Added ini entry for unhireable heroes
+[-] Repaired SoD_SP Save functionality
+
+Version 1.15b
+[ ] Unhireable heroes fix is now optional
+[-] Fix a bug when recalculating hero movement after encounter if the owner of the hero was defeated (thanks Lunareon)
+
+[*] German and Greek language corrections (thanks Nikos)
+
+Version 1.15a
+[ ] Fixed a bug when rapidly clicking on hero icon in garrison dialog which could lead to game crash
+[ ] Option for Naga Banks to revert HD+ modification of Sulfur to Gems (requires New Game) (thanks Ben80)
+[-] Non-repeatable events option was not properly working
+[-] Fixed a bug with HDmod shortcuts of non-positive creatures (thanks daemon_n)
+
+[*] German and Greek language updated to v1.15! (thanks Nikos)
+
+Version 1.15
+[+] Added interactive sidepanel displaying battle move order
+ NOTE: game resolution must be at minimum 1074x660
+[+] Introduced fix to prevent movement generation with Admiral's Hat (thanks Ben80)
+[+] Dismissed/lost heroes can no longer gain movement on the same turn (thanks Ben80)
+[+] Wandering Monster combat retreat no longer reduces the number of creature if an upgraded stack is present (thanks Ben80)
+[+] Anchor bug fix option available (thanks Kazmer) 
+ Note: cannot be modified within battlefield
+[+] SoD_SP text colors can now be modified in-game (hotkey: Ctrl+F12)
+[+] SoD_SP options and colors can now be saved to 'SoD_SP.ini' from their respective dialog
+[+] Added hint for movement cost for hero when holding ALT key (hotkey: hold ALT + move mouse to destination)
+[+] Hero maximum movement recalculated in several instances where it previously was not
+[+] Heroes can no longer gain movement after being dismissed/lost on a given player's turn
+[+] Heroes movement updated after retreating/surrendering while in a boat
+[+] Castle Lighthouse now only adds movement points to its owner
+[+] Earthquake bug has been fixed
+[+] The minimap can now follow enemy players' movement
+[+] Fixed a drawing issue of horizontal scrollbars when used with hotkeys
+[+] AI movement through teleporters and Dimension Door is no longer shown when "Don't show enemy moves" options is enabled
+[+] Added some optional debug log storing information about the last SoD_SP code executed before crash
+[+]  Events that were set as 'Cancel event after first visit' by the mapmaker are now correctly removed
+[ ] Fixed RMB dialog hint of Faerie Dragon spell cast (thanks Ben80)
+[ ] Unhireable heroes freed from prison (and a few other instances) remain unhireable (thanks Rince)
+[ ] Non-positive creatures can no longer be split using HDmod shortcuts (thanks wenwell)
+[ ] SoD_SP options dialog completely rewritten to allow more options in less space
+[ ] Options dialog now available from other menus
+[ ] Option to place SoD_SP DEFs in \Data\ folder reintroduced. 
+ Note: See 'SoD_SP.ini' if you have issues.
+[ ] Quick load now sends you to campaign saves if you were playing a campaign map
+[ ] Quick spell and move order panels may be disabled [effective from next combat start]
+[ ] Primary Skill overflow protection is turned off at Events and Pandora's Boxes IF AND ONLY IF the gain is +127
+[ ] Having more than 48 Seer Huts no longer crashes the game
+[ ] Hovering over quickspell panel now displays all of the battlefield hexes that can be affected by the spell
+[ ] Removed Multiplayer icons from main menu and load menu
+[ ] Restored some optional Quick Combat bugs
+[ ] Restored optional Clone Bug
+[ ] Added text hint for Cure spell while selecting battlefield target
+[ ] Added some missing options with turbo spells when using special color modes
+[-] Resurrection/Animate Dead text hints were incorrectly considering creature resistance (thanks Marlo_Stanfield)
+[-] Fixed potential endless loop with previous Waterwalk~Fly bug fix (thanks Marmot)
+[-] Removed a bug with quickspell panel that could show hints about non-existent creatures on the battlefield
+[-] Fixed shadow of battle window with stretchable modes for Quick Spell
+[-] Fixed an issue introduced by the fix of potential AI endless loop after using resurrection
+
+[*] Russian Text completely updated (thanks igrik)
+[*] HotA is no longer supported due in part to lack of plugin support by HDmod.
+[*] C++ conversion complete!
+
+Version 1.14b
+[+] Added custom in-game quicksave name (Ctrl+F9)
+[ ] Russian language updated to 1.14 (thanks igrik)
+[-] Fixed a graphical bug with 'reveal/hide Events'
+[-] Fixed a bug with Carnivorous Plant (thanks turboagent)
+[-] Included correct Quick Spell panel DEF (thanks igrik)
+
+Version 1.14
+[+] Option to remove Summoned Elementals and Cloned Creatures from Battlefield Casualties screen
+[+] Battlefield Casualties over 9999 are now shown per thousands (e.g. 200,000 is now 200k)
+[ ] Multiplayer mode (including SoD Lobby) is no longer accessible when SoD_SP is active
+[ ] Quick Spell panel reworked to remove clutter (right-click now resets target)
+[-] Fixed a bug from version 1.13 that unintentionally changed AI behaviour
+
+Version 1.13b
+[ ] Greek and German languages updated (thanks Nikos)
+[-] Fixed bug with Combat Quick Load (Shift+F9)
+[-] Workaround for SoD_SP DEFs to prevent some crashes (thanks 4ltair)
+[-] Fixed bug preventing purchase of Spellbook from Mage Guild (thanks Sewa)
+
+Version 1.13
+[+] Added FindMe dialog (hotkey: Ctrl+F)
+[+] Added ability to reveal/hide Events within FindMe dialog 
+ NOTE: requires new game with version 1.13 or higher
+[+] Added interactive sidepanel for Quick Spells while in combat 
+ NOTE: game resolution must be at minimum 1074x660
+[+] Bug fix: AI with large army could freeze game
+ Bug fix: AI with large army could lose to very weak opposition
+[+] Added compatibility for extra Monoliths subtypes made with WoG mapeditor 
+ NOTE: SoD only
+[+] Fixed rare division by 0 bug during combat setup
+[+] Can view Spells in Mage Guild even with hero lacking spellbook
+[ ] Added gold color to custom color options (same effect as "{ your text here }")
+[ ] Trees of Knowledge no longer provide experience above level 100
+[ ] Primary Skill overflow protection and few other options disabled in HotA due to implementation in 1.5.0+
+[ ] Disabled 'F1' launching Windows Help (SoD only)
+
+[*] Hotkey list documentation created (online)
+
+Version 1.12
+[+] Trees of Knowledge can no longer give negative experience
+[+] Fast leveling to levels 868+ (provided you have the correct experience amount)
+
+[-] Fixed incompatibility with HDmod 5.0 beta 19
+
+Version 1.11
+[+] Turbo: option to allow faster animations in combat
+[+] You can set your own color (see SoD_SP.ini for options and color codes)
+[+] Mouse cursor coordinates (x,y,z) in Map Adventure
+[+] Option to disable extra spell information available in the Spellbook
+[+] List of Quick Spells and Targets available in combat: 'ALT' + 'right-click' Spellbook icon
+[+] Bug fix: AI no longer casts 'Town Portal' on Cursed Ground
+ Bug fix: AI no longer casts 'Fly' if he does not have it (Waterwalk~Fly bug)
+
+Version 1.10b_beta
+[+] Quickly access "Load game" now works during battle (hotkey: Shift+F9)
+[-] Fixed a few bugs
+
+Version 1.10a_beta
+[-] Removed an internal testing function that could lead to crashes
+
+Version 1.10beta
+[+] Available in 5* languages. (unsure if there exists Greek fonts)
+ NOTE: if you do not have the necessary game fonts, it will not show correctly
+[+] Now compatible with HotA (some options are disabled, some features implemented differently)
+[+] Quickly access "Load game" with hotkey Shift+F9 (not yet available during combat)
+[+] Primary overflow checks for special Town buildings (Warlord's Monument, Carnivorous Plant, ...)
+[+] Monoliths and Subterranean Gates icons now correctly shown in 'View World' and 'View Air'
+
+[*] 90% rewritten for C++
+[*] Now uses patcher_x86.dll (smaller plugin size)
+
+Version 1.01
+[-] Fixed a bug with Quick Spell and Titan's Lightning Bolt
+[-] Fixed a bug with Primary Skill Overflow protection
+
+Version 1.00
+
+[+] When you hold the (left) 'ALT' key and right click on a creature while in combat, you will receive extended information about its various statuses.
+ You can still see the normal creature dialog if you don't press 'ALT'.
+
+[*] Code optimization still ongoing.
+[*] Introducing versions of the plugin. 
+ From this point on, the previous versions will be available in a folder with the format "SoD_SP_YYYY_MM_DD". 
+ See https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#heading=h.mre1fr5o3135
