@@ -5,7 +5,7 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** headers and p
 ## Description
 
 **H3.LodTable**
->Modifies the LOD tables to provide room for additional LOD or PAC files. By default, all folders of active HDmod plugins are browsed to add **.pac** or **.lod** game archives. You may also add archives from your own folders by using the HDmod variables created by the plugin. Included with SoD_SP.
+>Modifies the LOD tables to provide room for additional LOD or PAC archives. By default, all folders of active HDmod plugins are browsed to add **.pac** or **.lod** game archives. You may also add archives from your own folders by using the HDmod variables created by the plugin. Included with SoD_SP.
 
 **H3.TextColor**
 >Adds over 100 colors to game text using a simple tag **{~color}**_your text here_**}**. Included with SoD_SP.
