@@ -8,3 +8,9 @@
 *.sdf
 *.opensdf
 *.zip
+*.db
+*.opendb
+*.db-shm
+*.db-wal
+*.suo
+*.ipch

@@ -32,15 +32,17 @@ VersionInfoVersion=1.16.0
 CreateUninstallRegKey=no
 UninstallFilesDir={app}\_HD3_Data\Packs\SoD_SP\Uninstall
 VersionInfoProductName=SoD_SP
-;WizardSmallImageFile=SoDSP.bmp
 WizardStyle=classic
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "german"; MessagesFile: "compiler:Languages\German.isl"
+Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Files]
 Source: "{app}\_HD3_Data\Packs\SoD_SP\SoD_SP.ini"; DestDir: "{app}\_HD3_Data\Packs\SoD_SP\"; DestName: "[BACKUP]SoD_SP.ini"; Flags: external skipifsourcedoesntexist
-Source: "C:\github\sod_sp_cpp\Next Version\_HD3_Data\*"; DestDir: "{app}\_HD3_Data\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\github\H3\H3Plugins\SoD_SP_Public\Next Version\_HD3_Data\*"; DestDir: "{app}\_HD3_Data\"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Messages]
 WelcomeLabel2=This will install [name/ver] on your computer.

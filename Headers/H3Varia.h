@@ -1,41 +1,41 @@
 //////////////////////////////////////////////////////////////////////
-//																	//
-//					Created by RoseKavalier:						//
-//					rosekavalierhc@gmail.com						//
-//																	//
-//		    ***You may use or distribute these files freely			//
-//			   so long as this notice remains present.***			//
-//																	//
-//			In preparing these files, several sources were			//
-//				consulted, they are listed in no particular			//
-//							order below.							//
-//																	//
-//	Source: https://github.com/potmdehex/homm3tools					//
-//	Author: potmdehex and contributors								//
-//																	//
-//	Source: https://github.com/redxu/HoMM3_FA						//
-//	Author: redxu													//
-//																	//
-//	Source: https://github.com/openhomm/openhomm					//
-//	Author: Ershov Stanislav, Fomin Roman, Akulich Alexander		//
-//																	//
-//	Source: https://github.com/GrayFace/wog							//
-//	Author: GrayFace and WoG team									//
-//																	//
-//	Source: https://github.com/ethernidee/era						//
-//	Author: Berserker												//
-//																	//
-//	Source: https://github.com/ethernidee/era-editor				//
-//	Author: Grayface and Berserker									//
-//																	//
-//	Source:	http://wforum.heroes35.net/showthread.php?tid=3900		//
-//	Author: Slava and GrayFace										//
-//																	//
-//	Source: http://wforum.heroes35.net/showthread.php?tid=4583		//
-//	Author: gamecreator												//
-//																	//
-//	Thanks: patcher_x86 by baratorch and code therein				//
-//																	//
+//                                                                  //
+//                  Created by RoseKavalier:                        //
+//                  rosekavalierhc@gmail.com                        //
+//                                                                  //
+//          ***You may use or distribute these files freely         //
+//             so long as this notice remains present.***           //
+//                                                                  //
+//          In preparing these files, several sources were          //
+//            consulted, they are listed in no particular           //
+//                          order below.                            //
+//                                                                  //
+//  Source: https://github.com/potmdehex/homm3tools                 //
+//  Author: potmdehex and contributors                              //
+//                                                                  //
+//  Source: https://github.com/redxu/HoMM3_FA                       //
+//  Author: redxu                                                   //
+//                                                                  //
+//  Source: https://github.com/openhomm/openhomm                    //
+//  Author: Ershov Stanislav, Fomin Roman, Akulich Alexander        //
+//                                                                  //
+//  Source: https://github.com/GrayFace/wog                         //
+//  Author: GrayFace and WoG team                                   //
+//                                                                  //
+//  Source: https://github.com/ethernidee/era                       //
+//  Author: Berserker                                               //
+//                                                                  //
+//  Source: https://github.com/ethernidee/era-editor                //
+//  Author: Grayface and Berserker                                  //
+//                                                                  //
+//  Source: http://wforum.heroes35.net/showthread.php?tid=3900      //
+//  Author: Slava and GrayFace                                      //
+//                                                                  //
+//  Source: http://wforum.heroes35.net/showthread.php?tid=4583      //
+//  Author: gamecreator                                             //
+//                                                                  //
+//  Thanks: patcher_x86 by baratorch and code therein               //
+//                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #ifndef _H3VARIA_H_
@@ -74,7 +74,7 @@ public:
 };
 
 // * perform operations on loaded memory
-class H3Manipulator
+class H3Patcher
 {
 public:
 	static PUCHAR Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needle, size_t nlen);
@@ -131,10 +131,10 @@ struct H3NamedColors
 };
 #pragma pack(pop)
 
-#define BytePatch(start, code) (H3Manipulator::WriteBytePatch(start, code))
-#define DwordPatch(start, value) (H3Manipulator::WriteDwordPatch(start, value))
-#define HexPatch(start, code) (H3Manipulator::WriteHexPatch(start, code, sizeof(code)))
-#define needle_search(start_address, search_end, needle, offset) (H3Manipulator::FindByNeedle(start_address, search_end, needle, sizeof(needle), offset))
+#define BytePatch(start, code) (H3Patcher::WriteBytePatch(start, code))
+#define DwordPatch(start, value) (H3Patcher::WriteDwordPatch(start, value))
+#define HexPatch(start, code) (H3Patcher::WriteHexPatch(start, code, sizeof(code)))
+#define needle_search(start_address, search_end, needle, offset) (H3Patcher::FindByNeedle(start_address, search_end, needle, sizeof(needle), offset))
 #define naked_function void __declspec(naked)
 #define NAKED __declspec(naked)
 
@@ -220,7 +220,7 @@ enum mnemonics
 	call_dword = 0xFF15
 };
 
-inline PUCHAR H3Manipulator::Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needle, size_t nlen)
+inline PUCHAR H3Patcher::Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needle, size_t nlen)
 {
 	UCHAR needle_first;
 	PUCHAR p = haystack;
@@ -242,18 +242,18 @@ inline PUCHAR H3Manipulator::Memmem(PUCHAR haystack, size_t hlen, const PUCHAR n
 	return NULL;
 }
 
-inline UINT32 H3Manipulator::FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset)
+inline UINT32 H3Patcher::FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset)
 {
 	if (!address)
 		return NULL;
 
-	UINT32 p = (UINT32)H3Manipulator::Memmem(address, max_search_length, needle, needle_length);
+	UINT32 p = (UINT32)H3Patcher::Memmem(address, max_search_length, needle, needle_length);
 	if (p)
 		p += offset;
 	return p;
 }
 
-inline void H3Manipulator::WriteBytePatch(UINT32 start, UINT8 code)
+inline void H3Patcher::WriteBytePatch(UINT32 start, UINT8 code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 1, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -263,7 +263,7 @@ inline void H3Manipulator::WriteBytePatch(UINT32 start, UINT8 code)
 	}
 }
 
-inline void H3Manipulator::WriteWordPatch(UINT32 start, UINT16 code)
+inline void H3Patcher::WriteWordPatch(UINT32 start, UINT16 code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 2, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -273,7 +273,7 @@ inline void H3Manipulator::WriteWordPatch(UINT32 start, UINT16 code)
 	}
 }
 
-inline void H3Manipulator::WriteDwordPatch(UINT32 start, UINT32 code)
+inline void H3Patcher::WriteDwordPatch(UINT32 start, UINT32 code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 4, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -283,7 +283,7 @@ inline void H3Manipulator::WriteDwordPatch(UINT32 start, UINT32 code)
 	}
 }
 
-inline void H3Manipulator::WriteFloatPatch(UINT32 start, FLOAT code)
+inline void H3Patcher::WriteFloatPatch(UINT32 start, FLOAT code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 4, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -293,7 +293,7 @@ inline void H3Manipulator::WriteFloatPatch(UINT32 start, FLOAT code)
 	}
 }
 
-inline void H3Manipulator::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
+inline void H3Patcher::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, codeLength, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -304,7 +304,7 @@ inline void H3Manipulator::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLen
 	}
 }
 
-inline void H3Manipulator::NakedHook5(UINT32 start, void * function)
+inline void H3Patcher::NakedHook5(UINT32 start, void * function)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 5, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -317,7 +317,7 @@ inline void H3Manipulator::NakedHook5(UINT32 start, void * function)
 
 inline UINT32 H3DLL::NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset)
 {
-	UINT32 p = H3Manipulator::FindByNeedle(code, size, needle, needleSize, offset);
+	UINT32 p = H3Patcher::FindByNeedle(code, size, needle, needleSize, offset);
 #if _H3DLL_DEBUG_
 	if (!p)
 		NeedleNotFound(needle, needleSize);
@@ -332,7 +332,7 @@ inline UINT32 H3DLL::NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 r
 	{
 		UINT32 low = max((UINT32)code, p - radius);
 		UINT32 searchLength = min((UINT32)(2 * radius), size - (p - (UINT32)code));
-		p = H3Manipulator::FindByNeedle((PUINT8)low, searchLength, needle2, needleSize2, 0);
+		p = H3Patcher::FindByNeedle((PUINT8)low, searchLength, needle2, needleSize2, 0);
 #if _H3DLL_DEBUG_
 		if (!p)
 			NeedleNotFound(needle2, needleSize2);
@@ -343,7 +343,7 @@ inline UINT32 H3DLL::NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 r
 
 inline UINT32 H3DLL::NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset)
 {
-	UINT32 p = H3Manipulator::FindByNeedle((PUINT8)after, size - (after - (UINT32)code), needle, needleSize, offset);
+	UINT32 p = H3Patcher::FindByNeedle((PUINT8)after, size - (after - (UINT32)code), needle, needleSize, offset);
 #if _H3DLL_DEBUG_
 	if (!p)
 		NeedleNotFound(needle, needleSize);
@@ -369,7 +369,7 @@ inline UINT32 H3DLL::NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 
 
 inline UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needleSize)
 {
-	UINT32 p = H3Manipulator::FindByNeedle(data, dataSize, needle, needleSize, 0);
+	UINT32 p = H3Patcher::FindByNeedle(data, dataSize, needle, needleSize, 0);
 #if _H3DLL_DEBUG_
 	if (!p)
 		NeedleNotFound(needle, needleSize, FALSE);

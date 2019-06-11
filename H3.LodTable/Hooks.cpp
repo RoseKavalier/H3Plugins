@@ -121,8 +121,9 @@ void Variables_init(Patcher *p)
 	// * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *
 	// * Patcher *_P;
+	// * PatcherInstance *_PI;
 	// * UINT32 LoadingFunction = _P->VarGetValue("LodTable.Function", NULL);
-	// * _P->WriteLoHook(0x4EEA81, LoadCustomLODPath);
+	// * _PI->WriteLoHook(0x4EEA81, LoadCustomLODPath);
 	// *
 	// * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *

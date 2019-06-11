@@ -32,7 +32,6 @@ Global
 		{CCE27E8C-1893-4F1D-B292-E2D9192CCF4D}.Debug|Win32.ActiveCfg = Debug|Win32
 		{CCE27E8C-1893-4F1D-B292-E2D9192CCF4D}.Debug|Win32.Build.0 = Debug|Win32
 		{CCE27E8C-1893-4F1D-B292-E2D9192CCF4D}.Release|Win32.ActiveCfg = Release|Win32
-		{CCE27E8C-1893-4F1D-B292-E2D9192CCF4D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

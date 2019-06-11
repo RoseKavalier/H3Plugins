@@ -80,6 +80,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Hooks\AnchorBug.cpp" />
+    <ClCompile Include="Hooks\Dialogs\AdvancedCombatInfo.cpp" />
+    <ClCompile Include="Hooks\Fixes.cpp" />
+    <ClCompile Include="Hooks\GetDLLInfo.cpp" />
+    <ClCompile Include="Hooks\HorizontalScrollbar.cpp" />
+    <ClCompile Include="Hooks\igrik\spell_morale_luck_display.cpp" />
+    <ClCompile Include="Hooks\igrik\TownUpgradeHotkey.cpp" />
+    <ClCompile Include="Hooks\Improvements.cpp" />
+    <ClCompile Include="Hooks\Overflow.cpp" />
+    <ClCompile Include="Main\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Hooks\AnchorBug.h" />
+    <ClInclude Include="Main\Main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,41 +1,41 @@
 //////////////////////////////////////////////////////////////////////
-//																	//
-//					Created by RoseKavalier:						//
-//					rosekavalierhc@gmail.com						//
-//																	//
-//		    ***You may use or distribute these files freely			//
-//			   so long as this notice remains present.***			//
-//																	//
-//			In preparing these files, several sources were			//
-//			  consulted, they are listed in no particular			//
-//							order below.							//
-//																	//
-//	Source: https://github.com/potmdehex/homm3tools					//
-//	Author: potmdehex and contributors								//
-//																	//
-//	Source: https://github.com/redxu/HoMM3_FA						//
-//	Author: redxu													//
-//																	//
-//	Source: https://github.com/openhomm/openhomm					//
-//	Author: Ershov Stanislav, Fomin Roman, Akulich Alexander		//
-//																	//
-//	Source: https://github.com/GrayFace/wog							//
-//	Author: GrayFace and WoG team									//
-//																	//
-//	Source: https://github.com/ethernidee/era						//
-//	Author: Berserker												//
-//																	//
-//	Source: https://github.com/ethernidee/era-editor				//
-//	Author: Grayface and Berserker									//
-//																	//
-//	Source:	http://wforum.heroes35.net/showthread.php?tid=3900		//
-//	Author: Slava and GrayFace										//
-//																	//
-//	Source: http://wforum.heroes35.net/showthread.php?tid=4583		//
-//	Author: gamecreator												//
-//																	//
-//	Thanks: patcher_x86 by baratorch and code therein				//
-//																	//
+//                                                                  //
+//                  Created by RoseKavalier:                        //
+//                  rosekavalierhc@gmail.com                        //
+//                                                                  //
+//          ***You may use or distribute these files freely         //
+//             so long as this notice remains present.***           //
+//                                                                  //
+//          In preparing these files, several sources were          //
+//            consulted, they are listed in no particular           //
+//                          order below.                            //
+//                                                                  //
+//  Source: https://github.com/potmdehex/homm3tools                 //
+//  Author: potmdehex and contributors                              //
+//                                                                  //
+//  Source: https://github.com/redxu/HoMM3_FA                       //
+//  Author: redxu                                                   //
+//                                                                  //
+//  Source: https://github.com/openhomm/openhomm                    //
+//  Author: Ershov Stanislav, Fomin Roman, Akulich Alexander        //
+//                                                                  //
+//  Source: https://github.com/GrayFace/wog                         //
+//  Author: GrayFace and WoG team                                   //
+//                                                                  //
+//  Source: https://github.com/ethernidee/era                       //
+//  Author: Berserker                                               //
+//                                                                  //
+//  Source: https://github.com/ethernidee/era-editor                //
+//  Author: Grayface and Berserker                                  //
+//                                                                  //
+//  Source: http://wforum.heroes35.net/showthread.php?tid=3900      //
+//  Author: Slava and GrayFace                                      //
+//                                                                  //
+//  Source: http://wforum.heroes35.net/showthread.php?tid=4583      //
+//  Author: gamecreator                                             //
+//                                                                  //
+//  Thanks: patcher_x86 by baratorch and code therein               //
+//                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #ifndef _H3BASE_H_
@@ -636,6 +636,7 @@ protected:
 	INT32 length;
 	INT32 capacity;
 
+	void Deref() { str = NULL; length = 0; capacity = 0; }
 	void NullTerminate() { *End() = 0; }
 	BOOL Realloc(int newSize);
 public:
@@ -900,32 +901,30 @@ inline BOOL H3String::Realloc(int newSize)
 
 inline H3String::H3String()
 {
-	str = NULL;
-	length = 0;
-	capacity = 0;
+	Deref();
 }
 
 inline H3String::H3String(PCHAR msg)
 {
-	H3String();
+	Deref();
 	Assign(msg);
 }
 
 inline H3String::H3String(PCHAR msg, INT32 len)
 {
-	H3String();
+	Deref();
 	Assign(msg, len);
 }
 
 inline H3String::H3String(H3String * h3str)
 {
-	H3String();
+	Deref();
 	Assign(h3str);
 }
 
 inline H3String::H3String(CHAR ch)
 {
-	H3String();
+	Deref();
 	Assign(ch);
 }
 
@@ -1247,7 +1246,7 @@ inline H3String operator+(H3String & lhs, H3String & rhs)
 inline H3String operator+(H3String & lhs, CHAR rhs)
 {
 	H3String ans;
-	if (!ans.Reserve(lhs.Length()) + 1)
+	if (!ans.Reserve(lhs.Length() + 1))
 		return ans;
 	ans += lhs;
 	ans += rhs;

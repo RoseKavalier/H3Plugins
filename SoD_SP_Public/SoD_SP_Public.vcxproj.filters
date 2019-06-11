@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -13,5 +9,76 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Hooks">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Hooks\Bug Fixes">
+      <UniqueIdentifier>{d3f4272f-c797-4859-87ab-91d6f388399e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\Bug Fixes\Anchor Bug">
+      <UniqueIdentifier>{5482b8bf-2333-490a-b42f-3cef5f27f490}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\Bug Fixes\Horizontal Scrollbar">
+      <UniqueIdentifier>{ef037302-605d-45ba-b3f4-c68412264078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\Dialogs">
+      <UniqueIdentifier>{c588a369-a526-42da-94fb-9f83468782b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\DLL info">
+      <UniqueIdentifier>{8839b753-50a8-4fae-bad7-dd53b5a8cf7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\igrik plugins">
+      <UniqueIdentifier>{cc55c110-3c4d-4771-8849-9f0f6b368153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\Improvements">
+      <UniqueIdentifier>{b063246d-af01-4725-a572-ba91450b52d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hooks\Overflow">
+      <UniqueIdentifier>{8c99f83c-23fc-4534-a285-94c12b36a9de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{03e61e14-d60a-4cbf-8b76-1f59ac7b4af2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Hooks\Fixes.cpp">
+      <Filter>Hooks\Bug Fixes</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\AnchorBug.cpp">
+      <Filter>Hooks\Bug Fixes\Anchor Bug</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\HorizontalScrollbar.cpp">
+      <Filter>Hooks\Bug Fixes\Horizontal Scrollbar</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\Dialogs\AdvancedCombatInfo.cpp">
+      <Filter>Hooks\Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\GetDLLInfo.cpp">
+      <Filter>Hooks\DLL info</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\igrik\spell_morale_luck_display.cpp">
+      <Filter>Hooks\igrik plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\igrik\TownUpgradeHotkey.cpp">
+      <Filter>Hooks\igrik plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\Improvements.cpp">
+      <Filter>Hooks\Improvements</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks\Overflow.cpp">
+      <Filter>Hooks\Overflow</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Hooks\AnchorBug.h">
+      <Filter>Hooks\Bug Fixes\Anchor Bug</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Main.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

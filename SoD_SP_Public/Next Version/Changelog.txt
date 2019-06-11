@@ -13,6 +13,7 @@ Version 1.16.0
 [ ] RMB battle dialog option now only works on opposing creatures
 [ ] Improved battle move order move prediction
 [ ] Corrected and improved code to be future-proofed against HDmod updates
+[ ] FindMe events are now drawn directly on the adventure map using SoD_SP assets
 
 [*] Rewritten using H3API headers
 [*] Auto-installer now done with Inno Setup, also provides uninstaller
