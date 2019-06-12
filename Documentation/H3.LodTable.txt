@@ -1,0 +1,23 @@
+Add "H3.LodTable.dll" plugin to any HDmod packs to allow the use of additional LOD or PAC archives.
+
+By default, H3.LodTable will seek all *.lod and *.pac archives in every ^^active^^ HDmod pack.
+If you have a custom LOD/PAC folder, you can use the "LodTable.Function" patcher_x86 variable to recuperate the folder loading function.
+
+// * Code example
+// *
+// * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// *
+// * Patcher *_P;
+// * PatcherInstance *_PI;
+// * UINT32 LoadingFunction = _P->VarGetValue("LodTable.Function", NULL);
+// * _PI->WriteLoHook(0x4EEA81, LoadCustomLODPath);
+// *
+// * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// *
+// * LoHook LoadCustomLODPath @ 0x4EEA81
+// *
+// * PCHAR path = "C:\\MyFolderName\\"
+// * INT numLoaded = 0;
+// * if (LoadingFunction)
+// *	numLoaded = STDCALL_1(INT, LoadingFunction, path);
+// * return EXEC_DEFAULT;
