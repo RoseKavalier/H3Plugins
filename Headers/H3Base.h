@@ -335,7 +335,7 @@ typedef char h3unk;
 // * heapalloc using H3 assets
 #define h3_malloc(size)						CDECL_1(UINT32, 0x617492, size)
 // * same as h3_malloc but for objects
-#define h3_new(obj, number)					CDECL_1(obj*, 0x617492, number * sizeof(obj))
+#define h3_new(obj, number)					CDECL_1(obj*, 0x617492, (number) * (sizeof(obj)))
 // * heapfree using H3 assets
 #define h3_delete(obj)						CDECL_1(UINT, 0x60B0F0, (UINT)obj)
 // * memcpy using H3 assets
