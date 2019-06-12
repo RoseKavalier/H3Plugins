@@ -14,7 +14,7 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** headers and p
 >Adds custom battlefield backgrounds when fighting on the adventure map. Requires **H3.LodTable** plugin.
 
 **SoD_SP**
->Description is available [here](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#).
+>Description is currently only available [here](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#).
 
 ## Download Releases
 
