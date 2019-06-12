@@ -23,7 +23,7 @@ Releases are available [here](https://github.com/RoseKavalier/H3Plugins/releases
 ## Obtaining and using the H3API Headers
 
 A release for the headers might be updated from time to time, however your best bet is to clone them directly.
-In order to use the headers, add them to a folder of your choice and then add this line:
+In order to use the headers, add them to a folder of your choice and then add this line to your project:
 > #include "{_...relativepath..._}/H3API.h"
 
 The H3API headers were successfully tested using the 2013, 2015 and 2017 versions of MSVC.
@@ -47,7 +47,7 @@ In the spirit of transparency and contributing to the Heroes 3 modding community
 >The released code may be freely used in your own plugins, although beware the potential conflicts with SoD_SP.
 
 **What about using non-public code?**
->You can always try to make your case and convince me to make these public, or to release them in a separate plugin - similar to *H3.TextColor* or *H3.LodTable*. Keep in mind that SoD_SP is specifically intended to be available as a single player plugin only and some elements may not be able to be similarly separated.
+>You can always try to make your case and convince me to make these public, or to release them in a separate plugin - similar to *H3.TextColor* or *H3.LodTable* which were originally meant to be a part of SoD_SP. Keep in mind that SoD_SP is specifically intended to be available as a single player plugin only and some elements may not be able to be similarly separated.
 
 ## Help
 
