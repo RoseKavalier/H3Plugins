@@ -19,12 +19,12 @@ DefaultDirName={code:GetPathInstalled}
 DisableDirPage=no
 DisableWelcomePage=yes
 OutputBaseFilename=SoD_SP 1.16.0
-SetupIconFile=C:\github\H3\H3Plugins\SoD_SP_Public\Next Version\Images\SoD_SP+.ico
+SetupIconFile=Images\SoD_SP+.ico
 Compression=lzma
 SolidCompression=yes
 DisableStartupPrompt=yes
 AppendDefaultDirName=no
-InfoAfterFile=C:\github\H3\H3Plugins\SoD_SP_Public\Next Version\Changelog.txt
+InfoAfterFile=Changelog.txt
 UsePreviousGroup=yes
 AllowNoIcons=True
 AppendDefaultGroupName=False
@@ -42,7 +42,7 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Files]
 Source: "{app}\_HD3_Data\Packs\SoD_SP\SoD_SP.ini"; DestDir: "{app}\_HD3_Data\Packs\SoD_SP\"; DestName: "[BACKUP]SoD_SP.ini"; Flags: external skipifsourcedoesntexist
-Source: "C:\github\H3\H3Plugins\SoD_SP_Public\Next Version\_HD3_Data\*"; DestDir: "{app}\_HD3_Data\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "_HD3_Data\*"; DestDir: "{app}\_HD3_Data\"; Flags: ignoreversion recursesubdirs createallsubdirsSource: "Images\SODSP.bmp"; DestDir: "{app}"; Flags: dontcopy
 
 [Messages]
 WelcomeLabel2=This will install [name/ver] on your computer.
@@ -101,7 +101,8 @@ var
   WelcomePageID := Page.ID;
   { Create bitmap Logo }
   LogoBitmapImage := TBitmapImage.Create(WizardForm);
-  LogoBitmapImage.Bitmap.LoadFromFile('C:\github\H3\H3Plugins\SoD_SP_Public\Next Version\Images\SODSP.bmp');
+  ExtractTemporaryFile('SODSP.bmp');
+  LogoBitmapImage.Bitmap.LoadFromFile(ExpandConstant('{tmp}\SODSP.bmp'));
   LogoBitmapImage.Top := 10;  
   LogoBitmapImage.AutoSize := True;
   LogoBitmapImage.Cursor := crArrow;
