@@ -3194,6 +3194,10 @@ struct H3Executive
 	void RemoveManager(H3Manager *mgr) { THISCALL_2(void, 0x4B0950, this, mgr); }
 };
 
+// * This removes the following warning when using enum
+// * warning C4482: nonstandard extension used: enum '...' used in qualified name
+#pragma warning(push)
+#pragma warning(disable : 4482)
 // * manager for mouse
 struct H3MouseManager : public H3Manager
 {
@@ -3322,6 +3326,7 @@ public:
 	BOOL ClickedCancel() { return resultItemID == H3ClickIDs::H3ID_CANCEL; }
 	H3LoadedPCX16 *GetDrawBuffer() { return screenPcx16; }
 };
+#pragma warning(pop)
 
 // * in charge of playing sounds
 struct H3SoundManager : public H3Manager

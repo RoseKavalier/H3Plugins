@@ -304,6 +304,10 @@ inline void H3Patcher::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
 	}
 }
 
+// * This removes the following warning when using enum
+// * warning C4482: nonstandard extension used: enum '...' used in qualified name
+#pragma warning(push)
+#pragma warning(disable : 4482)
 inline void H3Patcher::NakedHook5(UINT32 start, void * function)
 {
 	DWORD old_protect = 0;
@@ -314,6 +318,7 @@ inline void H3Patcher::NakedHook5(UINT32 start, void * function)
 		VirtualProtect((LPVOID)start, 5, old_protect, &old_protect);
 	}
 }
+#pragma warning(pop)
 
 inline UINT32 H3DLL::NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset)
 {

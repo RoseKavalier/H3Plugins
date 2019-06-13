@@ -267,6 +267,10 @@ public: // copied from vTable at 0x63A6A8
 
 static H3DlgVTable CustomDlgVTable;
 
+// * This removes the following warning when using enum
+// * warning C4482: nonstandard extension used: enum '...' used in qualified name
+#pragma warning(push)
+#pragma warning(disable : 4482)
 struct H3Dlg
 {
 protected:
@@ -368,6 +372,7 @@ public:
 	H3DlgScrollableText* CreateScrollableText(PCHAR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue = FALSE);
 	H3DlgScrollbar* CreateScrollbar(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc = NULL, BOOL isBlue = FALSE, INT32 stepSize = 0, BOOL arrowsEnabled = TRUE);
 };
+#pragma warning(pop)
 
 struct H3DlgPanel
 {
