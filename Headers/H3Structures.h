@@ -4483,10 +4483,23 @@ inline void H3Resources::GainResourcesOF(H3Resources * gain)
 {
 	int *This = (int*)this;
 	int *Gain = (int*)gain;
+	INT resMax = INT_MAX;
 	for (int i = 0; i < 7; i++, This++, Gain++)
 	{
-		if (*This > 0 && *Gain > 0) // if current and gain are positives
-			*This = max(*This + *Gain, INT_MAX); // no overflow
+		if (*This > 0) // if current is positive
+		{
+			*This += *Gain;
+			if (*Gain > 0)
+			{
+				if (*This < 0) // no overflow
+					*This = resMax;
+			}
+			else
+			{
+				if (*This < 0) // can't go in negative resources
+					*This = 0;
+			}
+		}
 		else // gain normally
 			*This = *This + *Gain;
 	}
