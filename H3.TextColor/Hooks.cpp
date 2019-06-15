@@ -215,7 +215,7 @@ H3NamedColors H3CustomColors[] =
 _LHF_(ParseText) // 0x4B5255
 {
 	PCHAR text = (PCHAR)c->edx;
-	INT32 len = c->ecx;
+	INT32 len = c->local_n(5);
 
 	if (len >= CharColorsSize)
 	{
@@ -266,7 +266,7 @@ _LHF_(ParseText) // 0x4B5255
 	// update registers
 	c->edx = (int)TextParser.String();
 	IntAt(c->ebp + 8) = (int)TextParser.String();
-	c->ecx = TextParser.Length();
+	IntAt(c->ebp - 0x14) = TextParser.Length();
 
 	return EXEC_DEFAULT;
 }
