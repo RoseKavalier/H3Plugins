@@ -767,7 +767,9 @@ public:
 
 	enum eH3String
 	{
-		HS_NOTFOUND = -1
+		HS_NOTFOUND = -1,
+		HS_FAILED = 0,
+		HS_SUCCESS = 1
 	};
 };
 
@@ -973,10 +975,10 @@ inline BOOL H3String::SetLength(INT32 len)
 inline BOOL H3String::Append(PCHAR mes, INT32 len)
 {
 	if (!mes || len <= 0)
-		return FALSE;
+		return HS_FAILED;
 
 	if (Length() + len >= MaxLength() && !Realloc(Length() + len))
-		return FALSE;
+		return HS_FAILED;
 
 	PCHAR end = End();
 	PCHAR m = mes;
@@ -985,20 +987,20 @@ inline BOOL H3String::Append(PCHAR mes, INT32 len)
 		*end++ = *m++;
 	*end = 0;
 	length += len;
-	return TRUE;
+	return HS_SUCCESS;
 }
 
 inline BOOL H3String::Append(H3String & h3string)
 {
 	if (!h3string.Begin())
-		return FALSE;
+		return HS_FAILED;
 	return Append(h3string.Begin(), h3string.Length());
 }
 
 inline BOOL H3String::Append(H3String * h3string)
 {
 	if (!h3string)
-		return FALSE;
+		return HS_FAILED;
 	return Append(h3string->Begin(), h3string->Length());
 }
 
@@ -1012,16 +1014,16 @@ inline H3String * H3String::Append(int number)
 inline BOOL H3String::Append(CHAR ch)
 {
 	if (!ch) // null char already done
-		return TRUE;
+		return HS_SUCCESS;
 
 	if (Length() + 1 >= MaxLength() && !Realloc(Length() + 1))
-		return FALSE;
+		return HS_FAILED;
 
 	PCHAR end = End();
 	*end = ch;
 	*++end = 0;
 	length++;
-	return TRUE;
+	return HS_SUCCESS;
 }
 
 inline INT H3String::FindFirst(CHAR ch)
@@ -1052,7 +1054,7 @@ inline INT H3String::FindFirst(PCHAR substr)
 inline INT32 H3String::Remove(CHAR ch)
 {
 	if (!str || *str == 0) // no text or NULL string
-		return 0;
+		return HS_FAILED;
 
 	INT32 len = Length();
 
@@ -1081,7 +1083,7 @@ inline INT32 H3String::Remove(PCHAR substr, INT32 sublen)
 {
 	PCHAR s, copyFrom, copyEnd;
 	if (!String())
-		return 0;
+		return HS_FAILED;
 	if (NULL == (s = strstr(str, substr)))
 		// no match
 		return 0;
@@ -1109,13 +1111,13 @@ inline INT32 H3String::Remove(INT32 start, INT32 end)
 {
 	INT32 n = end - start;
 	if (n <= 0)
-		return 0;
+		return HS_FAILED;
 
 	PCHAR dest, src;
 	dest = At(start);
 	src = At(end);
 	if (!dest || !src)
-		return 0;
+		return HS_FAILED;
 
 	while (*src)
 		*dest++ = *src++;
@@ -1142,21 +1144,21 @@ inline BOOL H3String::Equals(PCHAR msg, INT32 len)
 inline BOOL H3String::Equals(PCHAR msg)
 {
 	if (!msg)
-		return FALSE;
+		return HS_FAILED;
 	return Equals(msg, strlen(msg));
 }
 
 inline BOOL H3String::Equals_i(PCHAR msg)
 {
 	if (!msg)
-		return FALSE;
+		return HS_FAILED;
 	return (h3_strcmpi(msg, String()) == 0);
 }
 
 inline BOOL H3String::Equals(H3String * h3string)
 {
 	if (!h3string)
-		return FALSE;
+		return HS_FAILED;
 	return Equals(h3string->Begin(), h3string->Length());
 }
 
