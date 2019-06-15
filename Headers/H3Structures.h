@@ -184,7 +184,7 @@ struct H3Position
 	protected:
 		unsigned _unused3 : 5;
 	public:
-		UINT32 Mixed() { return (UINT32)this; }
+		UINT32 Mixed() { return PtrAt(this); }
 };
 
 // * artifacts as they appear on H3Hero structure
