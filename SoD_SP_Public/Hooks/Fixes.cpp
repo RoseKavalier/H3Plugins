@@ -562,15 +562,15 @@ _LHF_(RecaculateMovementAfterExitingTown)
  * the maximum movement would not be updated.
  *
  */
-void __stdcall _HH_HeroesMeeting(HiHook *h, H3AdventureManager *This, H3Hero *hero, INT second_hero_id_ptr, H3Position position, BOOL8 human)
+void __stdcall _HH_HeroesMeeting(HiHook *h, H3AdventureManager *This, H3Hero *hero, H3MapItem *dest, UINT position, BOOL8 human)
 {
 	LOG_HIHOOK;
-	H3Hero* second_hero = P_Main->GetHero(PtrAt(second_hero_id_ptr));
+	H3Hero* second_hero = P_Main->GetHero(dest->setup);
 	BOOL same_owner = FALSE;
 	if (second_hero)
 		same_owner = hero->owner == second_hero->owner;
 
-	THISCALL_5(void, h->GetDefaultFunc(), This, hero, second_hero_id_ptr, position.Mixed(), human);
+	THISCALL_5(void, h->GetDefaultFunc(), This, hero, dest, position, human);
 
 	if (human && same_owner)
 		second_hero->maxMovement = second_hero->CalcMaxMovement();
