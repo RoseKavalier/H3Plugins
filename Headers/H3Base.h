@@ -696,6 +696,8 @@ public:
 	BOOL Append(CHAR ch);
 	// * Finds position of first ch
 	INT FindFirst(CHAR ch);
+	// * Finds position of first substring
+	INT FindFirst(PCHAR substr);
 	// * returns string offset at pos
 	PCHAR At(INT32 pos);
 	// * Removes all instances of ch
@@ -762,6 +764,11 @@ public:
 	friend H3String operator+(H3String &lhs, PCHAR rhs);
 	// * Adds one char* and H3String into one H3String
 	friend H3String operator+(PCHAR lhs, H3String &rhs);
+
+	enum eH3String
+	{
+		HS_NOTFOUND = -1
+	};
 };
 
 // * dword used as bitfield
@@ -1028,7 +1035,18 @@ inline INT H3String::FindFirst(CHAR ch)
 		f++;
 		pos++;
 	}
-	return -1;
+	return HS_NOTFOUND;
+}
+
+inline INT H3String::FindFirst(PCHAR substr)
+{
+	if (String())
+	{
+		PCHAR s = strstr(String(), substr);
+		if (s)
+			return s - String();
+	}
+	return HS_NOTFOUND;
 }
 
 inline INT32 H3String::Remove(CHAR ch)
@@ -1062,6 +1080,8 @@ inline INT32 H3String::Remove(PCHAR substr)
 inline INT32 H3String::Remove(PCHAR substr, INT32 sublen)
 {
 	PCHAR s, copyFrom, copyEnd;
+	if (!String())
+		return 0;
 	if (NULL == (s = strstr(str, substr)))
 		// no match
 		return 0;
