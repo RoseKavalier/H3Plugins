@@ -916,7 +916,7 @@ public:
 	// * does this hero own creature of type...?
 	BOOL8 HasCreatureType(INT32 type) { return army.HasCreatureType(type); }
 	// * the bonus effect on a spell from specialty
-	INT32 GetSpellSpecialtyEffect(INT32 spellID, INT32 creatureLevel, INT32 baseDamage) { return THISCALL_4(INT32, 0x4E620, this, spellID, creatureLevel, baseDamage); }
+	INT32 GetSpellSpecialtyEffect(INT32 spellID, INT32 creatureLevel, INT32 baseDamage) { return THISCALL_4(INT32, 0x4E6260, this, spellID, creatureLevel, baseDamage); }
 	// * the bonus effect on a spell from sorcery
 	INT32 GetSorceryEffect(INT32 spellID, INT32 baseDamage, H3CombatMonster *mon) { return THISCALL_4(INT32, 0x4E59D0, this, spellID, baseDamage, mon); }
 	// * the bonus/decreased effect on a spell from targetting a creature
