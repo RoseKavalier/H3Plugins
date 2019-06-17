@@ -563,7 +563,7 @@ _LHF_(SpellbookTextCases)
 _LHF_(ForcefieldShadow)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && c->arg_n(3) == H3Spell::FORCE_FIELD)
+	if (!multiplayer_game && P_CombatMgr->actionParameter == H3Spell::FORCE_FIELD)
 		c->ebx = 0; // forcefield middle hex is always on the right
 	LOG_LOHOOK;
 	return EXEC_DEFAULT;

@@ -1991,11 +1991,11 @@ public:
 	// * mana cost at each spell expertise
 	INT32 mana_cost[4];
 	// * +30
-	// * base value of spell for calculations
-	INT32 base_value;
-	// * +34
 	// * value multiplied by spell power
-	INT32 sp_effect[4];
+	INT32 sp_effect;
+	// * +34
+	// * base value of spell for calculations
+	INT32 base_value[4];
 	// * +44
 	// * change for each class?
 	INT32 chance_to_get[9];
@@ -2005,7 +2005,7 @@ public:
 	// * description of spell based on secondary skill level
 	PCHAR description[4];
 
-	INT32 GetBaseEffect(INT32 level, INT32 spellPower) { return base_value + spellPower * sp_effect[level]; }
+	INT32 GetBaseEffect(INT32 level, INT32 spellPower) { return base_value[level] + spellPower * sp_effect; }
 
 	enum eSpells
 	{
@@ -3148,7 +3148,9 @@ public:
 	// * H3Position
 	H3Vector<UINT32> subterraneanGatesID;
 protected:
-	h3unk _f_4E7AC[37];
+	H3Vector<h3unk> _f_4E7AC;
+	H3Vector<h3unk> _f_4E7BC;
+	h3unk _f_4E7CC[4];
 public: // functions
 
 	H3MapItem *GetMapItem(UINT32 mixedPosition) { return THISCALL_2(H3MapItem*, 0x42ED80, this, mixedPosition); }
@@ -3692,7 +3694,14 @@ public:
 	// * special terrain type used
 	INT32 specialTerrain;
 	// * +53C4
-	BOOL antiMagicGarrison;
+	BOOL8 antiMagicGarrison;
+	// * +53C5
+	BOOL8 creatureBank;
+	// * +53C6
+	BOOL8 boatCombat;
+protected:
+	h3unk _f_53C7;
+public:
 	// * +53C8
 	// * town structure where combat is taking place
 	H3Town *town;
@@ -3865,7 +3874,7 @@ public:
 	H3CombatMonster *GetAnimateDeadTarget(INT32 coordinate) { return THISCALL_3(H3CombatMonster*, 0x5A4260, this, currentActiveSide, coordinate); }
 	int NextCreatureToMove(void) { return THISCALL_2(int, 0x464C60, this, 1); }
 	BOOL8 IsHiddenBattle(void) { return THISCALL_1(BOOL8, 0x46A080, this); }
-	BOOL8 IsBattleOver(void) { return THISCALL_1(BOOL8, 0x46A080, this); }
+	BOOL8 IsBattleOver(void) { return THISCALL_1(BOOL8, 0x465410, this); }
 	void Refresh() { Refresh(1, 0, 1); }
 	void Refresh(BOOL redrawScreen, INT timeDelay, BOOL redrawBackground) { THISCALL_7(void, 0x493FC0, this, redrawScreen, 0, 0, timeDelay, redrawBackground, 0); }
 	void ShadeSquare(int index);

@@ -54,28 +54,19 @@ BOOL TryToUpgrade(H3Town *town, int clickID)
 	H3Player *me = main->GetPlayer();
 	if (me == h3_ActivePlayer && me->ownerID == town->owner)
 	{
-		if (clickID >= 115 && clickID <= 121) // visiting creatures
-		{
-			if (H3Hero *hero = main->GetHero(town->visitingHero))
-				r = UpgradeArmyStack(&hero->army, town, me, clickID - 115); // if no hero then there are no creatures here!
-		}
-		else if (clickID >= 140 && clickID <= 146) // garrison creatures
+		if (clickID >= 115 && clickID <= 121) // garrison creatures
 		{
 			if (H3Hero *hero = main->GetHero(town->garrisonHero))
-				r = UpgradeArmyStack(&hero->army, town, me, clickID - 140); // if no hero then there are no creatures here!
+				r = UpgradeArmyStack(&hero->army, town, me, clickID - 115); // if no hero then there are no creatures here!
 			else
-				r = UpgradeArmyStack(&town->Guards, town, me, clickID - 140); // if no hero then there are no creatures here!
+				r = UpgradeArmyStack(&town->Guards, town, me, clickID - 115); // if no hero then there are no creatures here!
 		}
-		else if (clickID == 123) // visiting hero portrait
+		else if (clickID >= 140 && clickID <= 146) // visiting creatures
 		{
-			if (H3Hero *hero = main->GetHero(town->visitingHero))  // if no hero then there are no creatures here!
-			{
-				army = &hero->army;
-				for (int i = 0; i < 7; i++)
-					r += UpgradeArmyStack(army, town, me, i);
-			}
+			if (H3Hero *hero = main->GetHero(town->visitingHero))
+				r = UpgradeArmyStack(&hero->army, town, me, clickID - 140); // if no hero then there are no creatures here!
 		}
-		else if (clickID == 125) // garrison hero portrait
+		else if (clickID == 123) // garrison hero portrait
 		{
 			if (H3Hero *hero = main->GetHero(town->garrisonHero))
 				army = &hero->army;
@@ -83,6 +74,15 @@ BOOL TryToUpgrade(H3Town *town, int clickID)
 				army = &town->Guards;
 			for (int i = 0; i < 7; i++)
 				r += UpgradeArmyStack(army, town, me, i);
+		}
+		else if (clickID == 125) // visiting hero portrait
+		{
+			if (H3Hero *hero = main->GetHero(town->visitingHero))  // if no hero then there are no creatures here!
+			{
+				army = &hero->army;
+				for (int i = 0; i < 7; i++)
+					r += UpgradeArmyStack(army, town, me, i);
+			}
 		}
 	}
 
@@ -98,18 +98,20 @@ BOOL TryToUpgrade(H3Town *town, int clickID)
 _LHF_(QuickUpgradeInTown)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && GetKeyState(TownUpgradeHotkey))
+	if (!multiplayer_game && GetKeyState(TownUpgradeHotkey) < 0)
 	{
-		H3Town *town = P_TownMgr->town;
-		int clickID = c->edi;
-
-		if (TryToUpgrade(town, clickID)) // if at least one upgrade was successful, redraw Town dialog
+		if (H3Town *town = P_TownMgr->town)
 		{
-			P_TownMgr->Draw();
-			P_TownMgr->RefreshScreen();
-			c->return_address = 0x5D460F;
-			LOG_LOHOOK;
-			return NO_EXEC_DEFAULT;
+			int clickID = c->edi;
+
+			if (TryToUpgrade(town, clickID)) // if at least one upgrade was successful, redraw Town dialog
+			{
+				P_TownMgr->Draw();
+				P_TownMgr->RefreshScreen();
+				c->return_address = 0x5D460F;
+				LOG_LOHOOK;
+				return NO_EXEC_DEFAULT;
+			}
 		}
 	}
 	LOG_LOHOOK;

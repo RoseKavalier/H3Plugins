@@ -43,6 +43,9 @@
 
 #pragma once
 
+// * Change this value to 1 if you would like to use some additional safety checks in the H3API (in development)
+#define H3API_SAFE 0
+
 #include <Windows.h>
 // * Exclude rarely-used stuff from Windows headers
 #define WIN32_LEAN_AND_MEAN
@@ -643,13 +646,15 @@ public:
 	// * constructor
 	H3String();
 	// * constructor and Assign(msg)
-	H3String(PCHAR msg);
+	H3String(const PCHAR msg);
 	// * constructor and Assign(msg, len)
-	H3String(PCHAR msg, INT32 len);
+	H3String(const PCHAR msg, const INT32 len);
 	// * constructor and Assign(h3str)
-	H3String(H3String *h3str);
+	H3String(const H3String *h3str);
+	// * constructor and Assign(h3str)
+	H3String(H3String & h3str);
 	// * constructor and Assign(ch)
-	H3String(CHAR ch);
+	H3String(const CHAR ch);
 	// * destructor
 	~H3String();
 	// * H3 constructor
@@ -677,7 +682,7 @@ public:
 	// * sets new capacity, 0x1F is default
 	BOOL Reserve(INT32 newSize = 0x1E);
 	// * returns constant char* string
-	const PCHAR String() { return str; }
+	const PCHAR String();
 	// * current length of string
 	INT32 Length() { return length; }
 	// * capacity of string
@@ -738,8 +743,12 @@ public:
 	H3String* operator+=(CHAR ch);
 	// * Equals(h3str)
 	BOOL operator==(H3String *h3str);
+	// * Equals(h3str)
+	BOOL operator==(H3String & h3str) { return operator==(&h3str); }
 	// * Equals(str)
 	BOOL operator==(PCHAR str);
+	// * Returns string at offset
+	PCHAR operator[](INT32 pos);
 	// * The number of times this string is referenced - avoids deletion from destructor in references
 	INT8 References();
 	// * Increase the number of references to this string
@@ -869,7 +878,7 @@ struct HDIni
 
 inline H3String * H3String::Assign(CHAR ch)
 {
-	if (String() || Realloc(1))
+	if (str || Realloc(1))
 	{
 		*Begin() = ch;
 		SetLength(1);
@@ -879,7 +888,7 @@ inline H3String * H3String::Assign(CHAR ch)
 
 inline H3String * H3String::Assign(H3String & h3string)
 {
-	if (h3string.Begin())
+	if (h3string.str)
 		Assign(h3string.String(), h3string.Length());
 	return this;
 }
@@ -903,6 +912,16 @@ inline BOOL H3String::Reserve(INT32 newSize)
 	return Realloc(newSize);
 }
 
+inline const PCHAR H3String::String()
+{
+#if H3API_SAFE
+	if (str)
+		return str;
+	return h3_NullString;
+#endif
+	return str;
+}
+
 inline BOOL H3String::Realloc(int newSize)
 {
 	return THISCALL_2(BOOL, 0x404B80, this, newSize);
@@ -913,25 +932,31 @@ inline H3String::H3String()
 	Deref();
 }
 
-inline H3String::H3String(PCHAR msg)
+inline H3String::H3String(const PCHAR msg)
 {
 	Deref();
 	Assign(msg);
 }
 
-inline H3String::H3String(PCHAR msg, INT32 len)
+inline H3String::H3String(const PCHAR msg, const INT32 len)
 {
 	Deref();
 	Assign(msg, len);
 }
 
-inline H3String::H3String(H3String * h3str)
+inline H3String::H3String(const H3String * h3str)
+{
+	Deref();
+	Assign((PCHAR)h3str);
+}
+
+inline H3String::H3String(H3String & h3str)
 {
 	Deref();
 	Assign(h3str);
 }
 
-inline H3String::H3String(CHAR ch)
+inline H3String::H3String(const CHAR ch)
 {
 	Deref();
 	Assign(ch);
@@ -959,6 +984,10 @@ inline H3String * H3String::Assign(PCHAR mes)
 
 inline H3String * H3String::Assign(PCHAR mes, INT32 len)
 {
+#if H3API_SAFE
+	if (!mes)
+		return this;
+#endif
 	return THISCALL_3(H3String*, 0x404180, this, mes, len);
 }
 
@@ -969,7 +998,7 @@ inline BOOL H3String::SetLength(INT32 len)
 
 	length = len;
 	NullTerminate();
-	return TRUE;
+	return HS_SUCCESS;
 }
 
 inline BOOL H3String::Append(PCHAR mes, INT32 len)
@@ -1216,6 +1245,19 @@ inline BOOL H3String::operator==(PCHAR str)
 	return Equals(str);
 }
 
+inline PCHAR H3String::operator[](INT32 pos)
+{
+#if H3API_SAFE
+	if (!str)
+		return h3_NullString;
+	if (pos < 0)
+		return str;
+	if (pos > Length())
+		return End();
+#endif
+	return str + pos;
+}
+
 inline INT8 H3String::References()
 {
 	return str[-1];
@@ -1268,7 +1310,7 @@ inline H3String operator+(H3String & lhs, H3String & rhs)
 inline H3String operator+(H3String & lhs, CHAR rhs)
 {
 	H3String ans;
-	if (!ans.Reserve(lhs.Length() + 1))
+	if (!(ans.Reserve(lhs.Length() + 1)))
 		return ans;
 	ans += lhs;
 	ans += rhs;
@@ -1278,7 +1320,7 @@ inline H3String operator+(H3String & lhs, CHAR rhs)
 inline H3String operator+(CHAR lhs, H3String & rhs)
 {
 	H3String ans;
-	if (!ans.Reserve(rhs.Length()) + 1)
+	if (!(ans.Reserve(rhs.Length()) + 1))
 		return ans;
 	ans += lhs;
 	ans += rhs;
@@ -1289,7 +1331,7 @@ inline H3String operator+(PCHAR lhs, H3String & rhs)
 {
 	H3String ans;
 	int slen = strlen(lhs);
-	if (!ans.Reserve(rhs.Length()) + slen)
+	if (!(ans.Reserve(rhs.Length()) + slen))
 		return ans;
 	ans += lhs;
 	ans += rhs;
@@ -1300,7 +1342,7 @@ inline H3String operator+(H3String & lhs, PCHAR rhs)
 {
 	H3String ans;
 	int slen = strlen(rhs);
-	if (!ans.Reserve(lhs.Length()) + slen)
+	if (!(ans.Reserve(lhs.Length()) + slen))
 		return ans;
 	ans += lhs;
 	ans += rhs;
