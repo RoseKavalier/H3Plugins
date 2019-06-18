@@ -1739,14 +1739,23 @@ public:
 // * enum for artifact type ~ level
 struct H3ArtifactSetup
 {
+	// * +0
 	PCHAR name;
+	// * +4
 	INT32 cost;
+	// * +8
 	INT32 position;
+	// * +C
 	INT32 type;
+	// * +10
 	PCHAR description;
+	// * +14
 	INT32 comboID;
+	// * +18
 	BOOL partOfCombo;
+	// * +1C
 	BOOL8 disabled;
+	// * +1D
 	INT8 newSpell;
 	h3unk _f_1E[2];
 
@@ -1966,7 +1975,8 @@ public:
 		unsigned AI20000 : 1;				// 20000
 		unsigned AI40000 : 1;				// 40000
 		unsigned AIhypnotize : 1;			// 80000
-		unsigned _unk100000 : 12;			// 100000
+		unsigned AI100000 : 1;				// 100000
+		unsigned _unk200000 : 11;			// 200000
 		// 200000 ~ Destroy Undead/ Death Ripple
 	}flags;
 	// * +10
