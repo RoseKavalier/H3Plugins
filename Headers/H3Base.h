@@ -628,6 +628,8 @@ public:
 	_Elem* operator[](INT32 pos);
 	// * Adds item to end of list
 	_Elem* operator+=(_Elem & item);
+	// * Adds item to end of list
+	_Elem* operator<<(_Elem & item) { return operator+=(item); }
 };
 
 // * a string following the H3 format
@@ -741,6 +743,14 @@ public:
 	H3String* operator+=(PCHAR msg);
 	// * Append(ch)
 	H3String* operator+=(CHAR ch);
+	// * Appends
+	H3String* operator<<(CHAR ch) { return operator+=(ch); }
+	// * Appends
+	H3String* operator<<(PCHAR msg) { return operator+=(msg); }
+	// * Appends
+	H3String* operator<<(H3String & h3str) { return operator+=(h3str); }
+	// * Appends
+	H3String* operator<<(H3String * h3str) { return operator+=(h3str); }
 	// * Equals(h3str)
 	BOOL operator==(H3String *h3str);
 	// * Equals(h3str)
@@ -749,6 +759,7 @@ public:
 	BOOL operator==(PCHAR str);
 	// * Returns string at offset
 	PCHAR operator[](INT32 pos);
+
 	// * The number of times this string is referenced - avoids deletion from destructor in references
 	INT8 References();
 	// * Increase the number of references to this string
@@ -1260,12 +1271,19 @@ inline PCHAR H3String::operator[](INT32 pos)
 
 inline INT8 H3String::References()
 {
+#if H3API_SAFE
+	if (!str)
+		return HS_NOTFOUND;
+#endif
 	return str[-1];
 }
 
 inline void H3String::IncreaseReferences()
 {
-	str[-1]++;
+#if H3API_SAFE
+	if (str)
+#endif
+		str[-1]++;
 }
 
 inline H3String * H3String::operator=(PCHAR msg)

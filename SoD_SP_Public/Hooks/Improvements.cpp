@@ -102,7 +102,7 @@ _LHF_(MapHintCoordinates)
 		///////////////////////
 		ShowMovementCost(coord);
 
-		sprintf(h3_TextBuffer, "%s {~%s}(%d, %d, %d)}", h3_TextBuffer, SODSP_COLOR.adventure_coordinates.String(), coord.x, coord.y, coord.z);
+		sprintf(h3_TextBuffer, "%s {~%s}(%d, %d, %d)}", h3_TextBuffer, SODSP_COLOR.adventure_coordinates.String(), coord.GetX(), coord.GetY(), coord.GetZ());
 	}
 	LOG_LOHOOK;
 	return EXEC_DEFAULT;
@@ -1414,33 +1414,27 @@ _LHF_(FixExperience)
  * These hooks restore AI behavior under the Berserk spell which was altered by HD+.
  *
  */
-static naked_t bridge_berserk1;
-static naked_t return_berserk1a = (naked_t)0x4B3537;
-static naked_t return_berserk1b = (naked_t)0x4B3724;
-static naked_t return_berserk2a = (naked_t)0x4B37AA;
-static naked_t return_berserk2b = (naked_t)0x4B37BF;
-static naked_t bridge_berserk3;
-static naked_t return_berserk3 = (naked_t)0x422447;
-
-naked_function AIberserk1(void)
+_LHF_(AIberserk1)
 {
-	__asm PUSHFD
-	__asm PUSHAD
-	if (!multiplayer_game && SODSP_OPTIONS.berserk)
-	{
-		__asm POPAD
-		__asm POPFD
-		__asm TEST DL, DL
-		__asm JNE jump_out
-		__asm JMP return_berserk1a
-		jump_out :
-				 __asm JMP return_berserk1b
-	}
-	__asm POPAD
-	__asm POPFD
-	__asm JMP bridge_berserk1
+	LOG_LOHOOK;
+	if (multiplayer_game || !SODSP_OPTIONS.berserk)
+		return EXEC_DEFAULT;
+
+	H3CombatManager *cmb = P_CombatMgr;
+
+	if (!cmb->activeStack)
+		return EXEC_DEFAULT;
+
+	if (!cmb->activeStack->activeSpellsDuration[H3Spell::BERSERK] && cmb->IsHumanTurn())
+		return EXEC_DEFAULT;
+
+	c->return_address = c->DL() ? 0x4B3537 : 0x4B3724;
+	LOG_LOHOOK;
+	return NO_EXEC_DEFAULT;
 }
 
+static naked_t return_berserk2a = (naked_t)0x4B37AA;
+static naked_t return_berserk2b = (naked_t)0x4B37BF;
 naked_function AIberserk2(void)
 {
 	__asm PUSHFD
@@ -1466,6 +1460,8 @@ naked_function AIberserk2(void)
 	__asm JMP return_berserk2a
 }
 
+static naked_t bridge_berserk3;
+static naked_t return_berserk3 = (naked_t)0x422447;
 naked_function AIberserk3(void)
 {
 	__asm PUSHFD
@@ -1491,13 +1487,10 @@ naked_function AIberserk3(void)
  * and applies hooks as necessary.
  *
  */
-void RestoreBerserk()
+void RestoreBerserk(PatcherInstance *pi)
 {
 	if (ByteAt(0x4B352F) == mnemonics::jmp)
-	{
-		bridge_berserk1 = (naked_t)FuncAt(0x4B352F);
-		H3Patcher::NakedHook5(0x4B352F, AIberserk1);
-	}
+		pi->WriteLoHook(0x4B352F, AIberserk1);
 	if (PtrAt(0x4B37A5) == 0x90909090)
 		H3Patcher::NakedHook5(0x4B37A5, AIberserk2);
 	if (ByteAt(0x422440) == mnemonics::jmp)
@@ -1706,7 +1699,7 @@ void improvements_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////
 	// restore berserk behaviour
 	//////////////////////////////////////////////////
-	RestoreBerserk();
+	RestoreBerserk(pi);
 
 	///////////////////////////////////////////
 	// More Seer Huts with repeated names

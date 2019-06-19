@@ -173,18 +173,54 @@ struct H3Position;
 // * stored (x,y,z) coordinates H3format
 struct H3Position
 {
-	public:
-		unsigned x : 10;
-	protected:
-		unsigned _unused1 : 6;
-	public:
-		unsigned y : 10;
-	public:
-		unsigned z : 1;
-	protected:
-		unsigned _unused3 : 5;
-	public:
-		UINT32 Mixed() { return PtrAt(this); }
+protected:
+	UINT pos;
+public:
+	// * returns the packed coordinates
+	UINT Mixed() { return pos; }
+	// * returns x from coordinates
+	UINT8 GetX() { return UnpackX(pos); }
+	// * returns y from coordinates
+	UINT8 GetY() { return UnpackY(pos); }
+	// * returns z from coordinates
+	UINT8 GetZ() { return UnpackZ(pos); }
+	// * provided variables x, y, z, unpacks the coordinates to those variables
+	void GetXYZ(INT &x, INT &y, INT &z) { UnpackXYZ(pos, x, y, z); }
+	// * modifies x
+	void SetX(INT x)
+	{
+		pos &= ~0x3FF;
+		pos |= (x & 0x3FF);
+	}
+	// * modifies y
+	void SetY(INT y)
+	{
+		pos &= ~0x03FF000;
+		pos |= (y & 0x3FF) << 16;
+	}
+	// * modifies z
+	void SetZ(INT z)
+	{
+		pos &= ~0x04000000;
+		pos |= (z & 1) << 26;
+	}
+	// * modifies x, y and z
+	void SetXYZ(INT x, INT y, INT z) { pos = Pack(x, y, z); }
+	// * Can be used on the stack safely to pack coordinates
+	static UINT Pack(INT x, INT y, INT z) { return (x & 0x3FF) + ((y & 0x3FF) << 0x10) + ((z & 1) << 0x1A); }
+	// * Can be used on the stack safely to unpack coordinates
+	static void UnpackXYZ(UINT &coord, INT &x, INT &y, INT &z)
+	{
+		x = UnpackX(coord);
+		y = UnpackY(coord);
+		z = UnpackZ(coord);
+	}
+	// * Can be used on the stack safely to unpack X
+	static UINT8 UnpackX(UINT &coord) { return coord & 0x3FF; }
+	// * Can be used on the stack safely to unpack Y
+	static UINT8 UnpackY(UINT &coord) { return (coord >> 16) & 0x3FF; }
+	// * Can be used on the stack safely to unpack Z
+	static UINT8 UnpackZ(UINT &coord) { return (coord >> 26) & 1; }
 };
 
 // * artifacts as they appear on H3Hero structure
@@ -337,6 +373,7 @@ struct H3Artifact
 		WIZARDS_WELL,
 		RING_OF_THE_MAGI,
 		CORNUCOPIA,
+			/* WoG items */
 		MAGIC_WAND_,
 		GOLD_TOWER_ARROW,
 		MONSTERS_POWER,
@@ -538,7 +575,7 @@ public:
 	PCHAR name;
 	// * +44
 	// * Heroes at start can only get up to 3 stacks
-	INT32 ArmyNum[3][2];
+	INT32 armyNum[3][2];
 };
 
 // * The specialty structure of heroes
@@ -576,13 +613,13 @@ struct H3HeroSpecialty
 	UINT32  upgradeTo;
 	// * +1C
 	// * short specialty name
-	PCHAR	SpShort;
+	PCHAR	spShort;
 	// * +20
 	// * full specialty name
-	PCHAR	SpFull;
+	PCHAR	spFull;
 	// * +24
 	// * specialty description
-	PCHAR	SpDescr;
+	PCHAR	spDescr;
 };
 
 // * the start of the save/load structure used by H3
@@ -1955,29 +1992,63 @@ public:
 	// * bitfield of spell data
 	struct SpellFlags
 	{
-		unsigned battlefield_spell : 1;		// 1
-		unsigned map_spell : 1;				// 2
-		unsigned time_scale : 1;			// 4
-		unsigned creature_spell : 1;		// 8
-		unsigned single_target : 1;			// 10
-		unsigned single_shooting_stack : 1;	// 20
-		unsigned expert_mass_version : 1;	// 40
-		unsigned target_anywhere : 1;		// 80
-		unsigned _unk100 : 1;				// 100
-		unsigned _unk200 : 1;				// 200 ~ Destroy Undead / Death Ripple
-		unsigned mind_spell : 1;			// 400
-		unsigned friendly_mass : 1;			// 800
-		unsigned cannot_target_siege : 1;	// 1000 / Death Ripple
-		unsigned spell_from_artifact : 1;	// 2000
-		unsigned _unk4000 : 1;				// 4000
-		unsigned AI8000 : 1;				// 8000
-		unsigned AI_area_effect : 1;		// 10000
-		unsigned AI20000 : 1;				// 20000
-		unsigned AI40000 : 1;				// 40000
-		unsigned AIhypnotize : 1;			// 80000
-		unsigned AI100000 : 1;				// 100000
-		unsigned _unk200000 : 11;			// 200000
-		// 200000 ~ Destroy Undead/ Death Ripple
+		// * flag 1
+		unsigned battlefield_spell : 1;
+		// * flag 2
+		unsigned map_spell : 1;
+		// * flag 4
+		unsigned time_scale : 1;
+		// * flag 8
+		unsigned creature_spell : 1;
+		// * flag 10
+		unsigned single_target : 1;
+		// * flag 20
+		unsigned single_shooting_stack : 1;
+		// * flag 40
+		unsigned expert_mass_version : 1;
+		// * flag 80
+		unsigned target_anywhere : 1;
+		// * flag 100
+		unsigned remove_obstacle : 1;
+		// * flag 200
+		// * All damage spells
+		unsigned damage_spell : 1;
+		// * flag 400
+		unsigned mind_spell : 1;
+		// * flag 800
+		unsigned friendly_mass : 1;
+		// * flag 1000
+		unsigned cannot_target_siege : 1;
+		// * flag 2000
+		unsigned spell_from_artifact : 1;
+		// * flag 4000
+		// * Air/Fire Shield, Protections From, Anti-Magic, Magic Mirror, Stone Skin, Counterstrike
+		unsigned defensive : 1;
+		// * flag 8000
+		// * All damage spells except INFERNO and CHAING LIGHTNING
+		unsigned AI_damage_spells : 1;
+		// * flag 10000
+		// * Inferno and Chaing Lightning
+		unsigned AI_area_effect : 1;
+		// * flag 20000
+		// * Death Ripple, Destroy Undead and Armageddon
+		unsigned AI_mass_damage_spells : 1;
+		// * flag 40000
+		// * Shield, Air Shield, ... Berserk, Teleport, Clone
+		// * NO SUMMON SPELLS
+		unsigned AI_non_damage_spells : 1;
+		// * flag 80000
+		// * Resurrection, Animate Dead
+		// * Hypnotize
+		// * 4 Summon Spells
+		unsigned AI_creatures : 1;
+		// * flag 100000
+		// * Summon Boat, Fly, WW, DD, TP
+		// * Earthquake, Titan's Lightning Bolt (not sure why these are here???)
+		unsigned AI_adventure_map : 1;
+		// * flag 200000+
+		// * there are no spells with these flags
+		unsigned _unused : 11;
 	}flags;
 	// * +10
 	// * full name
@@ -2932,12 +3003,9 @@ protected:
 	UINT16 movementCost2; // +1A
 	h3unk _f_1C[2];
 public:
-	/*UINT8 GetX() { return mixedPosition.xyz.x; }
-	UINT8 GetY() { return mixedPosition.xyz.y; }
-	UINT8 GetZ() { return mixedPosition.xyz.z; }*/
-	UINT8 GetX() { return mixedPosition.x; }
-	UINT8 GetY() { return mixedPosition.y; }
-	UINT8 GetZ() { return mixedPosition.z; }
+	UINT8 GetX() { return mixedPosition.GetX(); }
+	UINT8 GetY() { return mixedPosition.GetY(); }
+	UINT8 GetZ() { return mixedPosition.GetZ(); }
 
 	BOOL ZoneControlled() { return (0x0100 & FASTCALL_3(UINT16, 0x4F8040, GetX(), GetY(), GetZ())); }
 	H3MapItem *GetMapItem();
@@ -3473,12 +3541,9 @@ public:
 
 	H3MapItem* GetMapItem(int mixedPos) { return THISCALL_2(H3MapItem*, 0x412B30, this, mixedPos); }
 	H3MapItem* GetMapItem(int x, int y, int z) { return THISCALL_4(H3MapItem*, 0x4086D0, this->map, x, y, z); }
-	/*UINT8 GetX() { return mousePosition.xyz.x; }
-	UINT8 GetY() { return mousePosition.xyz.y; }
-	UINT8 GetZ() { return mousePosition.xyz.z; }*/
-	UINT8 GetX() { return mousePosition.x; }
-	UINT8 GetY() { return mousePosition.y; }
-	UINT8 GetZ() { return mousePosition.z; }
+	UINT8 GetX() { return mousePosition.GetX(); }
+	UINT8 GetY() { return mousePosition.GetY(); }
+	UINT8 GetZ() { return mousePosition.GetZ(); }
 	void FullUpdate() { THISCALL_3(void, 0x417380, this, 1, 0); }
 	void MobilizeHero() { THISCALL_4(void, 0x417540, this, 0, 0, 0); }
 	void DemobilizeHero() { return THISCALL_3(void, 0x4175E0, this, 0, 0); }
@@ -3747,7 +3812,7 @@ public:
 	// * +54A4
 	UINT8 isNotAI[2];
 	// * +54A6
-	UINT8 isHuman[2];
+	BOOL8 isHuman[2];
 	// * +54A8
 	INT32 heroOwner[2];
 	// * +54B0
@@ -3888,6 +3953,7 @@ public:
 	void Refresh() { Refresh(1, 0, 1); }
 	void Refresh(BOOL redrawScreen, INT timeDelay, BOOL redrawBackground) { THISCALL_7(void, 0x493FC0, this, redrawScreen, 0, 0, timeDelay, redrawBackground, 0); }
 	void ShadeSquare(int index);
+	BOOL8 IsHumanTurn() { return isHuman[currentActiveSide]; }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4372,13 +4438,9 @@ inline void H3Hero::RecalculateMovement()
 	H3AdventureManager *adv = P_AdventureMgr;
 	adv->movementCalculated = 0;
 	adv->movementCalculated1 = 0;
-	if ((int)dest_x != -1)
+	if (dest_x != -1)
 	{
-		H3Position mp;
-		mp.x = (WORD)dest_x;
-		mp.y = (WORD)dest_y;
-		mp.z = (BYTE)dest_z;
-		adv->MovementCalculations(mp.Mixed());
+		adv->MovementCalculations(H3Position::Pack(dest_x, dest_y, dest_z));
 		adv->MakeHeroPath();
 	}
 }
@@ -4529,9 +4591,9 @@ inline void H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
 	if (x >= 0 && x < h3_MapSize && y >= 0 && y < h3_MapSize)
 	{
 		DemobilizeHero();
-		screenPosition.x = (gameEdgeHorizontal + x); // width offset
-		screenPosition.y = (gameEdgeVertical + y); // height offset
-		screenPosition.z = z;
+		screenPosition.SetX(gameEdgeHorizontal + x); // width offset
+		screenPosition.SetY(gameEdgeVertical + y); // height offset
+		screenPosition.SetZ(z);
 		FullUpdate(); // force immediate redraw
 	}
 }
