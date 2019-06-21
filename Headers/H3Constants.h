@@ -43,6 +43,7 @@
 
 #pragma once
 
+#pragma warning(push)
 #pragma warning(disable:4146) // disable unary minus operator unsigned type warning
 
 namespace NH3Creatures
@@ -1003,5 +1004,7 @@ namespace NH3VKey
 		H3VK_RIGHT_CLICK
 	};
 }
+
+#pragma warning(pop)
 
 #endif /* #define _H3CONSTANTS_H_ */

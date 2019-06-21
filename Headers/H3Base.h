@@ -336,11 +336,11 @@ typedef char h3unk;
 #endif
 
 // * heapalloc using H3 assets
-#define h3_malloc(size)						CDECL_1(UINT32, 0x617492, size)
+#define h3_malloc(size)						CDECL_1(PVOID, 0x617492, size)
 // * same as h3_malloc but for objects
 #define h3_new(obj, number)					CDECL_1(obj*, 0x617492, (number) * (sizeof(obj)))
 // * heapfree using H3 assets
-#define h3_delete(obj)						CDECL_1(UINT, 0x60B0F0, (UINT)obj)
+#define h3_delete(obj)						CDECL_1(void, 0x60B0F0, (PVOID)obj)
 // * memcpy using H3 assets
 #define h3_memcpy(dest, src, len)			CDECL_3(void, 0x61AD70, (void*)dest, (void*)src, (size_t)len)
 // * heap realloc using H3 assets
@@ -421,6 +421,37 @@ typedef char h3unk;
 #define h3_CreatureHasUpgrade(id)			THISCALL_1(BOOL8, 0x47AA50, id)
 #define h3_GetCreatureUpgrade(id)			THISCALL_1(INT32, 0x47AAD0, id)
 #define h3_GetDiplomacyPowerFactor(k)		STDCALL_1(INT32, 0x4A7330, k)
+
+#pragma warning(push)
+#pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
+
+//* new operator using h3 assets
+inline PVOID operator new(size_t sz)
+{
+	return h3_malloc(sz);
+}
+
+// * delete operator using h3 assets
+inline void operator delete(PVOID ptr)
+{
+	if (ptr)
+		h3_delete(ptr);
+}
+
+// * new[] operator using h3 assets
+inline PVOID operator new[](size_t sz)
+{
+	return h3_malloc(sz);
+}
+
+// * delete[] operator using h3 assets
+inline void operator delete[](PVOID ptr)
+{
+	if (ptr)
+		h3_delete(ptr);
+}
+
+#pragma warning(pop) /* #pragma warning(disable:4595) */
 
 #pragma pack(push, 1) // 1 byte alignment
 
@@ -1458,8 +1489,6 @@ inline _Elem * H3Vector<_Elem>::AddOne(_Elem & item)
 {
 	if (!first)
 	{
-		//UINT32 size = sizeof(_Elem);
-		//first = (_Elem*)h3_malloc(size);
 		first = h3_new(_Elem, 1);
 		end = first;
 		if (first)

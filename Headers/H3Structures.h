@@ -187,27 +187,27 @@ public:
 	// * provided variables x, y, z, unpacks the coordinates to those variables
 	void GetXYZ(INT &x, INT &y, INT &z) { UnpackXYZ(pos, x, y, z); }
 	// * modifies x
-	void SetX(INT x)
+	void SetX(INT16 x)
 	{
 		pos &= ~0x3FF;
 		pos |= (x & 0x3FF);
 	}
 	// * modifies y
-	void SetY(INT y)
+	void SetY(INT16 y)
 	{
-		pos &= ~0x03FF000;
-		pos |= (y & 0x3FF) << 16;
+		pos &= ~0x03FF0000;
+		pos |= ((y & 0x3FF) << 16);
 	}
 	// * modifies z
-	void SetZ(INT z)
+	void SetZ(INT16 z)
 	{
 		pos &= ~0x04000000;
-		pos |= (z & 1) << 26;
+		pos |= ((z & 1) << 26);
 	}
 	// * modifies x, y and z
 	void SetXYZ(INT x, INT y, INT z) { pos = Pack(x, y, z); }
 	// * Can be used on the stack safely to pack coordinates
-	static UINT Pack(INT x, INT y, INT z) { return (x & 0x3FF) + ((y & 0x3FF) << 0x10) + ((z & 1) << 0x1A); }
+	static UINT Pack(INT x, INT y, INT z) { return ((x & 0x3FF) | ((y & 0x3FF) << 0x10) | ((z & 1) << 0x1A)); }
 	// * Can be used on the stack safely to unpack coordinates
 	static void UnpackXYZ(UINT &coord, INT &x, INT &y, INT &z)
 	{
@@ -216,9 +216,9 @@ public:
 		z = UnpackZ(coord);
 	}
 	// * Can be used on the stack safely to unpack X
-	static UINT8 UnpackX(UINT &coord) { return coord & 0x3FF; }
+	static UINT8 UnpackX(UINT &coord) { return coord & 0xFF; }
 	// * Can be used on the stack safely to unpack Y
-	static UINT8 UnpackY(UINT &coord) { return (coord >> 16) & 0x3FF; }
+	static UINT8 UnpackY(UINT &coord) { return (coord >> 16) & 0xFF; }
 	// * Can be used on the stack safely to unpack Z
 	static UINT8 UnpackZ(UINT &coord) { return (coord >> 26) & 1; }
 };
@@ -4591,9 +4591,7 @@ inline void H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
 	if (x >= 0 && x < h3_MapSize && y >= 0 && y < h3_MapSize)
 	{
 		DemobilizeHero();
-		screenPosition.SetX(gameEdgeHorizontal + x); // width offset
-		screenPosition.SetY(gameEdgeVertical + y); // height offset
-		screenPosition.SetZ(z);
+		screenPosition.SetXYZ(gameEdgeHorizontal + x, gameEdgeVertical + y, z);
 		FullUpdate(); // force immediate redraw
 	}
 }
