@@ -398,7 +398,7 @@ typedef char h3unk;
 
 #define h3_MapSize							IntAt(0x6783C8)
 #define h3_ColorMode						PtrAt(0x694DB0)
-#define h3_BitMode							ByteAt(0x5FA22B) // typical 2, 4 means True graphic mode is used
+#define h3_BitMode							ByteAt(0x5FA228 + 3) // typical 2, 4 means True graphic mode is used
 #define h3_ObjectName(id)					(*(PCHAR*)(0x6A7A54 + 4 * id))
 #define h3_MineNames(type)					(*(PCHAR*)(0x6A7538 + 4 * type))
 #define h3_TentColors(type)					(*(PCHAR*)(0x6A7588 + 4 * type))

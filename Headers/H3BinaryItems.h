@@ -306,10 +306,10 @@ struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
 struct H3DefFrame : public H3BinaryItem
 {
 	// * +1C
-	INT32 dataSize;
+	INT32 frameSize;
 	// * +20
 	// * frame width * frame height
-	INT32 frameSize;
+	INT32 dataSize;
 	// * +24
 	INT32 compressionType;
 	// * +28

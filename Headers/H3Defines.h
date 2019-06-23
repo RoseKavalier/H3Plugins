@@ -48,6 +48,7 @@
 
 #define h3_DataPath							((H3String*)0x69E528)
 #define h3_ActivePlayer						(*(H3Player**)0x69CCFC)
+#define h3_HWND								(*(HWND*)0x699650)
 
 #define h3_GeneralText						(*(H3ColumnTextFile**)0x6A5DC4)
 #define h3_CurrentPlayerID					IntAt(0x69CCF4)
