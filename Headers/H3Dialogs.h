@@ -353,9 +353,9 @@ public:
 	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
-	H3DlgDefButton * H3Dlg::CreateOKButton(INT32 x, INT32 y);
-	H3DlgDefButton * H3Dlg::CreateSaveButton(INT32 x, INT32 y);
-	H3DlgDefButton * H3Dlg::CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, INT32 frame, INT32 clickFrame = 0);
+	H3DlgDefButton * CreateOKButton(INT32 x, INT32 y);
+	H3DlgDefButton * CreateSaveButton(INT32 x, INT32 y);
+	H3DlgDefButton * CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, INT32 frame, INT32 clickFrame = 0);
 	H3DlgDefButton* CreateOKButton(); // adjust for hintBar
 	H3DlgDefButton* CreateOK32Button(INT32 x, INT32 y); // height is 32
 	H3DlgDefButton* CreateCancelButton(); // adjust for hintBar
@@ -808,7 +808,7 @@ inline H3DlgDefButton * H3Dlg::CreateOKButton(INT32 x, INT32 y)
 
 inline H3DlgDefButton * H3Dlg::CreateSaveButton(INT32 x, INT32 y)
 {
-	H3DlgDefButton *button = H3DlgDefButton::Create(x, y, H3Msg::ID_SAVE, iSAVE_DEF, 0, 1, FALSE, NH3VKey::H3VK_S);
+	H3DlgDefButton *button = H3DlgDefButton::Create(x, y, H3Msg::ID_SAVE, (PCHAR)iSAVE_DEF, 0, 1, FALSE, NH3VKey::H3VK_S);
 	if (button)
 	{
 		AddItem(H3DlgPcx::Create(x - 1, y - 1, BOX_64_32_PCX));
@@ -886,7 +886,7 @@ inline H3DlgPcx * H3Dlg::CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, 
 
 inline H3DlgPcx * H3Dlg::CreateLineSeparator(INT32 x, INT32 y, INT32 width)
 {
-	return CreatePcx(x, y, width, 2, 0, LINE_SEPARATOR);
+	return CreatePcx(x, y, width, 2, 0, (PCHAR)LINE_SEPARATOR);
 }
 
 inline H3DlgPcx16 * H3Dlg::CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName)
@@ -956,7 +956,7 @@ inline H3DlgScrollbar * H3Dlg::CreateScrollbar(INT32 x, INT32 y, INT32 width, IN
 inline void H3Dlg::PlaceAtMouse()
 {
 	int x, y;
-	h3_GetCursorPosition(x, y);
+	F_GetCursorPosition(x, y);
 
 	// adjust x & y to make certain the dialog will fit
 	x = min(x, gameWidth - widthDlg - 200); // 200 is width of adventure bar on right
@@ -1184,10 +1184,10 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 
 	H3DlgPcx *up, *down, *left, *right, *pcx;
 
-	up = H3DlgPcx::Create(xStart, yStart, "hd_fr_u.bmp");
-	down = H3DlgPcx::Create(xStart, yEnd - 4, "hd_fr_d.bmp");
-	left = H3DlgPcx::Create(xStart, yStart, "hd_fr_l.bmp");
-	right = H3DlgPcx::Create(xEnd - 4, yStart, "hd_fr_r.bmp");
+	up = H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_u.bmp");
+	down = H3DlgPcx::Create(xStart, yEnd - 4, (PCHAR)"hd_fr_d.bmp");
+	left = H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_l.bmp");
+	right = H3DlgPcx::Create(xEnd - 4, yStart, (PCHAR)"hd_fr_r.bmp");
 
 	if (!up || !down || !left || !right)
 	{
@@ -1250,10 +1250,10 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	////////////////////
 	// Add corners
 	////////////////////
-	this->AddItem(H3DlgPcx::Create(xStart, yStart, "hd_fr_lu.bmp"));
-	this->AddItem(H3DlgPcx::Create(xStart, yEnd - 4, "hd_fr_ld.bmp"));
-	this->AddItem(H3DlgPcx::Create(xEnd - 4, yStart, "hd_fr_ru.bmp"));
-	this->AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, "hd_fr_rd.bmp"));
+	this->AddItem(H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_lu.bmp"));
+	this->AddItem(H3DlgPcx::Create(xStart, yEnd - 4, (PCHAR)"hd_fr_ld.bmp"));
+	this->AddItem(H3DlgPcx::Create(xEnd - 4, yStart, (PCHAR)"hd_fr_ru.bmp"));
+	this->AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, (PCHAR)"hd_fr_rd.bmp"));
 
 	return TRUE;
 }
@@ -1567,7 +1567,7 @@ inline void H3DlgHintBar::ShowMessage(PCHAR msg)
 
 inline H3DlgHintBar * H3DlgHintBar::Create(H3Dlg * dlg)
 {
-	return (H3DlgHintBar*)H3DlgTextPcx::Create(8, dlg->GetHeight() - 26, dlg->GetWidth() - 16, 19, h3_NullString, SMALL_TEXT, HD_STATUSBAR_PCX, TEXT_REGULAR);
+	return (H3DlgHintBar*)H3DlgTextPcx::Create(8, dlg->GetHeight() - 26, dlg->GetWidth() - 16, 19, h3_NullString, SMALL_TEXT, (PCHAR)HD_STATUSBAR_PCX, TEXT_REGULAR);
 }
 
 inline H3Dlg::H3Dlg(int width, int height, int x, int y)

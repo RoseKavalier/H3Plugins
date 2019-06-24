@@ -57,10 +57,10 @@ _LHF_(changeCursor)
 int __stdcall _HH_CheckShift(HiHook *h, H3AdventureManager* This, H3Msg *msg, int a3, int a4, int a5)
 {
 	POINT p;
-	if (msg->KeyPressed() == NH3VKey::H3VK_SHIFT)
+	if (msg->KeyPressed() == NH3VKey::H3VK_SHIFT && !shiftPressed)
 	{
 		shiftPressed = TRUE;
-		h3_GetCursorPosition(p);
+		F_GetCursorPosition(p);
 		This->previousMousePosition.x = -1;
 		This->SimulateMouseOver(p);
 	}
@@ -82,7 +82,7 @@ _LHF_(ShiftOff)
 	if (msg->IsKeyPress() && msg->KeyPressed() == NH3VKey::H3VK_SHIFT)
 	{
 		shiftPressed = FALSE;
-		h3_GetCursorPosition(p);
+		F_GetCursorPosition(p);
 		P_AdventureMgr->previousMousePosition.x = -1;
 		P_AdventureMgr->SimulateMouseOver(p);
 	}

@@ -1,5 +1,5 @@
 #include "LodBase.h"
-#include "../H3API.h"
+#include "../Headers/H3API.h"
 
 // * existing H3LodType sequence, with room to add
 INT H3LodTypes::sequence[4][3][LOD_COUNT] =
