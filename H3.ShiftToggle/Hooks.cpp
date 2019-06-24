@@ -94,5 +94,5 @@ void Hooks_init(PatcherInstance *pi)
 	pi->WriteLoHook(0x40A7C7, checkShift);
 	pi->WriteLoHook(0x40E495, changeCursor);
 	pi->WriteHiHook(0x408BA0, SPLICE_, THISCALL_, _HH_CheckShift);
-	pi->WriteLoHook(0x40891F, ShiftOff);
+	pi->WriteLoHook(0x408928, ShiftOff);
 }
