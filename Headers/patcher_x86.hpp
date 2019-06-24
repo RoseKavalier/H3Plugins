@@ -878,6 +878,8 @@ public:
 	// the PatcherInstance instance will be created with the module name from
 	// the function was called.
 	virtual PatcherInstance* __stdcall CreateInstance(char* owner) = 0;
+	// Visual Studio 2017+ has difficulty processing const char* to char*
+	PatcherInstance* CreateInstance(const char* owner) { return CreateInstance((char*)owner); }
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// GetInstance method
@@ -891,6 +893,8 @@ public:
 	// - get access to all patches and hooks of some mod,
 	// using patcher_x86.dll
 	virtual PatcherInstance*  __stdcall GetInstance(char* owner) = 0;
+	// Visual Studio 2017+ has difficulty processing const char* to char*
+	PatcherInstance * GetInstance(const char* owner) { return GetInstance((char*)owner); }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// GetLastPatchAt method

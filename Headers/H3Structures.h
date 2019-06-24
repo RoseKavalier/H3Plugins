@@ -3480,8 +3480,11 @@ public:
 	// * +E8
 	// * the position of the mouse cursor in (x,y,z)
 	H3Position mousePosition;
+	// * +EC
+	// * the previous map adventure coordinates of the mouse
+	POINT previousMousePosition;
 protected:
-	h3unk _f_0EC[32];
+	h3unk _f_0F4[24];
 	// * +10C
 	H3LoadedDEF *heroDEF[18];
 	// * +154
