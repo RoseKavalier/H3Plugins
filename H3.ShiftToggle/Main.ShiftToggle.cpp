@@ -18,10 +18,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 		if (!pluginOn)
 		{
 			pluginOn = TRUE;
-			auto p = GetPatcher();
+			Patcher* p = _P = GetPatcher();
 			if (!p)
 				break;
-			auto pi = p->CreateInstance("H3.ToggleShift");
+			PatcherInstance *pi = _PI = p->CreateInstance("H3.ToggleShift");
 			if (!pi)
 				break;
 			Hooks_init(pi);
