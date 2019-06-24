@@ -417,6 +417,7 @@ typedef char h3unk;
 #define h3_MessageBoxChoice(text)			FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0)
 #define h3_MessageBoxRMB(text)				FASTCALL_12(void, 0x4F6C00, text, 4, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0)
 #define h3_GetCursorPosition(x, y)			STDCALL_2(void, 0x50D700, &x, &y);
+#define h3_GetCursorPosition(point)			STDCALL_2(void, 0x50D700, &point.x, &point.y);
 #define h3_GetCurrentDirectory(buf, len)	STDCALL_2(int, IntAt(0x63A1A4), len, buf)
 #define h3_CreatureHasUpgrade(id)			THISCALL_1(BOOL8, 0x47AA50, id)
 #define h3_GetCreatureUpgrade(id)			THISCALL_1(INT32, 0x47AAD0, id)

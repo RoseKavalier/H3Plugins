@@ -3555,6 +3555,8 @@ public:
 	void MovementCalculations(UINT32 mixedPosition) { THISCALL_2(void, 0x419400, this, mixedPosition); }
 	void MakeHeroPath() { THISCALL_4(void, 0x418D30, this, 1, 1, 1); }
 	void ShowCoordinates(INT32 x, INT32 y, INT8 z);
+	INT SimulateMouseOver(INT x, INT y) { return THISCALL_3(int, 0x40E2C0, this, x, y); }
+	INT SimulateMouseOver(POINT & p) { return SimulateMouseOver(p.x, p.y); }
 };
 
 // * trading between two armies

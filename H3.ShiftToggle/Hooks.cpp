@@ -56,13 +56,13 @@ _LHF_(changeCursor)
  */
 int __stdcall _HH_CheckShift(HiHook *h, H3AdventureManager* This, H3Msg *msg, int a3, int a4, int a5)
 {
-	int x, y;
+	POINT p;
 	if (msg->KeyPressed() == NH3VKey::H3VK_SHIFT)
 	{
 		shiftPressed = TRUE;
-		h3_GetCursorPosition(x, y);
+		h3_GetCursorPosition(p);
 		This->previousMousePosition.x = -1;
-		THISCALL_3(int, 0x40E2C0, This, x, y);
+		This->SimulateMouseOver(p);
 	}
 
 	return THISCALL_5(int, h->GetDefaultFunc(), This, msg, a3, a4, a5);
@@ -77,14 +77,14 @@ int __stdcall _HH_CheckShift(HiHook *h, H3AdventureManager* This, H3Msg *msg, in
  */
 _LHF_(ShiftOff)
 {
+	POINT p;
 	H3Msg * msg = (H3Msg *)c->edi;
 	if (msg->IsKeyPress() && msg->KeyPressed() == NH3VKey::H3VK_SHIFT)
 	{
 		shiftPressed = FALSE;
-		int x, y;
-		h3_GetCursorPosition(x, y);
+		h3_GetCursorPosition(p);
 		P_AdventureMgr->previousMousePosition.x = -1;
-		THISCALL_3(int, 0x40E2C0, P_AdventureMgr, x, y);
+		P_AdventureMgr->SimulateMouseOver(p);
 	}
 	return EXEC_DEFAULT;
 }
