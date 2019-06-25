@@ -45,6 +45,7 @@
 
 #include "H3Base.h"
 #include "H3Structures.h"
+#include "H3Functions.h"
 
 enum TextAlignment
 {
@@ -318,7 +319,7 @@ public:
 	// Constructor and destructor
 	////////////////////////////////////////////////////////////////////////
 	H3Dlg(int width = 0, int height = 0, int x = -1, int y = -1); // default constructor
-	H3Dlg(int width, int heigh, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = NULL, INT32 colorIndex = IntAt(0x69CCF4)); // extended constructor
+	H3Dlg(int width, int heigh, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = NULL, BOOL makeBackground = TRUE, INT32 colorIndex = IntAt(0x69CCF4)); // extended constructor
 	~H3Dlg() { THISCALL_2(void, vtable->destroyDlg, this, 0); } // default destructor
 	////////////////////////////////////////////////////////////////////////
 	// Functions
@@ -800,8 +801,8 @@ inline H3DlgDefButton * H3Dlg::CreateOKButton(INT32 x, INT32 y)
 	H3DlgDefButton *button = H3DlgDefButton::Create(x, y, H3Msg::ID_OK, OKAY_DEF, 0, 1, TRUE, NH3VKey::H3VK_ENTER);
 	if (button)
 	{
-		this->AddItem(H3DlgPcx::Create(x - 1, y - 1, BOX_64_30_PCX));
-		this->AddItem(button);
+		AddItem(H3DlgPcx::Create(x - 1, y - 1, BOX_64_30_PCX));
+		AddItem(button);
 	}
 	return button;
 }
@@ -828,11 +829,11 @@ inline H3DlgDefButton * H3Dlg::CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, I
 inline H3DlgDefButton * H3Dlg::CreateOKButton()
 {
 
-	H3DlgDefButton *button = H3DlgDefButton::Create(25, this->heightDlg - 50, H3Msg::ID_OK, OKAY_DEF, 0, 1, TRUE, NH3VKey::H3VK_ENTER);
+	H3DlgDefButton *button = H3DlgDefButton::Create(25, heightDlg - 50, H3Msg::ID_OK, OKAY_DEF, 0, 1, TRUE, NH3VKey::H3VK_ENTER);
 	if (button)
 	{
-		this->AddItem(H3DlgPcx::Create(25 - 1, this->heightDlg - 50 - 1, BOX_64_30_PCX));
-		this->AddItem(button);
+		AddItem(H3DlgPcx::Create(25 - 1, heightDlg - 50 - 1, BOX_64_30_PCX));
+		AddItem(button);
 	}
 	return button;
 }
@@ -842,19 +843,19 @@ inline H3DlgDefButton * H3Dlg::CreateOK32Button(INT32 x, INT32 y)
 	H3DlgDefButton *button = H3DlgDefButton::Create(x, y, H3Msg::ID_OK, OKAY32_DEF, 0, 1, TRUE, NH3VKey::H3VK_ENTER);
 	if (button)
 	{
-		this->AddItem(H3DlgPcx::Create(x - 1, y - 1, BOX_66_32_PCX));
-		this->AddItem(button);
+		AddItem(H3DlgPcx::Create(x - 1, y - 1, BOX_66_32_PCX));
+		AddItem(button);
 	}
 	return button;
 }
 
 inline H3DlgDefButton * H3Dlg::CreateCancelButton()
 {
-	H3DlgDefButton *button = H3DlgDefButton::Create(this->widthDlg - 25 - 64, this->heightDlg - 50, H3Msg::ID_CANCEL, CANCEL_DEF, 0, 1, TRUE, NH3VKey::H3VK_ESCAPE);
+	H3DlgDefButton *button = H3DlgDefButton::Create(widthDlg - 25 - 64, heightDlg - 50, H3Msg::ID_CANCEL, CANCEL_DEF, 0, 1, TRUE, NH3VKey::H3VK_ESCAPE);
 	if (button)
 	{
-		this->AddItem(H3DlgPcx::Create(this->widthDlg - 25 - 1 - 64, this->heightDlg - 50 - 1, BOX_64_30_PCX));
-		this->AddItem(button);
+		AddItem(H3DlgPcx::Create(widthDlg - 25 - 1 - 64, heightDlg - 50 - 1, BOX_64_30_PCX));
+		AddItem(button);
 	}
 	return button;
 }
@@ -917,7 +918,7 @@ inline H3DlgText * H3Dlg::CreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 he
 {
 	H3DlgText *t = H3DlgText::Create(x, y, width, height, h3_NullString, MEDIUM_TEXT, 0, 0, 0, 9 + TEXT_BLACK);
 	if (t)
-		this->AddItem(t);
+		AddItem(t);
 	return t;
 }
 
@@ -984,8 +985,8 @@ inline void H3Dlg::Start()
 
 inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 {
-	INT32 w = this->widthDlg;
-	INT32 h = this->heightDlg;
+	INT32 w = widthDlg;
+	INT32 h = heightDlg;
 
 	if (frame && (w < 64 || h < 64))
 		return FALSE;
@@ -1018,7 +1019,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 			bg2->SetY(y);
 			bg2->SetWidth(min(_w, 256)); // update dimensions
 			bg2->SetHeight(dh);
-			this->AddItem(bg2);
+			AddItem(bg2);
 			x += 256;
 			_w -= 256;
 		}
@@ -1088,7 +1089,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def->Copy(baseDef);
 		def->SetX(x);
 		def->SetFrame(BF_tm);
-		this->AddItem(def);
+		AddItem(def);
 
 		def2 = h3_new(H3DlgDef, 1);
 		if (!def2)
@@ -1096,7 +1097,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def2->Copy(def);
 		def2->SetY(h - 64);
 		def2->SetFrame(f_bm);
-		this->AddItem(def2);
+		AddItem(def2);
 
 		x -= 64;
 	}
@@ -1115,7 +1116,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def->Copy(baseDef);
 		def->SetY(y);
 		def->SetFrame(BF_ml);
-		this->AddItem(def);
+		AddItem(def);
 
 		def2 = h3_new(H3DlgDef, 1);
 		if (!def2)
@@ -1123,7 +1124,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def2->Copy(def);
 		def2->SetX(w - 64);
 		def2->SetFrame(BF_mr);
-		this->AddItem(def2);
+		AddItem(def2);
 
 		y -= 64;
 	}
@@ -1132,7 +1133,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	// All corners
 	////////////////////
 	// top left
-	this->AddItem(baseDef);
+	AddItem(baseDef);
 
 	////////////////////
 	// now top right
@@ -1143,7 +1144,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	def->Copy(baseDef);
 	def->SetX(w - 64);
 	def->SetFrame(BF_tr);
-	this->AddItem(def);
+	AddItem(def);
 
 	////////////////////
 	// bottom left
@@ -1154,7 +1155,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	def->Copy(baseDef);
 	def->SetY(h - 64);
 	def->SetFrame(f_bl);
-	this->AddItem(def);
+	AddItem(def);
 
 	////////////////////
 	// bottom right
@@ -1166,7 +1167,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	def->SetX(w - 64);
 	def->SetY(h - 64);
 	def->SetFrame(f_br);
-	this->AddItem(def);
+	AddItem(def);
 
 	def->ColorDefToPlayer(colorIndex);
 	return TRUE;
@@ -1250,10 +1251,10 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	////////////////////
 	// Add corners
 	////////////////////
-	this->AddItem(H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_lu.bmp"));
-	this->AddItem(H3DlgPcx::Create(xStart, yEnd - 4, (PCHAR)"hd_fr_ld.bmp"));
-	this->AddItem(H3DlgPcx::Create(xEnd - 4, yStart, (PCHAR)"hd_fr_ru.bmp"));
-	this->AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, (PCHAR)"hd_fr_rd.bmp"));
+	AddItem(H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_lu.bmp"));
+	AddItem(H3DlgPcx::Create(xStart, yEnd - 4, (PCHAR)"hd_fr_ld.bmp"));
+	AddItem(H3DlgPcx::Create(xEnd - 4, yStart, (PCHAR)"hd_fr_ru.bmp"));
+	AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, (PCHAR)"hd_fr_rd.bmp"));
 
 	return TRUE;
 }
@@ -1549,20 +1550,20 @@ inline void H3DlgHintBar::ShowHint(H3Msg *msg)
 		if (di)
 		{
 			if (di->GetHint())
-				this->SetText(di->GetHint());
+				SetText(di->GetHint());
 			else
-				this->SetText(h3_NullString);
-			this->Draw();
-			this->Refresh();
+				SetText(h3_NullString);
+			Draw();
+			Refresh();
 		}
 	}
 }
 
 inline void H3DlgHintBar::ShowMessage(PCHAR msg)
 {
-	this->SetText(msg);
-	this->Draw();
-	this->Refresh();
+	SetText(msg);
+	Draw();
+	Refresh();
 }
 
 inline H3DlgHintBar * H3DlgHintBar::Create(H3Dlg * dlg)
@@ -1578,15 +1579,16 @@ inline H3Dlg::H3Dlg(int width, int height, int x, int y)
 	hintBar = 0;
 }
 
-inline H3Dlg::H3Dlg(int width, int height, int x, int y, BOOL statusBar, H3Dlg_proc dlgProc, INT32 colorIndex)
+inline H3Dlg::H3Dlg(int width, int height, int x, int y, BOOL statusBar, H3Dlg_proc dlgProc, BOOL makeBackground, INT32 colorIndex)
 {
 	THISCALL_6(H3Dlg*, 0x41AFA0, this, x == -1 ? (gameWidth - width) / 2 : x, y == -1 ? (gameHeight - height) / 2 : y, width, height, 0x12);
 	vtable = &CustomDlgVTable;
-	this->DlgBackground(TRUE, statusBar, colorIndex);
+	if (makeBackground)
+		DlgBackground(TRUE, statusBar, colorIndex);
 	customProc = dlgProc;
 	H3DlgHintBar *hint = NULL;
 	if (statusBar)
-		hint = this->CreateHint();
+		hint = CreateHint();
 	hintBar = hint;
 }
 

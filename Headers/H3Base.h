@@ -342,25 +342,11 @@ typedef char h3unk;
 // * heapfree using H3 assets
 #define h3_delete(obj)						CDECL_1(void, 0x60B0F0, (PVOID)obj)
 // * memcpy using H3 assets
-#define h3_memcpy(dest, src, len)			CDECL_3(void, 0x61AD70, (void*)dest, (void*)src, (size_t)len)
+#define h3_memcpy(dest, src, len)			CDECL_3(void, 0x61AD70, (PVOID)dest, (PVOID)src, (size_t)len)
 // * heap realloc using H3 assets
-#define h3_realloc(obj, new_size)			CDECL_2(UINT, 0x619890, (void*)obj, new_size)
-// * converts text to integer using H3 assets
-#define h3_atoi(text)						CDECL_1(INT32, 0x6184D9, text)
-// * compares two strings up to len characters
-#define h3_strnicmp(string1, string2, len)	CDECL_3(INT, 0x626680, string1, string2, len)
-// * copies len characters from source to dest
-#define h3_strncpy(dest, src, len)			CDECL_3(PCHAR, 0x618FE0, dest, src, len)
+#define h3_realloc(obj, new_size)			CDECL_2(PVOID, 0x619890, (PVOID)obj, new_size)
 // * compares two strings, not-case-sensitive
 #define h3_strcmpi(string1, string2)		CDECL_2(BOOL, 0x6197C0, string1, string2)
-// * reverses string in buffer, returned to buffer
-#define h3_strRev(buffer)					CDECL_1(PCHAR, 0x627690, buffer)
-// * FindFirstFileA using H3 assets
-#define h3_FindFirstFileA(path, data)		STDCALL_2(HANDLE, PtrAt(0x63A11C), path, &data)
-// * FindNextFileA using H3 assets
-#define h3_FindNextFileA(handle, data)		STDCALL_2(HANDLE, PtrAt(0x63A120), handle, &data)
-// * timeGetTime using H3 assets
-#define h3_GetTime							STDCALL_0(DWORD, PtrAt(0x63A354))
 
 // * movement bonuses
 #define SPEED_BONUS_BOOTS					IntAt(0x698B50) // usually 600 mp
@@ -408,30 +394,6 @@ typedef char h3unk;
 #define h3_TextBuffer						((PCHAR)0x697428) // 512 bytes of char buffer to be used
 #define h3_NullString						((PCHAR)0x691260)
 #define h3_SaveName							((PCHAR)0x69FC88)
-
-#define h3_PrintScreenText(text)			CDECL_3(void, 0x553C40, 0x69D800, "%s", text)
-#define h3_CanViewTile(x, y, z)				(FASTCALL_3(UINT8, 0x4F8040, x, y, z) & h3_ActivePlayerBitset)
-#define h3_GetCreatureUpgrade(Type)			THISCALL_1(INT32, 0x47AAD0, Type)
-#define multiplayer_game					STDCALL_0(BOOL8, 0x4CE950)
-#define h3_MessageBox(text)					FASTCALL_12(void, 0x4F6C00, text, 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0)
-#define h3_MessageBoxChoice(text)			FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0)
-#define h3_MessageBoxRMB(text)				FASTCALL_12(void, 0x4F6C00, text, 4, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0)
-#define h3_GetCurrentDirectory(buf, len)	STDCALL_2(int, IntAt(0x63A1A4), len, buf)
-#define h3_CreatureHasUpgrade(id)			THISCALL_1(BOOL8, 0x47AA50, id)
-#define h3_GetCreatureUpgrade(id)			THISCALL_1(INT32, 0x47AAD0, id)
-#define h3_GetDiplomacyPowerFactor(k)		STDCALL_1(INT32, 0x4A7330, k)
-
-// * Gets cursor coordinates within game window
-inline void F_GetCursorPosition(INT &x, INT &y)
-{
-	STDCALL_2(void, 0x50D700, &x, &y);
-}
-
-// * Gets cursor coordinates within game window
-inline void F_GetCursorPosition(POINT & p)
-{
-	STDCALL_2(void, 0x50D700, &p.x, &p.y);
-}
 
 #pragma warning(push)
 #pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
@@ -1256,12 +1218,12 @@ inline BOOL H3String::Truncate(INT32 position)
 
 inline H3String * H3String::operator=(H3String & h3str)
 {
-	return this->Assign(h3str);
+	return Assign(h3str);
 }
 
 inline H3String * H3String::operator=(H3String * h3str)
 {
-	return this->Assign(h3str);
+	return Assign(h3str);
 }
 
 inline H3String * H3String::operator+=(H3String & h3str)

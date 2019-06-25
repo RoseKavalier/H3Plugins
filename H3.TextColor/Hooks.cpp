@@ -234,7 +234,7 @@ _LHF_(ParseText) // 0x4B5255
 		if (current[0] == '{' && current[1] == '~') // current[1] is always safe because strings are null-terminated
 		{
 			INT32 seekLen = min(TAG_MAX_SIZE, len - i - 1); // why -1 ? because if the color tag is at the very end of the string, it will have no effect anyway
-			h3_strncpy(buffer, &current[2], seekLen); // make a temporary copy of text starting after '{~'
+			F_strncpy(buffer, &current[2], seekLen); // make a temporary copy of text starting after '{~'
 			for (INT tagLen = 0; tagLen < seekLen; tagLen++)
 			{
 				if (buffer[tagLen] == '}') // seek end of color tag

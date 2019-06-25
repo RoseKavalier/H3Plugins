@@ -73,6 +73,8 @@
 #include "H3Dialogs.h"
 // * Structures used in the game
 #include "H3Structures.h"
+// * various non-member h3 functions
+#include "H3Functions.h"
 // * Strucutres from the random map generator
 #include "H3RMG.h"
 // * Some structures related to LODs

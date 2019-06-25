@@ -3543,7 +3543,7 @@ public:
 	};
 
 	H3MapItem* GetMapItem(int mixedPos) { return THISCALL_2(H3MapItem*, 0x412B30, this, mixedPos); }
-	H3MapItem* GetMapItem(int x, int y, int z) { return THISCALL_4(H3MapItem*, 0x4086D0, this->map, x, y, z); }
+	H3MapItem* GetMapItem(int x, int y, int z) { return THISCALL_4(H3MapItem*, 0x4086D0, map, x, y, z); }
 	UINT8 GetX() { return mousePosition.GetX(); }
 	UINT8 GetY() { return mousePosition.GetY(); }
 	UINT8 GetZ() { return mousePosition.GetZ(); }
@@ -3967,7 +3967,7 @@ public:
 
 inline INT32 H3Hero::GetRealSpellDamage(INT32 baseDamage, H3CombatMonster * mon, INT32 spellID, H3Hero * enemy)
 {
-	INT32 dmg = this->GetSorceryEffect(spellID, baseDamage, mon);
+	INT32 dmg = GetSorceryEffect(spellID, baseDamage, mon);
 	dmg = FASTCALL_3(INT32, 0x44B180, dmg, spellID, mon->type); // golem-style resistance
 	return enemy->GetProtectiveSpellEffect(dmg, spellID, mon);
 }
@@ -4007,7 +4007,7 @@ inline INT32 H3Hero::SSkillsLeftToLearn()
 	int known_skills = 0;
 	int banned_skills = 0;
 	for (int i = 0; i < 28; i++)
-		known_skills += this->secSkill[i];
+		known_skills += secSkill[i];
 
 	int maxSkills = 3 * ByteAt(0x4E256A); // usually 3 * 8
 
@@ -4022,11 +4022,11 @@ inline INT32 H3Hero::SSkillsLeftToLearn()
 
 	for (int i = 0; i < 28; i++)
 	{
-		sslevel = this->secSkill[i];
+		sslevel = secSkill[i];
 		if (!main->bannedSkills[i] || sslevel > 0)
 			skills_can_be_learned += 3 - sslevel;
 	}
-	if (this->hero_class != NH3Heroes::NECROMANCER && this->hero_class != NH3Heroes::DEATH_KNIGHT && this->secSkill[NH3Skills::NECROMANCY] == 0 && !main->bannedSkills[NH3Skills::NECROMANCY])
+	if (hero_class != NH3Heroes::NECROMANCER && hero_class != NH3Heroes::DEATH_KNIGHT && secSkill[NH3Skills::NECROMANCY] == 0 && !main->bannedSkills[NH3Skills::NECROMANCY])
 		skills_can_be_learned -= 3;
 
 	skills_can_be_learned = min(maxSkills - known_skills, skills_can_be_learned);
@@ -4046,7 +4046,7 @@ inline INT32 H3Army::FirstFreeSlot()
 	INT32 r = 0;
 	for (INT32 i = 0; i < 7; i++)
 	{
-		if (this->type[i] != -1)
+		if (type[i] != -1)
 			r++;
 		else
 			return r;
@@ -4175,12 +4175,12 @@ inline void H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
 inline void H3CreatureBank::SetupBank(int type, int level)
 {
 	H3CreatureBankState *cbs = &P_CreatureBankTable[type].states[level];
-	h3_memcpy(&this->guardians, &cbs->guardians, sizeof(H3Army));
-	h3_memcpy(&this->resources, &cbs->resources, sizeof(H3Resources));
-	this->creatureRewardType = cbs->creatureRewardType;
-	this->creatureRewardCount = cbs->creatureRewardCount;
+	h3_memcpy(&guardians, &cbs->guardians, sizeof(H3Army));
+	h3_memcpy(&resources, &cbs->resources, sizeof(H3Resources));
+	creatureRewardType = cbs->creatureRewardType;
+	creatureRewardCount = cbs->creatureRewardCount;
 
-	int stacks = this->guardians.GetStackCount();
+	int stacks = guardians.GetStackCount();
 	int stacks_to_add = 4 - stacks;
 	int stack_to_split;
 	int first_free_slot;
@@ -4237,8 +4237,8 @@ inline void H3CreatureBank::UpgradeStack(BOOL upg)
 {
 	if (upg) // in code there are additional checks for game type (RoE) and creature (4 Elementals)
 	{
-		if (THISCALL_1(char, 0x47AA50, this->guardians.type[0])) // creature has upgrade?
-			this->guardians.type[2] = THISCALL_1(INT32, 0x47AAD0, this->guardians.type[0]);
+		if (THISCALL_1(char, 0x47AA50, guardians.type[0])) // creature has upgrade?
+			guardians.type[2] = THISCALL_1(INT32, 0x47AAD0, guardians.type[0]);
 	}
 	else
 		guardians.type[2] = guardians.type[0];
@@ -4253,5 +4253,17 @@ inline H3MapItem * H3TileMovement::GetMapItem()
 {
 	return P_AdventureMgr->GetMapItem(*(int*)this);
 }
+
+// * As the H3API only uses headers (no *.cpp) to facilitate linking,
+// * the placement of this function can only be here
+
+// * message box with 'OK' and 'Cancel' buttons
+// * returns true if clicked 'OK'
+inline BOOL F_MessageBoxChoice(PCHAR text = h3_TextBuffer)
+{
+	FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+	return P_WindowMgr->ClickedOK();
+}
+
 
 #endif /* #define _H3STRUCTURES_H_ */

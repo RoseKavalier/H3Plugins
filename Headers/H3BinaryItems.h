@@ -379,7 +379,7 @@ inline void H3LoadedDEF::AddFrame(PCHAR source, INT32 index)
 	if (!src)
 		return;
 	H3DefFrame *frm = src->groups[0]->frames[0];
-	H3DefGroup *grp = this->groups[0];
+	H3DefGroup *grp = groups[0];
 
 	H3DefFrame *frame = h3_new(H3DefFrame, 1); // make a new frame
 	if (frame)
@@ -411,7 +411,7 @@ inline void H3LoadedDEF::ColorToPlayer(INT32 id)
 {
 	int paletteEntries = THISCALL_1(int, 0x47B5E0, this);
 	FASTCALL_2(void, 0x6003E0, paletteEntries, id);
-	FASTCALL_2(void, 0x600400, this->palette888, id);
+	FASTCALL_2(void, 0x600400, palette888, id);
 }
 
 #endif /* #define _H3BINARYITEMS_H_ */

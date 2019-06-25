@@ -43,7 +43,7 @@ DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(PCHAR path)
 	// * add '*'
 	folderPath += '*';
 	WIN32_FIND_DATAA data;
-	HANDLE handle = h3_FindFirstFileA(folderPath.String(), data);
+	HANDLE handle = F_FindFirstFileA(folderPath, data);
 
 	CHAR lodName[32];
 	int lpLen = lodPath.Length(); // backup of folderPath length, minus '*'
@@ -60,16 +60,16 @@ DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(PCHAR path)
 			// * LODs can only be 32 chars in name at most, including null char, hence 32 - 1 = 31
 			if (len >= 5 && len <= 31)
 			{
-				h3_strncpy(lodName, data.cFileName, 31);
+				F_strncpy(lodName, data.cFileName, 31);
 				lodName[len] = 0; // null terminate
-				if (h3_strnicmp(lodName + len - 4, ".lod", 4) == 0 || h3_strnicmp(lodName + len - 4, ".pac", 4) == 0) // is a .lod or .pac file
+				if (F_strnicmp(lodName + len - 4, ".lod", 4) == 0 || F_strnicmp(lodName + len - 4, ".pac", 4) == 0) // is a .lod or .pac file
 				{
 					lodPath.Append(lodName, len); // complete lod path with its name
 					lodCount += LoadCustomLod(lodName, lodPath.String()); // load to our LOD table
 					lodPath.Truncate(lpLen); // reset lodPath name without lod name
 				}
 			}
-		} while (h3_FindNextFileA(handle, data));
+		} while (F_FindNextFileA(handle, data));
 	}
 
 	return lodCount; // return number of successfully loaded LODs

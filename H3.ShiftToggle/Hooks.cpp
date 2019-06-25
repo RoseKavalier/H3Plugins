@@ -1,5 +1,7 @@
 #include "Hooks.h"
 
+using NH3VKey::H3VK_SHIFT;
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -57,7 +59,7 @@ _LHF_(changeCursor)
 int __stdcall _HH_CheckShift(HiHook *h, H3AdventureManager* This, H3Msg *msg, int a3, int a4, int a5)
 {
 	POINT p;
-	if (msg->KeyPressed() == NH3VKey::H3VK_SHIFT && !shiftPressed)
+	if (msg->KeyPressed() == H3VK_SHIFT && !shiftPressed)
 	{
 		shiftPressed = TRUE;
 		F_GetCursorPosition(p);
@@ -79,7 +81,7 @@ _LHF_(ShiftOff)
 {
 	POINT p;
 	H3Msg * msg = (H3Msg *)c->edi;
-	if (msg->IsKeyPress() && msg->KeyPressed() == NH3VKey::H3VK_SHIFT)
+	if (msg->IsKeyPress() && msg->KeyPressed() == H3VK_SHIFT)
 	{
 		shiftPressed = FALSE;
 		F_GetCursorPosition(p);

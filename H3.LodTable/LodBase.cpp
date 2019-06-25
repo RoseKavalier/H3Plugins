@@ -24,7 +24,7 @@ H3LodBase * H3LodBase::Create(PCHAR lodName, PCHAR lodPath)
 	if (!lodName || !lodPath || lastLod >= LOD_COUNT)
 		return NULL;
 
-	h3_strncpy(this->name, lodName, 31);
+	F_strncpy(this->name, lodName, 31);
 	this->name[31] = 0;
 	this->index = lastLod + 1;
 	memset(&LodTable[this->index], 0, sizeof(H3Lod));

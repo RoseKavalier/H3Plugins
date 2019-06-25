@@ -198,7 +198,7 @@ void Hooks_init(PatcherInstance *pi)
 {
 	// * not using h3's random function in order
 	// * to avoid contaminating battle rng seed
-	srand(h3_GetTime);
+	srand(F_GetTime());
 
 	pi->WriteLoHook(0x463833, NewBattleGrounds);
 }
