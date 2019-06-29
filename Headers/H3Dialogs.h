@@ -973,7 +973,7 @@ inline void H3Dlg::PlaceAtMouse()
 
 inline void H3Dlg::Start()
 {
-	H3MouseManager *mmgr = P_MouseMgr;
+	H3MouseManager *mmgr = H3Pointers::MouseManager();
 	INT32 mouseType = mmgr->GetType();
 	INT32 mouseFrame = mmgr->GetFrame();
 	mmgr->DefaultCursor();
@@ -1261,7 +1261,7 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 
 inline void H3Dlg::Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
 {
-	P_WindowMgr->H3Redraw(xDlg + x, yDlg + y, dx, dy);
+	H3Pointers::WindowManager()->H3Redraw(xDlg + x, yDlg + y, dx, dy);
 }
 
 inline void H3Dlg::Redraw()

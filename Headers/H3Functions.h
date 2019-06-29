@@ -95,6 +95,14 @@ inline void F_MessageBox(PCHAR text = h3_TextBuffer)
 	FASTCALL_12(void, 0x4F6C00, text, 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 }
 
+// * message box with 'OK' and 'Cancel' buttons
+// * returns true if clicked 'OK'
+inline BOOL F_MessageBoxChoice(PCHAR text = h3_TextBuffer)
+{
+	FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+	return H3Pointers::WindowManager()->ClickedOK();
+}
+
 // * prints text to the log screen (default h3_TextBuffer)
 inline void F_PrintScreenText(PCHAR text = h3_TextBuffer)
 {

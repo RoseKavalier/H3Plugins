@@ -51,6 +51,8 @@
 #define WIN32_LEAN_AND_MEAN
 // * Input / output functions
 #include <stdio.h>
+// * defines some keywords: and [&&], or [||], not [!], xor [^] ...
+#include <iso646.h>
 // * Prevents some warnings
 #define _CRT_SECURE_NO_WARNINGS
 // * disable sprintf warning

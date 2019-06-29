@@ -145,29 +145,6 @@ struct MapWitchHut;
 struct TownTowerLoaded;
 struct H3Position;
 
-// Pointers P_ from Heroes3.exe
-
-#define P_MouseMgr							(*(H3MouseManager**)0x6992B0)
-#define P_WindowMgr							(*(H3WindowManager**)0x6992D0)
-#define P_Executive							(*(H3Executive**)0x699550)
-#define P_Main								(*(H3Main**)0x699538)
-#define P_CombatMgr							(*(H3CombatManager**)0x699420)
-#define P_TownMgr							(*(H3TownManager**)0x69954C)
-#define P_SoundMgr							(*(H3SoundManager**)0x699414)
-#define P_InputMgr							(*(H3InputManager**)0x699530)
-#define P_AdventureMgr						(*(H3AdventureManager**)0x6992B8)
-#define P_MovementMgr						(*(H3MovementManager**)0x6992D4)
-#define P_ObjectSettings					(*(H3GlobalObjectSettings**)0x660428)
-#define P_Spell								(*(H3Spell**)0x687FA8)
-#define P_CreatureBankTable					((H3CreatureBankSetup*)0x695088)
-#define P_ValidCatapultTargets				((H3ValidCatapultTargets*)0x63BE68) // up to 0x63BEC8, exclusively ~ so 8 total
-#define P_Artifacts							(*(H3ArtifactSetup**)0x660B68)
-#define P_Creatures							(*(H3CreatureInformation**)0x6747B0)
-#define P_DefObstacleInfo					(*(H3ObstacleInfo**)0x465C21) // 0x63C7C8 in SoD
-#define P_DialogHero						(*(H3Hero**)0x698B70)
-#define P_TurnTimer							((H3TurnTimer*)0x69D680)
-#define P_HeroSpecialty						((H3HeroSpecialty*)0x679C80)
-
 #pragma pack(push, 1)
 
 // * stored (x,y,z) coordinates H3format
@@ -3963,7 +3940,38 @@ public:
 
 #pragma pack(pop)
 
-// * Member functions
+// * this is an internal structure to replace the use of defines
+// * within the H3API to reduce the likelihood of conflicts.
+// * You can always use it instead of the #define equivalents if you prefer
+struct H3Pointers
+{
+	inline static H3MouseManager			* MouseManager()			{ return *(H3MouseManager**)0x6992B0; }
+	inline static H3WindowManager			* WindowManager()			{ return *(H3WindowManager**)0x6992D0; }
+	inline static H3Executive				* Executive()				{ return *(H3Executive**)0x699550; }
+	inline static H3Main					* Main()					{ return *(H3Main**)0x699538; }
+	inline static H3CombatManager			* CombatManager()			{ return *(H3CombatManager**)0x699420; }
+	inline static H3TownManager				* TownManager()				{ return *(H3TownManager**)0x69954C; }
+	inline static H3SoundManager			* SoundManager()			{ return *(H3SoundManager**)0x699414; }
+	inline static H3InputManager			* InputManager()			{ return *(H3InputManager**)0x699530; }
+	inline static H3AdventureManager		* AdventureManager()		{ return *(H3AdventureManager**)0x6992B8; }
+	inline static H3MovementManager			* MovementManager()			{ return *(H3MovementManager**)0x6992D4; }
+	inline static H3GlobalObjectSettings	* GlobalObjectSettings()	{ return *(H3GlobalObjectSettings**)0x660428; }
+	inline static H3Spell					* Spell()					{ return *(H3Spell**)0x687FA8; }
+	inline static H3CreatureBankSetup		* CreatureBankSetup()		{ return *(H3CreatureBankSetup**)(0x47A3C1 + 1); }
+	inline static H3ValidCatapultTargets	* ValidCatapultTargets()	{ return *(H3ValidCatapultTargets**)(0x4929DD + 3); }
+	inline static H3ArtifactSetup			* ArtifactSetup()			{ return *(H3ArtifactSetup**)0x660B68; }
+	inline static H3CreatureInformation		* CreatureInformation()		{ return *(H3CreatureInformation**)0x6747B0; }
+	inline static H3ObstacleInfo			* ObstacleInfo()			{ return *(H3ObstacleInfo**)0x465C21; }
+	inline static H3Hero					* DialogHero()				{ return *(H3Hero**)0x698B70; }
+	inline static H3TurnTimer				* TurnTimer()				{ return *(H3TurnTimer**)(0x4AD194 + 1); }
+	inline static H3HeroSpecialty			* HeroSpecialty()			{ return *(H3HeroSpecialty**)(0x4B8AF1 + 1); }
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////	Member functions
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 inline INT32 H3Hero::GetRealSpellDamage(INT32 baseDamage, H3CombatMonster * mon, INT32 spellID, H3Hero * enemy)
 {
@@ -3992,7 +4000,7 @@ inline BOOL H3Hero::UnlearnSkill(INT32 id)
 
 inline void H3Hero::RecalculateMovement()
 {
-	H3AdventureManager *adv = P_AdventureMgr;
+	H3AdventureManager *adv = H3Pointers::AdventureManager();
 	adv->movementCalculated = 0;
 	adv->movementCalculated1 = 0;
 	if (dest_x != -1)
@@ -4018,7 +4026,7 @@ inline INT32 H3Hero::SSkillsLeftToLearn()
 	int skills_can_be_learned = 0;
 
 	int sslevel;
-	H3Main *main = P_Main;
+	H3Main *main = H3Pointers::Main();
 
 	for (int i = 0; i < 28; i++)
 	{
@@ -4163,7 +4171,7 @@ inline void H3CombatManager::ShadeSquare(int index)
 
 inline void H3CombatMonster::ShowStatsDialog(BOOL RightClick)
 {
-	THISCALL_3(void, 0x468440, P_CombatMgr, this, RightClick);
+	THISCALL_3(void, 0x468440, H3Pointers::CombatManager(), this, RightClick);
 }
 
 inline void H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
@@ -4174,7 +4182,7 @@ inline void H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
 
 inline void H3CreatureBank::SetupBank(int type, int level)
 {
-	H3CreatureBankState *cbs = &P_CreatureBankTable[type].states[level];
+	H3CreatureBankState *cbs = &H3Pointers::CreatureBankSetup()[type].states[level];
 	h3_memcpy(&guardians, &cbs->guardians, sizeof(H3Army));
 	h3_memcpy(&resources, &cbs->resources, sizeof(H3Resources));
 	creatureRewardType = cbs->creatureRewardType;
@@ -4242,28 +4250,17 @@ inline void H3CreatureBank::UpgradeStack(BOOL upg)
 	}
 	else
 		guardians.type[2] = guardians.type[0];
+
 }
 
 inline H3Hero * H3Player::GetActiveHero()
 {
-	return P_Main->GetHero(currentHero);
+	return H3Pointers::Main()->GetHero(currentHero);
 }
 
 inline H3MapItem * H3TileMovement::GetMapItem()
 {
-	return P_AdventureMgr->GetMapItem(*(int*)this);
+	return H3Pointers::AdventureManager()->GetMapItem(*(int*)this);
 }
-
-// * As the H3API only uses headers (no *.cpp) to facilitate linking,
-// * the placement of this function can only be here
-
-// * message box with 'OK' and 'Cancel' buttons
-// * returns true if clicked 'OK'
-inline BOOL F_MessageBoxChoice(PCHAR text = h3_TextBuffer)
-{
-	FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
-	return P_WindowMgr->ClickedOK();
-}
-
 
 #endif /* #define _H3STRUCTURES_H_ */

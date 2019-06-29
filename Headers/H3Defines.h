@@ -57,10 +57,28 @@
 #define h3_AnimationSpeed					((H3AnimationSpeed*)0x63CF7C)
 #define h3_BattleShadowHexes				((H3Vector<INT>*)0x696A08)
 
-// various non-member functions
-#define h3_GetTileVision(x, y, z)			FASTCALL_3(H3TileVision*, 0x4F8070, x, y, z)
-#define h3_ReveaTile(x,y,z)					(h3_GetTileVision(x, y, z)->vision |= h3_ActivePlayerBitset)
+// Pointers P_ from Heroes3.exe
 
+#define P_MouseMgr							(*(H3MouseManager**)0x6992B0)
+#define P_WindowMgr							(*(H3WindowManager**)0x6992D0)
+#define P_Executive							(*(H3Executive**)0x699550)
+#define P_Main								(*(H3Main**)0x699538)
+#define P_CombatMgr							(*(H3CombatManager**)0x699420)
+#define P_TownMgr							(*(H3TownManager**)0x69954C)
+#define P_SoundMgr							(*(H3SoundManager**)0x699414)
+#define P_InputMgr							(*(H3InputManager**)0x699530)
+#define P_AdventureMgr						(*(H3AdventureManager**)0x6992B8)
+#define P_MovementMgr						(*(H3MovementManager**)0x6992D4)
+#define P_ObjectSettings					(*(H3GlobalObjectSettings**)0x660428)
+#define P_Spell								(*(H3Spell**)0x687FA8)
+#define P_CreatureBankTable					(*(H3CreatureBankSetup**)(0x47A3C1 + 1))
+#define P_ValidCatapultTargets				(*(H3ValidCatapultTargets**)(0x4929DD + 3)) // up to 0x63BEC8, exclusively ~ so 8 total
+#define P_Artifacts							(*(H3ArtifactSetup**)0x660B68)
+#define P_Creatures							(*(H3CreatureInformation**)0x6747B0)
+#define P_DefObstacleInfo					(*(H3ObstacleInfo**)0x465C21) // 0x63C7C8 in SoD
+#define P_DialogHero						(*(H3Hero**)0x698B70)
+#define P_TurnTimer							(*(H3TurnTimer**)(0x4AD194 + 1))
+#define P_HeroSpecialty						(*(H3HeroSpecialty**)(0x4B8AF1 + 1))
 
 // Constants C_ from Heroes3.exe
 
