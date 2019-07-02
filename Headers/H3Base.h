@@ -111,11 +111,6 @@ typedef char h3unk;
 #define FuncAt(address) (DwordAt(address + 1) + address + 5)
 #endif
 
-#ifndef DEBUG_BREAKPOINT
-// * inserts a breakpoint for quick stop using debugger
-#define DEBUG_BREAKPOINT __asm int 3
-#endif
-
 // model function definitions
 #ifndef THISCALL_0
 #define THISCALL_0(return_type, address) ((return_type(__thiscall *)(void))address)()

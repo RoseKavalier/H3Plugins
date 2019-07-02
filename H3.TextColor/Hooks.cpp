@@ -426,4 +426,7 @@ void Hooks_init(PatcherInstance *pi)
 	}
 	else
 		pi->WriteLoHook(0x4B4F74, DrawCharColor);
+
+	pi->WriteByte(0x57D394, 4);			// allows the use of '~' key in the save game text field
+	pi->WriteWord(0x5BAFB7, 0x06EB);	// allows the use of '{' and '}' in some text fields, such as chat
 }

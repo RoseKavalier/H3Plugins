@@ -418,7 +418,7 @@ struct H3DlgItemVTable // 0x63BA24
 	////////////////////////////////////////////////
 	h3func setFocus; // H3DlgEdit has these // ScrollbarText has 3
 	h3func processKey;
-	h3func isTabEscEnter;
+	h3func isDisallowedKey; // +40 disallowed key for H3DlgEdit, e.g. save game field 0x57D2F0
 	h3func loadPcx16;
 	h3func pcx16FromBuffer;
 };

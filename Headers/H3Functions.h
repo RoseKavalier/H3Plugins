@@ -47,6 +47,13 @@
 #include "H3Structures.h"
 #include "H3Defines.h"
 
+// * inserts a breakpoint for quick stop using debugger
+inline void F_Breakpoint()
+{
+	if (IsDebuggerPresent())
+		__asm int 3;
+}
+
 // * Gets cursor coordinates within game window
 inline void F_GetCursorPosition(INT &x, INT &y)
 {
@@ -212,9 +219,16 @@ inline BOOL8 F_Multiplayer()
 	return STDCALL_0(BOOL8, 0x4CE950);
 }
 
+// * sets dest to value
 inline PVOID F_memset(PVOID dest, UINT value, UINT len)
 {
 	return CDECL_3(PVOID, 0x61B7E0, dest, value, len);
+}
+
+// * converts text to wide char, destination is buffer that needs to be pre-allocated
+inline LPCWSTR F_MultiByteToWideChar(PCHAR text, int textLength, WCHAR *buffer)
+{
+	return STDCALL_6(LPCWSTR, PtrAt(0x63A1CC), CP_ACP, 0, text, textLength, buffer, textLength);
 }
 
 #endif /* #define _H3FUNCTIONS_H_ */

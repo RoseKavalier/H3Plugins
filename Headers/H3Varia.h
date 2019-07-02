@@ -217,7 +217,7 @@ enum mnemonics
 	far_jnl = 0x0F8D,
 	far_jng = 0x0F8E,
 	far_jg = 0x0F8F,
-	call_dword = 0xFF15
+	call_dword = 0x15FF
 };
 
 inline PUCHAR H3Patcher::Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needle, size_t nlen)
