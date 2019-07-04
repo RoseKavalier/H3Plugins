@@ -94,6 +94,8 @@ struct H3DLL
 	PUINT8 code;
 	UINT32 size;
 	PCHAR dllName;
+	PUINT8 rdata;
+	UINT32 rdataSize;
 	PUINT8 data;
 	UINT32 dataSize;
 
@@ -114,6 +116,8 @@ struct H3DLL
 	UINT32 NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset);
 	// performs NeedleSearch and checks checks location for expectedCode
 	UINT32 NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 offset, PUINT8 expectedCode, INT32 expectedSize);
+	// needleSearch in rdata
+	UINT32 NeedleSearchRData(PUINT8 needle, INT32 needleSize);
 	// needleSearch in data
 	UINT32 NeedleSearchData(PUINT8 needle, INT32 needleSize);
 };
@@ -372,6 +376,16 @@ inline UINT32 H3DLL::NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 
 	return p;
 }
 
+inline UINT32 H3DLL::NeedleSearchRData(PUINT8 needle, INT32 needleSize)
+{
+	UINT32 p = H3Patcher::FindByNeedle(rdata, rdataSize, needle, needleSize, 0);
+#if _H3DLL_DEBUG_
+	if (!p)
+		NeedleNotFound(needle, needleSize, FALSE);
+#endif
+	return p;
+}
+
 inline UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needleSize)
 {
 	UINT32 p = H3Patcher::FindByNeedle(data, dataSize, needle, needleSize, 0);
@@ -407,9 +421,13 @@ inline void H3DLL::GetDLLInfo(const PCHAR name)
 		PCHAR name = (PCHAR)pSectionHdr->Name;
 		if (!memcmp(name, ".rdata", sizeof(".rdata"))) // no -1 to sizeof() to include \0 null terminator
 		{
+			rdata = (PUINT8)((DWORD)hm + pSectionHdr->VirtualAddress);
+			rdataSize = pSectionHdr->Misc.VirtualSize;
+		}
+		if (!memcmp(name, ".data", sizeof(".data"))) // no -1 to sizeof() to include \0 null terminator
+		{
 			data = (PUINT8)((DWORD)hm + pSectionHdr->VirtualAddress);
 			dataSize = pSectionHdr->Misc.VirtualSize;
-			break;
 		}
 	}
 }
@@ -429,7 +447,7 @@ inline void H3DLL::NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode)
 		if (inCode)
 			sprintf(buffer, "Could not find needle:\n\n%s\n\nIn module: \"%s\".\n\nCode start: 0x%08X\n\nDLL size: 0x%08X", needleBuffer, dllName, (UINT32)code, size);
 		else
-			sprintf(buffer, "Could not find needle:\n\n%s\n\nIn data of module: \"%s\".\n\nData start: 0x%08X\n\nDLL data size: 0x%08X", needleBuffer, dllName, (UINT32)data, dataSize);
+			sprintf(buffer, "Could not find needle:\n\n%s\n\nIn data of module: \"%s\".\n\nData start: 0x%08X\n\nDLL data size: 0x%08X", needleBuffer, dllName, (UINT32)rdata, rdataSize);
 		H3Error::ShowError(buffer, "Needle not found!");
 	}
 	free(buffer);

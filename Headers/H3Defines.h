@@ -79,6 +79,7 @@
 #define P_DialogHero						(*(H3Hero**)0x698B70)
 #define P_TurnTimer							(*(H3TurnTimer**)(0x4AD194 + 1))
 #define P_HeroSpecialty						(*(H3HeroSpecialty**)(0x4B8AF1 + 1))
+#define P_NewGameDlg						(*(H3Dlg**)0x69FC44)
 
 // Constants C_ from Heroes3.exe
 
