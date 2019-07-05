@@ -1526,7 +1526,7 @@ inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 wid
 
 inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
-	H3DlgCustomButton *b = Create(x, y, 0, 0, 0, defName, customProc, frame, clickFrame);
+	H3DlgCustomButton *b = Create(x, y, 0, 0, id, defName, customProc, frame, clickFrame);
 	if (b && b->loadedDef)
 	{
 		b->widthItem = b->loadedDef->widthDEF;
