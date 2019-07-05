@@ -147,6 +147,7 @@ enum TextAlignment
 
 struct H3Dlg;
 struct H3Msg;
+struct H3MsgCustom;
 struct H3DlgItem;
 struct H3DlgDef;
 struct H3DlgDefButton;
@@ -161,7 +162,7 @@ struct H3DlgScrollableText;
 struct H3DlgCustomButton;
 struct H3DlgHintBar;
 typedef INT32(__stdcall *H3Dlg_proc)(H3Dlg* dlg, H3Msg* msg);
-typedef INT32(__thiscall *H3DlgButton_proc)(struct H3Msg *msg);
+typedef INT32(__fastcall *H3DlgButton_proc)(H3MsgCustom *msg);
 typedef void(__fastcall *H3DlgScrollbar_proc)(INT32 click_id, H3Dlg* dlg);
 
 struct H3Msg
@@ -220,6 +221,11 @@ struct H3Msg
 	BOOL IsRightClick() { return (command == MC_MouseButton && subtype == MS_RButtonDown);	}
 	INT32 CloseDialog() { return STDCALL_1(INT32, 0x491640, this); }
 	BOOL ClickOutside() { return command == MC_RClickOutside || command == MC_LClickOutside; }
+};
+
+struct H3MsgCustom : public H3Msg
+{
+	H3Dlg * GetDlg() { return (H3Dlg*)flags2; }
 };
 
 // * actually __thiscall but declaration is not allowed
@@ -362,6 +368,8 @@ public:
 	H3DlgDefButton* CreateCancelButton(); // adjust for hintBar
 	H3DlgCaptionButton* CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group = 0, BOOL closeDialog = FALSE, INT32 hotkey = NULL, INT32 color = 0);
 	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
 	H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName);
 	H3DlgPcx* CreateLineSeparator(INT32 x, INT32 y, INT32 width);
 	H3DlgPcx16* CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName);
@@ -518,7 +526,8 @@ public:
 	static H3DlgDef* Create(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	static H3DlgDef* Create(INT32 x, INT32 y, PCHAR defName, INT32 frame = 0, INT32 group = 0);
 	void SetFrame(INT32 frame) { defFrame = frame; }
-	void ToggleFrame() { defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; }
+	INT ToggleFrame() { defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; return defFrame; }
+	INT32 GetFrame() { return defFrame; }
 	void Copy(H3DlgDef* src);
 	void ColorDefToPlayer(INT32 id);
 	void SetClickFrame(INT32 clickFrame) { defFrameOnClick = clickFrame; }
@@ -557,7 +566,10 @@ protected:
 	H3DlgButton_proc customButtonProc;
 public:
 	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
 	static H3DlgCustomButton* Create(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+
+	void ToggleFlag(BOOL & flag);
 };
 
 struct H3DlgPcx : public H3DlgItem
@@ -868,13 +880,25 @@ inline H3DlgCaptionButton * H3Dlg::CreateCaptionButton(INT32 x, INT32 y, INT32 w
 	return but;
 }
 
-typedef int(__thiscall *H3DlgButton_proc)(struct H3Msg *msg);
 inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	H3DlgCustomButton *but = H3DlgCustomButton::Create(x, y, width, height, id, defName, customProc, frame, clickFrame);
 	if (but)
 		AddItem(but);
 	return but;
+}
+
+inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+{
+	H3DlgCustomButton *but = H3DlgCustomButton::Create(x, y, id, defName, customProc, frame, clickFrame);
+	if (but)
+		AddItem(but);
+	return but;
+}
+
+inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+{
+	return CreateCustomButton(x, y, 0, defName, customProc, frame, clickFrame);
 }
 
 inline H3DlgPcx * H3Dlg::CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName)
@@ -1500,7 +1524,7 @@ inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 wid
 	return b;
 }
 
-inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	H3DlgCustomButton *b = Create(x, y, 0, 0, 0, defName, customProc, frame, clickFrame);
 	if (b && b->loadedDef)
@@ -1510,6 +1534,21 @@ inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, PCHAR def
 	}
 	return b;
 }
+
+inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+{
+	return Create(x, y, 0, defName, customProc, frame, clickFrame);
+}
+
+inline void H3DlgCustomButton::ToggleFlag(BOOL & flag)
+{
+	defFrame = !defFrame;
+	defFrameOnClick = !defFrameOnClick;
+	flag = !flag;
+	Draw();
+	Refresh();
+}
+
 
 inline H3DlgEdit * H3DlgEdit::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, PCHAR text, PCHAR fontName, INT32 color, INT32 align, PCHAR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
 {
