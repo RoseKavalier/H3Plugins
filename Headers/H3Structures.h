@@ -601,10 +601,10 @@ struct H3HeroSpecialty
 
 // * the start of the save/load structure used by H3
 // * probably some stream or similar
-struct H3SaverLoader
+struct H3Stream
 {
 protected:
-	struct SLTable{
+	struct {
 		h3func freeSave;
 		// * +4
 		h3func loadRegion;
@@ -3980,14 +3980,14 @@ struct H3Pointers
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline BOOL H3SaverLoader::Save(const PVOID data, const UINT data_size)
+inline BOOL H3Stream::Save(const PVOID data, const UINT data_size)
 {
 	if (data_size && THISCALL_3(UINT, vTable->saveRegion, this, data, data_size) >= data_size)
 		return TRUE;
 	return FALSE;
 }
 
-inline BOOL H3SaverLoader::Load(const PVOID data, const UINT data_size)
+inline BOOL H3Stream::Load(const PVOID data, const UINT data_size)
 {
 	if (data_size && THISCALL_3(UINT, vTable->loadRegion, this, data, data_size) >= data_size)
 		return TRUE;
