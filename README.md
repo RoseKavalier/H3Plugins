@@ -26,7 +26,7 @@ A release for the headers might be updated from time to time, however your best 
 In order to use the headers, add them to a folder of your choice and then add this line to your project:
 > #include "{_...relativepath..._}/H3API.h"
 
-The H3API headers were successfully tested using the 2008, 2013, 2015 and 2017 versions of MSVC.
+The H3API headers were successfully tested using the 2008, 2013, 2015, 2017 and 2019 versions of MSVC.
 You may freely use and distribute the headers, however it would be nice of you to leave the disclaimers intact.
 
 ## Build Instructions
