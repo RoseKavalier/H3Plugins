@@ -19,7 +19,7 @@ H3LodTypes::LodTypesTable H3LodTypes::table[4][3] =
 	{ { 2, sequence[3][0] }, { 2, sequence[3][1] }, { 2, sequence[3][2] } }
 };
 
-H3LodBase * H3LodBase::Create(PCHAR lodName, PCHAR lodPath)
+H3LodBase * H3LodBase::Create(LPCSTR lodName, LPCSTR lodPath)
 {
 	if (!lodName || !lodPath || lastLod >= LOD_COUNT)
 		return NULL;
@@ -34,7 +34,7 @@ H3LodBase * H3LodBase::Create(PCHAR lodName, PCHAR lodPath)
 	return this;
 }
 
-BOOL H3LodBase::LoadItem(PCHAR lodPath)
+BOOL H3LodBase::LoadItem(LPCSTR lodPath)
 {
 	int r = FALSE;
 	if (this->index < 0)

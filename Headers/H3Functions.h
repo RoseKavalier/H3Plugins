@@ -91,27 +91,27 @@ inline INT F_GetCurrentDirectory(PCHAR buf, INT bufLen)
 }
 
 // * message box with text shown (default h3_TextBuffer) on right mouse button click
-inline void F_MessageBoxRMB(PCHAR text = h3_TextBuffer)
+inline void F_MessageBoxRMB(LPCSTR text = h3_TextBuffer)
 {
 	FASTCALL_12(void, 0x4F6C00, text, 4, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 }
 
 // * message box with text shown (default h3_TextBuffer) with an 'OK' button
-inline void F_MessageBox(PCHAR text = h3_TextBuffer)
+inline void F_MessageBox(LPCSTR text = h3_TextBuffer)
 {
 	FASTCALL_12(void, 0x4F6C00, text, 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 }
 
 // * message box with 'OK' and 'Cancel' buttons
 // * returns true if clicked 'OK'
-inline BOOL F_MessageBoxChoice(PCHAR text = h3_TextBuffer)
+inline BOOL F_MessageBoxChoice(LPCSTR text = h3_TextBuffer)
 {
 	FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 	return H3Pointers::WindowManager()->ClickedOK();
 }
 
 // * prints text to the log screen (default h3_TextBuffer)
-inline void F_PrintScreenText(PCHAR text = h3_TextBuffer)
+inline void F_PrintScreenText(LPCSTR text = h3_TextBuffer)
 {
 	CDECL_3(void, 0x553C40, 0x69D800, "%s", text);
 }
@@ -147,7 +147,7 @@ inline PCHAR F_strRev(PCHAR buffer)
 }
 
 // * FindFirstFileA using H3 assets
-inline HANDLE F_FindFirstFileA(PCHAR path, WIN32_FIND_DATAA & data)
+inline HANDLE F_FindFirstFileA(LPCSTR path, WIN32_FIND_DATAA & data)
 {
 	return STDCALL_2(HANDLE, PtrAt(0x63A11C), path, &data);
 }
@@ -165,52 +165,21 @@ inline HANDLE F_FindNextFileA(HANDLE handle, WIN32_FIND_DATAA & data)
 }
 
 // * converts text to integer using H3 assets
-inline INT32 F_atoi(PCHAR text)
+inline INT32 F_atoi(LPCSTR text)
 {
 	return CDECL_1(INT32, 0x6184D9, text);
 }
 
 // * compares two strings up to len characters
-inline INT F_strnicmp(PCHAR string1, PCHAR string2, INT len)
+inline INT F_strnicmp(LPCSTR string1, LPCSTR string2, INT len)
 {
 	return CDECL_3(INT, 0x626680, string1, string2, len);
 }
 
-// * compares two strings, not-case-sensitive
-inline BOOL F_strcmpi(PCHAR string1, PCHAR string2)
-{
-	return CDECL_2(BOOL, 0x6197C0, string1, string2);
-}
-
 // * copies len characters from source to dest
-inline PCHAR  F_strncpy(PCHAR dest, PCHAR src, INT len)
+inline PCHAR F_strncpy(LPCSTR dest, LPCSTR src, INT len)
 {
 	return CDECL_3(PCHAR, 0x618FE0, dest, src, len);
-}
-
-// * heap realloc using H3 assets
-inline PVOID F_realloc(PVOID obj, UINT new_size)
-{
-	return CDECL_2(PVOID, 0x619890, obj, new_size);
-}
-
-// * heapalloc using H3 assets
-inline PVOID F_malloc(UINT size)
-{
-	return CDECL_1(PVOID, 0x617492, size);
-}
-
-// * heapfree using H3 assets
-inline void F_delete(PVOID obj)
-{
-	if (obj)
-		CDECL_1(void, 0x60B0F0, (PVOID)obj);
-}
-
-// * memcpy using H3 assets
-inline void F_memcpy(PVOID dest, PVOID src, UINT len)
-{
-	CDECL_3(void, 0x61AD70, dest, src, len);
 }
 
 // * Checks if the current game features more than 1 human
@@ -226,9 +195,20 @@ inline PVOID F_memset(PVOID dest, UINT value, UINT len)
 }
 
 // * converts text to wide char, destination is buffer that needs to be pre-allocated
-inline LPCWSTR F_MultiByteToWideChar(PCHAR text, int textLength, WCHAR *buffer)
+inline LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR *buffer)
 {
 	return STDCALL_6(LPCWSTR, PtrAt(0x63A1CC), CP_ACP, 0, text, textLength, buffer, textLength);
+}
+
+inline void H3SoundManager::ClickSound()
+{
+	H3WavFile *buttonWav = C_ButtonWav;
+	INT32 backup = clickSoundVar;
+	buttonWav->spinCount = 64;
+	buttonWav->debugInfo = (PRTL_CRITICAL_SECTION_DEBUG)1;
+	buttonWav->lockSemaphore = (HANDLE)(HANDLE_FLAG_PROTECT_FROM_CLOSE | HANDLE_FLAG_INHERIT);
+	THISCALL_2(void, 0x59A510, this, buttonWav);
+	clickSoundVar = backup;
 }
 
 #endif /* #define _H3FUNCTIONS_H_ */

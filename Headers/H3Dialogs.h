@@ -58,11 +58,11 @@ enum TextAlignment
 	TA_BottomCenter = 1 | 8
 };
 
-#define TINY_TEXT		((PCHAR)0x660CB4)	// "tiny.fnt"
-#define SMALL_TEXT		((PCHAR)0x65F2F8)	// "smalfont.fnt"
-#define MEDIUM_TEXT		((PCHAR)0x65F2EC)	// "MedFont.fnt"
-#define BIG_TEXT		((PCHAR)0x660B24)	// "bigfont.fnt"
-#define VERDANA_TEXT	((PCHAR)0x6700B4)	// "Verd10B.fnt"
+#define TINY_TEXT		((LPCSTR)0x660CB4)	// "tiny.fnt"
+#define SMALL_TEXT		((LPCSTR)0x65F2F8)	// "smalfont.fnt"
+#define MEDIUM_TEXT		((LPCSTR)0x65F2EC)	// "MedFont.fnt"
+#define BIG_TEXT		((LPCSTR)0x660B24)	// "bigfont.fnt"
+#define VERDANA_TEXT	((LPCSTR)0x6700B4)	// "Verd10B.fnt"
 
 #define TEXT_SILVER 0
 #define TEXT_REGULAR 1
@@ -99,49 +99,49 @@ enum TextAlignment
 #define TEXT_CYAN4 0x69
 #define TEXT_CYAN5 0x6A
 
-#define DLGBOX				((PCHAR)0x66024C)
-#define DIBOXBACK			((PCHAR)0x66025C)	// "diboxback.pcx" 256x256
-#define ARTIFACT_DEF		((PCHAR)0x660214)	// "artifact.def" 44x44
-#define CREATURE_SMALL		((PCHAR)0x660180)	// "CPRSMALL.def" 32x32
-#define PSKILL_42			((PCHAR)0x679D9C)	// "PSKIL42.def" 42x42
-#define RESOURCE_DEF		((PCHAR)0x660224)	// "resource.def" 32x32
-#define RESOURCE_82			((PCHAR)0x660114)	// "resour82.def" 82x93
-#define SPELLS_DEF			((PCHAR)0x660208)	// "spells.def"	78x65
-#define SSKILL_44			((PCHAR)0x6601D0)	// "Secskill.def" 44x44
-#define UN44_DEF			((PCHAR)0x679D90)	// "un44.def"	44x44
-#define SPELL_SMALL			((PCHAR)0x6700A4)	// "spellint.def" 48x36
+#define DLGBOX				((LPCSTR)0x66024C)
+#define DIBOXBACK			((LPCSTR)0x66025C)	// "diboxback.pcx" 256x256
+#define ARTIFACT_DEF		((LPCSTR)0x660214)	// "artifact.def" 44x44
+#define CREATURE_SMALL		((LPCSTR)0x660180)	// "CPRSMALL.def" 32x32
+#define PSKILL_42			((LPCSTR)0x679D9C)	// "PSKIL42.def" 42x42
+#define RESOURCE_DEF		((LPCSTR)0x660224)	// "resource.def" 32x32
+#define RESOURCE_82			((LPCSTR)0x660114)	// "resour82.def" 82x93
+#define SPELLS_DEF			((LPCSTR)0x660208)	// "spells.def"	78x65
+#define SSKILL_44			((LPCSTR)0x6601D0)	// "Secskill.def" 44x44
+#define UN44_DEF			((LPCSTR)0x679D90)	// "un44.def"	44x44
+#define SPELL_SMALL			((LPCSTR)0x6700A4)	// "spellint.def" 48x36
 #define SCROLL_SMALL		"def.SpScrArt"		// from HDmod, 44x44
-#define OVBUTN3				((PCHAR)0x6817C4)	// "OvButn3.def" 108x16
-#define HERO_CADRE			((PCHAR)0x65F3DC)	// hpsyyy.pcx 48x32
-#define LARGE_HERO_CADRE	((PCHAR)0x68C45C)	// TPTavSel.pcx 62x68 ~decal by -2
-#define CREATURE_LARGE		((PCHAR)0x6700C0)	// TwCrPort.def 58x64
+#define OVBUTN3				((LPCSTR)0x6817C4)	// "OvButn3.def" 108x16
+#define HERO_CADRE			((LPCSTR)0x65F3DC)	// hpsyyy.pcx 48x32
+#define LARGE_HERO_CADRE	((LPCSTR)0x68C45C)	// TPTavSel.pcx 62x68 ~decal by -2
+#define CREATURE_LARGE		((LPCSTR)0x6700C0)	// TwCrPort.def 58x64
 #define HERO_FRAME			"48x32bFr.bmp"		// darken an area for 48x32 def ~ from HDmod
 #define BACKPACK_DEF		"bckpck.def"		// from HDmod 52x36
 #define BIG_BACKPACK		"BkPack.bmp"		// from HDmod 369x369
-#define CANCEL_BUTTON		((PCHAR)0x660B04)	// iCancel.def 64x30
-#define CAST_SPELL			((PCHAR)0x66FFD4)	// icm005.def 48x36
-#define ARTS_ICON			((PCHAR)0x683178)	// AltArt.def 64x32
-#define MORALE_42			((PCHAR)0x68C6DC)	// IMRL42.def 42x38
-#define LUCK_42				((PCHAR)0x68C6D0)	// ILCK42.def 42x38
-#define CREST58				((PCHAR)0x6601FC)	// CREST58.def 58x64
-#define TOWN_SMALL			((PCHAR)0x65F318)	// itpa.def 48x32
-#define NO_VISION			((PCHAR)0x6885A0)	// SYSOPB8.def 46x32
-#define ADVENTURE_CURSOR	((PCHAR)0x68164C)	// cradvntr.def 40x40
-#define ALT_ART				((PCHAR)0x683178)	// AltArt.def 64x32
-#define ON_OFF_CHECKBOX		((PCHAR)0x6700F0)	// sysopchk.def 32x24
-#define OKAY_DEF			((PCHAR)0x670160)	// iOkay.def 64x30
-#define OKAY32_DEF			((PCHAR)0x682374)	// iOkay32.def 66x32
-#define OKAY6432_DEF		((PCHAR)0x65F470)	// iOk6432.def 64x32
-#define BOX_64_30_PCX		((PCHAR)0x67016C)	// Box64x30.pcx
-#define BOX_66_32_PCX		((PCHAR)0x682380)	// Box66x32.pcx
-#define CANCEL_DEF			((PCHAR)0x660B04)	// "iCancel.def" 64x30
-#define VIEW_CREATURE		((PCHAR)0x660134)	// iViewCr.def
-#define VIEW_MAGNIFIER		((PCHAR)0x68C734)	// VWMag1.def 60x32
+#define CANCEL_BUTTON		((LPCSTR)0x660B04)	// iCancel.def 64x30
+#define CAST_SPELL			((LPCSTR)0x66FFD4)	// icm005.def 48x36
+#define ARTS_ICON			((LPCSTR)0x683178)	// AltArt.def 64x32
+#define MORALE_42			((LPCSTR)0x68C6DC)	// IMRL42.def 42x38
+#define LUCK_42				((LPCSTR)0x68C6D0)	// ILCK42.def 42x38
+#define CREST58				((LPCSTR)0x6601FC)	// CREST58.def 58x64
+#define TOWN_SMALL			((LPCSTR)0x65F318)	// itpa.def 48x32
+#define NO_VISION			((LPCSTR)0x6885A0)	// SYSOPB8.def 46x32
+#define ADVENTURE_CURSOR	((LPCSTR)0x68164C)	// cradvntr.def 40x40
+#define ALT_ART				((LPCSTR)0x683178)	// AltArt.def 64x32
+#define ON_OFF_CHECKBOX		((LPCSTR)0x6700F0)	// sysopchk.def 32x24
+#define OKAY_DEF			((LPCSTR)0x670160)	// iOkay.def 64x30
+#define OKAY32_DEF			((LPCSTR)0x682374)	// iOkay32.def 66x32
+#define OKAY6432_DEF		((LPCSTR)0x65F470)	// iOk6432.def 64x32
+#define BOX_64_30_PCX		((LPCSTR)0x67016C)	// Box64x30.pcx
+#define BOX_66_32_PCX		((LPCSTR)0x682380)	// Box66x32.pcx
+#define CANCEL_DEF			((LPCSTR)0x660B04)	// "iCancel.def" 64x30
+#define VIEW_CREATURE		((LPCSTR)0x660134)	// iViewCr.def
+#define VIEW_MAGNIFIER		((LPCSTR)0x68C734)	// VWMag1.def 60x32
 #define iSAVE_DEF			("ISAVE.DEF")		// iSave.def 64x32
-#define BOX_64_32_PCX		((PCHAR)0x68C640)	// Box64x32.pcx
+#define BOX_64_32_PCX		((LPCSTR)0x68C640)	// Box64x32.pcx
 #define LINE_SEPARATOR		"stripe3d.bmp"		// from HDmod 800x2
 #define HD_STATUSBAR_PCX	"HD_TStat.pcx"		// from HDmod 800x19
-#define GAME_TYPE_DEF		((PCHAR)0x683568)	// 32x24
+#define GAME_TYPE_DEF		((LPCSTR)0x683568)	// 32x24
 
 #pragma pack(push, 1)
 
@@ -357,28 +357,28 @@ public:
 	void SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter);
 	void SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter);
 	void AdjustToPlayerColor(INT8 player, UINT16 itemId);
-	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
-	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
-	H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
+	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
+	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
+	H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
 	H3DlgDefButton * CreateOKButton(INT32 x, INT32 y);
 	H3DlgDefButton * CreateSaveButton(INT32 x, INT32 y);
 	H3DlgDefButton * CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, INT32 frame, INT32 clickFrame = 0);
 	H3DlgDefButton* CreateOKButton(); // adjust for hintBar
 	H3DlgDefButton* CreateOK32Button(INT32 x, INT32 y); // height is 32
 	H3DlgDefButton* CreateCancelButton(); // adjust for hintBar
-	H3DlgCaptionButton* CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group = 0, BOOL closeDialog = FALSE, INT32 hotkey = NULL, INT32 color = 0);
-	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
-	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
-	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
-	H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName);
+	H3DlgCaptionButton* CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group = 0, BOOL closeDialog = FALSE, INT32 hotkey = NULL, INT32 color = 0);
+	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
 	H3DlgPcx* CreateLineSeparator(INT32 x, INT32 y, INT32 width);
-	H3DlgPcx16* CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName);
-	H3DlgEdit* CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, PCHAR text, PCHAR fontName = MEDIUM_TEXT, INT32 color = TEXT_REGULAR, INT32 align = TextAlignment::TA_HCenter | TextAlignment::TA_VCenter, PCHAR pcxName = NULL, INT32 id = 0, INT32 hasBorder = FALSE, INT32 borderX = 0, INT32 borderY = 0);
-	H3DlgText* CreateText(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, INT32 color, INT32 id, INT32 align = TextAlignment::TA_HCenter | TextAlignment::TA_VCenter, INT32 bkColor = 0);
+	H3DlgPcx16* CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
+	H3DlgEdit* CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName = MEDIUM_TEXT, INT32 color = TEXT_REGULAR, INT32 align = TextAlignment::TA_HCenter | TextAlignment::TA_VCenter, LPCSTR pcxName = NULL, INT32 id = 0, INT32 hasBorder = FALSE, INT32 borderX = 0, INT32 borderY = 0);
+	H3DlgText* CreateText(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, INT32 color, INT32 id, INT32 align = TextAlignment::TA_HCenter | TextAlignment::TA_VCenter, INT32 bkColor = 0);
 	H3DlgText* CreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height);
 	H3DlgHintBar* CreateHint();
-	H3DlgTextPcx* CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, PCHAR pcxName, INT32 color, INT32 id, INT32 align = TextAlignment::TA_HCenter | TextAlignment::TA_VCenter);
-	H3DlgScrollableText* CreateScrollableText(PCHAR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue = FALSE);
+	H3DlgTextPcx* CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id, INT32 align = TextAlignment::TA_HCenter | TextAlignment::TA_VCenter);
+	H3DlgScrollableText* CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue = FALSE);
 	H3DlgScrollbar* CreateScrollbar(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc = NULL, BOOL isBlue = FALSE, INT32 stepSize = 0, BOOL arrowsEnabled = TRUE);
 };
 #pragma warning(pop)
@@ -459,12 +459,17 @@ protected:
 	// * +1E
 	UINT16 heightItem;
 	// * +20
-	PCHAR hint;
+	LPCSTR hint;
 	// * +24
-	PCHAR rightClickHint;
+	LPCSTR rightClickHint;
 	h3unk _f_28[4];
 	// * +2C
 	INT32 deactivatesCount;
+
+	// * private function, use SetText() of respective items
+	// * if it's not there, it's not available!
+	void _SetText(LPCSTR text);
+
 public:
 	static H3DlgItem* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 flags);
 	void EnableItem(BOOL enable) { THISCALL_2(void, vTable->setEnabled, this, enable); }
@@ -484,13 +489,13 @@ public:
 	void UnShade() { state &= ~8; }
 	void SetFocus(BOOL8 focus) { THISCALL_2(void, vTable->setFocus, this, focus); }
 	BOOL IsVisible() { return state & 4; }
-	PCHAR GetHint() { return hint; }
-	void SetHint(PCHAR msg) { hint = msg; }
+	LPCSTR GetHint() { return hint; }
+	void SetHint(LPCSTR msg) { hint = msg; }
 	UINT16 GetID() { return id; }
 	void ParentRedraw(); // redraw through parent
 	void ColorToPlayer(INT8 player);
 	void SendCommand(INT32 command, INT32 parameter);
-	void SetText(char *text);
+
 
 	H3DlgDef *CastDef() { return (H3DlgDef*)this; }
 	H3DlgDefButton *CastDefButton() { return (H3DlgDefButton*)this; }
@@ -522,9 +527,9 @@ protected:
 	INT16 closeDialog;
 	h3unk _f_46[2];
 public:
-	static H3DlgDef* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
-	static H3DlgDef* Create(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
-	static H3DlgDef* Create(INT32 x, INT32 y, PCHAR defName, INT32 frame = 0, INT32 group = 0);
+	static H3DlgDef* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
+	static H3DlgDef* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
+	static H3DlgDef* Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame = 0, INT32 group = 0);
 	void SetFrame(INT32 frame) { defFrame = frame; }
 	INT ToggleFrame() { defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; return defFrame; }
 	INT32 GetFrame() { return defFrame; }
@@ -542,9 +547,9 @@ protected:
 	H3String caption;
 	// customProc
 public:
-	static H3DlgDefButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey);
-	static H3DlgDefButton* Create(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey);
-	static H3DlgDefButton* Create(INT32 x, INT32 y, PCHAR defName, INT32 frame, INT32 clickFrame);
+	static H3DlgDefButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey);
+	static H3DlgDefButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey);
+	static H3DlgDefButton* Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame, INT32 clickFrame);
 };
 
 struct H3DlgCaptionButton : public H3DlgDefButton // size 0x70
@@ -555,8 +560,9 @@ protected:
 	// * +6C
 	INT32 color;
 public:
-	static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
-	static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
+	void SetText(LPCSTR text) { _SetText(text); }
+	static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
+	static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
 };
 
 struct H3DlgCustomButton : public H3DlgDefButton // size 0x6C
@@ -565,9 +571,9 @@ protected:
 	// * +68
 	H3DlgButton_proc customButtonProc;
 public:
-	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
-	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
-	static H3DlgCustomButton* Create(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+	static H3DlgCustomButton* Create(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
 
 	void ToggleFlag(BOOL & flag);
 };
@@ -578,9 +584,9 @@ protected:
 	// * +30
 	struct H3LoadedPCX *loadedPcx;
 public:
-	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName);
-	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 id, PCHAR pcxName);
-	static H3DlgPcx* Create(INT32 x, INT32 y, PCHAR pcxName);
+	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
+	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
+	static H3DlgPcx* Create(INT32 x, INT32 y, LPCSTR pcxName);
 	void Copy(H3DlgPcx* src);
 
 	void AdjustColor(INT player) { THISCALL_2(void, 0x4501D0, this, player); }
@@ -592,9 +598,9 @@ protected:
 	// * +30
 	H3LoadedPCX16 *loadedPcx16;
 public:
-	static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName);
-	static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 id, PCHAR pcxName);
-	static H3DlgPcx16* Create(INT32 x, INT32 y, PCHAR pcxName);
+	static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
+	static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
+	static H3DlgPcx16* Create(INT32 x, INT32 y, LPCSTR pcxName);
 };
 
 struct H3DlgEdit : public H3DlgItem // size 0x70
@@ -634,9 +640,10 @@ protected:
 	BOOL8 autoRedraw;
 	h3unk _f_6F;
 public:
-	static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, PCHAR text, PCHAR fontName, INT32 color, INT32 align, PCHAR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
-	PCHAR GetText() { return text.String(); }
+	static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
+	LPCSTR GetText() { return text.String(); }
 	H3String *GetString() { return &text; }
+	void SetText(LPCSTR text) { _SetText(text); }
 	void DecreaseCaret() { caretPos--; }
 	void SetAutoredraw(BOOL on) { autoRedraw = on; }
 	void SetFocus(BOOL on = TRUE) { THISCALL_2(void, vTable->setFocus, this, on); }
@@ -656,8 +663,9 @@ protected:
 	// * +40
 	INT32 align;
 public:
-	static H3DlgText* Create(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName = SMALL_TEXT, INT32 color = TEXT_REGULAR, INT32 id = 0, INT32 align = TA_HCenter | TA_VCenter, INT32 bkColor = 0);
+	static H3DlgText* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName = SMALL_TEXT, INT32 color = TEXT_REGULAR, INT32 id = 0, INT32 align = TA_HCenter | TA_VCenter, INT32 bkColor = 0);
 	H3String & GetH3String() { return text; }
+	void SetText(LPCSTR text) { _SetText(text); }
 };
 
 struct H3DlgTextPcx : public H3DlgText
@@ -666,15 +674,14 @@ protected:
 	// * +44
 	struct H3LoadedPCX *loadedPcx;
 public:
-	static H3DlgTextPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, PCHAR pcxName, INT32 color, INT32 id = 0, INT32 align = TA_HCenter | TA_VCenter);
-	static H3DlgTextPcx* Create(INT32 x, INT32 y, PCHAR text, PCHAR fontName, PCHAR pcxName, INT32 color, INT32 align);
+	static H3DlgTextPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id = 0, INT32 align = TA_HCenter | TA_VCenter);
+	static H3DlgTextPcx* Create(INT32 x, INT32 y, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 align);
 };
-
 
 struct H3DlgHintBar : public H3DlgTextPcx
 {
 	void ShowHint(H3Msg *msg);
-	void ShowMessage(PCHAR msg);
+	void ShowMessage(LPCSTR msg);
 	static H3DlgHintBar * Create(H3Dlg * dlg);
 };
 
@@ -692,7 +699,7 @@ protected:
 	H3DlgScrollbar *scrollBar;
 	h3unk _f_58[4];
 public:
-	static H3DlgScrollableText* Create(PCHAR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue);
+	static H3DlgScrollableText* Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue);
 };
 
 struct H3DlgScrollbar : public H3DlgItem
@@ -784,7 +791,7 @@ inline void H3Dlg::AdjustToPlayerColor(INT8 player, UINT16 itemId)
 		it->ColorToPlayer(player);
 }
 
-inline H3DlgDef * H3Dlg::CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
+inline H3DlgDef * H3Dlg::CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
 {
 	H3DlgDef *def = H3DlgDef::Create(x, y, width, height, id, defName, frame, group, mirror, closeDialog);
 	if (def)
@@ -792,7 +799,7 @@ inline H3DlgDef * H3Dlg::CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, 
 	return def;
 }
 
-inline H3DlgDef * H3Dlg::CreateDef(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
+inline H3DlgDef * H3Dlg::CreateDef(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
 {
 	H3DlgDef *def = H3DlgDef::Create(x, y, id, defName, frame, group, mirror, closeDialog);
 	if (def)
@@ -800,7 +807,7 @@ inline H3DlgDef * H3Dlg::CreateDef(INT32 x, INT32 y, INT32 id, PCHAR defName, IN
 	return def;
 }
 
-inline H3DlgDefButton * H3Dlg::CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
+inline H3DlgDefButton * H3Dlg::CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
 {
 	H3DlgDefButton *but = H3DlgDefButton::Create(x, y, width, height, id, defName, frame, clickFrame, closeDialog, hotkey);
 	if (but)
@@ -821,7 +828,7 @@ inline H3DlgDefButton * H3Dlg::CreateOKButton(INT32 x, INT32 y)
 
 inline H3DlgDefButton * H3Dlg::CreateSaveButton(INT32 x, INT32 y)
 {
-	H3DlgDefButton *button = H3DlgDefButton::Create(x, y, H3Msg::ID_SAVE, (PCHAR)iSAVE_DEF, 0, 1, FALSE, NH3VKey::H3VK_S);
+	H3DlgDefButton *button = H3DlgDefButton::Create(x, y, H3Msg::ID_SAVE, iSAVE_DEF, 0, 1, FALSE, NH3VKey::H3VK_S);
 	if (button)
 	{
 		AddItem(H3DlgPcx::Create(x - 1, y - 1, BOX_64_32_PCX));
@@ -872,7 +879,7 @@ inline H3DlgDefButton * H3Dlg::CreateCancelButton()
 	return button;
 }
 
-inline H3DlgCaptionButton * H3Dlg::CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
+inline H3DlgCaptionButton * H3Dlg::CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
 {
 	H3DlgCaptionButton *but = H3DlgCaptionButton::Create(x, y, width, height, id, defName, text, font, frame, group, closeDialog, hotkey, color);
 	if (but)
@@ -880,7 +887,7 @@ inline H3DlgCaptionButton * H3Dlg::CreateCaptionButton(INT32 x, INT32 y, INT32 w
 	return but;
 }
 
-inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	H3DlgCustomButton *but = H3DlgCustomButton::Create(x, y, width, height, id, defName, customProc, frame, clickFrame);
 	if (but)
@@ -888,7 +895,7 @@ inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 wid
 	return but;
 }
 
-inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	H3DlgCustomButton *but = H3DlgCustomButton::Create(x, y, id, defName, customProc, frame, clickFrame);
 	if (but)
@@ -896,12 +903,12 @@ inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, INT32 id,
 	return but;
 }
 
-inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3Dlg::CreateCustomButton(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	return CreateCustomButton(x, y, 0, defName, customProc, frame, clickFrame);
 }
 
-inline H3DlgPcx * H3Dlg::CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName)
+inline H3DlgPcx * H3Dlg::CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 {
 	H3DlgPcx *pcx = H3DlgPcx::Create(x, y, width, height, id, pcxName);
 	if (pcx)
@@ -911,10 +918,10 @@ inline H3DlgPcx * H3Dlg::CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, 
 
 inline H3DlgPcx * H3Dlg::CreateLineSeparator(INT32 x, INT32 y, INT32 width)
 {
-	return CreatePcx(x, y, width, 2, 0, (PCHAR)LINE_SEPARATOR);
+	return CreatePcx(x, y, width, 2, 0, LINE_SEPARATOR);
 }
 
-inline H3DlgPcx16 * H3Dlg::CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName)
+inline H3DlgPcx16 * H3Dlg::CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 {
 	H3DlgPcx16 *pcx = H3DlgPcx16::Create(x, y, width, height, id, pcxName);
 	if (pcx)
@@ -922,7 +929,7 @@ inline H3DlgPcx16 * H3Dlg::CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 heig
 	return pcx;
 }
 
-inline H3DlgEdit * H3Dlg::CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, PCHAR text, PCHAR fontName, INT32 color, INT32 align, PCHAR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
+inline H3DlgEdit * H3Dlg::CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
 {
 	H3DlgEdit *ed = H3DlgEdit::Create(x, y, width, height, maxLength, text, fontName, color, align, pcxName, id, hasBorder, borderX, borderY);
 	if (ed)
@@ -930,7 +937,7 @@ inline H3DlgEdit * H3Dlg::CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height
 	return ed;
 }
 
-inline H3DlgText * H3Dlg::CreateText(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, INT32 color, INT32 id, INT32 align, INT32 bkColor)
+inline H3DlgText * H3Dlg::CreateText(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, INT32 color, INT32 id, INT32 align, INT32 bkColor)
 {
 	H3DlgText *tx = H3DlgText::Create(x, y, width, height, text, fontName, color, id, align, bkColor);
 	if (tx)
@@ -954,7 +961,7 @@ inline H3DlgHintBar * H3Dlg::CreateHint()
 	return h;
 }
 
-inline H3DlgTextPcx * H3Dlg::CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, PCHAR pcxName, INT32 color, INT32 id, INT32 align)
+inline H3DlgTextPcx * H3Dlg::CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id, INT32 align)
 {
 	H3DlgTextPcx *tx = H3DlgTextPcx::Create(x, y, width, height, text, fontName, pcxName, color, id, align);
 	if (tx)
@@ -962,7 +969,7 @@ inline H3DlgTextPcx * H3Dlg::CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 
 	return tx;
 }
 
-inline H3DlgScrollableText * H3Dlg::CreateScrollableText(PCHAR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
+inline H3DlgScrollableText * H3Dlg::CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
 {
 	H3DlgScrollableText *sc = H3DlgScrollableText::Create(text, x, y, width, height, font, color, isBlue);
 	if (sc)
@@ -1032,10 +1039,10 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		_w = w; // reset variable to dialog width
 		while (_w > 0) // horizontal pass first
 		{
-			H3DlgPcx *bg2 = h3_new(H3DlgPcx, 1);
+			H3DlgPcx *bg2 = new H3DlgPcx;
 			if (!bg2)
 			{
-				h3_delete(bg);
+				F_delete(bg);
 				return FALSE;
 			}
 			bg2->Copy(bg); // copy contents
@@ -1051,7 +1058,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		_h -= 256;
 	}
 
-	h3_delete(bg); // no longer needed
+	F_delete(bg); // no longer needed
 
 	if (!frame)
 		return TRUE;
@@ -1107,7 +1114,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 
 	while (x > 0)
 	{
-		def = h3_new(H3DlgDef, 1);
+		def = new H3DlgDef;
 		if (!def)
 			return FALSE;
 		def->Copy(baseDef);
@@ -1115,7 +1122,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def->SetFrame(BF_tm);
 		AddItem(def);
 
-		def2 = h3_new(H3DlgDef, 1);
+		def2 = new H3DlgDef;
 		if (!def2)
 			return FALSE;
 		def2->Copy(def);
@@ -1134,7 +1141,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 
 	while (y >= 0)
 	{
-		def = h3_new(H3DlgDef, 1);
+		def = new H3DlgDef;
 		if (!def)
 			return FALSE;
 		def->Copy(baseDef);
@@ -1142,7 +1149,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def->SetFrame(BF_ml);
 		AddItem(def);
 
-		def2 = h3_new(H3DlgDef, 1);
+		def2 = new H3DlgDef;
 		if (!def2)
 			return FALSE;
 		def2->Copy(def);
@@ -1162,7 +1169,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	////////////////////
 	// now top right
 	////////////////////
-	def = h3_new(H3DlgDef, 1);
+	def = new H3DlgDef;
 	if (!def)
 		return FALSE;
 	def->Copy(baseDef);
@@ -1173,7 +1180,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	////////////////////
 	// bottom left
 	////////////////////
-	def = h3_new(H3DlgDef, 1);
+	def = new H3DlgDef;
 	if (!def)
 		return FALSE;
 	def->Copy(baseDef);
@@ -1184,7 +1191,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	////////////////////
 	// bottom right
 	////////////////////
-	def = h3_new(H3DlgDef, 1);
+	def = new H3DlgDef;
 	if (!def)
 		return FALSE;
 	def->Copy(baseDef);
@@ -1209,17 +1216,17 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 
 	H3DlgPcx *up, *down, *left, *right, *pcx;
 
-	up = H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_u.bmp");
-	down = H3DlgPcx::Create(xStart, yEnd - 4, (PCHAR)"hd_fr_d.bmp");
-	left = H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_l.bmp");
-	right = H3DlgPcx::Create(xEnd - 4, yStart, (PCHAR)"hd_fr_r.bmp");
+	up = H3DlgPcx::Create(xStart, yStart, "hd_fr_u.bmp");
+	down = H3DlgPcx::Create(xStart, yEnd - 4, "hd_fr_d.bmp");
+	left = H3DlgPcx::Create(xStart, yStart, "hd_fr_l.bmp");
+	right = H3DlgPcx::Create(xEnd - 4, yStart, "hd_fr_r.bmp");
 
 	if (!up || !down || !left || !right)
 	{
-		h3_delete(up);
-		h3_delete(down);
-		h3_delete(left);
-		h3_delete(right);
+		F_delete(up);
+		F_delete(down);
+		F_delete(left);
+		F_delete(right);
 		return FALSE;
 	}
 
@@ -1229,14 +1236,14 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	while (dX >= 4)
 	{
 		dX -= 4;
-		pcx = h3_new(H3DlgPcx, 1);
+		pcx = new H3DlgPcx;
 		if (pcx)
 		{
 			pcx->Copy(up);
 			pcx->SetX(xStart + dX);
 			AddItem(pcx);
 		}
-		pcx = h3_new(H3DlgPcx, 1);
+		pcx = new H3DlgPcx;
 		if (pcx)
 		{
 			pcx->Copy(down);
@@ -1251,14 +1258,14 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	while (dY >= 4)
 	{
 		dY -= 4;
-		pcx = h3_new(H3DlgPcx, 1);
+		pcx = new H3DlgPcx;
 		if (pcx)
 		{
 			pcx->Copy(left);
 			pcx->SetY(yStart + dY);
 			AddItem(pcx);
 		}
-		pcx = h3_new(H3DlgPcx, 1);
+		pcx = new H3DlgPcx;
 		if (pcx)
 		{
 			pcx->Copy(right);
@@ -1267,18 +1274,18 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 		}
 	}
 
-	h3_delete(up);
-	h3_delete(down);
-	h3_delete(left);
-	h3_delete(right);
+	F_delete(up);
+	F_delete(down);
+	F_delete(left);
+	F_delete(right);
 
 	////////////////////
 	// Add corners
 	////////////////////
-	AddItem(H3DlgPcx::Create(xStart, yStart, (PCHAR)"hd_fr_lu.bmp"));
-	AddItem(H3DlgPcx::Create(xStart, yEnd - 4, (PCHAR)"hd_fr_ld.bmp"));
-	AddItem(H3DlgPcx::Create(xEnd - 4, yStart, (PCHAR)"hd_fr_ru.bmp"));
-	AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, (PCHAR)"hd_fr_rd.bmp"));
+	AddItem(H3DlgPcx::Create(xStart, yStart, "hd_fr_lu.bmp"));
+	AddItem(H3DlgPcx::Create(xStart, yEnd - 4, "hd_fr_ld.bmp"));
+	AddItem(H3DlgPcx::Create(xEnd - 4, yStart, "hd_fr_ru.bmp"));
+	AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, "hd_fr_rd.bmp"));
 
 	return TRUE;
 }
@@ -1301,7 +1308,7 @@ inline void H3Dlg::RedrawItem(UINT16 itemID)
 
 inline H3DlgItem * H3DlgItem::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 flags)
 {
-	H3DlgItem *d = h3_new(H3DlgItem, 1);
+	H3DlgItem *d = new H3DlgItem;
 	if (d)
 		THISCALL_7(H3DlgItem*, 0x5FE900, d, x, y, width, height, id, flags);
 	return d;
@@ -1332,20 +1339,20 @@ inline void H3DlgItem::SendCommand(INT32 command, INT32 parameter)
 	THISCALL_3(void, 0x5FED80, this, command, parameter);
 }
 
-inline void H3DlgItem::SetText(char * text)
+inline void H3DlgItem::_SetText(LPCSTR text)
 {
 	THISCALL_2(void, vTable->setText, this, text);
 }
 
-inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
+inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
 {
-	H3DlgDef *d = h3_new(H3DlgDef, 1);
+	H3DlgDef *d = new H3DlgDef;
 	if (d)
 		THISCALL_12(H3DlgDef*, 0x4EA800, d, x, y, width, height, id, defName, frame, group, mirror, closeDialog, 0x10);
 	return d;
 }
 
-inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
+inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
 {
 	H3DlgDef *d = Create(x, y, 0, 0, id, defName, frame, group, mirror, closeDialog);
 	if (d && d->loadedDef)
@@ -1356,7 +1363,7 @@ inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, IN
 	return d;
 }
 
-inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, PCHAR defName, INT32 frame, INT32 group)
+inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame, INT32 group)
 {
 	H3DlgDef *d = Create(x, y, 0, 0, 0, defName, frame, group, 0, 0);
 	if (d && d->loadedDef)
@@ -1369,7 +1376,7 @@ inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, PCHAR defName, INT32 frame,
 
 inline void H3DlgDef::Copy(H3DlgDef * src)
 {
-	h3_memcpy(this, src, sizeof(H3DlgDef));
+	F_memcpy(this, src, sizeof(H3DlgDef));
 }
 
 inline void H3DlgDef::ColorDefToPlayer(INT32 id)
@@ -1377,15 +1384,15 @@ inline void H3DlgDef::ColorDefToPlayer(INT32 id)
 	loadedDef->ColorToPlayer(id);
 }
 
-inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName)
+inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 {
-	H3DlgPcx *p = h3_new(H3DlgPcx, 1);
+	H3DlgPcx *p = new H3DlgPcx;
 	if (p)
 		THISCALL_8(H3DlgPcx*, 0x44FFA0, p, x, y, width, height, id, pcxName, 0x800);
 	return p;
 }
 
-inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, INT32 id, PCHAR pcxName)
+inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName)
 {
 	H3DlgPcx *p = Create(x, y, 0, 0, id, pcxName);
 	if (p && p->loadedPcx)
@@ -1396,25 +1403,25 @@ inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, INT32 id, PCHAR pcxName)
 	return p;
 }
 
-inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, PCHAR pcxName)
+inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, LPCSTR pcxName)
 {
 	return Create(x, y, 0, pcxName);
 }
 
 inline void H3DlgPcx::Copy(H3DlgPcx * src)
 {
-	h3_memcpy(this, src, sizeof(H3DlgPcx));
+	F_memcpy(this, src, sizeof(H3DlgPcx));
 }
 
-inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
+inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
 {
-	H3DlgDefButton *b = h3_new(H3DlgDefButton, 1);
+	H3DlgDefButton *b = new H3DlgDefButton;
 	if (b)
 		THISCALL_12(H3DlgDefButton*, 0x455BD0, b, x, y, width, height, id, defName, frame, clickFrame, closeDialog, hotkey, 2);
 	return b;
 }
 
-inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
+inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
 {
 	H3DlgDefButton *b = Create(x, y, 0, 0, id, defName, frame, clickFrame, closeDialog, hotkey);
 	if (b && b->loadedDef)
@@ -1425,20 +1432,20 @@ inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, INT32 id, PCHAR
 	return b;
 }
 
-inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, PCHAR defName, INT32 frame, INT32 clickFrame)
+inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame, INT32 clickFrame)
 {
 	return Create(x, y, 0, defName, frame, clickFrame, 0, 0);
 }
 
-inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
+inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
 {
-	H3DlgCaptionButton *b = h3_new(H3DlgCaptionButton, 1);
+	H3DlgCaptionButton *b = new H3DlgCaptionButton;
 	if (b)
 		THISCALL_15(H3DlgCaptionButton*, 0x456730, b, x, y, width, height, id, defName, text, font, frame, group, closeDialog, hotkey, 2, color);
 	return b;
 }
 
-inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, PCHAR text, PCHAR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
+inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
 {
 	H3DlgCaptionButton *b = Create(x, y, 0, 0, id, defName, text, font, frame, group, closeDialog, hotkey, color);
 	if (b && b->loadedDef)
@@ -1449,15 +1456,15 @@ inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 i
 	return b;
 }
 
-inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR pcxName)
+inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 {
-	H3DlgPcx16 *p = h3_new(H3DlgPcx16, 1);
+	H3DlgPcx16 *p = new H3DlgPcx16;
 	if (p)
 		THISCALL_8(H3DlgPcx16*, 0x450340, p, x, y, width, height, id, pcxName, 0x800);
 	return p;
 }
 
-inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, INT32 id, PCHAR pcxName)
+inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName)
 {
 	H3DlgPcx16 *p = Create(x, y, 0, 0, id, pcxName);
 	if (p && p->loadedPcx16)
@@ -1468,28 +1475,28 @@ inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, INT32 id, PCHAR pcxName
 	return p;
 }
 
-inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, PCHAR pcxName)
+inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, LPCSTR pcxName)
 {
 	return Create(x, y, 0, 0, 0, pcxName);
 }
 
-inline H3DlgText * H3DlgText::Create(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, INT32 color, INT32 id, INT32 align, INT32 bkColor)
+inline H3DlgText * H3DlgText::Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, INT32 color, INT32 id, INT32 align, INT32 bkColor)
 {
-	H3DlgText *t = h3_new(H3DlgText, 1);
+	H3DlgText *t = new H3DlgText;
 	if (t)
 		THISCALL_12(H3DlgText*, 0x5BC6A0, t, x, y, width, height, text, fontName, color, id, align, bkColor, 8);
 	return t;
 }
 
-inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, PCHAR text, PCHAR fontName, PCHAR pcxName, INT32 color, INT32 id, INT32 align)
+inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id, INT32 align)
 {
-	H3DlgTextPcx *t = h3_new(H3DlgTextPcx, 1);
+	H3DlgTextPcx *t = new H3DlgTextPcx;
 	if (t)
 		THISCALL_12(H3DlgTextPcx*, 0x5BCB70, t, x, y, width, height, text, fontName, pcxName, color, id, align, 8);
 	return t;
 }
 
-inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, PCHAR text, PCHAR fontName, PCHAR pcxName, INT32 color, INT32 align)
+inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 align)
 {
 	H3DlgTextPcx *t = Create(x, y, 0, 0, text, fontName, pcxName, color, 0, align);
 	if (t && t->loadedPcx)
@@ -1500,9 +1507,9 @@ inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, PCHAR text, PCHAR f
 	return t;
 }
 
-inline H3DlgScrollableText * H3DlgScrollableText::Create(PCHAR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
+inline H3DlgScrollableText * H3DlgScrollableText::Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
 {
-	H3DlgScrollableText *s = h3_new(H3DlgScrollableText, 1);
+	H3DlgScrollableText *s = new H3DlgScrollableText;
 	if (s)
 		THISCALL_9(H3DlgScrollableText*, 0x5BA360, s, text, x, y, width, height, font, color, isBlue);
 	return s;
@@ -1510,21 +1517,21 @@ inline H3DlgScrollableText * H3DlgScrollableText::Create(PCHAR text, INT32 x, IN
 
 inline H3DlgScrollbar * H3DlgScrollbar::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc, BOOL isBlue, INT32 stepSize, BOOL arrowsEnabled)
 {
-	H3DlgScrollbar *s = h3_new(H3DlgScrollbar, 1);
+	H3DlgScrollbar *s = new H3DlgScrollbar;
 	if (s)
 		THISCALL_11(H3DlgScrollbar*, 0x5963C0, s, x, y, width, height, id, ticksCount, scrollbarProc, isBlue, stepSize, arrowsEnabled);
 	return s;
 }
 
-inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
-	H3DlgCustomButton *b = h3_new(H3DlgCustomButton, 1);
+	H3DlgCustomButton *b = new H3DlgCustomButton;
 	if (b)
 		THISCALL_10(H3DlgCustomButton*, 0x456A10, b, x, y, width, height, id, defName, customProc, frame, clickFrame);
 	return b;
 }
 
-inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 id, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	H3DlgCustomButton *b = Create(x, y, 0, 0, id, defName, customProc, frame, clickFrame);
 	if (b && b->loadedDef)
@@ -1535,7 +1542,7 @@ inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 id,
 	return b;
 }
 
-inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, PCHAR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
+inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
 	return Create(x, y, 0, defName, customProc, frame, clickFrame);
 }
@@ -1550,9 +1557,9 @@ inline void H3DlgCustomButton::ToggleFlag(BOOL & flag)
 }
 
 
-inline H3DlgEdit * H3DlgEdit::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, PCHAR text, PCHAR fontName, INT32 color, INT32 align, PCHAR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
+inline H3DlgEdit * H3DlgEdit::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
 {
-	H3DlgEdit *e = h3_new(H3DlgEdit, 1);
+	H3DlgEdit *e = new H3DlgEdit;
 	if (e)
 		THISCALL_17(H3DlgEdit*, 0x5BACD0, e, x, y, width, height, maxLength, text, fontName, color, align, pcxName, 0, id, 0, hasBorder, borderX, borderY);
 	return e;
@@ -1598,7 +1605,7 @@ inline void H3DlgHintBar::ShowHint(H3Msg *msg)
 	}
 }
 
-inline void H3DlgHintBar::ShowMessage(PCHAR msg)
+inline void H3DlgHintBar::ShowMessage(LPCSTR msg)
 {
 	SetText(msg);
 	Draw();
@@ -1607,7 +1614,7 @@ inline void H3DlgHintBar::ShowMessage(PCHAR msg)
 
 inline H3DlgHintBar * H3DlgHintBar::Create(H3Dlg * dlg)
 {
-	return (H3DlgHintBar*)H3DlgTextPcx::Create(8, dlg->GetHeight() - 26, dlg->GetWidth() - 16, 19, h3_NullString, SMALL_TEXT, (PCHAR)HD_STATUSBAR_PCX, TEXT_REGULAR);
+	return (H3DlgHintBar*)H3DlgTextPcx::Create(8, dlg->GetHeight() - 26, dlg->GetWidth() - 16, 19, h3_NullString, SMALL_TEXT, HD_STATUSBAR_PCX, TEXT_REGULAR);
 }
 
 inline H3Dlg::H3Dlg(int width, int height, int x, int y)

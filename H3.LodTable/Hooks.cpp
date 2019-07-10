@@ -25,13 +25,13 @@ INT lastLod = 8;
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-BOOL LoadCustomLod(PCHAR lodName, PCHAR lodPath)
+BOOL LoadCustomLod(LPCSTR lodName, LPCSTR lodPath)
 {
 	H3LodBase newLod;
 	return NULL != newLod.Create(lodName, lodPath);
 }
 
-DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(PCHAR path)
+DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(LPCSTR path)
 {
 	int lodCount = 0;
 	H3String folderPath, lodPath;

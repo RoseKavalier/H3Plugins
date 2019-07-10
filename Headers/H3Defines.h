@@ -56,6 +56,7 @@
 #define h3_IsCampaignGame					(IntAt(0x69779C) != 0)
 #define h3_AnimationSpeed					((H3AnimationSpeed*)0x63CF7C)
 #define h3_BattleShadowHexes				((H3Vector<INT>*)0x696A08)
+#define h3_Instance							(*(HMODULE*)0x699604)
 
 // Pointers P_ from Heroes3.exe
 
@@ -84,17 +85,6 @@
 // Constants C_ from Heroes3.exe
 
 #define C_ButtonWav							(*(H3WavFile**)0x694DF4)
-
-inline void H3SoundManager::ClickSound()
-{
-	H3WavFile *buttonWav = C_ButtonWav;
-	INT32 backup = clickSoundVar;
-	buttonWav->spinCount = 64;
-	buttonWav->debugInfo = (PRTL_CRITICAL_SECTION_DEBUG)1;
-	buttonWav->lockSemaphore = (HANDLE)(HANDLE_FLAG_PROTECT_FROM_CLOSE | HANDLE_FLAG_INHERIT);
-	THISCALL_2(void, 0x59A510, this, buttonWav);
-	clickSoundVar = backup;
-}
 
 // others
 #define COMBATSQUARE_DIMENSION				44

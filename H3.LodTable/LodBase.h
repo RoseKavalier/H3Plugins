@@ -15,9 +15,9 @@ struct H3LodBase
 	CHAR name[32];
 
 	// * loads lod data to custom table
-	H3LodBase *Create(PCHAR lodName, PCHAR lodPath);
+	H3LodBase *Create(LPCSTR lodName, LPCSTR lodPath);
 	// * adds lod to memory
-	BOOL LoadItem(PCHAR lodPath);
+	BOOL LoadItem(LPCSTR lodPath);
 };
 
 

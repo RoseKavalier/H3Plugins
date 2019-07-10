@@ -539,17 +539,17 @@ public:
 	INT32 armyType[3];
 	// * +30
 	// * Small portrait name
-	PCHAR smallPortrait;
+	LPCSTR smallPortrait;
 	// * +34
 	// * Large portrait name
-	PCHAR largePortrait;
+	LPCSTR largePortrait;
 protected:
 	// * +38
 	UINT8 _u2[8];
 public:
 	// * +40
 	// * the default name
-	PCHAR name;
+	LPCSTR name;
 	// * +44
 	// * Heroes at start can only get up to 3 stacks
 	INT32 armyNum[3][2];
@@ -590,26 +590,33 @@ struct H3HeroSpecialty
 	UINT32  upgradeTo;
 	// * +1C
 	// * short specialty name
-	PCHAR	spShort;
+	LPCSTR	spShort;
 	// * +20
 	// * full specialty name
-	PCHAR	spFull;
+	LPCSTR	spFull;
 	// * +24
 	// * specialty description
-	PCHAR	spDescr;
+	LPCSTR	spDescr;
 };
 
 // * the start of the save/load structure used by H3
 // * probably some stream or similar
 struct H3SaverLoader
 {
+protected:
 	struct SLTable{
 		h3func freeSave;
+		// * +4
 		h3func loadRegion;
+		// * +8
 		h3func saveRegion;
 	}*vTable;
 
 	// ...
+
+public:
+	BOOL Save(const PVOID data, const UINT data_size);
+	BOOL Load(const PVOID data, const UINT data_size);
 };
 
 // * the bitfield flags for heroes
@@ -1065,7 +1072,7 @@ public:
 
 	BOOL IsBuildingBuilt(INT32 id) { return THISCALL_3(BOOL, 0x4305A0, this, id, 1); }
 	BOOL CanBuildStructure(INT32 id) { return THISCALL_3(BOOL, 0x4305A0, this, id, 0); }
-	PCHAR GetTownTypeName() { return THISCALL_1(PCHAR, 0x5C1850, this); }
+	LPCSTR GetTownTypeName() { return THISCALL_1(LPCSTR, 0x5C1850, this); }
 
 	enum eTown
 	{
@@ -1332,8 +1339,8 @@ protected:
 // * from WoG source
 struct H3MagicAnimation
 {
-	PCHAR defName;
-	PCHAR name;
+	LPCSTR defName;
+	LPCSTR name;
 	INT32 type;
 };
 
@@ -1754,7 +1761,7 @@ public:
 struct H3ArtifactSetup
 {
 	// * +0
-	PCHAR name;
+	LPCSTR name;
 	// * +4
 	INT32 cost;
 	// * +8
@@ -1762,7 +1769,7 @@ struct H3ArtifactSetup
 	// * +C
 	INT32 type;
 	// * +10
-	PCHAR description;
+	LPCSTR description;
 	// * +14
 	INT32 comboID;
 	// * +18
@@ -1944,7 +1951,7 @@ struct H3WallSection
 	INT16 x;
 	INT16 y;
 	h3unk _f_04[4];
-	PCHAR names[5];
+	LPCSTR names[5];
 	INT32 name;
 	INT16 hp;
 	h3unk _f_22[2];
@@ -1960,7 +1967,7 @@ struct H3Spell
 	INT32 type;
 	// * +4
 	// * the soundname to use
-	PCHAR soundName;
+	LPCSTR soundName;
 protected:
 	// * +8
 	UINT32 animationRelated;
@@ -2029,10 +2036,10 @@ public:
 	}flags;
 	// * +10
 	// * full name
-	PCHAR name;
+	LPCSTR name;
 	// * +14
 	// * short name
-	PCHAR shortName;
+	LPCSTR shortName;
 	// * +18
 	// * 0~5
 	INT32 level;
@@ -2061,7 +2068,7 @@ public:
 	UINT32 ai_value[4];
 	// * 78
 	// * description of spell based on secondary skill level
-	PCHAR description[4];
+	LPCSTR description[4];
 
 	INT32 GetBaseEffect(INT32 level, INT32 spellPower) { return base_value[level] + spellPower * sp_effect; }
 
@@ -2170,7 +2177,7 @@ struct H3ObstacleInfo // size 20
 	// * +8
 	INT8 RelativeCells[8];
 	// * +10
-	PCHAR defName;
+	LPCSTR defName;
 };
 
 // * information about obstacle in combat manager
@@ -2235,17 +2242,17 @@ struct H3CreatureInformation
 	// 0 ~ 6
 	INT32 level;
 	//  * +8
-	PCHAR shortName;
+	LPCSTR shortName;
 	//  * +C
-	PCHAR defName;
+	LPCSTR defName;
 	//  * +10
 	H3CreatureFlags flags;
 	//  * +14
-	PCHAR nameSingular;
+	LPCSTR nameSingular;
 	//  * +18
-	PCHAR namePlural;
+	LPCSTR namePlural;
 	//  * +1C
-	PCHAR description;
+	LPCSTR description;
 	//  * +20
 	H3Resources cost;
 	//  * +3C
@@ -2277,7 +2284,7 @@ struct H3CreatureInformation
 	// * +70
 	INT32  advMapHigh;
 
-	PCHAR GetCreatureName(INT32 count) { return count > 1 ? namePlural : nameSingular; }
+	LPCSTR GetCreatureName(INT32 count) { return count > 1 ? namePlural : nameSingular; }
 	void UpgradeCost(H3Resources *res, H3CreatureInformation *upg, INT32 count);
 };
 
@@ -2426,7 +2433,7 @@ public:
 	H3CombatMonsterSpellsData spellsData;
 
 	// * returns appropriate name of stack
-	PCHAR GetCreatureName() { return info.GetCreatureName(numberAlive); }
+	LPCSTR GetCreatureName() { return info.GetCreatureName(numberAlive); }
 	// * returns second square if creature occupies 2 squares
 	INT32 GetSecondSquare() { return THISCALL_1(INT32, 0x4463C0, this); }
 	// * returns actual speed of creature
@@ -2954,7 +2961,7 @@ struct H3GlobalObjectSettings
 	BOOL8 exitTop; // +1
 	UINT8 canBeRemoved; // used at0x548362
 	h3unk _align; // probably alignment. All objects 0
-	PCHAR objectName;
+	LPCSTR objectName;
 	INT32 objectID;
 	BOOL decor; // is it a decorative item?
 };
@@ -3214,7 +3221,7 @@ public: // functions
 	H3Hero *GetHero(INT32 id) { return THISCALL_2(H3Hero*, 0x4317D0, this, id); }
 	void ResetRandomArtifacts() { memset(randomArtifacts, 0, sizeof(randomArtifacts)); }
 	INT32 GetRandomArtifactOfLevel(INT32 level) { return THISCALL_2(INT32, 0x4C9190, this, level); }
-	void SaveGame(PCHAR save_name) { THISCALL_6(void, 0x4BEB60, this, save_name, 1, 1, 1, 0); }
+	void SaveGame(LPCSTR save_name) { THISCALL_6(void, 0x4BEB60, this, save_name, 1, 1, 1, 0); }
 	void PlaceObjectOnMap(int x, int y, int z, int type, int subtype, int setup = -1) { THISCALL_7(void, 0x4C9550, this, x, y, z, type, subtype, setup); }
 };
 
@@ -3855,7 +3862,7 @@ public:
 protected:
 	h3unk _f_13300[356];
 	// * +13464
-	PCHAR backgroundPcxName;
+	LPCSTR backgroundPcxName;
 	// * +13468
 	//INT16 AdjascentSquares[1122];
 public:
@@ -3972,6 +3979,20 @@ struct H3Pointers
 ////////////////	Member functions
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+inline BOOL H3SaverLoader::Save(const PVOID data, const UINT data_size)
+{
+	if (data_size && THISCALL_3(UINT, vTable->saveRegion, this, data, data_size) >= data_size)
+		return TRUE;
+	return FALSE;
+}
+
+inline BOOL H3SaverLoader::Load(const PVOID data, const UINT data_size)
+{
+	if (data_size && THISCALL_3(UINT, vTable->loadRegion, this, data, data_size) >= data_size)
+		return TRUE;
+	return FALSE;
+}
 
 inline INT32 H3Hero::GetRealSpellDamage(INT32 baseDamage, H3CombatMonster * mon, INT32 spellID, H3Hero * enemy)
 {
@@ -4183,8 +4204,8 @@ inline void H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
 inline void H3CreatureBank::SetupBank(int type, int level)
 {
 	H3CreatureBankState *cbs = &H3Pointers::CreatureBankSetup()[type].states[level];
-	h3_memcpy(&guardians, &cbs->guardians, sizeof(H3Army));
-	h3_memcpy(&resources, &cbs->resources, sizeof(H3Resources));
+	F_memcpy(&guardians, &cbs->guardians, sizeof(H3Army));
+	F_memcpy(&resources, &cbs->resources, sizeof(H3Resources));
 	creatureRewardType = cbs->creatureRewardType;
 	creatureRewardCount = cbs->creatureRewardCount;
 

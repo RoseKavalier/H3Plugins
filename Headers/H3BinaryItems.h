@@ -81,7 +81,7 @@ struct H3BinTreeList
 	h3unk _f8[4];
 	INT32 count;
 
-	UINT FindItem(PCHAR name) { return THISCALL_2(UINT, 0x55EE00, this, name); }
+	UINT FindItem(LPCSTR name) { return THISCALL_2(UINT, 0x55EE00, this, name); }
 };
 
 struct H3BinaryTreeItem
@@ -140,9 +140,9 @@ struct H3ColumnTextFile : public H3BinaryItem
 {
 protected:
 	// * +1C list of rows holding text, single column
-	H3Vector<PCHAR> text;
+	H3Vector<LPCSTR> text;
 public:
-	inline PCHAR GetText(INT32 row) { return text.first[row - 1]; } // using the index from TxtEdit
+	inline LPCSTR GetText(INT32 row) { return text.first[row - 1]; } // using the index from TxtEdit
 };
 
 // * text file with a several columns of text
@@ -150,11 +150,11 @@ struct H3TextFile : public H3BinaryItem
 {
 protected:
 	// * +1C list of rows holding lists of column text
-	H3Vector<H3Vector<PCHAR>*> text;
+	H3Vector<H3Vector<LPCSTR>*> text;
 public:
-	H3Vector<H3Vector<PCHAR>*> *GetText() { return &text; }
+	H3Vector<H3Vector<LPCSTR>*> & GetText() { return text; }
 	INT32 CountRows() { return text.Count(); }
-	static H3TextFile* Load(PCHAR name) { return THISCALL_1(H3TextFile*, 0x55C2B0, name); }
+	static H3TextFile* Load(LPCSTR name) { return THISCALL_1(H3TextFile*, 0x55C2B0, name); }
 	void UnLoad() { THISCALL_1(void, vTable->dereference, this); }
 };
 
@@ -214,9 +214,9 @@ struct H3Font : public H3BinaryItem
 	// * +125C
 	INT32 bufferSize;
 
-	INT32 GetLinesCountInText(PCHAR str, INT32 width) { return THISCALL_3(INT32, 0x4B5580, this, str, width); }
-	INT32 GetMaxLineWidth(PCHAR str) { return THISCALL_2(INT32, 0x4B56F0, this, str); }
-	INT32 GetMaxWordWidth(PCHAR str) { return THISCALL_2(INT32, 0x4B5770, this, str); }
+	INT32 GetLinesCountInText(LPCSTR str, INT32 width) { return THISCALL_3(INT32, 0x4B5580, this, str, width); }
+	INT32 GetMaxLineWidth(LPCSTR str) { return THISCALL_2(INT32, 0x4B56F0, this, str); }
+	INT32 GetMaxWordWidth(LPCSTR str) { return THISCALL_2(INT32, 0x4B5770, this, str); }
 };
 
 struct H3Palette888 : public H3BinaryItem
@@ -250,7 +250,7 @@ struct H3LoadedPCX : public H3BinaryItem // size 0x56C
 		THISCALL_9(void, 0x44FA80, this, srcX, srcY, dx, dy, drawMan, x, y, transparent);
 	}
 
-	static H3LoadedPCX* Load(PCHAR name) { return THISCALL_1(H3LoadedPCX*, 0x55AA10, name); }
+	static H3LoadedPCX* Load(LPCSTR name) { return THISCALL_1(H3LoadedPCX*, 0x55AA10, name); }
 };
 
 struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
@@ -269,7 +269,7 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
 	PUINT8 buffer;
 	h3unk _f_34[4];
 
-	H3LoadedPCX16* Construct(PCHAR name, INT width, INT height)
+	H3LoadedPCX16* Construct(LPCSTR name, INT width, INT height)
 	{
 		return THISCALL_4(H3LoadedPCX16*, 0x44DD20, this, name, width, height);
 	}
@@ -277,7 +277,7 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
 	{
 		return THISCALL_12(void, 0x44DF80, this, srcX, srcY, width, height, dest->buffer, x,y, dest->width, dest->height, dest->scanlineSize, transparent);
 	}
-	static H3LoadedPCX16* Load(PCHAR name) { return THISCALL_1(H3LoadedPCX16*, 0x55B1E0, name); }
+	static H3LoadedPCX16* Load(LPCSTR name) { return THISCALL_1(H3LoadedPCX16*, 0x55B1E0, name); }
 };
 
 struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
@@ -293,7 +293,7 @@ struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
 	// * +2C
 	PUINT8 buffer;
 
-	H3LoadedPCX24* Construct(PCHAR name, INT width, INT height, H3Palette565 *palette, UINT32 bufferSize)
+	H3LoadedPCX24* Construct(LPCSTR name, INT width, INT height, H3Palette565 *palette, UINT32 bufferSize)
 	{
 		return THISCALL_6(H3LoadedPCX24*, 0x44EA20, this, name, width, height, palette, bufferSize);
 	}
@@ -360,8 +360,8 @@ struct H3LoadedDEF : public H3BinaryItem
 	// * +34
 	INT32 heightDEF;
 
-	static H3LoadedDEF* Load(PCHAR name) { return THISCALL_1(H3LoadedDEF*, 0x55C9C0, name); }
-	void AddFrame(PCHAR source, INT32 index);
+	static H3LoadedDEF* Load(LPCSTR name) { return THISCALL_1(H3LoadedDEF*, 0x55C9C0, name); }
+	void AddFrame(LPCSTR source, INT32 index);
 	void ColorToPlayer(INT32 id);
 
 	void DrawTransparent(INT32 frame, H3LoadedPCX16 *pcx, INT32 x, INT32 y, BOOL transparent = TRUE, BOOL mirror = FALSE, INT32 group = 0, INT32 xFromRight = 0, INT32 yFromBottom = 0)
@@ -373,7 +373,7 @@ struct H3LoadedDEF : public H3BinaryItem
 #pragma pack(pop)
 
 
-inline void H3LoadedDEF::AddFrame(PCHAR source, INT32 index)
+inline void H3LoadedDEF::AddFrame(LPCSTR source, INT32 index)
 {
 	H3LoadedDEF *src = H3LoadedDEF::Load(source);
 	if (!src)
@@ -381,18 +381,18 @@ inline void H3LoadedDEF::AddFrame(PCHAR source, INT32 index)
 	H3DefFrame *frm = src->groups[0]->frames[0];
 	H3DefGroup *grp = groups[0];
 
-	H3DefFrame *frame = h3_new(H3DefFrame, 1); // make a new frame
+	H3DefFrame *frame = new H3DefFrame;
 	if (frame)
 	{
-		h3_memcpy(frame, frm, sizeof(H3DefFrame)); // copy frame data
-		frame->rawData = (PUINT8)h3_malloc(frame->dataSize); // new data buffer
-		h3_memcpy(frame->rawData, frm->rawData, frame->dataSize); // copy data buffer
+		F_memcpy(frame, frm, sizeof(H3DefFrame)); // copy frame data
+		frame->rawData = (PUINT8)F_malloc(frame->frameSize); // new data buffer
+		F_memcpy(frame->rawData, frm->rawData, frame->frameSize); // copy data buffer
 
 		int nFrames = grp->count;
 
 		if (nFrames < index + 1) // add room for frame
 		{
-			H3DefFrame ** newList = (H3DefFrame**)h3_realloc(grp->frames, (index + 1) * 4);
+			H3DefFrame ** newList = (H3DefFrame**)F_realloc(grp->frames, (index + 1) * 4);
 			if (newList)
 			{
 				newList[index] = frame;

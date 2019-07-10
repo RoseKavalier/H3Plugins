@@ -93,7 +93,7 @@ struct H3DLL
 {
 	PUINT8 code;
 	UINT32 size;
-	PCHAR dllName;
+	LPCSTR dllName;
 	PUINT8 rdata;
 	UINT32 rdataSize;
 	PUINT8 data;
@@ -107,7 +107,7 @@ struct H3DLL
 	void DLLNotFound();
 
 	// get DLL code start and DLL size
-	void GetDLLInfo(const PCHAR name);
+	void GetDLLInfo(LPCSTR name);
 	// find the first instance of needle
 	UINT32 NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset);
 	// searches around the needle for a piece of code, needl2
@@ -129,10 +129,71 @@ struct H3DLL
 // * used by H3.TextColor
 struct H3NamedColors
 {
-	PCHAR name;
+	LPCSTR name;
 	UINT32 rgb;
 	UINT16 rgb565;
 };
+
+// * HDmod's format for ini files lines
+struct HDIniEntry // size 0xD ~ 13
+{
+	union
+	{
+		LPCSTR text;
+		UINT32 value;
+	}data;
+	enum eType : BYTE
+	{
+		iniValue = 2,
+		iniText = 3,
+		iniKey = 4
+	};
+	eType entryType;
+	DWORD entryCount;
+	LPCSTR uselessText; // like " = ", end of line, ...
+
+	LPCSTR GetText()
+	{
+		if (entryType == iniValue)
+			return h3_NullString;
+		return data.text;
+	}
+};
+
+// * HDmod's format for ini files
+struct HDIni
+{
+	HDIniEntry **entries;
+	INT32 lineEntries;
+	h3unk _f_08[4];
+	CHAR name[8]; // unknown length
+
+	HDIniEntry ** FindEntry(LPCSTR key)
+	{
+		HDIniEntry **e = entries;
+		int i = lineEntries;
+
+		while (i > 0)
+		{
+			HDIniEntry *c = *e;
+			if (c->entryType == c->iniKey)
+			{
+				if (F_strcmpi(key, c->data.text) == 0)
+					return e;
+
+				i -= (c->entryCount + 1);
+				e += (c->entryCount + 1);
+			}
+			else
+			{
+				i--;
+				e++;
+			}
+		}
+		return NULL;
+	}
+};
+
 #pragma pack(pop)
 
 #define BytePatch(start, code) (H3Patcher::WriteBytePatch(start, code))
@@ -396,7 +457,7 @@ inline UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needleSize)
 	return p;
 }
 
-inline void H3DLL::GetDLLInfo(const PCHAR name)
+inline void H3DLL::GetDLLInfo(LPCSTR name)
 {
 	HMODULE hm = GetModuleHandleA(name);
 	if (!hm)
@@ -418,7 +479,7 @@ inline void H3DLL::GetDLLInfo(const PCHAR name)
 
 	for (int i = 0; i < pNTHeaders->FileHeader.NumberOfSections; i++, pSectionHdr++)
 	{
-		PCHAR name = (PCHAR)pSectionHdr->Name;
+		LPCSTR name = (LPCSTR)pSectionHdr->Name;
 		if (!memcmp(name, ".rdata", sizeof(".rdata"))) // no -1 to sizeof() to include \0 null terminator
 		{
 			rdata = (PUINT8)((DWORD)hm + pSectionHdr->VirtualAddress);

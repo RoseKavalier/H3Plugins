@@ -220,13 +220,13 @@ _LHF_(ParseText) // 0x4B5255
 	if (len >= CharColorsSize)
 	{
 		CharColorsSize *= 2; // double size
-		h3_delete(CharColors);
-		CharColors = (PINT32)h3_malloc(CharColorsSize);
+		delete CharColors;
+		CharColors = (PINT32)F_malloc(CharColorsSize);
 	}
 
 	CHAR buffer[TAG_MAX_SIZE + 1];
 	TextParser.Assign(text, len); // copy text to parser
-	PCHAR current = TextParser.String();
+	PCHAR current = TextParser.Begin();
 	INT32 currentColor = NO_COLOR;
 
 	for (INT i = 0; i < len; i++, current++)
@@ -243,7 +243,7 @@ _LHF_(ParseText) // 0x4B5255
 
 					for (INT k = 0; k < NUMBER_COLORS; k++) // look up if this is an existing color in our table
 					{
-						if (!h3_strcmpi(buffer, H3CustomColors[k].name)) // not character-sensitive
+						if (!F_strcmpi(buffer, H3CustomColors[k].name)) // not character-sensitive
 						{
 							currentColor = k; // set current color
 							INT removed = sizeof('{') + sizeof('~') + sizeof('}') + tagLen; // we are removing the {~Color} tag from parsed text
@@ -405,7 +405,7 @@ void Variables_init(Patcher *p)
 
 void Hooks_init(PatcherInstance *pi)
 {
-	CharColors = (PINT32)h3_malloc(CharColorsSize);
+	CharColors = (PINT32)F_malloc(CharColorsSize);
 	if (CharColors)
 		memset(CharColors, NO_COLOR, CharColorsSize);
 	else
