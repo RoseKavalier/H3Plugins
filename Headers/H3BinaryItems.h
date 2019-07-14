@@ -50,7 +50,7 @@ typedef UINT16 RGB565;
 
 // BINARY TREE ITEMS ~ named _BaseFileItem_ in database
 struct H3BinaryItem;
-struct H3BinaryTreeItem;
+struct H3BinaryTreeNode;
 struct H3BinTreeList;
 struct H3WavFile;
 struct H3ColumnTextFile;
@@ -84,20 +84,20 @@ struct H3BinTreeList
 	UINT FindItem(LPCSTR name) { return THISCALL_2(UINT, 0x55EE00, this, name); }
 };
 
-struct H3BinaryTreeItem
+struct H3BinaryTreeNode
 {
 	// * +0
-	H3BinaryTreeItem *previous;
+	H3BinaryTreeNode *leftNode;
 	// * +4
-	H3BinaryTreeItem *parent;
+	H3BinaryTreeNode *parent;
 	// * +8
-	H3BinaryTreeItem *next;
+	H3BinaryTreeNode *rightNode;
 	// * +C
 	CHAR name[12];
 	h3unk _f_18[4];
 	// * +1C
 	H3BinaryItem *item;
-	h3unk _f_20[4];
+	BOOL isBlackNode; // https://en.wikipedia.org/wiki/Red–black_tree
 };
 
 struct H3BinaryItem // constructor 0x558970, size 1C
@@ -122,7 +122,7 @@ protected:
 };
 
 ///////////////////////////////////////////////////
-// from breakpoint at constructor, the following items are all H3BinaryTreeItem subclasses
+// from breakpoint at constructor, the following items are all H3BinaryTreeNode subclasses
 
 struct H3WavFile : public H3BinaryItem // size 0x34 from 0x55C67E
 {

@@ -475,6 +475,9 @@ public:
 	void EnableItem(BOOL enable) { THISCALL_2(void, vTable->setEnabled, this, enable); }
 	void Enable() { EnableItem(TRUE); }
 	void Disable() { EnableItem(FALSE); }
+	INT16 GetX() { return xPos; }
+	INT16 GetY() { return yPos; }
+	BOOL IsEnabled() { return !(state & 0x20); }
 	void SetX(UINT16 x) { xPos = x; }
 	void SetY(UINT16 y) { yPos = y; }
 	INT32 GetHeight() { return heightItem; }
