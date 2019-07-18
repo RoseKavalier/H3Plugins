@@ -442,7 +442,7 @@ public:
 	/* Example:
 	Pi->WriteHexPatch(0x57b521, "6A 01 6A 00");
 	*/
-	virtual Patch* __stdcall WriteHexPatch(_ptr_ address, char* hex_str) = 0;
+	virtual Patch* __stdcall WriteHexPatch(_ptr_ address, const char* hex_str) = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Method WriteCodePatchVA
@@ -877,9 +877,7 @@ public:
 	// if owner == NULL or owner == "" then
 	// the PatcherInstance instance will be created with the module name from
 	// the function was called.
-	virtual PatcherInstance* __stdcall CreateInstance(char* owner) = 0;
-	// Visual Studio 2017+ has difficulty processing const char* to char*
-	PatcherInstance* CreateInstance(const char* owner) { return CreateInstance((char*)owner); }
+	virtual PatcherInstance* __stdcall CreateInstance(const char* owner) = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// GetInstance method
@@ -892,9 +890,7 @@ public:
 	// - check if some mod is active, using patcher_x86.dll
 	// - get access to all patches and hooks of some mod,
 	// using patcher_x86.dll
-	virtual PatcherInstance*  __stdcall GetInstance(char* owner) = 0;
-	// Visual Studio 2017+ has difficulty processing const char* to char*
-	PatcherInstance * GetInstance(const char* owner) { return GetInstance((char*)owner); }
+	virtual PatcherInstance*  __stdcall GetInstance(const char* owner) = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// GetLastPatchAt method
@@ -916,7 +912,7 @@ public:
 	// - number and names of all instances of PatcherInstance
 	// - the number of all applied patches / hooks
 	// - list of all applied patches and hooks with their installation addresses, sizes, global order of use, proprietors (PatcherInstance names)
-	virtual void __stdcall SaveDump(char* file_name) = 0;
+	virtual void __stdcall SaveDump(const char* file_name) = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////// /
 	// SaveLog method
@@ -924,7 +920,7 @@ public:
 	// if logging is disabled in the log, there will be 0 entries.
 	// enable logging by creating in the library directory
 	// the text file patcher_x86.ini with the contents: Logging = 1
-	virtual void __stdcall SaveLog(char* file_name) = 0;
+	virtual void __stdcall SaveLog(const char* file_name) = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// GetMaxPatchSize Method
@@ -988,11 +984,11 @@ public:
 	// initializes a "variable" named name and sets the value of "variable" to value
 	// if a "variable" with this name already exists, then simply sets its value to value
 	// returns a pointer to the "variable" if successful and NULL otherwise
-	virtual Variable* __stdcall VarInit(char* name, _dword_ value) = 0;
+	virtual Variable* __stdcall VarInit(const char* name, _dword_ value) = 0;
 	// VarFind method
 	// returns a pointer to a "variable" named name, if such was initialized
 	// if not, it returns NULL
-	virtual Variable* __stdcall VarFind(char* name) = 0;
+	virtual Variable* __stdcall VarFind(const char* name) = 0;
 
 
 	// ver 2.6
@@ -1001,7 +997,7 @@ public:
 	// PatcherInstance created in this way can not create patches.
 	// This incomplete instance is used to apply the PatcherInstance :: BlockAt and PatcherInstance :: BlockAllExceptVA methods
 	// so that you can block addresses before this PatcherInstance is fully created using CreateInstance
-	virtual PatcherInstance* __stdcall PreCreateInstance(char* name) = 0;
+	virtual PatcherInstance* __stdcall PreCreateInstance(const char* name) = 0;
 
 
 	// ver 4.1
@@ -1013,7 +1009,7 @@ public:
 	// the VarGetValue method returns the value of a "variable" named name
 	// if the "variable" with this name was not initialized, it returns default_value
 	template<typename ValueType>
-	inline ValueType VarGetValue(char* name, ValueType default_value)
+	inline ValueType VarGetValue(const char* name, ValueType default_value)
 	{
 		if (sizeof(ValueType) > 4) return default_value;
 		Variable* v = VarFind(name);
@@ -1025,7 +1021,7 @@ public:
 	// if the "variable" with this name was not initialized, initializes it and sets the value to 0
 	// attention, accessing the value of a variable by reference is not intrinsically safe
 	template<typename ValueType>
-	inline ValueType& VarValue(char* name)
+	inline ValueType& VarValue(const char* name)
 	{
 		if (sizeof(ValueType) > 4) __asm{__asm int 3};
 

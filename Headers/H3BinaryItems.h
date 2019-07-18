@@ -381,7 +381,7 @@ inline void H3LoadedDEF::AddFrame(LPCSTR source, INT32 index)
 	H3DefFrame *frm = src->groups[0]->frames[0];
 	H3DefGroup *grp = groups[0];
 
-	H3DefFrame *frame = new H3DefFrame;
+	H3DefFrame *frame = (H3DefFrame *)F_malloc(sizeof(H3DefFrame));
 	if (frame)
 	{
 		F_memcpy(frame, frm, sizeof(H3DefFrame)); // copy frame data

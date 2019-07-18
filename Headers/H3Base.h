@@ -417,6 +417,14 @@ inline INT F_strcmpi(LPCSTR string1, LPCSTR string2)
 #pragma warning(push)
 #pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
 
+
+// * The new, new[], delete and delete[] operators are
+// * placed behind the _H3API_OPERATORS_ guards.
+// * If you want to use them in your project, you
+// * should first define it i.e.
+// * #define _H3API_OPERATORS_
+// * #include "<...>/H3API.h"
+#ifdef _H3API_OPERATORS_
 //* new operator using h3 assets
 inline PVOID operator new(size_t sz)
 {
@@ -442,6 +450,8 @@ inline void operator delete[](PVOID ptr)
 	if (ptr)
 		F_delete(ptr);
 }
+
+#endif /* _H3API_OPERATORS_ */
 
 #pragma warning(pop) /* #pragma warning(disable:4595) */
 

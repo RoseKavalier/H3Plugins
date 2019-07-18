@@ -754,7 +754,6 @@ public:
 
 inline H3DlgItem * H3Dlg::AddItem(H3DlgItem * item)
 {
-	//dlgItems.AddSize4(item);
 	dlgItems += item;
 	return THISCALL_3(H3DlgItem*, 0x5FF270, this, item, -1); // LoadItem
 }
@@ -1042,7 +1041,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		_w = w; // reset variable to dialog width
 		while (_w > 0) // horizontal pass first
 		{
-			H3DlgPcx *bg2 = new H3DlgPcx;
+			H3DlgPcx *bg2 = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
 			if (!bg2)
 			{
 				F_delete(bg);
@@ -1117,7 +1116,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 
 	while (x > 0)
 	{
-		def = new H3DlgDef;
+		def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 		if (!def)
 			return FALSE;
 		def->Copy(baseDef);
@@ -1125,7 +1124,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def->SetFrame(BF_tm);
 		AddItem(def);
 
-		def2 = new H3DlgDef;
+		def2 = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 		if (!def2)
 			return FALSE;
 		def2->Copy(def);
@@ -1144,7 +1143,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 
 	while (y >= 0)
 	{
-		def = new H3DlgDef;
+		def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 		if (!def)
 			return FALSE;
 		def->Copy(baseDef);
@@ -1152,7 +1151,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 		def->SetFrame(BF_ml);
 		AddItem(def);
 
-		def2 = new H3DlgDef;
+		def2 = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 		if (!def2)
 			return FALSE;
 		def2->Copy(def);
@@ -1172,7 +1171,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	////////////////////
 	// now top right
 	////////////////////
-	def = new H3DlgDef;
+	def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 	if (!def)
 		return FALSE;
 	def->Copy(baseDef);
@@ -1183,7 +1182,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	////////////////////
 	// bottom left
 	////////////////////
-	def = new H3DlgDef;
+	def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 	if (!def)
 		return FALSE;
 	def->Copy(baseDef);
@@ -1194,7 +1193,7 @@ inline BOOL H3Dlg::DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
 	////////////////////
 	// bottom right
 	////////////////////
-	def = new H3DlgDef;
+	def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 	if (!def)
 		return FALSE;
 	def->Copy(baseDef);
@@ -1239,14 +1238,14 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	while (dX >= 4)
 	{
 		dX -= 4;
-		pcx = new H3DlgPcx;
+		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
 		if (pcx)
 		{
 			pcx->Copy(up);
 			pcx->SetX(xStart + dX);
 			AddItem(pcx);
 		}
-		pcx = new H3DlgPcx;
+		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
 		if (pcx)
 		{
 			pcx->Copy(down);
@@ -1261,14 +1260,14 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	while (dY >= 4)
 	{
 		dY -= 4;
-		pcx = new H3DlgPcx;
+		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
 		if (pcx)
 		{
 			pcx->Copy(left);
 			pcx->SetY(yStart + dY);
 			AddItem(pcx);
 		}
-		pcx = new H3DlgPcx;
+		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
 		if (pcx)
 		{
 			pcx->Copy(right);
@@ -1311,7 +1310,7 @@ inline void H3Dlg::RedrawItem(UINT16 itemID)
 
 inline H3DlgItem * H3DlgItem::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 flags)
 {
-	H3DlgItem *d = new H3DlgItem;
+	H3DlgItem *d = (H3DlgItem*)F_malloc(sizeof(H3DlgItem));
 	if (d)
 		THISCALL_7(H3DlgItem*, 0x5FE900, d, x, y, width, height, id, flags);
 	return d;
@@ -1349,7 +1348,7 @@ inline void H3DlgItem::_SetText(LPCSTR text)
 
 inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
 {
-	H3DlgDef *d = new H3DlgDef;
+	H3DlgDef *d = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 	if (d)
 		THISCALL_12(H3DlgDef*, 0x4EA800, d, x, y, width, height, id, defName, frame, group, mirror, closeDialog, 0x10);
 	return d;
@@ -1389,7 +1388,7 @@ inline void H3DlgDef::ColorDefToPlayer(INT32 id)
 
 inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 {
-	H3DlgPcx *p = new H3DlgPcx;
+	H3DlgPcx *p = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
 	if (p)
 		THISCALL_8(H3DlgPcx*, 0x44FFA0, p, x, y, width, height, id, pcxName, 0x800);
 	return p;
@@ -1418,7 +1417,7 @@ inline void H3DlgPcx::Copy(H3DlgPcx * src)
 
 inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
 {
-	H3DlgDefButton *b = new H3DlgDefButton;
+	H3DlgDefButton *b = (H3DlgDefButton*)F_malloc(sizeof(H3DlgDefButton));
 	if (b)
 		THISCALL_12(H3DlgDefButton*, 0x455BD0, b, x, y, width, height, id, defName, frame, clickFrame, closeDialog, hotkey, 2);
 	return b;
@@ -1442,7 +1441,7 @@ inline H3DlgDefButton * H3DlgDefButton::Create(INT32 x, INT32 y, LPCSTR defName,
 
 inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
 {
-	H3DlgCaptionButton *b = new H3DlgCaptionButton;
+	H3DlgCaptionButton *b = (H3DlgCaptionButton*)F_malloc(sizeof(H3DlgCaptionButton));
 	if (b)
 		THISCALL_15(H3DlgCaptionButton*, 0x456730, b, x, y, width, height, id, defName, text, font, frame, group, closeDialog, hotkey, 2, color);
 	return b;
@@ -1461,7 +1460,7 @@ inline H3DlgCaptionButton * H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 i
 
 inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 {
-	H3DlgPcx16 *p = new H3DlgPcx16;
+	H3DlgPcx16 *p = (H3DlgPcx16*)F_malloc(sizeof(H3DlgPcx16));
 	if (p)
 		THISCALL_8(H3DlgPcx16*, 0x450340, p, x, y, width, height, id, pcxName, 0x800);
 	return p;
@@ -1485,7 +1484,7 @@ inline H3DlgPcx16 * H3DlgPcx16::Create(INT32 x, INT32 y, LPCSTR pcxName)
 
 inline H3DlgText * H3DlgText::Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, INT32 color, INT32 id, INT32 align, INT32 bkColor)
 {
-	H3DlgText *t = new H3DlgText;
+	H3DlgText *t = (H3DlgText*)F_malloc(sizeof(H3DlgText));
 	if (t)
 		THISCALL_12(H3DlgText*, 0x5BC6A0, t, x, y, width, height, text, fontName, color, id, align, bkColor, 8);
 	return t;
@@ -1493,7 +1492,7 @@ inline H3DlgText * H3DlgText::Create(INT32 x, INT32 y, INT32 width, INT32 height
 
 inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id, INT32 align)
 {
-	H3DlgTextPcx *t = new H3DlgTextPcx;
+	H3DlgTextPcx *t = (H3DlgTextPcx*)F_malloc(sizeof(H3DlgTextPcx));
 	if (t)
 		THISCALL_12(H3DlgTextPcx*, 0x5BCB70, t, x, y, width, height, text, fontName, pcxName, color, id, align, 8);
 	return t;
@@ -1512,7 +1511,7 @@ inline H3DlgTextPcx * H3DlgTextPcx::Create(INT32 x, INT32 y, LPCSTR text, LPCSTR
 
 inline H3DlgScrollableText * H3DlgScrollableText::Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
 {
-	H3DlgScrollableText *s = new H3DlgScrollableText;
+	H3DlgScrollableText *s = (H3DlgScrollableText*)F_malloc(sizeof(H3DlgScrollableText));
 	if (s)
 		THISCALL_9(H3DlgScrollableText*, 0x5BA360, s, text, x, y, width, height, font, color, isBlue);
 	return s;
@@ -1520,7 +1519,7 @@ inline H3DlgScrollableText * H3DlgScrollableText::Create(LPCSTR text, INT32 x, I
 
 inline H3DlgScrollbar * H3DlgScrollbar::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc, BOOL isBlue, INT32 stepSize, BOOL arrowsEnabled)
 {
-	H3DlgScrollbar *s = new H3DlgScrollbar;
+	H3DlgScrollbar *s = (H3DlgScrollbar*)F_malloc(sizeof(H3DlgScrollbar));
 	if (s)
 		THISCALL_11(H3DlgScrollbar*, 0x5963C0, s, x, y, width, height, id, ticksCount, scrollbarProc, isBlue, stepSize, arrowsEnabled);
 	return s;
@@ -1528,7 +1527,7 @@ inline H3DlgScrollbar * H3DlgScrollbar::Create(INT32 x, INT32 y, INT32 width, IN
 
 inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 {
-	H3DlgCustomButton *b = new H3DlgCustomButton;
+	H3DlgCustomButton *b = (H3DlgCustomButton*)F_malloc(sizeof(H3DlgCustomButton));
 	if (b)
 		THISCALL_10(H3DlgCustomButton*, 0x456A10, b, x, y, width, height, id, defName, customProc, frame, clickFrame);
 	return b;
@@ -1562,7 +1561,7 @@ inline void H3DlgCustomButton::ToggleFlag(BOOL & flag)
 
 inline H3DlgEdit * H3DlgEdit::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
 {
-	H3DlgEdit *e = new H3DlgEdit;
+	H3DlgEdit *e = (H3DlgEdit*)F_malloc(sizeof(H3DlgEdit));
 	if (e)
 		THISCALL_17(H3DlgEdit*, 0x5BACD0, e, x, y, width, height, maxLength, text, fontName, color, align, pcxName, 0, id, 0, hasBorder, borderX, borderY);
 	return e;

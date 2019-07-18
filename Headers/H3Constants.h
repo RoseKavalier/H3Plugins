@@ -200,6 +200,7 @@ namespace NH3Creatures
 		FIRST_AID_TENT,
 		AMMO_CART,
 		ARROW_TOWER,
+		/* HotA */
 		CANNON,
 		SEA_DOG,
 		HOTA_UNUSED,
