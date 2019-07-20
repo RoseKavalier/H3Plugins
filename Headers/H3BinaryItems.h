@@ -361,7 +361,7 @@ struct H3LoadedDEF : public H3BinaryItem
 	INT32 heightDEF;
 
 	static H3LoadedDEF* Load(LPCSTR name) { return THISCALL_1(H3LoadedDEF*, 0x55C9C0, name); }
-	void AddFrame(LPCSTR source, INT32 index);
+	void AddFrameFromDef(LPCSTR source, INT32 index);
 	void ColorToPlayer(INT32 id);
 
 	void DrawTransparent(INT32 frame, H3LoadedPCX16 *pcx, INT32 x, INT32 y, BOOL transparent = TRUE, BOOL mirror = FALSE, INT32 group = 0, INT32 xFromRight = 0, INT32 yFromBottom = 0)
@@ -373,7 +373,7 @@ struct H3LoadedDEF : public H3BinaryItem
 #pragma pack(pop)
 
 
-inline void H3LoadedDEF::AddFrame(LPCSTR source, INT32 index)
+inline void H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 {
 	H3LoadedDEF *src = H3LoadedDEF::Load(source);
 	if (!src)

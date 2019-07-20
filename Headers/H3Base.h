@@ -115,7 +115,8 @@ typedef char h3unk;
 #define FuncAt(address) (DwordAt(address + 1) + address + 5)
 #endif
 
-// model function definitions
+// * model function definitions
+#pragma region THISCALL_DECLARATIONS
 #ifndef THISCALL_0
 #define THISCALL_0(return_type, address) ((return_type(__thiscall *)(void))address)()
 #endif
@@ -170,7 +171,9 @@ typedef char h3unk;
 #ifndef THISCALL_17
 #define THISCALL_17(return_type, address, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17) ((return_type(__thiscall *)(UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT))(address))((UINT)(a1), (UINT)(a2), (UINT)(a3), (UINT)(a4), (UINT)(a5), (UINT)(a6), (UINT)(a7), (UINT)(a8), (UINT)(a9), (UINT)(a10), (UINT)(a11), (UINT)(a12), (UINT)(a13), (UINT)(a14), (UINT)(a15), (UINT)(a16), (UINT)(a17))
 #endif
+#pragma endregion
 
+#pragma region STDCALL_DECLARATIONS
 #ifndef STDCALL_0
 #define STDCALL_0(return_type, address) ((return_type(__stdcall *)(void))address)()
 #endif
@@ -225,7 +228,9 @@ typedef char h3unk;
 #ifndef STDCALL_17
 #define STDCALL_17(return_type, address, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17) ((return_type(__stdcall *)(UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT))(address))((UINT)(a1), (UINT)(a2), (UINT)(a3), (UINT)(a4), (UINT)(a5), (UINT)(a6), (UINT)(a7), (UINT)(a8), (UINT)(a9), (UINT)(a10), (UINT)(a11), (UINT)(a12), (UINT)(a13), (UINT)(a14), (UINT)(a15), (UINT)(a16), (UINT)(a17))
 #endif
+#pragma endregion
 
+#pragma region FASTCALL_DECLARATIONS
 #ifndef FASTCALL_0
 #define FASTCALL_0(return_type, address) ((return_type(__fastcall *)(void))address)()
 #endif
@@ -280,7 +285,9 @@ typedef char h3unk;
 #ifndef FASTCALL_17
 #define FASTCALL_17(return_type, address, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17) ((return_type(__fastcall *)(UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT))(address))((UINT)(a1), (UINT)(a2), (UINT)(a3), (UINT)(a4), (UINT)(a5), (UINT)(a6), (UINT)(a7), (UINT)(a8), (UINT)(a9), (UINT)(a10), (UINT)(a11), (UINT)(a12), (UINT)(a13), (UINT)(a14), (UINT)(a15), (UINT)(a16), (UINT)(a17))
 #endif
+#pragma endregion
 
+#pragma region CDECL_DECLARATIONS
 #ifndef CDECL_0
 #define CDECL_0(return_type, address) ((return_type(__cdecl *)(void))address)()
 #endif
@@ -335,6 +342,25 @@ typedef char h3unk;
 #ifndef CDECL_17
 #define CDECL_17(return_type, address, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17) ((return_type(__cdecl *)(UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT, UINT))(address))((UINT)(a1), (UINT)(a2), (UINT)(a3), (UINT)(a4), (UINT)(a5), (UINT)(a6), (UINT)(a7), (UINT)(a8), (UINT)(a9), (UINT)(a10), (UINT)(a11), (UINT)(a12), (UINT)(a13), (UINT)(a14), (UINT)(a15), (UINT)(a16), (UINT)(a17))
 #endif
+#pragma endregion
+
+#pragma region VA_DECLARATIONS
+#ifndef STDCALL_VA
+#define STDCALL_VA(return_type, address, a1, ...) ((return_type(__stdcall *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#endif
+
+#ifndef THISCALL_VA
+#define THISCALL_VA(return_type, address, a1, ...) ((return_type(__thiscall *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#endif
+
+#ifndef FASTCALL_VA
+#define FASTCALL_VA(return_type, address, a1, ...) ((return_type(__fastcall *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#endif
+
+#ifndef CDECL_VA
+#define CDECL_VA(return_type, address, a1, ...) ((return_type(__cdecl *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#endif
+#pragma endregion
 
 // * heap realloc using H3 assets
 inline PVOID F_realloc(PVOID obj, UINT new_size)
