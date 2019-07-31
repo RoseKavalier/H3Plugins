@@ -198,6 +198,8 @@ struct H3Palette565 : public H3BinaryItem
 {
 	// * +1C
 	H3RGB565 color[256];
+
+	void ColorToPlayer(INT id) { FASTCALL_2(void, 0x6003E0, this, id); }
 };
 
 struct H3Font : public H3BinaryItem
@@ -223,6 +225,8 @@ struct H3Palette888 : public H3BinaryItem
 {
 	// * +1C
 	H3RGB888 color[256];
+
+	void ColorToPlayer(INT id) { FASTCALL_2(void, 0x600400, this, id); }
 };
 
 struct H3LoadedPCX : public H3BinaryItem // size 0x56C
@@ -306,7 +310,8 @@ struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
 struct H3DefFrame : public H3BinaryItem
 {
 	// * +1C
-	INT32 frameSize;
+	// * all row offsets and actual pixel data
+	INT32 rawDataSize;
 	// * +20
 	// * frame width * frame height
 	INT32 dataSize;
@@ -385,8 +390,8 @@ inline void H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 	if (frame)
 	{
 		F_memcpy(frame, frm, sizeof(H3DefFrame)); // copy frame data
-		frame->rawData = (PUINT8)F_malloc(frame->frameSize); // new data buffer
-		F_memcpy(frame->rawData, frm->rawData, frame->frameSize); // copy data buffer
+		frame->rawData = (PUINT8)F_malloc(frame->rawDataSize); // new data buffer
+		F_memcpy(frame->rawData, frm->rawData, frame->rawDataSize); // copy data buffer
 
 		int nFrames = grp->count;
 
@@ -409,9 +414,8 @@ inline void H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 
 inline void H3LoadedDEF::ColorToPlayer(INT32 id)
 {
-	int paletteEntries = THISCALL_1(int, 0x47B5E0, this);
-	FASTCALL_2(void, 0x6003E0, paletteEntries, id);
-	FASTCALL_2(void, 0x600400, palette888, id);
+	palette565->ColorToPlayer(id);
+	palette888->ColorToPlayer(id);
 }
 
 #endif /* #define _H3BINARYITEMS_H_ */
