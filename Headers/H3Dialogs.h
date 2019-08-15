@@ -163,7 +163,7 @@ struct H3DlgCustomButton;
 struct H3DlgHintBar;
 typedef INT32(__stdcall *H3Dlg_proc)(H3Dlg* dlg, H3Msg* msg);
 typedef INT32(__fastcall *H3DlgButton_proc)(H3MsgCustom *msg);
-typedef void(__fastcall *H3DlgScrollbar_proc)(INT32 click_id, H3Dlg* dlg);
+typedef VOID(__fastcall *H3DlgScrollbar_proc)(INT32 click_id, H3Dlg* dlg);
 
 struct H3Msg
 {
@@ -209,8 +209,8 @@ struct H3Msg
 		MF_Alt = 32
 	};
 
-	void SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2);
-	void SetCommand(INT32 cmd, INT32 param);
+	VOID SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2);
+	VOID SetCommand(INT32 cmd, INT32 param);
 	H3DlgItem *ItemAtPosition(H3Dlg *dlg);
 	INT32 KeyPressed() { return subtype; }
 	BOOL IsMouseOver() { return command == MC_MouseOver; }
@@ -326,19 +326,19 @@ public:
 	////////////////////////////////////////////////////////////////////////
 	H3Dlg(int width = 0, int height = 0, int x = -1, int y = -1); // default constructor
 	H3Dlg(int width, int heigh, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = NULL, BOOL makeBackground = TRUE, INT32 colorIndex = IntAt(0x69CCF4)); // extended constructor
-	~H3Dlg() { THISCALL_2(void, vtable->destroyDlg, this, 0); } // default destructor
+	~H3Dlg() { THISCALL_2(VOID, vtable->destroyDlg, this, 0); } // default destructor
 	////////////////////////////////////////////////////////////////////////
 	// Functions
 	////////////////////////////////////////////////////////////////////////
 	H3DlgItem* AddItem(H3DlgItem *item);
 	// Dlg functions
-	void PlaceAtMouse();
-	void Start();
-	void RMB_Show() { THISCALL_1(void, 0x5F4B90, this); }
+	VOID PlaceAtMouse();
+	VOID Start();
+	VOID RMB_Show() { THISCALL_1(VOID, 0x5F4B90, this); }
 	BOOL DlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex);
 	BOOL SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height);
-	void Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy); // redraw part of dialog
-	void Redraw(); // redraw whole dialog
+	VOID Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy); // redraw part of dialog
+	VOID Redraw(); // redraw whole dialog
 	INT32 DefaultProc(H3Msg *msg) { return THISCALL_2(INT32, 0x41B120, this, msg); }
 	INT32 GetWidth() { return widthDlg; }
 	INT32 GetHeight() { return heightDlg; }
@@ -352,11 +352,11 @@ public:
 	H3Vector<H3DlgItem*> *GetList() { return &dlgItems; }
 	H3DlgHintBar *GetHintBar() { return hintBar; }
 	H3DlgItem *GetH3DlgItem(UINT16 id);
-	void RedrawItem(UINT16 itemID);
-	void EnableItem(UINT16 id, BOOL enable);
-	void SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter);
-	void SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter);
-	void AdjustToPlayerColor(INT8 player, UINT16 itemId);
+	VOID RedrawItem(UINT16 itemID);
+	VOID EnableItem(UINT16 id, BOOL enable);
+	VOID SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter);
+	VOID SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter);
+	VOID AdjustToPlayerColor(INT8 player, UINT16 itemId);
 	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
@@ -468,36 +468,36 @@ protected:
 
 	// * private function, use SetText() of respective items
 	// * if it's not there, it's not available!
-	void _SetText(LPCSTR text);
+	VOID _SetText(LPCSTR text);
 
 public:
 	static H3DlgItem* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 flags);
-	void EnableItem(BOOL enable) { THISCALL_2(void, vTable->setEnabled, this, enable); }
-	void Enable() { EnableItem(TRUE); }
-	void Disable() { EnableItem(FALSE); }
+	VOID EnableItem(BOOL enable) { THISCALL_2(VOID, vTable->setEnabled, this, enable); }
+	VOID Enable() { EnableItem(TRUE); }
+	VOID Disable() { EnableItem(FALSE); }
 	INT16 GetX() { return xPos; }
 	INT16 GetY() { return yPos; }
 	BOOL IsEnabled() { return !(state & 0x20); }
-	void SetX(UINT16 x) { xPos = x; }
-	void SetY(UINT16 y) { yPos = y; }
+	VOID SetX(UINT16 x) { xPos = x; }
+	VOID SetY(UINT16 y) { yPos = y; }
 	INT32 GetHeight() { return heightItem; }
 	INT32 GetWidth() { return widthItem; }
-	void SetWidth(UINT16 w) { widthItem = w; }
-	void SetHeight(UINT16 h) { heightItem = h; }
-	void Draw(); // draw new contents through vTable
-	void Refresh(); // refresh screen through parent dlg
-	void Hide() { state &= ~4; }
-	void Show() { state |= 4; }
-	void Shade() { state |= 8; }
-	void UnShade() { state &= ~8; }
-	void SetFocus(BOOL8 focus) { THISCALL_2(void, vTable->setFocus, this, focus); }
+	VOID SetWidth(UINT16 w) { widthItem = w; }
+	VOID SetHeight(UINT16 h) { heightItem = h; }
+	VOID Draw(); // draw new contents through vTable
+	VOID Refresh(); // refresh screen through parent dlg
+	VOID Hide() { state &= ~4; }
+	VOID Show() { state |= 4; }
+	VOID Shade() { state |= 8; }
+	VOID UnShade() { state &= ~8; }
+	VOID SetFocus(BOOL8 focus) { THISCALL_2(VOID, vTable->setFocus, this, focus); }
 	BOOL IsVisible() { return state & 4; }
 	LPCSTR GetHint() { return hint; }
-	void SetHint(LPCSTR msg) { hint = msg; }
+	VOID SetHint(LPCSTR msg) { hint = msg; }
 	UINT16 GetID() { return id; }
-	void ParentRedraw(); // redraw through parent
-	void ColorToPlayer(INT8 player);
-	void SendCommand(INT32 command, INT32 parameter);
+	VOID ParentRedraw(); // redraw through parent
+	VOID ColorToPlayer(INT8 player);
+	VOID SendCommand(INT32 command, INT32 parameter);
 
 
 	H3DlgDef *CastDef() { return (H3DlgDef*)this; }
@@ -533,12 +533,12 @@ public:
 	static H3DlgDef* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	static H3DlgDef* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	static H3DlgDef* Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame = 0, INT32 group = 0);
-	void SetFrame(INT32 frame) { defFrame = frame; }
+	VOID SetFrame(INT32 frame) { defFrame = frame; }
 	INT ToggleFrame() { defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; return defFrame; }
 	INT32 GetFrame() { return defFrame; }
-	void Copy(H3DlgDef* src);
-	void ColorDefToPlayer(INT32 id);
-	void SetClickFrame(INT32 clickFrame) { defFrameOnClick = clickFrame; }
+	VOID Copy(H3DlgDef* src);
+	VOID ColorDefToPlayer(INT32 id);
+	VOID SetClickFrame(INT32 clickFrame) { defFrameOnClick = clickFrame; }
 };
 
 struct H3DlgDefButton : public H3DlgDef // size 0x68 ~ although there is room for CustomProc, which is the same as H3DlgCustomButton, however it is not passed as an argument to the function
@@ -563,7 +563,7 @@ protected:
 	// * +6C
 	INT32 color;
 public:
-	void SetText(LPCSTR text) { _SetText(text); }
+	VOID SetText(LPCSTR text) { _SetText(text); }
 	static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
 	static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
 };
@@ -578,7 +578,7 @@ public:
 	static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
 	static H3DlgCustomButton* Create(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
 
-	void ToggleFlag(BOOL & flag);
+	VOID ToggleFlag(BOOL & flag);
 };
 
 struct H3DlgPcx : public H3DlgItem
@@ -590,9 +590,9 @@ public:
 	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
 	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
 	static H3DlgPcx* Create(INT32 x, INT32 y, LPCSTR pcxName);
-	void Copy(H3DlgPcx* src);
+	VOID Copy(H3DlgPcx* src);
 
-	void AdjustColor(INT player) { THISCALL_2(void, 0x4501D0, this, player); }
+	VOID AdjustColor(INT player) { THISCALL_2(VOID, 0x4501D0, this, player); }
 };
 
 struct H3DlgPcx16 : public H3DlgItem
@@ -646,10 +646,10 @@ public:
 	static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
 	LPCSTR GetText() { return text.String(); }
 	H3String *GetString() { return &text; }
-	void SetText(LPCSTR text) { _SetText(text); }
-	void DecreaseCaret() { caretPos--; }
-	void SetAutoredraw(BOOL on) { autoRedraw = on; }
-	void SetFocus(BOOL on = TRUE) { THISCALL_2(void, vTable->setFocus, this, on); }
+	VOID SetText(LPCSTR text) { _SetText(text); }
+	VOID DecreaseCaret() { caretPos--; }
+	VOID SetAutoredraw(BOOL on) { autoRedraw = on; }
+	VOID SetFocus(BOOL on = TRUE) { THISCALL_2(VOID, vTable->setFocus, this, on); }
 };
 
 struct H3DlgText : public H3DlgItem
@@ -668,7 +668,7 @@ protected:
 public:
 	static H3DlgText* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName = SMALL_TEXT, INT32 color = TEXT_REGULAR, INT32 id = 0, INT32 align = TA_HCenter | TA_VCenter, INT32 bkColor = 0);
 	H3String & GetH3String() { return text; }
-	void SetText(LPCSTR text) { _SetText(text); }
+	VOID SetText(LPCSTR text) { _SetText(text); }
 };
 
 struct H3DlgTextPcx : public H3DlgText
@@ -683,8 +683,8 @@ public:
 
 struct H3DlgHintBar : public H3DlgTextPcx
 {
-	void ShowHint(H3Msg *msg);
-	void ShowMessage(LPCSTR msg);
+	VOID ShowHint(H3Msg *msg);
+	VOID ShowMessage(LPCSTR msg);
 	static H3DlgHintBar * Create(H3Dlg * dlg);
 };
 
@@ -737,9 +737,9 @@ protected:
 public:
 	static H3DlgScrollbar* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc, BOOL isBlue, INT32 stepSize, BOOL arrowsEnabled);
 	INT32 GetTick() { return tick; }
-	void SetTick(INT32 index) { tick = index; }
-	void SetBigStep(INT32 step) { bigStepSize = step; } // used for pageup, pagedown
-	void SetButtonPosition() { btnPosition = sizeFree * tick / (ticksCount - 1) + btnSize2; }
+	VOID SetTick(INT32 index) { tick = index; }
+	VOID SetBigStep(INT32 step) { bigStepSize = step; } // used for pageup, pagedown
+	VOID SetButtonPosition() { btnPosition = sizeFree * tick / (ticksCount - 1) + btnSize2; }
 	BOOL IsHorizontal() { return widthItem > heightItem; }
 	INT32 GetRightButtonX() { return parent->GetX() + xPos + sizeMax - btnSize2; } // for horizontal scrollbar only!
 	INT32 GetHorizontalY() { return parent->GetY() + yPos; }
@@ -768,26 +768,26 @@ inline H3DlgItem * H3Dlg::GetH3DlgItem(UINT16 id)
 	return THISCALL_2(H3DlgItem*, 0x5FF5B0, this, id);
 }
 
-inline void H3Dlg::EnableItem(UINT16 id, BOOL enable)
+inline VOID H3Dlg::EnableItem(UINT16 id, BOOL enable)
 {
 	H3DlgItem *it = GetH3DlgItem(id);
 	if (it)
 		it->EnableItem(enable);
 }
 
-inline void H3Dlg::SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter)
+inline VOID H3Dlg::SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter)
 {
-	THISCALL_5(void, 0x5FF400, this, 0x200, command, itemID, parameter);
+	THISCALL_5(VOID, 0x5FF400, this, 0x200, command, itemID, parameter);
 }
 
-inline void H3Dlg::SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter)
+inline VOID H3Dlg::SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter)
 {
 	H3Msg msg;
 	msg.SetCommand(0x200, command, itemID, 0, 0, 0, parameter, 0);
-	THISCALL_2(void, 0x5FF3A0, this, &msg);
+	THISCALL_2(VOID, 0x5FF3A0, this, &msg);
 }
 
-inline void H3Dlg::AdjustToPlayerColor(INT8 player, UINT16 itemId)
+inline VOID H3Dlg::AdjustToPlayerColor(INT8 player, UINT16 itemId)
 {
 	if (H3DlgItem *it = GetH3DlgItem(itemId))
 		it->ColorToPlayer(player);
@@ -987,7 +987,7 @@ inline H3DlgScrollbar * H3Dlg::CreateScrollbar(INT32 x, INT32 y, INT32 width, IN
 	return sc;
 }
 
-inline void H3Dlg::PlaceAtMouse()
+inline VOID H3Dlg::PlaceAtMouse()
 {
 	int x, y;
 	F_GetCursorPosition(x, y);
@@ -1004,14 +1004,14 @@ inline void H3Dlg::PlaceAtMouse()
 	yDlg = y;
 }
 
-inline void H3Dlg::Start()
+inline VOID H3Dlg::Start()
 {
 	H3MouseManager *mmgr = H3Pointers::MouseManager();
 	INT32 mouseType = mmgr->GetType();
 	INT32 mouseFrame = mmgr->GetFrame();
 	mmgr->DefaultCursor();
 
-	THISCALL_2(void, vtable->runDlg, this, 0); // run H3Dlg
+	THISCALL_2(VOID, vtable->runDlg, this, 0); // run H3Dlg
 
 	mmgr->SetCursor(mouseType, mouseFrame); // restore previous cursor
 }
@@ -1292,17 +1292,17 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	return TRUE;
 }
 
-inline void H3Dlg::Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
+inline VOID H3Dlg::Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
 {
 	H3Pointers::WindowManager()->H3Redraw(xDlg + x, yDlg + y, dx, dy);
 }
 
-inline void H3Dlg::Redraw()
+inline VOID H3Dlg::Redraw()
 {
-	THISCALL_4(void, vtable->redrawDlg, this, TRUE, -65535, 65535);
+	THISCALL_4(VOID, vtable->redrawDlg, this, TRUE, -65535, 65535);
 }
 
-inline void H3Dlg::RedrawItem(UINT16 itemID)
+inline VOID H3Dlg::RedrawItem(UINT16 itemID)
 {
 	if (H3DlgItem *it = GetH3DlgItem(itemID))
 		it->Refresh();
@@ -1316,34 +1316,34 @@ inline H3DlgItem * H3DlgItem::Create(INT32 x, INT32 y, INT32 width, INT32 height
 	return d;
 }
 
-inline void H3DlgItem::ParentRedraw()
+inline VOID H3DlgItem::ParentRedraw()
 {
 	parent->Redraw(xPos, yPos, widthItem, heightItem);
 }
 
-inline void H3DlgItem::Draw()
+inline VOID H3DlgItem::Draw()
 {
-	THISCALL_1(void, vTable->draw, this);
+	THISCALL_1(VOID, vTable->draw, this);
 }
 
-inline void H3DlgItem::Refresh()
+inline VOID H3DlgItem::Refresh()
 {
 	parent->Redraw(xPos, yPos, widthItem, heightItem);
 }
 
-inline void H3DlgItem::ColorToPlayer(INT8 player) // for PCX
+inline VOID H3DlgItem::ColorToPlayer(INT8 player) // for PCX
 {
-	THISCALL_2(void, 0x4501D0, this, player);
+	THISCALL_2(VOID, 0x4501D0, this, player);
 }
 
-inline void H3DlgItem::SendCommand(INT32 command, INT32 parameter)
+inline VOID H3DlgItem::SendCommand(INT32 command, INT32 parameter)
 {
-	THISCALL_3(void, 0x5FED80, this, command, parameter);
+	THISCALL_3(VOID, 0x5FED80, this, command, parameter);
 }
 
-inline void H3DlgItem::_SetText(LPCSTR text)
+inline VOID H3DlgItem::_SetText(LPCSTR text)
 {
-	THISCALL_2(void, vTable->setText, this, text);
+	THISCALL_2(VOID, vTable->setText, this, text);
 }
 
 inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
@@ -1376,12 +1376,12 @@ inline H3DlgDef * H3DlgDef::Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame
 	return d;
 }
 
-inline void H3DlgDef::Copy(H3DlgDef * src)
+inline VOID H3DlgDef::Copy(H3DlgDef * src)
 {
 	F_memcpy(this, src, sizeof(H3DlgDef));
 }
 
-inline void H3DlgDef::ColorDefToPlayer(INT32 id)
+inline VOID H3DlgDef::ColorDefToPlayer(INT32 id)
 {
 	loadedDef->ColorToPlayer(id);
 }
@@ -1410,7 +1410,7 @@ inline H3DlgPcx * H3DlgPcx::Create(INT32 x, INT32 y, LPCSTR pcxName)
 	return Create(x, y, 0, pcxName);
 }
 
-inline void H3DlgPcx::Copy(H3DlgPcx * src)
+inline VOID H3DlgPcx::Copy(H3DlgPcx * src)
 {
 	F_memcpy(this, src, sizeof(H3DlgPcx));
 }
@@ -1549,7 +1549,7 @@ inline H3DlgCustomButton * H3DlgCustomButton::Create(INT32 x, INT32 y, LPCSTR de
 	return Create(x, y, 0, defName, customProc, frame, clickFrame);
 }
 
-inline void H3DlgCustomButton::ToggleFlag(BOOL & flag)
+inline VOID H3DlgCustomButton::ToggleFlag(BOOL & flag)
 {
 	defFrame = !defFrame;
 	defFrameOnClick = !defFrameOnClick;
@@ -1567,7 +1567,7 @@ inline H3DlgEdit * H3DlgEdit::Create(INT32 x, INT32 y, INT32 width, INT32 height
 	return e;
 }
 
-inline void H3Msg::SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2)
+inline VOID H3Msg::SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2)
 {
 	command = _command;
 	subtype = _subtype;
@@ -1579,7 +1579,7 @@ inline void H3Msg::SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, IN
 	flags2 = _flags2;
 }
 
-inline void H3Msg::SetCommand(INT32 cmd, INT32 param)
+inline VOID H3Msg::SetCommand(INT32 cmd, INT32 param)
 {
 	SetCommand(0x200, cmd, 0, 0, 0, 0, param, 0);
 }
@@ -1589,7 +1589,7 @@ inline H3DlgItem * H3Msg::ItemAtPosition(H3Dlg * dlg)
 	return THISCALL_3(H3DlgItem*, 0x5FF9A0, dlg, x_abs, y_abs);
 }
 
-inline void H3DlgHintBar::ShowHint(H3Msg *msg)
+inline VOID H3DlgHintBar::ShowHint(H3Msg *msg)
 {
 	H3DlgItem *di;
 	if (msg->command == H3Msg::MC_MouseOver)
@@ -1607,7 +1607,7 @@ inline void H3DlgHintBar::ShowHint(H3Msg *msg)
 	}
 }
 
-inline void H3DlgHintBar::ShowMessage(LPCSTR msg)
+inline VOID H3DlgHintBar::ShowMessage(LPCSTR msg)
 {
 	SetText(msg);
 	Draw();

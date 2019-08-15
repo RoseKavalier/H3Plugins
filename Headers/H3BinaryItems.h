@@ -77,7 +77,7 @@ struct H3BinTreeList
 {
 	h3unk _f0[4];
 	// * +4
-	void *postLastItem;
+	PVOID postLastItem;
 	h3unk _f8[4];
 	INT32 count;
 
@@ -118,7 +118,7 @@ protected:
 	// * +18
 	INT32 ref; // the number of times it is being used
 
-	void Dereference() { THISCALL_1(void, vTable->dereference, this); }
+	VOID Dereference() { THISCALL_1(VOID, vTable->dereference, this); }
 };
 
 ///////////////////////////////////////////////////
@@ -155,7 +155,7 @@ public:
 	H3Vector<H3Vector<LPCSTR>*> & GetText() { return text; }
 	INT32 CountRows() { return text.Count(); }
 	static H3TextFile* Load(LPCSTR name) { return THISCALL_1(H3TextFile*, 0x55C2B0, name); }
-	void UnLoad() { THISCALL_1(void, vTable->dereference, this); }
+	VOID UnLoad() { THISCALL_1(VOID, vTable->dereference, this); }
 };
 
 struct H3RGB888
@@ -173,7 +173,7 @@ public:
 	UINT8 GetRed() { return (bits & 0x7C00) >> 10; }
 	UINT8 GetGreen() { return (bits & 0x3E0) >> 5; }
 	UINT8 GetBlue() { return bits & 0x1F; }
-	void PackRGB(UINT8 r, UINT8 g, UINT8 b) { bits = (r & 0x1F) << 10 | (g & 0x1F) << 5 | (b & 0x1F); }
+	VOID PackRGB(UINT8 r, UINT8 g, UINT8 b) { bits = (r & 0x1F) << 10 | (g & 0x1F) << 5 | (b & 0x1F); }
 	DWORD UnPack() { return GetRed() << 16 | GetGreen() << 8 | GetBlue(); }
 };
 
@@ -199,7 +199,7 @@ struct H3Palette565 : public H3BinaryItem
 	// * +1C
 	H3RGB565 color[256];
 
-	void ColorToPlayer(INT id) { FASTCALL_2(void, 0x6003E0, this, id); }
+	VOID ColorToPlayer(INT id) { FASTCALL_2(VOID, 0x6003E0, this, id); }
 };
 
 struct H3Font : public H3BinaryItem
@@ -226,7 +226,7 @@ struct H3Palette888 : public H3BinaryItem
 	// * +1C
 	H3RGB888 color[256];
 
-	void ColorToPlayer(INT id) { FASTCALL_2(void, 0x600400, this, id); }
+	VOID ColorToPlayer(INT id) { FASTCALL_2(VOID, 0x600400, this, id); }
 };
 
 struct H3LoadedPCX : public H3BinaryItem // size 0x56C
@@ -249,9 +249,9 @@ struct H3LoadedPCX : public H3BinaryItem // size 0x56C
 	// * +250
 	H3Palette888 palette888;
 
-	void DrawToPcx16(int srcX, int srcY, int dx, int dy, H3LoadedPCX16 *drawMan, int x, int y, int transparent)
+	VOID DrawToPcx16(int srcX, int srcY, int dx, int dy, H3LoadedPCX16 *drawMan, int x, int y, int transparent)
 	{
-		THISCALL_9(void, 0x44FA80, this, srcX, srcY, dx, dy, drawMan, x, y, transparent);
+		THISCALL_9(VOID, 0x44FA80, this, srcX, srcY, dx, dy, drawMan, x, y, transparent);
 	}
 
 	static H3LoadedPCX* Load(LPCSTR name) { return THISCALL_1(H3LoadedPCX*, 0x55AA10, name); }
@@ -277,9 +277,9 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
 	{
 		return THISCALL_4(H3LoadedPCX16*, 0x44DD20, this, name, width, height);
 	}
-	void DrawToPcx16(INT x, INT y, BOOL transparent, H3LoadedPCX16 *dest, INT srcX = 0, INT srcY = 0)
+	VOID DrawToPcx16(INT x, INT y, BOOL transparent, H3LoadedPCX16 *dest, INT srcX = 0, INT srcY = 0)
 	{
-		return THISCALL_12(void, 0x44DF80, this, srcX, srcY, width, height, dest->buffer, x,y, dest->width, dest->height, dest->scanlineSize, transparent);
+		return THISCALL_12(VOID, 0x44DF80, this, srcX, srcY, width, height, dest->buffer, x,y, dest->width, dest->height, dest->scanlineSize, transparent);
 	}
 	static H3LoadedPCX16* Load(LPCSTR name) { return THISCALL_1(H3LoadedPCX16*, 0x55B1E0, name); }
 };
@@ -301,9 +301,9 @@ struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
 	{
 		return THISCALL_6(H3LoadedPCX24*, 0x44EA20, this, name, width, height, palette, bufferSize);
 	}
-	void DrawToPcx16(INT x, INT y, H3LoadedPCX16 *dest, INT srcX = 0, INT srcY = 0)
+	VOID DrawToPcx16(INT x, INT y, H3LoadedPCX16 *dest, INT srcX = 0, INT srcY = 0)
 	{
-		return THISCALL_11(void, 0x44ECE0, this, srcX, srcY, width, height, buffer, x, y, dest->width, dest->height, dest->scanlineSize);
+		return THISCALL_11(VOID, 0x44ECE0, this, srcX, srcY, width, height, buffer, x, y, dest->width, dest->height, dest->scanlineSize);
 	}
 };
 
@@ -366,19 +366,19 @@ struct H3LoadedDEF : public H3BinaryItem
 	INT32 heightDEF;
 
 	static H3LoadedDEF* Load(LPCSTR name) { return THISCALL_1(H3LoadedDEF*, 0x55C9C0, name); }
-	void AddFrameFromDef(LPCSTR source, INT32 index);
-	void ColorToPlayer(INT32 id);
+	VOID AddFrameFromDef(LPCSTR source, INT32 index);
+	VOID ColorToPlayer(INT32 id);
 
-	void DrawTransparent(INT32 frame, H3LoadedPCX16 *pcx, INT32 x, INT32 y, BOOL transparent = TRUE, BOOL mirror = FALSE, INT32 group = 0, INT32 xFromRight = 0, INT32 yFromBottom = 0)
+	VOID DrawTransparent(INT32 frame, H3LoadedPCX16 *pcx, INT32 x, INT32 y, BOOL transparent = TRUE, BOOL mirror = FALSE, INT32 group = 0, INT32 xFromRight = 0, INT32 yFromBottom = 0)
 	{
-		THISCALL_15(void, 0x47BA90, this, group, frame, xFromRight, yFromBottom, widthDEF, heightDEF, pcx->buffer, x, y, pcx->width, pcx->height, pcx->scanlineSize, mirror, transparent);
+		THISCALL_15(VOID, 0x47BA90, this, group, frame, xFromRight, yFromBottom, widthDEF, heightDEF, pcx->buffer, x, y, pcx->width, pcx->height, pcx->scanlineSize, mirror, transparent);
 	}
 };
 
 #pragma pack(pop)
 
 
-inline void H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
+inline VOID H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 {
 	H3LoadedDEF *src = H3LoadedDEF::Load(source);
 	if (!src)
@@ -412,7 +412,7 @@ inline void H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 	src->Dereference(); // get rid of source
 }
 
-inline void H3LoadedDEF::ColorToPlayer(INT32 id)
+inline VOID H3LoadedDEF::ColorToPlayer(INT32 id)
 {
 	palette565->ColorToPlayer(id);
 	palette888->ColorToPlayer(id);

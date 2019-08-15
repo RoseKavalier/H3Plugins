@@ -162,31 +162,31 @@ public:
 	// * returns z from coordinates
 	UINT8 GetZ() { return UnpackZ(pos); }
 	// * provided variables x, y, z, unpacks the coordinates to those variables
-	void GetXYZ(INT &x, INT &y, INT &z) { UnpackXYZ(pos, x, y, z); }
+	VOID GetXYZ(INT &x, INT &y, INT &z) { UnpackXYZ(pos, x, y, z); }
 	// * modifies x
-	void SetX(INT16 x)
+	VOID SetX(INT16 x)
 	{
 		pos &= ~0x3FF;
 		pos |= (x & 0x3FF);
 	}
 	// * modifies y
-	void SetY(INT16 y)
+	VOID SetY(INT16 y)
 	{
 		pos &= ~0x03FF0000;
 		pos |= ((y & 0x3FF) << 16);
 	}
 	// * modifies z
-	void SetZ(INT16 z)
+	VOID SetZ(INT16 z)
 	{
 		pos &= ~0x04000000;
 		pos |= ((z & 1) << 26);
 	}
 	// * modifies x, y and z
-	void SetXYZ(INT x, INT y, INT z) { pos = Pack(x, y, z); }
+	VOID SetXYZ(INT x, INT y, INT z) { pos = Pack(x, y, z); }
 	// * Can be used on the stack safely to pack coordinates
 	static UINT Pack(INT x, INT y, INT z) { return ((x & 0x3FF) | ((y & 0x3FF) << 0x10) | ((z & 1) << 0x1A)); }
 	// * Can be used on the stack safely to unpack coordinates
-	static void UnpackXYZ(UINT &coord, INT &x, INT &y, INT &z)
+	static VOID UnpackXYZ(UINT &coord, INT &x, INT &y, INT &z)
 	{
 		x = UnpackX(coord);
 		y = UnpackY(coord);
@@ -439,9 +439,9 @@ struct H3Resources
 	// * returns true if every current value is greater or equal
 	BOOL EnoughResources(H3Resources *cost);
 	// * removes cost resources from current
-	void RemoveResources(H3Resources *cost);
+	VOID RemoveResources(H3Resources *cost);
 	// * adds resources to current
-	void GainResourcesOF(H3Resources *gain);
+	VOID GainResourcesOF(H3Resources *gain);
 };
 
 // * The arrangment of 7 creatures on various H3 structures
@@ -451,10 +451,10 @@ struct H3Army
 	INT32 count[7];
 
 	// * add amount creature of type to slot
-	void AddStack(INT32 type, INT32 amount, INT32 slot) { THISCALL_4(void, 0x44A9B0, this, type, amount, slot); }
+	VOID AddStack(INT32 type, INT32 amount, INT32 slot) { THISCALL_4(VOID, 0x44A9B0, this, type, amount, slot); }
 	// * Split fromStack based on fraction denominator to toStack
 	// * fraction = 2 cuts in half
-	void SplitFromStackToStack(INT32 fromStack, INT32 toStack, INT32 fraction);
+	VOID SplitFromStackToStack(INT32 fromStack, INT32 toStack, INT32 fraction);
 	// * the first type[] index to hold no creature
 	INT32 FirstFreeSlot();
 	// * the slot position of the n-th existing stack
@@ -468,11 +468,11 @@ struct H3Army
 	// * not empty
 	BOOL HasCreatures() { return THISCALL_1(BOOL, 0x449370, this); }
 	// * remove all contents
-	void Clear() { THISCALL_1(void, 0x44A750, this); }
+	VOID Clear() { THISCALL_1(VOID, 0x44A750, this); }
 	// * clear contents of stack #0-6
-	void Clear(INT stack) { THISCALL_2(void, 0x44A830, this, stack); }
+	VOID Clear(INT stack) { THISCALL_2(VOID, 0x44A830, this, stack); }
 	// * removes contents and gives creatures
-	void ClearAndGive(INT type, INT count) { THISCALL_3(void, 0x44A770, this, type, count); }
+	VOID ClearAndGive(INT type, INT count) { THISCALL_3(VOID, 0x44A770, this, type, count); }
 	// * checks if all stacks are flagged as undead
 	BOOL8 IsUndeadArmy() { return THISCALL_1(BOOL8, 0x44A7F0, this); }
 	// * the number of different creature alignments in an army
@@ -923,15 +923,15 @@ protected:
 	UINT8  _u8[24];
 public:
 	// * calculates maximum daily movement on land
-	INT32 MaxLandMovement(void) { return THISCALL_2(INT32, 0x4E4C00, this, 0); }
+	INT32 MaxLandMovement(VOID) { return THISCALL_2(INT32, 0x4E4C00, this, 0); }
 	// * calculates maximum daily movement on water
-	INT32 MaxWaterMovement(void) { return THISCALL_2(INT32, 0x4E4C00, this, 1); }
+	INT32 MaxWaterMovement(VOID) { return THISCALL_2(INT32, 0x4E4C00, this, 1); }
 	// * calculates maximum daily movement automatically
-	INT32 CalcMaxMovement(void) { return THISCALL_1(INT32, 0x4E5000, this); }
+	INT32 CalcMaxMovement(VOID) { return THISCALL_1(INT32, 0x4E5000, this); }
 	// * give an artifact by reference
-	void GiveArtifact(H3Artifact *art, INT32 slot) { THISCALL_3(void, 0x4E2C70, this, art, slot); }
+	VOID GiveArtifact(H3Artifact *art, INT32 slot) { THISCALL_3(VOID, 0x4E2C70, this, art, slot); }
 	// * learn secondary skill by given increase
-	void LearnSecondarySkill(INT32 id, INT32 increase) { return THISCALL_3(void, 0x4E52F0, this, id, increase); }
+	VOID LearnSecondarySkill(INT32 id, INT32 increase) { return THISCALL_3(VOID, 0x4E52F0, this, id, increase); }
 	// * returns effect (none, basic, ... expert) of a spell on a given terrain
 	INT32 GetSpellExpertise(INT32 spell_id, INT32 special_terrain) { return THISCALL_3(INT32, 0x4E52F0, this, spell_id, special_terrain); }
 	// * does this hero own creature of type...?
@@ -945,15 +945,15 @@ public:
 	// * combined effects of a spell on a creature
 	INT32 GetRealSpellDamage(INT32 baseDamage, H3CombatMonster *mon, INT32 spellID, H3Hero *enemy);
 	// * checks under the hero for special terrain
-	INT32 GetSpecialTerrain(void) { return THISCALL_1(INT32, 0x4E5130, this); }
+	INT32 GetSpecialTerrain(VOID) { return THISCALL_1(INT32, 0x4E5130, this); }
 	// * checks if hero has access to a spell
 	BOOL HasSpell(INT32 spell) { return learned_spell[spell] | available_spell[spell]; }
 	// * attempts to combine body artifacts into combo
-	void BuildCombinationArtifact(INT32 combo_id) { THISCALL_3(void, 0x4DC1A0, this, combo_id, -1); }
+	VOID BuildCombinationArtifact(INT32 combo_id) { THISCALL_3(VOID, 0x4DC1A0, this, combo_id, -1); }
 	// * hero loses skill of id
 	BOOL UnlearnSkill(INT32 id);
 	// * forces recalculation of movement costs on the adventure map
-	void RecalculateMovement();
+	VOID RecalculateMovement();
 	// * is it possible to move to where hero is standing?
 	BOOL8 CanFlyOnTile() { return THISCALL_1(BOOL8, 0x4E5F50, this); }
 	// * how much movement points it costs to move to given mixedPos
@@ -1845,8 +1845,8 @@ public:
 	H3Vector<INT32> artifacts;
 
 	BOOL HasUpgradedStack() { return guardians.type[0] != guardians.type[2]; }
-	void SetupBank(int type, int level);
-	void UpgradeStack(BOOL upg);
+	VOID SetupBank(int type, int level);
+	VOID UpgradeStack(BOOL upg);
 };
 
 // * CRBanks.txt converted in memory, single bank state
@@ -1925,24 +1925,6 @@ struct H3ValidCatapultTargets
 		FE_LOWER_TWR_CVR,
 		FE_UPPER_TWR_CVR
 	};
-};
-
-// * Cranim.txt
-struct H3MonsterAnimation
-{
-	INT16 UpperRightMissileOffsetX;
-	INT16 UpperRightMissileOffsetY;
-	INT16 RightMissileOffsetX;
-	INT16 RightMissileOffsetY;
-	INT16 LowerRightMissileOffsetX;
-	INT16 LowerRightMissileOffsetY;
-	float MissileFrameAngles[12];
-	INT32 TroopCountLocationOffset;
-	INT32 AttackClimaxFrame;
-	INT32 TimeBetweenFidgets;
-	INT32 WalkAnimationTime;
-	INT32 AttackAnimationTime;
-	INT32 FlightAnimationDistance;
 };
 
 // * town wall data
@@ -2285,7 +2267,7 @@ struct H3CreatureInformation
 	INT32  advMapHigh;
 
 	LPCSTR GetCreatureName(INT32 count) { return count > 1 ? namePlural : nameSingular; }
-	void UpgradeCost(H3Resources *res, H3CreatureInformation *upg, INT32 count);
+	VOID UpgradeCost(H3Resources *res, H3CreatureInformation *upg, INT32 count);
 };
 
 // * a substructure of H3CombatMonster related to spells
@@ -2333,6 +2315,31 @@ struct H3CombatMonsterSpellsData
 	INT32 Hypnotize_528;
 	INT32 Hypnotize_52C;
 	h3unk _f_530[24];
+};
+
+// * Cranim.txt
+struct H3MonsterAnimation
+{
+	enum eMissiles
+	{
+		M_UPPER_RIGHT,
+		M_RIGHT,
+		M_LOWER_RIGHT
+	};
+
+	struct H3MissileOffets
+	{
+		INT16 offset_x;
+		INT16 offset_y;
+	}missiles[3];
+
+	INT32 missile_frame_angles[12]; // from high to low (90 to -90)
+	INT32 troop_count_location_offset;
+	INT32 attack_climax_frame;
+	INT32 time_between_fidgets;
+	INT32 walk_animation_time;
+	INT32 attack_animation_time;
+	INT32 flight_animation_time;
 };
 
 // * monster information on battlefield
@@ -2393,25 +2400,41 @@ public:
 	// * +F4
 	// * left or right
 	INT32 side;
+	// * +F8
 	//  * reference to position on side
 	INT32 sideIndex;
 protected:
-	h3unk _f_0FC[4];
+	// * +FC
+	UINT32 last_animation_time;
+	// * +100
 	INT32 yOffset;
+	// * +104
 	INT32 xOffset;
-	h3unk _f_108[92];
+	h3unk _f_108[8];
+	// * +110 from cranim
+	H3MonsterAnimation cranim;
 	// * +164
 	H3LoadedDEF *def;
 	// * +168
 	H3LoadedDEF *shootingDef;
 	h3unk _f_16C[4];
+	// * +170
 	UINT32 moveSound;
+	// * +174
 	UINT32 attackSound;
+	// * +178
 	UINT32 getHitSound;
+	// * +17C
 	UINT32 shotSound;
+	// * +180
 	UINT32 deathSound;
+	// * +184
 	UINT32 defendSound;
-	h3unk _f_188[12];
+	// * +188
+	UINT32 extraSound1;
+	// * +18C
+	UINT32 extraSound2;
+	h3unk _f_190[4];
 public:
 	// * +194
 	// * the number of spells currently active
@@ -2448,7 +2471,7 @@ public:
 	// * index 0 ~ 41
 	INT32 Index() { return sideIndex + 21 * side; }
 	// * show creature information dialog
-	void ShowStatsDialog(BOOL RightClick);
+	VOID ShowStatsDialog(BOOL RightClick);
 	// * Checks if hypnotized
 	INT32 GetSide() { return THISCALL_1(INT, 0x43FE60, this); }
 	// * Checks if hypnotized
@@ -2566,7 +2589,7 @@ struct H3Quest
 		INT32 bePlayer;					// visit as a certain player
 	} data;
 
-	INT32 GetQuestType(void) { return (this ? ((DWORD)vTable - 0x641798) / 0x3C + 1 : 0); }
+	INT32 GetQuestType(VOID) { return (this ? ((DWORD)vTable - 0x641798) / 0x3C + 1 : 0); }
 };
 
 // * quest guard is a quest plus a byte to show who visited
@@ -2694,8 +2717,8 @@ public:
 	H3Vector<H3ObjectAttributes> objectLists[232];
 
 	H3MapItem* GetMapItem(int x, int y, int z) { return THISCALL_4(H3MapItem*, 0x4086D0, this, x, y, z); }
-	void DrawItem(H3MapItem *mitem, H3ObjectDraw *draw) { THISCALL_3(void, 0x505880, this, mitem, draw); }
-	void AddObjectAttribute(H3ObjectAttributes * oa);
+	VOID DrawItem(H3MapItem *mitem, H3ObjectDraw *draw) { THISCALL_3(VOID, 0x505880, this, mitem, draw); }
+	VOID AddObjectAttribute(H3ObjectAttributes * oa);
 };
 
 // from WoG sources
@@ -2727,7 +2750,7 @@ struct H3CampaignInfo
 	H3Vector<UINT32> CampaignMapInfo;
 	h3unk _f_6C;
 	h3unk _f_6D[3];
-	void *SomeCrossoverInfoStructs;
+	VOID *SomeCrossoverInfoStructs;
 	h3unk _f_74[8];
 };
 
@@ -2912,7 +2935,7 @@ struct H3Boat // size 0x28 from 0x4CE5C0
 	INT8 has_hero; //24h
 	h3unk _f_25[3];
 };
-
+#include <WTypes.h>
 // * how h3combatmonster is represented during quick combat
 struct H3QuickBattleCreatures
 {
@@ -2951,7 +2974,7 @@ struct H3AIQuickBattle
 	h3unk _f_31;
 	INT16 turretsLevel;
 
-	void DeleteCreatures() { THISCALL_2(void, 0x424880, this, 1); }
+	VOID DeleteCreatures() { THISCALL_2(VOID, 0x424880, this, 1); }
 };
 
 // * access data about objects on the adventure map
@@ -2959,7 +2982,7 @@ struct H3GlobalObjectSettings
 {
 	BOOL8 cannotEnter; // +0
 	BOOL8 exitTop; // +1
-	UINT8 canBeRemoved; // used at0x548362
+	UINT8 canBeRemoved; // used at 0x548362
 	h3unk _align; // probably alignment. All objects 0
 	LPCSTR objectName;
 	INT32 objectID;
@@ -3144,7 +3167,7 @@ protected:
 public:
 	// * +20AD0
 	H3Player players[8];
-	// * +
+	// * +21610
 	H3Vector<H3Town> towns;
 	// * +21620
 	H3Hero heroes[156];
@@ -3219,10 +3242,10 @@ public: // functions
 	H3Player *GetPlayer() { return THISCALL_1(H3Player*, 0x4CE670, this); }
 	INT32 GetPlayerID() { return THISCALL_1(INT32, 0x4CE6E0, this); }
 	H3Hero *GetHero(INT32 id) { return THISCALL_2(H3Hero*, 0x4317D0, this, id); }
-	void ResetRandomArtifacts() { memset(randomArtifacts, 0, sizeof(randomArtifacts)); }
+	VOID ResetRandomArtifacts() { memset(randomArtifacts, 0, sizeof(randomArtifacts)); }
 	INT32 GetRandomArtifactOfLevel(INT32 level) { return THISCALL_2(INT32, 0x4C9190, this, level); }
-	void SaveGame(LPCSTR save_name) { THISCALL_6(void, 0x4BEB60, this, save_name, 1, 1, 1, 0); }
-	void PlaceObjectOnMap(int x, int y, int z, int type, int subtype, int setup = -1) { THISCALL_7(void, 0x4C9550, this, x, y, z, type, subtype, setup); }
+	VOID SaveGame(LPCSTR save_name) { THISCALL_6(VOID, 0x4BEB60, this, save_name, 1, 1, 1, 0); }
+	VOID PlaceObjectOnMap(int x, int y, int z, int type, int subtype, int setup = -1) { THISCALL_7(VOID, 0x4C9550, this, x, y, z, type, subtype, setup); }
 };
 
 // * size 38h
@@ -3244,8 +3267,8 @@ protected:
 	INT32 nameEnd; // 0x30
 	h3unk _f_34[4];
 public:
-	void SetPreviousManager(H3Manager *prev) { parent = prev; }
-	void SetNextManager(H3Manager *next) { child = next; }
+	VOID SetPreviousManager(H3Manager *prev) { parent = prev; }
+	VOID SetNextManager(H3Manager *next) { child = next; }
 };
 
 // * the manager of managers
@@ -3255,7 +3278,7 @@ struct H3Executive
 	H3Manager *next;
 	h3unk _f_08[8];
 
-	void RemoveManager(H3Manager *mgr) { THISCALL_2(void, 0x4B0950, this, mgr); }
+	VOID RemoveManager(H3Manager *mgr) { THISCALL_2(VOID, 0x4B0950, this, mgr); }
 };
 
 // * This removes the following warning when using enum
@@ -3355,13 +3378,13 @@ public:
 		BFC_Teleport
 	};
 
-	void TurnOn() { THISCALL_2(void, 0x50D7B0, this, 1); }
-	void TurnOff() { THISCALL_2(void, 0x50D7B0, this, 0); }
+	VOID TurnOn() { THISCALL_2(VOID, 0x50D7B0, this, 1); }
+	VOID TurnOff() { THISCALL_2(VOID, 0x50D7B0, this, 0); }
 	INT32 GetType() { return cursorType; }
 	INT32 GetFrame() { return cursorFrame; }
-	void SetCursor(INT32 type, INT32 frame) { THISCALL_3(void, 0x50CEA0, this, frame, type); }
-	void DefaultCursor() { SetCursor(0, 0); }
-	void SetArtifactCursor(INT32 art_id) { SetCursor(art_id, H3MouseCursorType::Cursor_Artifact); }
+	VOID SetCursor(INT32 type, INT32 frame) { THISCALL_3(VOID, 0x50CEA0, this, frame, type); }
+	VOID DefaultCursor() { SetCursor(0, 0); }
+	VOID SetArtifactCursor(INT32 art_id) { SetCursor(art_id, H3MouseCursorType::Cursor_Artifact); }
 };
 
 // * named heroWindowManager in H3, abbreviated
@@ -3384,7 +3407,7 @@ public:
 		H3ID_CANCEL = 30726
 	};
 
-	void H3Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy) { THISCALL_5(void, 0x603190, this, x, y, dx, dy); }
+	VOID H3Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy) { THISCALL_5(VOID, 0x603190, this, x, y, dx, dy); }
 	UINT32 ClickedItemID() { return resultItemID; }
 	BOOL ClickedOK() { return resultItemID == H3ClickIDs::H3ID_OK; }
 	BOOL ClickedCancel() { return resultItemID == H3ClickIDs::H3ID_CANCEL; }
@@ -3400,7 +3423,7 @@ struct H3SoundManager : public H3Manager
 	INT32 clickSoundVar; // +84
 	h3unk _f_88[8];
 	_RTL_CRITICAL_SECTION rtlSection[3];
-	void ClickSound(); // modeled after sub_00456540
+	VOID ClickSound(); // modeled after sub_00456540
 };
 
 // * in charge of the adventure map
@@ -3531,14 +3554,14 @@ public:
 	UINT8 GetX() { return mousePosition.GetX(); }
 	UINT8 GetY() { return mousePosition.GetY(); }
 	UINT8 GetZ() { return mousePosition.GetZ(); }
-	void FullUpdate() { THISCALL_3(void, 0x417380, this, 1, 0); }
-	void MobilizeHero() { THISCALL_4(void, 0x417540, this, 0, 0, 0); }
-	void DemobilizeHero() { return THISCALL_3(void, 0x4175E0, this, 0, 0); }
-	/*void MovementCalculationsMouse(void) { THISCALL_2(void, 0x419400, this, mousePosition.mixed); }*/
-	void MovementCalculationsMouse(void) { THISCALL_2(void, 0x419400, this, mousePosition.Mixed()); }
-	void MovementCalculations(UINT32 mixedPosition) { THISCALL_2(void, 0x419400, this, mixedPosition); }
-	void MakeHeroPath() { THISCALL_4(void, 0x418D30, this, 1, 1, 1); }
-	void ShowCoordinates(INT32 x, INT32 y, INT8 z);
+	VOID FullUpdate() { THISCALL_3(VOID, 0x417380, this, 1, 0); }
+	VOID MobilizeHero() { THISCALL_4(VOID, 0x417540, this, 0, 0, 0); }
+	VOID DemobilizeHero() { return THISCALL_3(VOID, 0x4175E0, this, 0, 0); }
+	/*VOID MovementCalculationsMouse(VOID) { THISCALL_2(VOID, 0x419400, this, mousePosition.mixed); }*/
+	VOID MovementCalculationsMouse(VOID) { THISCALL_2(VOID, 0x419400, this, mousePosition.Mixed()); }
+	VOID MovementCalculations(UINT32 mixedPosition) { THISCALL_2(VOID, 0x419400, this, mixedPosition); }
+	VOID MakeHeroPath() { THISCALL_4(VOID, 0x418D30, this, 1, 1, 1); }
+	VOID ShowCoordinates(INT32 x, INT32 y, INT8 z);
 	INT SimulateMouseOver(INT x, INT y) { return THISCALL_3(int, 0x40E2C0, this, x, y); }
 	INT SimulateMouseOver(POINT & p) { return SimulateMouseOver(p.x, p.y); }
 };
@@ -3598,8 +3621,8 @@ protected:
 	h3unk _f_1C4[4];
 	h3unk _f_1C8[16];
 public:
-	void Draw() { THISCALL_1(void, 0x5D5930, this); }
-	void RefreshScreen() { THISCALL_1(void, 0x5D5810, this); }
+	VOID Draw() { THISCALL_1(VOID, 0x5D5930, this); }
+	VOID RefreshScreen() { THISCALL_1(VOID, 0x5D5810, this); }
 };
 
 // * keyboard and mouse input
@@ -3923,25 +3946,25 @@ protected:
 	h3unk _f_14000[268];
 public:
 	// functions
-	void SimulateMouseAtHex(int hex_id) { return THISCALL_2(void, 0x477550, this, hex_id); }
+	VOID SimulateMouseAtHex(int hex_id) { return THISCALL_2(VOID, 0x477550, this, hex_id); }
 	BOOL8 CanCastSpellAtCoord(int spell_id, int spell_expertise, int coordinates)
 	{
 		return THISCALL_7(BOOL8, 0x5A3CD0, this, spell_id, spell_expertise, coordinates, currentActiveSide, 1, 0);
 	}
-	void WinBattle(void) { return THISCALL_2(void, 0x468F80, this, 1 - currentActiveSide); }
-	void LoadSpell(INT32 spell_id) { return THISCALL_3(void, 0x59EF60, this, spell_id, 0); }
-	void CastSpell(int spell_id, int hex_ix, int cast_type_012, int hex2_ix, int skill_level, int spell_power)
+	VOID WinBattle(VOID) { return THISCALL_2(VOID, 0x468F80, this, 1 - currentActiveSide); }
+	VOID LoadSpell(INT32 spell_id) { return THISCALL_3(VOID, 0x59EF60, this, spell_id, 0); }
+	VOID CastSpell(int spell_id, int hex_ix, int cast_type_012, int hex2_ix, int skill_level, int spell_power)
 	{
-		THISCALL_7(void, 0x5A0140, this, spell_id, hex_ix, cast_type_012, hex2_ix, skill_level, spell_power);
+		THISCALL_7(VOID, 0x5A0140, this, spell_id, hex_ix, cast_type_012, hex2_ix, skill_level, spell_power);
 	}
 	H3CombatMonster *GetResurrectionTarget(INT32 coordinate) { return THISCALL_4(H3CombatMonster*, 0x5A3FD0, this, currentActiveSide, coordinate, 0); }
 	H3CombatMonster *GetAnimateDeadTarget(INT32 coordinate) { return THISCALL_3(H3CombatMonster*, 0x5A4260, this, currentActiveSide, coordinate); }
-	int NextCreatureToMove(void) { return THISCALL_2(int, 0x464C60, this, 1); }
-	BOOL8 IsHiddenBattle(void) { return THISCALL_1(BOOL8, 0x46A080, this); }
-	BOOL8 IsBattleOver(void) { return THISCALL_1(BOOL8, 0x465410, this); }
-	void Refresh() { Refresh(1, 0, 1); }
-	void Refresh(BOOL redrawScreen, INT timeDelay, BOOL redrawBackground) { THISCALL_7(void, 0x493FC0, this, redrawScreen, 0, 0, timeDelay, redrawBackground, 0); }
-	void ShadeSquare(int index);
+	int NextCreatureToMove(VOID) { return THISCALL_2(int, 0x464C60, this, 1); }
+	BOOL8 IsHiddenBattle(VOID) { return THISCALL_1(BOOL8, 0x46A080, this); }
+	BOOL8 IsBattleOver(VOID) { return THISCALL_1(BOOL8, 0x465410, this); }
+	VOID Refresh() { Refresh(1, 0, 1); }
+	VOID Refresh(BOOL redrawScreen, INT timeDelay, BOOL redrawBackground) { THISCALL_7(VOID, 0x493FC0, this, redrawScreen, 0, 0, timeDelay, redrawBackground, 0); }
+	VOID ShadeSquare(int index);
 	BOOL8 IsHumanTurn() { return isHuman[currentActiveSide]; }
 };
 
@@ -4019,7 +4042,7 @@ inline BOOL H3Hero::UnlearnSkill(INT32 id)
 	return FALSE;
 }
 
-inline void H3Hero::RecalculateMovement()
+inline VOID H3Hero::RecalculateMovement()
 {
 	H3AdventureManager *adv = H3Pointers::AdventureManager();
 	adv->movementCalculated = 0;
@@ -4063,7 +4086,7 @@ inline INT32 H3Hero::SSkillsLeftToLearn()
 	return skills_can_be_learned - 1; // -1 because it's already included in formula for level to go to
 }
 
-inline void H3Army::SplitFromStackToStack(INT32 fromStack, INT32 toStack, INT32 fraction)
+inline VOID H3Army::SplitFromStackToStack(INT32 fromStack, INT32 toStack, INT32 fraction)
 {
 	INT32 num = count[fromStack] / fraction;
 	count[fromStack] -= num;
@@ -4099,7 +4122,7 @@ inline INT32 H3Army::FindExistingByIndex(INT32 index)
 	return -1;
 }
 
-inline void H3CreatureInformation::UpgradeCost(H3Resources * res, H3CreatureInformation * upg, INT32 count)
+inline VOID H3CreatureInformation::UpgradeCost(H3Resources * res, H3CreatureInformation * upg, INT32 count)
 {
 	res->wood = (upg->cost.wood - cost.wood) * count;
 	res->mercury = (upg->cost.mercury - cost.mercury) * count;
@@ -4135,7 +4158,7 @@ inline BOOL H3Resources::EnoughResources(H3Resources * cost)
 	return r;
 }
 
-inline void H3Resources::RemoveResources(H3Resources * cost)
+inline VOID H3Resources::RemoveResources(H3Resources * cost)
 {
 	wood -= cost->wood;
 	mercury -= cost->mercury;
@@ -4146,7 +4169,7 @@ inline void H3Resources::RemoveResources(H3Resources * cost)
 	gold -= cost->gold;
 }
 
-inline void H3Resources::GainResourcesOF(H3Resources * gain)
+inline VOID H3Resources::GainResourcesOF(H3Resources * gain)
 {
 	int *This = (int*)this;
 	int *Gain = (int*)gain;
@@ -4172,7 +4195,7 @@ inline void H3Resources::GainResourcesOF(H3Resources * gain)
 	}
 }
 
-inline void H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
+inline VOID H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
 {
 	if (x >= 0 && x < h3_MapSize && y >= 0 && y < h3_MapSize)
 	{
@@ -4182,7 +4205,7 @@ inline void H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
 	}
 }
 
-inline void H3CombatManager::ShadeSquare(int index)
+inline VOID H3CombatManager::ShadeSquare(int index)
 {
 	if (index < 0 || index > 187)
 		return;
@@ -4190,18 +4213,18 @@ inline void H3CombatManager::ShadeSquare(int index)
 	CCellShdPcx->DrawToPcx16(0, 0, 0x2D, 0x34, drawBuffer, sq->left, sq->top, TRUE); // copied from 0x4935B9 and below
 }
 
-inline void H3CombatMonster::ShowStatsDialog(BOOL RightClick)
+inline VOID H3CombatMonster::ShowStatsDialog(BOOL RightClick)
 {
-	THISCALL_3(void, 0x468440, H3Pointers::CombatManager(), this, RightClick);
+	THISCALL_3(VOID, 0x468440, H3Pointers::CombatManager(), this, RightClick);
 }
 
-inline void H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
+inline VOID H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
 {
 	H3Vector<H3ObjectAttributes> *list = &objectLists[oa->type];
-	THISCALL_4(void, 0x4D15F0, list, list->end, 1, oa);
+	THISCALL_4(VOID, 0x4D15F0, list, list->end, 1, oa);
 }
 
-inline void H3CreatureBank::SetupBank(int type, int level)
+inline VOID H3CreatureBank::SetupBank(int type, int level)
 {
 	H3CreatureBankState *cbs = &H3Pointers::CreatureBankSetup()[type].states[level];
 	F_memcpy(&guardians, &cbs->guardians, sizeof(H3Army));
@@ -4262,7 +4285,7 @@ inline void H3CreatureBank::SetupBank(int type, int level)
 
 }
 
-inline void H3CreatureBank::UpgradeStack(BOOL upg)
+inline VOID H3CreatureBank::UpgradeStack(BOOL upg)
 {
 	if (upg) // in code there are additional checks for game type (RoE) and creature (4 Elementals)
 	{

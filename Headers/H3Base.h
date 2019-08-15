@@ -60,15 +60,45 @@
 
 // * Slaps top of car
 // * This bad boy can hold just about anything
-typedef void(*naked_t)(void);
+typedef void			(*naked_t)(void);
 // * generic typedef to indicate this is a h3 function
-typedef unsigned long h3func;
+typedef unsigned long	h3func;
 // * 1-byte sized boolean
-typedef char BOOL8;
+typedef char			BOOL8;
 // * Used for unknown structure members
-typedef char h3unk;
+typedef char			h3unk;
+
+// * for uniformity's sake
+#ifdef VOID
+#undef VOID
+// * void type
+typedef void VOID;
+#else
+// * void type
+typedef void VOID;
+#endif
+
+// * typedef safety declarations
+// * no checks are needed here based on C++03 Standard 7.1.3 typedef specifier
+// * https://stackoverflow.com/questions/8594954/repeated-typedefs-invalid-in-c-but-valid-in-c?answertab=votes#tab-top
+typedef int					INT, *PINT;
+typedef unsigned int		UINT, *PUINT;
+typedef signed char         INT8, *PINT8;
+typedef signed short        INT16, *PINT16;
+typedef signed int          INT32, *PINT32;
+typedef signed __int64      INT64, *PINT64;
+typedef unsigned char       UINT8, *PUINT8;
+typedef unsigned short      UINT16, *PUINT16;
+typedef unsigned int        UINT32, *PUINT32;
+typedef unsigned __int64    UINT64, *PUINT64;
+typedef float				FLOAT;
+typedef double				DOUBLE;
+typedef char				CHAR;
+typedef const char			*LPCSTR;
+typedef void				*PVOID;
 
 #ifndef ArraySize
+// * returns number of elements in an array
 #define ArraySize(arr) (sizeof(arr) / sizeof(arr[0]))
 #endif
 
@@ -118,7 +148,7 @@ typedef char h3unk;
 // * model function definitions
 #pragma region THISCALL_DECLARATIONS
 #ifndef THISCALL_0
-#define THISCALL_0(return_type, address) ((return_type(__thiscall *)(void))address)()
+#define THISCALL_0(return_type, address) ((return_type(__thiscall *)(VOID))address)()
 #endif
 #ifndef THISCALL_1
 #define THISCALL_1(return_type, address, a1) ((return_type(__thiscall *)(UINT))(address))((UINT)(a1))
@@ -175,7 +205,7 @@ typedef char h3unk;
 
 #pragma region STDCALL_DECLARATIONS
 #ifndef STDCALL_0
-#define STDCALL_0(return_type, address) ((return_type(__stdcall *)(void))address)()
+#define STDCALL_0(return_type, address) ((return_type(__stdcall *)(VOID))address)()
 #endif
 #ifndef STDCALL_1
 #define STDCALL_1(return_type, address, a1) ((return_type(__stdcall *)(UINT))(address))((UINT)(a1))
@@ -232,7 +262,7 @@ typedef char h3unk;
 
 #pragma region FASTCALL_DECLARATIONS
 #ifndef FASTCALL_0
-#define FASTCALL_0(return_type, address) ((return_type(__fastcall *)(void))address)()
+#define FASTCALL_0(return_type, address) ((return_type(__fastcall *)(VOID))address)()
 #endif
 #ifndef FASTCALL_1
 #define FASTCALL_1(return_type, address, a1) ((return_type(__fastcall *)(UINT))(address))((UINT)(a1))
@@ -289,7 +319,7 @@ typedef char h3unk;
 
 #pragma region CDECL_DECLARATIONS
 #ifndef CDECL_0
-#define CDECL_0(return_type, address) ((return_type(__cdecl *)(void))address)()
+#define CDECL_0(return_type, address) ((return_type(__cdecl *)(VOID))address)()
 #endif
 #ifndef CDECL_1
 #define CDECL_1(return_type, address, a1) ((return_type(__cdecl *)(UINT))(address))((UINT)(a1))
@@ -375,16 +405,16 @@ inline PVOID F_malloc(UINT size)
 }
 
 // * heapfree using H3 assets
-inline void F_delete(PVOID obj)
+inline VOID F_delete(PVOID obj)
 {
 	if (obj)
-		CDECL_1(void, 0x60B0F0, (PVOID)obj);
+		CDECL_1(VOID, 0x60B0F0, (PVOID)obj);
 }
 
 // * memcpy using H3 assets
-inline void F_memcpy(PVOID dest, PVOID src, UINT len)
+inline VOID F_memcpy(PVOID dest, PVOID src, UINT len)
 {
-	CDECL_3(void, 0x61AD70, dest, src, len);
+	CDECL_3(VOID, 0x61AD70, dest, src, len);
 }
 
 // * compares two strings, not-case-sensitive
@@ -458,7 +488,7 @@ inline PVOID operator new(size_t sz)
 }
 
 // * delete operator using h3 assets
-inline void operator delete(PVOID ptr)
+inline VOID operator delete(PVOID ptr)
 {
 	if (ptr)
 		F_delete(ptr);
@@ -471,7 +501,7 @@ inline PVOID operator new[](size_t sz)
 }
 
 // * delete[] operator using h3 assets
-inline void operator delete[](PVOID ptr)
+inline VOID operator delete[](PVOID ptr)
 {
 	if (ptr)
 		F_delete(ptr);
@@ -639,9 +669,9 @@ public:
 	H3Vector() { Init(); }
 	~H3Vector() { Deref(); }
 	// * ~constructor
-	void Init();
+	VOID Init();
 	// * ~destructor.
-	void Deref();
+	VOID Deref();
 	// * If list is empty
 	BOOL IsEmpty();
 	// * If vector is full
@@ -655,15 +685,15 @@ public:
 	// * calculates allocated size
 	UINT32 SizeAllocated();
 	// * removes the last item
-	void RemoveLast();
+	VOID RemoveLast();
 	// * empties list
-	void RemoveAll();
+	VOID RemoveAll();
 	// * Adds item
 	_Elem* Add(_Elem & item);
 	// * Adds only 1 item, expands by only 1
 	_Elem* AddOne(_Elem & item);
 	// * only for size 4 or references, H3 code
-	void AddSize4(_Elem item);
+	VOID AddSize4(_Elem item);
 	// * increases capacity
 	BOOL Expand();
 	// * returns First item
@@ -700,8 +730,8 @@ protected:
 	INT32 length;
 	INT32 capacity;
 
-	void Deref() { str = NULL; length = 0; capacity = 0; }
-	void NullTerminate() { *End() = 0; }
+	VOID Deref() { str = NULL; length = 0; capacity = 0; }
+	VOID NullTerminate() { *End() = 0; }
 	BOOL Realloc(int newSize);
 public:
 	// * constructor
@@ -719,10 +749,11 @@ public:
 	// * destructor
 	~H3String();
 	// * H3 constructor
-	void Init();
+	VOID Init();
 	// * H3 destructor
-	void Dereference();
+	VOID Dereference();
 	// * returns beginning of string
+	// * modifiable contrary to String()
 	PCHAR Begin();
 	// * returns end of string, on null char
 	PCHAR End();
@@ -775,7 +806,7 @@ public:
 	// * Remove chars from start to end
 	INT32 Remove(INT32 start, INT32 end);
 	// * sets string to all 0s
-	void Erase();
+	VOID Erase();
 	// * memcmp ~ case sensitive
 	BOOL Equals(LPCSTR msg, INT32 len);
 	// * Equals(msg, strlen(msg))
@@ -822,7 +853,7 @@ public:
 	// * The number of times this string is referenced - avoids deletion from destructor in references
 	INT8 References();
 	// * Increase the number of references to this string
-	void IncreaseReferences();
+	VOID IncreaseReferences();
 
 	BOOL FormattedNumber(int number);
 	BOOL ScaledNumber(int number, int decimals = 1);
@@ -867,9 +898,9 @@ struct H3Bitfield
 		INT32 value = 1 << pos;
 		return ((&bf)[index]) & value;
 	}
-	// * sets bit at position to one or off
+	// * sets bit at position to on or off
 	// * position can exceed the scope of bitfield, meaning greater than 32 bits
-	void SetState(INT32 position, BOOL state)
+	VOID SetState(INT32 position, BOOL state)
 	{
 		INT32 index = position >> 5;
 		INT32 pos = position & 0x1F;
@@ -975,14 +1006,14 @@ inline H3String::~H3String()
 	Dereference();
 }
 
-inline void H3String::Init()
+inline VOID H3String::Init()
 {
-	THISCALL_2(void, 0x404130, this, 0);
+	THISCALL_2(VOID, 0x404130, this, 0);
 }
 
-inline void H3String::Dereference()
+inline VOID H3String::Dereference()
 {
-	THISCALL_1(void, 0x4040F0, this);
+	THISCALL_1(VOID, 0x4040F0, this);
 }
 
 inline PCHAR H3String::Begin()
@@ -1197,7 +1228,7 @@ inline INT32 H3String::Remove(INT32 start, INT32 end)
 	return n;
 }
 
-inline void H3String::Erase()
+inline VOID H3String::Erase()
 {
 	memset(Begin(), 0, Length());
 	length = 0;
@@ -1308,7 +1339,7 @@ inline INT8 H3String::References()
 	return str[-1];
 }
 
-inline void H3String::IncreaseReferences()
+inline VOID H3String::IncreaseReferences()
 {
 #if H3API_SAFE
 	if (str)
@@ -1400,7 +1431,7 @@ inline H3String operator+(H3String & lhs, LPCSTR rhs)
 // * H3Vector member function definitions
 
 template<typename _Elem>
-inline void H3Vector<_Elem>::Init()
+inline VOID H3Vector<_Elem>::Init()
 {
 	first = NULL;
 	end = NULL;
@@ -1408,7 +1439,7 @@ inline void H3Vector<_Elem>::Init()
 }
 
 template<typename _Elem>
-inline void H3Vector<_Elem>::Deref()
+inline VOID H3Vector<_Elem>::Deref()
 {
 	if (first)
 		F_delete(first);
@@ -1458,14 +1489,14 @@ inline UINT32 H3Vector<_Elem>::SizeAllocated()
 }
 
 template<typename _Elem>
-inline void H3Vector<_Elem>::RemoveLast()
+inline VOID H3Vector<_Elem>::RemoveLast()
 {
 	if (end > first)
 		end--;
 }
 
 template<typename _Elem>
-inline void H3Vector<_Elem>::RemoveAll()
+inline VOID H3Vector<_Elem>::RemoveAll()
 {
 	end = first;
 }
@@ -1517,9 +1548,9 @@ inline _Elem * H3Vector<_Elem>::AddOne(_Elem & item)
 }
 
 template<typename _Elem>
-inline void H3Vector<_Elem>::AddSize4(_Elem item)
+inline VOID H3Vector<_Elem>::AddSize4(_Elem item)
 {
-	THISCALL_4(void, 0x5FE2D0, this, end, 1, &item);
+	THISCALL_4(VOID, 0x5FE2D0, this, end, 1, &item);
 }
 
 template<typename _Elem>
@@ -1612,7 +1643,7 @@ inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
 	_Elem* remEnd = rem + r;
 
 	size_t copyLen = (size_t)end - (size_t)remEnd;
-	memmove((void*)rem, (void*)remEnd, copyLen);
+	memmove((PVOID)rem, (PVOID)remEnd, copyLen);
 	end -= r;
 	return TRUE;
 }

@@ -53,13 +53,13 @@
 class H3Error
 {
 public:
-	static void ShowError(LPCSTR message, LPCSTR title = "H3Error!")
+	static VOID ShowError(LPCSTR message, LPCSTR title = "H3Error!")
 	{
 		MessageBoxA(NULL, message, title, MB_OK | MB_ICONERROR);
 	}
 
 	// * wide char format
-	static void _ShowError(LPCWSTR message, LPCWSTR title = L"H3Error!")
+	static VOID _ShowError(LPCWSTR message, LPCWSTR title = L"H3Error!")
 	{
 		MessageBoxW(NULL, message, title, MB_OK | MB_ICONERROR);
 	}
@@ -79,13 +79,13 @@ class H3Patcher
 public:
 	static PUCHAR Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needle, size_t nlen);
 	static UINT32 FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset);
-	static void WriteBytePatch(UINT32 start, UINT8 code);
-	static void WriteWordPatch(UINT32 start, UINT16 code);
-	static void WriteDwordPatch(UINT32 start, UINT32 code);
-	static void WriteFloatPatch(UINT32 start, FLOAT code);
-	static void WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength);
+	static VOID WriteBytePatch(UINT32 start, UINT8 code);
+	static VOID WriteWordPatch(UINT32 start, UINT16 code);
+	static VOID WriteDwordPatch(UINT32 start, UINT32 code);
+	static VOID WriteFloatPatch(UINT32 start, FLOAT code);
+	static VOID WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength);
 	// * only works for opcode length 5, most basic hook there is
-	static void NakedHook5(UINT32 start, void *function);
+	static VOID NakedHook5(UINT32 start, VOID *function);
 };
 
 // * get information about loaded dll
@@ -102,12 +102,12 @@ struct H3DLL
 	H3DLL() { code = NULL; size = 0; dllName = NULL; }
 
 	// for debug purposes
-	void NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode = TRUE);
-	void NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize);
-	void DLLNotFound();
+	VOID NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode = TRUE);
+	VOID NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize);
+	VOID DLLNotFound();
 
 	// get DLL code start and DLL size
-	void GetDLLInfo(LPCSTR name);
+	VOID GetDLLInfo(LPCSTR name);
 	// find the first instance of needle
 	UINT32 NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset);
 	// searches around the needle for a piece of code, needl2
@@ -200,7 +200,7 @@ struct HDIni
 #define DwordPatch(start, value) (H3Patcher::WriteDwordPatch(start, value))
 #define HexPatch(start, code) (H3Patcher::WriteHexPatch(start, code, sizeof(code)))
 #define needle_search(start_address, search_end, needle, offset) (H3Patcher::FindByNeedle(start_address, search_end, needle, sizeof(needle), offset))
-#define naked_function void __declspec(naked)
+#define naked_function VOID __declspec(naked)
 #define NAKED __declspec(naked)
 
 enum mnemonics
@@ -318,7 +318,7 @@ inline UINT32 H3Patcher::FindByNeedle(PUINT8 address, UINT32 max_search_length, 
 	return p;
 }
 
-inline void H3Patcher::WriteBytePatch(UINT32 start, UINT8 code)
+inline VOID H3Patcher::WriteBytePatch(UINT32 start, UINT8 code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 1, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -328,7 +328,7 @@ inline void H3Patcher::WriteBytePatch(UINT32 start, UINT8 code)
 	}
 }
 
-inline void H3Patcher::WriteWordPatch(UINT32 start, UINT16 code)
+inline VOID H3Patcher::WriteWordPatch(UINT32 start, UINT16 code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 2, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -338,7 +338,7 @@ inline void H3Patcher::WriteWordPatch(UINT32 start, UINT16 code)
 	}
 }
 
-inline void H3Patcher::WriteDwordPatch(UINT32 start, UINT32 code)
+inline VOID H3Patcher::WriteDwordPatch(UINT32 start, UINT32 code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 4, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -348,7 +348,7 @@ inline void H3Patcher::WriteDwordPatch(UINT32 start, UINT32 code)
 	}
 }
 
-inline void H3Patcher::WriteFloatPatch(UINT32 start, FLOAT code)
+inline VOID H3Patcher::WriteFloatPatch(UINT32 start, FLOAT code)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 4, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -358,7 +358,7 @@ inline void H3Patcher::WriteFloatPatch(UINT32 start, FLOAT code)
 	}
 }
 
-inline void H3Patcher::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
+inline VOID H3Patcher::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, codeLength, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -373,7 +373,7 @@ inline void H3Patcher::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
 // * warning C4482: nonstandard extension used: enum '...' used in qualified name
 #pragma warning(push)
 #pragma warning(disable : 4482)
-inline void H3Patcher::NakedHook5(UINT32 start, void * function)
+inline VOID H3Patcher::NakedHook5(UINT32 start, VOID * function)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, 5, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -426,7 +426,7 @@ inline UINT32 H3DLL::NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 
 	UINT32 p = NeedleSearch(needle, needleSize, offset);
 	if (p)
 	{
-		if (memcmp((void*)p, expectedCode, expectedSize)) // is the code at the found address different from what we expect?
+		if (memcmp((PVOID)p, expectedCode, expectedSize)) // is the code at the found address different from what we expect?
 		{
 #if _H3DLL_DEBUG_
 			NeedleUnexpectedCode(p, needle, needleSize, expectedCode, expectedSize);
@@ -457,7 +457,7 @@ inline UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needleSize)
 	return p;
 }
 
-inline void H3DLL::GetDLLInfo(LPCSTR name)
+inline VOID H3DLL::GetDLLInfo(LPCSTR name)
 {
 	HMODULE hm = GetModuleHandleA(name);
 	if (!hm)
@@ -493,7 +493,7 @@ inline void H3DLL::GetDLLInfo(LPCSTR name)
 	}
 }
 
-inline void H3DLL::NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode)
+inline VOID H3DLL::NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode)
 {
 	PCHAR buffer = (PCHAR)calloc(1, needleSize * 3 + strlen(dllName) + 512); // * 3 to show space in between hex codes
 	PCHAR needleBuffer = (PCHAR)calloc(1, needleSize * 3);
@@ -515,7 +515,7 @@ inline void H3DLL::NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode)
 	free(needleBuffer);
 }
 
-inline void H3DLL::NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize)
+inline VOID H3DLL::NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize)
 {
 	PCHAR buffer = (PCHAR)calloc(1, needleSize * 3 + expectedSize * 3 * 2 + strlen(dllName) + 512); // * 3 to show space in between hex codes
 	PCHAR needleBuffer = (PCHAR)calloc(1, needleSize * 3);
@@ -550,7 +550,7 @@ inline void H3DLL::NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 nee
 	free(foundBuffer);
 }
 
-inline void H3DLL::DLLNotFound()
+inline VOID H3DLL::DLLNotFound()
 {
 	PCHAR buffer = (PCHAR)calloc(1, strlen(dllName) + 512);
 	if (buffer)

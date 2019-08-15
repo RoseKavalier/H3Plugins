@@ -48,22 +48,22 @@
 #include "H3Defines.h"
 
 // * inserts a breakpoint for quick stop using debugger
-inline void F_Breakpoint()
+inline VOID F_Breakpoint()
 {
 	if (IsDebuggerPresent())
 		__asm int 3;
 }
 
 // * Gets cursor coordinates within game window
-inline void F_GetCursorPosition(INT &x, INT &y)
+inline VOID F_GetCursorPosition(INT &x, INT &y)
 {
-	STDCALL_2(void, 0x50D700, &x, &y);
+	STDCALL_2(VOID, 0x50D700, &x, &y);
 }
 
 // * Gets cursor coordinates within game window
-inline void F_GetCursorPosition(POINT & p)
+inline VOID F_GetCursorPosition(POINT & p)
 {
-	STDCALL_2(void, 0x50D700, &p.x, &p.y);
+	STDCALL_2(VOID, 0x50D700, &p.x, &p.y);
 }
 
 // * given power ratio k, returns the diplomacy power factor
@@ -91,29 +91,29 @@ inline INT F_GetCurrentDirectory(PCHAR buf, INT bufLen)
 }
 
 // * message box with text shown (default h3_TextBuffer) on right mouse button click
-inline void F_MessageBoxRMB(LPCSTR text = h3_TextBuffer)
+inline VOID F_MessageBoxRMB(LPCSTR text = h3_TextBuffer)
 {
-	FASTCALL_12(void, 0x4F6C00, text, 4, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+	FASTCALL_12(VOID, 0x4F6C00, text, 4, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 }
 
 // * message box with text shown (default h3_TextBuffer) with an 'OK' button
-inline void F_MessageBox(LPCSTR text = h3_TextBuffer)
+inline VOID F_MessageBox(LPCSTR text = h3_TextBuffer)
 {
-	FASTCALL_12(void, 0x4F6C00, text, 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+	FASTCALL_12(VOID, 0x4F6C00, text, 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 }
 
 // * message box with 'OK' and 'Cancel' buttons
 // * returns true if clicked 'OK'
 inline BOOL F_MessageBoxChoice(LPCSTR text = h3_TextBuffer)
 {
-	FASTCALL_12(void, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+	FASTCALL_12(VOID, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
 	return H3Pointers::WindowManager()->ClickedOK();
 }
 
 // * prints text to the log screen (default h3_TextBuffer)
-inline void F_PrintScreenText(LPCSTR text = h3_TextBuffer)
+inline VOID F_PrintScreenText(LPCSTR text = h3_TextBuffer)
 {
-	CDECL_3(void, 0x553C40, 0x69D800, "%s", text);
+	CDECL_3(VOID, 0x553C40, 0x69D800, "%s", text);
 }
 
 // * checks whether the active player can view given coordinates
@@ -129,7 +129,7 @@ inline H3TileVision* F_GetTileVision(INT x, INT y, INT z)
 }
 
 // * reveals tile for current player at coordinates
-inline void F_ReveaTile(INT x, INT y, INT z)
+inline VOID F_ReveaTile(INT x, INT y, INT z)
 {
 	F_GetTileVision(x, y, z)->vision |= h3_ActivePlayerBitset;
 }
@@ -200,14 +200,14 @@ inline LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR *buffer)
 	return STDCALL_6(LPCWSTR, PtrAt(0x63A1CC), CP_ACP, 0, text, textLength, buffer, textLength);
 }
 
-inline void H3SoundManager::ClickSound()
+inline VOID H3SoundManager::ClickSound()
 {
 	H3WavFile *buttonWav = C_ButtonWav;
 	INT32 backup = clickSoundVar;
 	buttonWav->spinCount = 64;
 	buttonWav->debugInfo = (PRTL_CRITICAL_SECTION_DEBUG)1;
 	buttonWav->lockSemaphore = (HANDLE)(HANDLE_FLAG_PROTECT_FROM_CLOSE | HANDLE_FLAG_INHERIT);
-	THISCALL_2(void, 0x59A510, this, buttonWav);
+	THISCALL_2(VOID, 0x59A510, this, buttonWav);
 	clickSoundVar = backup;
 }
 
