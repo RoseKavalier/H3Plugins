@@ -443,7 +443,7 @@ struct RMG_Main
 	// * +ED8
 	BOOL8 isHuman[8];
 	// * +EE0
-	INT8 playerOwner[8];
+	INT32 playerOwner[8];
 	h3unk _f_f00[36];
 	// * +F24
 	INT32 playerTown[8];
