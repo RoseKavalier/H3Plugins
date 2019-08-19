@@ -2353,12 +2353,10 @@ public:
 	// * +38
 	// * position on battlefield
 	INT32 position;
-protected:
 	// * +3C
 	INT32 animation;
 	// * +40
 	INT32 animationFrame;
-public:
 	// * +44
 	// * left or right
 	INT32 secondHexOrientation;
@@ -2413,8 +2411,10 @@ protected:
 	h3unk _f_108[8];
 	// * +110 from cranim
 	H3MonsterAnimation cranim;
+public:
 	// * +164
 	H3LoadedDEF *def;
+protected:
 	// * +168
 	H3LoadedDEF *shootingDef;
 	h3unk _f_16C[4];
@@ -3943,7 +3943,12 @@ public:
 protected:
 	// * +13FFC
 	INT32 GlobalCardeIndex;
-	h3unk _f_14000[268];
+public:
+	// * +14000
+	// * oddly there are only 20, not 21, slots for each side
+	BOOL8 RedrawCreatureFrame[2][20];
+protected:
+	h3unk _f_14028[228];
 public:
 	// functions
 	VOID SimulateMouseAtHex(int hex_id) { return THISCALL_2(VOID, 0x477550, this, hex_id); }
@@ -3964,6 +3969,7 @@ public:
 	BOOL8 IsBattleOver(VOID) { return THISCALL_1(BOOL8, 0x465410, this); }
 	VOID Refresh() { Refresh(1, 0, 1); }
 	VOID Refresh(BOOL redrawScreen, INT timeDelay, BOOL redrawBackground) { THISCALL_7(VOID, 0x493FC0, this, redrawScreen, 0, 0, timeDelay, redrawBackground, 0); }
+	VOID RefreshCreatures() { THISCALL_1(VOID, 0x495770, this); }
 	VOID ShadeSquare(int index);
 	BOOL8 IsHumanTurn() { return isHuman[currentActiveSide]; }
 };
@@ -4078,7 +4084,17 @@ inline INT32 H3Hero::SSkillsLeftToLearn()
 		if (!main->bannedSkills[i] || sslevel > 0)
 			skills_can_be_learned += 3 - sslevel;
 	}
+	// only necropolis heroes can learn necromancy, unless hero already has it
 	if (hero_class != NH3Heroes::NECROMANCER && hero_class != NH3Heroes::DEATH_KNIGHT && secSkill[NH3Skills::NECROMANCY] == 0 && !main->bannedSkills[NH3Skills::NECROMANCY])
+		skills_can_be_learned -= 3;
+	// necropolis heroes cannot learn leadership, unless hero already has it
+	if ((hero_class == NH3Heroes::NECROMANCER || hero_class == NH3Heroes::DEATH_KNIGHT) && secSkill[NH3Skills::LEADERSHIP] == 0 && !main->bannedSkills[NH3Skills::LEADERSHIP])
+		skills_can_be_learned -= 3;
+	// dungeon heroes cannot learn water magic, unless hero already has it
+	if ((hero_class == NH3Heroes::OVERLORD || hero_class == NH3Heroes::WARLOCK) && secSkill[NH3Skills::WATER_MAGIC] == 0 && !main->bannedSkills[NH3Skills::WATER_MAGIC])
+		skills_can_be_learned -= 3;
+	// rampart heroes cannot learn fire magic, unless hero already has it
+	if ((hero_class == NH3Heroes::RANGER || hero_class == NH3Heroes::DRUID) && secSkill[NH3Skills::FIRE_MAGIC] == 0 && !main->bannedSkills[NH3Skills::FIRE_MAGIC])
 		skills_can_be_learned -= 3;
 
 	skills_can_be_learned = min(maxSkills - known_skills, skills_can_be_learned);

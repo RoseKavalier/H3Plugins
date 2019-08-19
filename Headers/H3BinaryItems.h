@@ -359,11 +359,38 @@ struct H3LoadedDEF : public H3BinaryItem
 	// * +28
 	INT32 groupsCount;
 	// * +2C
-	INT32 activeGroups;
+	INT32 *activeGroups;
 	// * +30
 	INT32 widthDEF;
 	// * +34
 	INT32 heightDEF;
+
+	// * for creature animation groups
+	enum CreatureGroups
+	{
+		CG_MOVING = 0,
+		CG_MOUSE_OVER = 1,
+		CG_STANDING = 2,
+		CG_GETTING_HIT = 3,
+		CG_DEFEND = 4,
+		CG_DEATH = 5,
+		CG_UNUSED_DEATH = 6,
+		CG_TURN_LEFT = 7,
+		CG_TURN_RIGHT = 8,
+		CG_TURN_LEFT2 = 9,
+		CG_TURN_RIGHT2 = 10,
+		CG_ATTACK_UP = 11,
+		CG_ATTACK_STRAIGHT = 12,
+		CG_ATTACK_DOWN = 13,
+		CG_SHOOT_UP = 14,
+		CG_SHOOT_STRAIGHT = 15,
+		CG_SHOOT_DOWN = 16,
+		CG_SPELL_ATTACK_UP = 17,
+		CG_SPELL_ATTACK_STRAIGHT = 18,
+		CG_SPELL_ATTACK_DOWN = 19,
+		CG_START_MOVING = 20,
+		CG_STOP_MOVING = 21
+	};
 
 	static H3LoadedDEF* Load(LPCSTR name) { return THISCALL_1(H3LoadedDEF*, 0x55C9C0, name); }
 	VOID AddFrameFromDef(LPCSTR source, INT32 index);

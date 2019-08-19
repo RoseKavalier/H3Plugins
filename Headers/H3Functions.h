@@ -200,6 +200,11 @@ inline LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR *buffer)
 	return STDCALL_6(LPCWSTR, PtrAt(0x63A1CC), CP_ACP, 0, text, textLength, buffer, textLength);
 }
 
+inline INT F_MultiplayerRNG(INT min_value, INT max_value)
+{
+	return FASTCALL_2(INT, 0x50B3C0, min_value, max_value);
+}
+
 inline VOID H3SoundManager::ClickSound()
 {
 	H3WavFile *buttonWav = C_ButtonWav;

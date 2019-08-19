@@ -13,6 +13,12 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** headers and p
 **H3.Battlefields**
 >Adds custom battlefield backgrounds when fighting on the adventure map. Requires **H3.LodTable** plugin.
 
+**H3.ShiftToggle**
+>When the Shift key is held on the adventure map, the active hero ignores any left mouse clicks.
+
+**H3.CombatAnimation**
+>Cycles through combat creatures' standing animation frames instead of being idle. Included with SoD_SP.
+
 **SoD_SP**
 >Description is currently only available [here](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#).
 

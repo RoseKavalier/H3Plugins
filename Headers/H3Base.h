@@ -81,19 +81,30 @@ typedef void VOID;
 // * typedef safety declarations
 // * no checks are needed here based on C++03 Standard 7.1.3 typedef specifier
 // * https://stackoverflow.com/questions/8594954/repeated-typedefs-invalid-in-c-but-valid-in-c?answertab=votes#tab-top
-typedef int					INT, *PINT;
-typedef unsigned int		UINT, *PUINT;
-typedef signed char         INT8, *PINT8;
-typedef signed short        INT16, *PINT16;
-typedef signed int          INT32, *PINT32;
-typedef signed __int64      INT64, *PINT64;
-typedef unsigned char       UINT8, *PUINT8;
+typedef int					INT,	*PINT;
+typedef unsigned int		UINT,	*PUINT;
+typedef signed char         INT8,	*PINT8;
+typedef signed short        INT16,	*PINT16;
+typedef signed int          INT32,	*PINT32;
+typedef signed __int64      INT64,	*PINT64;
+typedef unsigned char       UINT8,	*PUINT8;
 typedef unsigned short      UINT16, *PUINT16;
 typedef unsigned int        UINT32, *PUINT32;
 typedef unsigned __int64    UINT64, *PUINT64;
 typedef float				FLOAT;
+typedef FLOAT				*PFLOAT;
 typedef double				DOUBLE;
+typedef DOUBLE				*PDOUBLE;
 typedef char				CHAR;
+typedef CHAR				*PCHAR;
+typedef unsigned char		UCHAR;
+typedef UCHAR				*PUCHAR;
+typedef unsigned char		BYTE;
+typedef BYTE				*PBYTE;
+typedef unsigned short		WORD;
+typedef WORD				*PWORD;
+typedef unsigned long		DWORD;
+typedef DWORD				*PDWORD;
 typedef const char			*LPCSTR;
 typedef void				*PVOID;
 

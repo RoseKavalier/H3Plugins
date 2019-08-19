@@ -83,9 +83,16 @@ public:
 	static VOID WriteWordPatch(UINT32 start, UINT16 code);
 	static VOID WriteDwordPatch(UINT32 start, UINT32 code);
 	static VOID WriteFloatPatch(UINT32 start, FLOAT code);
-	static VOID WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength);
+	static VOID WriteHexPatch(const UINT32 start, const PUINT8 code, const UINT codeLength);
 	// * only works for opcode length 5, most basic hook there is
 	static VOID NakedHook5(UINT32 start, VOID *function);
+
+	// * writes byte, word or dword
+	template<typename T> static VOID WriteValue(const UINT32 address, T value);
+	// writes array of values of type T
+	template<typename T, size_t size> static VOID WriteValue(const UINT32 address, T (&value)[size]);
+	// writes array of UINT8
+	template<size_t size> static VOID WriteHexPatch(const UINT32 address, const UINT8(&code)[size]);
 };
 
 // * get information about loaded dll
@@ -110,7 +117,7 @@ struct H3DLL
 	VOID GetDLLInfo(LPCSTR name);
 	// find the first instance of needle
 	UINT32 NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset);
-	// searches around the needle for a piece of code, needl2
+	// searches around the needle for a piece of code, needle2
 	UINT32 NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 radius, PUINT8 needle2, INT32 needleSize2);
 	// to find subsequent instances of a needle, based on NeedleSearch result
 	UINT32 NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset);
@@ -120,6 +127,19 @@ struct H3DLL
 	UINT32 NeedleSearchRData(PUINT8 needle, INT32 needleSize);
 	// needleSearch in data
 	UINT32 NeedleSearchData(PUINT8 needle, INT32 needleSize);
+
+	// find the first instance of needle
+	template <INT32 sz> UINT32 NeedleSearch(UINT8(&needle)[sz], INT32 offset);
+	// searches around the needle for a piece of code, needle2
+	template <INT32 sz, INT32 sz2> UINT32 NeedleSearchAround(UINT8(&needle)[sz], INT32 radius, UINT8(&needle2)[sz2]);
+	// to find subsequent instances of a needle, based on NeedleSearch result
+	template <INT32 sz> UINT32 NeedleSearchAfter(UINT32 after, UINT8(&needle)[sz], INT32 offset);
+	// performs NeedleSearch and checks checks location for expectedCode
+	template <INT32 sz, INT32 sz2> UINT32 NeedleSearchConfirm(UINT8(&needle)[sz], INT32 offset, UINT8(&expectedCode)[sz2]);
+	// needleSearch in rdata
+	template <INT32 sz> UINT32 NeedleSearchRData(UINT8(&needle)[sz]);
+	// needleSearch in data
+	template <INT32 sz> UINT32 NeedleSearchData(UINT8(&needle)[sz]);
 };
 
 #define Color32To16(Color) (((Color & 0x0000F8) >> 3) | ((Color & 0x00FC00) >> 5) | ((Color & 0xF80000) >> 8))
@@ -358,7 +378,7 @@ inline VOID H3Patcher::WriteFloatPatch(UINT32 start, FLOAT code)
 	}
 }
 
-inline VOID H3Patcher::WriteHexPatch(UINT32 start, PUINT8 code, UINT codeLength)
+inline VOID H3Patcher::WriteHexPatch(const UINT32 start, const PUINT8 code, const UINT codeLength)
 {
 	DWORD old_protect = 0;
 	if (VirtualProtect((LPVOID)start, codeLength, PAGE_EXECUTE_WRITECOPY, &old_protect))
@@ -384,6 +404,32 @@ inline VOID H3Patcher::NakedHook5(UINT32 start, VOID * function)
 	}
 }
 #pragma warning(pop)
+
+template<typename T>
+inline VOID H3Patcher::WriteValue(const UINT32 address, T value)
+{
+	if (VirtualProtect((LPVOID)start, sizeof(T), PAGE_EXECUTE_WRITECOPY, &old_protect))
+	{
+		*(T*)address = value;
+		VirtualProtect((LPVOID)start, sizeof(T), old_protect, &old_protect);
+	}
+}
+
+template<typename T, size_t size>
+inline VOID H3Patcher::WriteValue(const UINT32 address, T(&value)[size])
+{
+	if (VirtualProtect((LPVOID)start, size, PAGE_EXECUTE_WRITECOPY, &old_protect))
+	{
+		memcpy((PVOID)address, (PVOID)value, size);
+		VirtualProtect((LPVOID)start, size, old_protect, &old_protect);
+	}
+}
+
+template<size_t size>
+inline VOID H3Patcher::WriteHexPatch(const UINT32 address, const UINT8(&code)[size])
+{
+	return WriteHexPatch((UINT32)address, (PUINT8)&code, (UINT)size);
+}
 
 inline UINT32 H3DLL::NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset)
 {
@@ -561,6 +607,42 @@ inline VOID H3DLL::DLLNotFound()
 	free(buffer);
 }
 
+template<INT32 sz>
+inline UINT32 H3DLL::NeedleSearch(UINT8(&needle)[sz], INT32 offset)
+{
+	return NeedleSearch((PUINT8)&needle, sz, offset);
+}
+
+template<INT32 sz, INT32 sz2>
+inline UINT32 H3DLL::NeedleSearchAround(UINT8(&needle)[sz], INT32 radius, UINT8(&needle2)[sz2])
+{
+	return NeedleSearchAround((PUINT8)&needle, sz, radius, (PUINT8)&needle2, sz2);
+}
+
+template<INT32 sz>
+inline UINT32 H3DLL::NeedleSearchAfter(UINT32 after, UINT8(&needle)[sz], INT32 offset)
+{
+	return NeedleSearchAfter(after, (PUINT8)&needle, sz, offset);
+}
+
+template<INT32 sz, INT32 sz2>
+inline UINT32 H3DLL::NeedleSearchConfirm(UINT8(&needle)[sz], INT32 offset, UINT8(&expectedCode)[sz2])
+{
+	return NeedleSearchConfirm((PUINT8)&needle, sz, offset, (PUINT8)&expectedCode, sz2);
+}
+
+template<INT32 sz>
+inline UINT32 H3DLL::NeedleSearchRData(UINT8(&needle)[sz])
+{
+	return NeedleSearchRData((PUINT8)&needle, sz);
+}
+
+template<INT32 sz>
+inline UINT32 H3DLL::NeedleSearchData(UINT8(&needle)[sz])
+{
+	return NeedleSearchData((PUINT8)&needle, sz);
+}
+
 // * From https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range?answertab=active#tab-top
 inline int H3Random::Random(int high)
 {
@@ -586,3 +668,5 @@ inline int H3Random::RandBetween(int low, int high)
 }
 
 #endif /* #define _H3VARIA_H_ */
+
+
