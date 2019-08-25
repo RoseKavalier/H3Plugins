@@ -1069,7 +1069,6 @@ public:
 	// * +160
 	H3Bitfield bMask[2];
 
-
 	BOOL IsBuildingBuilt(INT32 id) { return THISCALL_3(BOOL, 0x4305A0, this, id, 1); }
 	BOOL CanBuildStructure(INT32 id) { return THISCALL_3(BOOL, 0x4305A0, this, id, 0); }
 	LPCSTR GetTownTypeName() { return THISCALL_1(LPCSTR, 0x5C1850, this); }

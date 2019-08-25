@@ -165,6 +165,14 @@ struct H3RGB888
 	UINT8 b;
 };
 
+struct H3ARGB888
+{
+	UINT8 a; // alpha
+	UINT8 r;
+	UINT8 g;
+	UINT8 b;
+};
+
 struct H3RGB555 // https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
 {
 protected:
@@ -199,7 +207,7 @@ struct H3Palette565 : public H3BinaryItem
 	// * +1C
 	H3RGB565 color[256];
 
-	VOID ColorToPlayer(INT id) { FASTCALL_2(VOID, 0x6003E0, this, id); }
+	VOID ColorToPlayer(INT id) { FASTCALL_2(VOID, 0x6003E0, color, id); }
 };
 
 struct H3Font : public H3BinaryItem
@@ -229,7 +237,7 @@ struct H3Palette888 : public H3BinaryItem
 	VOID ColorToPlayer(INT id) { FASTCALL_2(VOID, 0x600400, this, id); }
 };
 
-struct H3LoadedPCX : public H3BinaryItem // size 0x56C
+struct H3LoadedPCX : public H3BinaryItem // size 0x56C // vt 63BA14
 {
 	// * +1C
 	INT32 bufSize;
@@ -242,10 +250,10 @@ struct H3LoadedPCX : public H3BinaryItem // size 0x56C
 	// * +2C
 	INT32 scanlineSize;
 	// * +30
+	// * 256-color indexed buffer
 	PUINT8 buffer;
-	h3unk _f_34[28];
-	// * +50
-	H3RGB565 palette565[256];
+	// * +34
+	H3Palette565 palette565;
 	// * +250
 	H3Palette888 palette888;
 
@@ -255,9 +263,14 @@ struct H3LoadedPCX : public H3BinaryItem // size 0x56C
 	}
 
 	static H3LoadedPCX* Load(LPCSTR name) { return THISCALL_1(H3LoadedPCX*, 0x55AA10, name); }
+
+	// * returns row start in buffer
+	PUINT8 GetRow(int row) { return buffer + row * scanlineSize; }
+	// * returns the color index of pixel (x, y) starting from top left
+	PUINT8 GetPixelIndex(int x, int y) {	return GetRow(y) + x; }
 };
 
-struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
+struct H3LoadedPCX16 : public H3BinaryItem // size 0x38 // vt 63B9C8
 {
 	// * +1C
 	INT32 buffSize;
@@ -270,8 +283,11 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
 	// * +2C
 	INT32 scanlineSize;
 	// * +30
+	// * H3RGB565 buffer unless bitmode = 4
+	// * in which case this is a H3ARGB888 buffer
 	PUINT8 buffer;
-	h3unk _f_34[4];
+	h3unk _f_34; // set to 0 by constructor
+	h3unk _f_35[3];
 
 	H3LoadedPCX16* Construct(LPCSTR name, INT width, INT height)
 	{
@@ -282,9 +298,18 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38
 		return THISCALL_12(VOID, 0x44DF80, this, srcX, srcY, width, height, dest->buffer, x,y, dest->width, dest->height, dest->scanlineSize, transparent);
 	}
 	static H3LoadedPCX16* Load(LPCSTR name) { return THISCALL_1(H3LoadedPCX16*, 0x55B1E0, name); }
+
+	// * returns row start in buffer
+	PUINT8 GetRow(int row) { return buffer + row * scanlineSize; }
+	// * returns rgb565 pixel at coordinates (x,y) in buffer
+	// * !WARNING! This is only valid when h3_BitMode == 2 aka default
+	H3RGB565* GetPixel565(int x, int y) { return (H3RGB565*)GetRow(y) + x; };
+	// * returns rgb565 pixel at coordinates (x,y) in buffer
+	// * !WARNING! This is only valid when h3_BitMode == 4 aka TRUE mode with HDmod
+	H3ARGB888* GetPixel888(int x, int y) { return (H3ARGB888*)GetRow(y) + x; };
 };
 
-struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
+struct H3LoadedPCX24 : public H3BinaryItem // size 0x30 // vt 63B9F4
 {
 	// * +1C
 	INT32 buffSize;
@@ -295,16 +320,23 @@ struct H3LoadedPCX24 : public H3BinaryItem // size 0x30
 	// * +28
 	INT32 height;
 	// * +2C
+	// * RGB888 buffer
 	PUINT8 buffer;
 
 	H3LoadedPCX24* Construct(LPCSTR name, INT width, INT height, H3Palette565 *palette, UINT32 bufferSize)
 	{
 		return THISCALL_6(H3LoadedPCX24*, 0x44EA20, this, name, width, height, palette, bufferSize);
 	}
+	// * converts RGB888 to RGB565
 	VOID DrawToPcx16(INT x, INT y, H3LoadedPCX16 *dest, INT srcX = 0, INT srcY = 0)
 	{
 		return THISCALL_11(VOID, 0x44ECE0, this, srcX, srcY, width, height, buffer, x, y, dest->width, dest->height, dest->scanlineSize);
 	}
+
+	// * returns row start in buffer
+	PUINT8 GetRow(int row) { return buffer + row * sizeof(H3RGB888) * width; }
+	// * returns rgb888 pixel at coordinates (x, y) in buffer
+	H3RGB888* GetPixel(int x, int y) { return (H3RGB888*)GetRow(y) + x; }
 };
 
 struct H3DefFrame : public H3BinaryItem
@@ -441,7 +473,8 @@ inline VOID H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 
 inline VOID H3LoadedDEF::ColorToPlayer(INT32 id)
 {
-	palette565->ColorToPlayer(id);
+	if (palette565)
+		palette565->ColorToPlayer(id);
 	palette888->ColorToPlayer(id);
 }
 

@@ -33,6 +33,9 @@ BOOL LoadCustomLod(LPCSTR lodName, LPCSTR lodPath)
 
 DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(LPCSTR path)
 {
+	if (!path)
+		return 0;
+
 	int lodCount = 0;
 	H3String folderPath, lodPath;
 	folderPath = path;
