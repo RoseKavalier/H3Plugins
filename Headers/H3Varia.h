@@ -53,15 +53,27 @@
 class H3Error
 {
 public:
+	// * external messagebox showing message
 	static VOID ShowError(LPCSTR message, LPCSTR title = "H3Error!")
 	{
 		MessageBoxA(NULL, message, title, MB_OK | MB_ICONERROR);
 	}
-
+	// * external messagebox showing message and offering OK / Cancel choice
+	static BOOL ShowErrorChoice(LPCSTR message, LPCSTR title = "H3Error!")
+	{
+		return MessageBoxA(NULL, message, title, MB_OKCANCEL | MB_ICONERROR);
+	}
+	// * external messagebox showing message
 	// * wide char format
 	static VOID _ShowError(LPCWSTR message, LPCWSTR title = L"H3Error!")
 	{
 		MessageBoxW(NULL, message, title, MB_OK | MB_ICONERROR);
+	}
+	// * external messagebox showing message and offering OK / Cancel choice
+	// * wide char format
+	static BOOL _ShowErrorChoice(LPCWSTR message, LPCWSTR title = L"H3Error!")
+	{
+		return MessageBoxW(NULL, message, title, MB_OKCANCEL | MB_ICONERROR);
 	}
 };
 

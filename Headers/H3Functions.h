@@ -85,7 +85,7 @@ inline BOOL8 F_CreatureHasUpgrade(INT id)
 }
 
 // * GetCurrentDirectoryA using h3 assets
-inline INT F_GetCurrentDirectory(PCHAR buf, INT bufLen)
+inline INT F_GetCurrentDirectory(PCHAR buf, INT bufLen = MAX_PATH)
 {
 	return STDCALL_2(INT, IntAt(0x63A1A4), bufLen, buf);
 }
@@ -203,6 +203,14 @@ inline LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR *buffer)
 inline INT F_MultiplayerRNG(INT min_value, INT max_value)
 {
 	return FASTCALL_2(INT, 0x50B3C0, min_value, max_value);
+}
+
+inline PCHAR F_GetLocalTime()
+{
+	SYSTEMTIME time;
+	STDCALL_1(VOID, PtrAt(0x63A248), &time);
+	sprintf(h3_TextBuffer, "%04d.%02d.%02d - %02dh%02dm%02ds", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+	return h3_TextBuffer;
 }
 
 inline VOID H3SoundManager::ClickSound()

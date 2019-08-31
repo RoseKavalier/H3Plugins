@@ -84,6 +84,15 @@
 // * Various functions and structures
 #include "H3Varia.h"
 
+// * The H3Exception is hidden behind the _H3API_EXCEPTION_ guard.
+// * Uncomment the line below to be able to use it.
+//#define _H3API_EXCEPTION_
+
+#ifdef _H3API_EXCEPTION_
+// * SEH error handler, requies \EHa compiler flag
+#include "H3Exception.h"
+#endif /* #ifdef _H3API_EXCEPTION_ */
+
 #endif /* #define _H3API_H_ */
 
 // * Note to USERS

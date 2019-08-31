@@ -481,10 +481,6 @@ inline INT F_strcmpi(LPCSTR string1, LPCSTR string2)
 #define h3_NullString						((LPCSTR)0x691260)
 #define h3_SaveName							((PCHAR)0x69FC88)
 
-#pragma warning(push)
-#pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
-
-
 // * The new, new[], delete and delete[] operators are
 // * placed behind the _H3API_OPERATORS_ guards.
 // * If you want to use them in your project, you
@@ -492,6 +488,10 @@ inline INT F_strcmpi(LPCSTR string1, LPCSTR string2)
 // * #define _H3API_OPERATORS_
 // * #include "<...>/H3API.h"
 #ifdef _H3API_OPERATORS_
+
+#pragma warning(push)
+#pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
+
 //* new operator using h3 assets
 inline PVOID operator new(size_t sz)
 {
@@ -518,9 +518,9 @@ inline VOID operator delete[](PVOID ptr)
 		F_delete(ptr);
 }
 
-#endif /* _H3API_OPERATORS_ */
-
 #pragma warning(pop) /* #pragma warning(disable:4595) */
+
+#endif /* _H3API_OPERATORS_ */
 
 #pragma pack(push, 1) // 1 byte alignment
 
@@ -785,11 +785,11 @@ public:
 	// * sets new capacity, 0x1F is default
 	BOOL Reserve(INT32 newSize = 0x1E);
 	// * returns constant char* string
-	LPCSTR String();
+	LPCSTR String() const;
 	// * current length of string
-	INT32 Length() { return length; }
+	INT32 Length() const { return length; }
 	// * capacity of string
-	INT32 MaxLength() { return capacity; }
+	INT32 MaxLength() const { return capacity; }
 	// * Sets capacity if larger, otherwise shortens
 	BOOL SetLength(INT32 len);
 	// * Adds mes to end of string
@@ -962,7 +962,7 @@ inline BOOL H3String::Reserve(const INT32 newSize)
 	return Realloc(newSize);
 }
 
-inline LPCSTR H3String::String()
+inline LPCSTR H3String::String() const
 {
 #if H3API_SAFE
 	if (str)
@@ -1169,14 +1169,15 @@ inline INT32 H3String::Remove(CHAR ch)
 		return HS_FAILED;
 
 	INT32 len = Length();
+	register INT32 l = len;
 
 	char *src, *dst;
-	for (src = dst = str; *src && length; src++)
+	for (src = dst = str; *src && l--; src++)
 	{
 		if (*src == ch) // skip over this char
 		{
 			++src;
-			length--;
+			--length;
 		}
 		*dst = *src;
 		dst++;
