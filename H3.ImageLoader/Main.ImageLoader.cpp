@@ -1,15 +1,3 @@
-/*
- *
- * This plugin was inspired from ERA's implementation
- * of color tags and is heavily drawn upon its source code
- * which is available at:
- *
- * https://github.com/ethernidee/era/blob/master/Rainbow.pas
- *
- * Many thanks to Berserker!
- *
- */
-
 #include "Hooks.h"
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
@@ -21,17 +9,12 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 		if (!pluginOn)
 		{
 			pluginOn = TRUE;
-
-			// * not to be used outside SoD
-			if (h3_ExeVersion != h3_VersionSOD)
-				return TRUE;
-
 			Patcher *p = _P = GetPatcher();
 
 			// * make sure this plugin only installs once
-			if (!p->GetInstance("H3.TextColor"))
+			if (!p->GetInstance("H3.ImageLoader"))
 			{
-				_PI = p->CreateInstance("H3.TextColor");
+				_PI = p->CreateInstance("H3.ImageLoader");
 				PatcherInstance *pi = _PI;
 
 				Hooks_init(pi);

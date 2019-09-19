@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "H3.ShiftToggle", "H3.ShiftT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "H3.CombatAnimation", "H3.CombatAnimation\H3.CombatAnimation.vcxproj", "{02B7E3A4-24C2-4DED-9D51-29521DA8769A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "H3.ImageLoader", "H3.ImageLoader\H3.ImageLoader.vcxproj", "{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -62,6 +64,14 @@ Global
 		{02B7E3A4-24C2-4DED-9D51-29521DA8769A}.Release|Win32.Build.0 = Release|Win32
 		{02B7E3A4-24C2-4DED-9D51-29521DA8769A}.Release|x64.ActiveCfg = Release|x64
 		{02B7E3A4-24C2-4DED-9D51-29521DA8769A}.Release|x64.Build.0 = Release|x64
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Debug|Win32.Build.0 = Debug|Win32
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Debug|x64.ActiveCfg = Debug|x64
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Debug|x64.Build.0 = Debug|x64
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Release|Win32.ActiveCfg = Release|Win32
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Release|Win32.Build.0 = Release|Win32
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Release|x64.ActiveCfg = Release|x64
+		{6E8B343B-C214-4B7D-9E5B-81AC0ACCEEE3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

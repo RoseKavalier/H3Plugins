@@ -15,6 +15,7 @@
 
 #include "H3Base.h"
 #include "H3Varia.h"
+#include "H3Functions.h"
 #include <eh.h>
 #include <exception>
 #include <Psapi.h>
@@ -27,6 +28,7 @@
 namespace NH3Error
 {
 	inline void h3_trans_func(UINT code, EXCEPTION_POINTERS* ep);
+	CHAR const OfferToLog[] = "\nWould you like to save this error to file ?";
 }
 
 // * Catches std::exception and SEH errors
@@ -46,8 +48,9 @@ public:
 	VOID ShowMessagebox() { H3Error::ShowError(what()); }
 	// * creates a out-of-game messagebox showing the error
 	BOOL ShowMessageboxLog() { return H3Error::ShowErrorChoice(what()); }
-	//TODO add logging options to external file...
+	// * logs error to specified path
 	VOID LogError(const H3String &path) { LogError(path.String()); }
+	// * logs error to specified path
 	VOID LogError(LPCSTR path);
 
 };
@@ -69,7 +72,7 @@ class H3SEHandler
 	const _se_translator_function old_SE_translator;
 public:
 	H3SEHandler()
-		: old_SE_translator{ _set_se_translator(NH3Error::h3_trans_func) }
+		: old_SE_translator( _set_se_translator(NH3Error::h3_trans_func) )
 	{}
 	~H3SEHandler()
 	{
@@ -148,7 +151,7 @@ namespace NH3Error
 			}
 		}
 
-		static VOID information(H3String &error, _EXCEPTION_POINTERS* ep, bool has_exception_code = false, UINT code = 0, bool log_error = true)
+		static VOID information(H3String &error, _EXCEPTION_POINTERS* ep, UINT code = 0, bool log_error = true)
 		{
 			HMODULE hm;
 			GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCSTR)(ep->ExceptionRecord->ExceptionAddress), &hm);
@@ -171,44 +174,29 @@ namespace NH3Error
 					break;
 				}
 
-			CHAR buffer[512];
+			error.Printf("SE %s at address offset 0x%08X inside %s.\n",
+				seDescription(code),
+				(DWORD)ep->ExceptionRecord->ExceptionAddress - base_of_code,
+				module_name_short);
 
-			error += "SE ";
-			if (has_exception_code)
-				error += seDescription(code);
-			error += " at address offset 0x";
-			// address offset of error
-			int len = sprintf_s(buffer, sizeof(buffer), "%08X", (DWORD)ep->ExceptionRecord->ExceptionAddress - base_of_code);
-			error.Append(buffer, len);
-			error += " inside ";
-			error += module_name_short;
-			error += ".\n";
-
-			if (has_exception_code && (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR))
+			if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR)
 			{
-				error += "Invalid operation: ";
-				error += opDescription(ep->ExceptionRecord->ExceptionInformation[0]);
-				error += " at address 0x";
-
-				len = sprintf_s(buffer, sizeof(buffer), "%08X\n", ep->ExceptionRecord->ExceptionInformation[1]);
-				error.Append(buffer, len);
+				error.PrintfAppend("Invalid operation: %s at address 0x%08X.\n",
+					opDescription(ep->ExceptionRecord->ExceptionInformation[0]),
+					ep->ExceptionRecord->ExceptionInformation[1]);
 			}
 
-			if (has_exception_code && code == EXCEPTION_IN_PAGE_ERROR) {
-				error += "Underlying NTSTATUS code that resulted in the exception ";
-				len = sprintf_s(buffer, sizeof(buffer), "%08X\n", ep->ExceptionRecord->ExceptionInformation[2]);
-				error.Append(buffer, len);
+			if (code == EXCEPTION_IN_PAGE_ERROR) {
+				error.PrintfAppend("Underlying NTSTATUS code that resulted in the exception %08X.\n",
+					ep->ExceptionRecord->ExceptionInformation[2]);
 			}
 
-			error += "Context:\n";
 			PCONTEXT ctx = ep->ContextRecord;
-			len = sprintf_s(buffer, sizeof(buffer),
-				"EAX = 0x%08X\nECX = 0x%08X\nEDX = 0x%08X\nEBX = 0x%08X\nESP = 0x%08X\nEBP = 0x%08X\nESI = 0x%08X\nEDI = 0x%08X\nFlags = 0x%08X\n",
+			error.PrintfAppend("\nContext:\nEAX = 0x%08X\nECX = 0x%08X\nEDX = 0x%08X\nEBX = 0x%08X\nESP = 0x%08X\nEBP = 0x%08X\nESI = 0x%08X\nEDI = 0x%08X\nFlags = 0x%08X\n",
 				ctx->Eax, ctx->Ecx, ctx->Edx, ctx->Ebx, ctx->Esp, ctx->Ebp, ctx->Esi, ctx->Edi, ctx->ContextFlags);
-			error.Append(buffer, len);
 
 			if (log_error)
-				error += "\nWould you like to save this error to file?";
+				error.Append(OfferToLog);
 		}
 	};
 
@@ -216,7 +204,7 @@ namespace NH3Error
 	{
 		H3String error;
 		// * change the last input to false if you do not wish to offer logging the SE error
-		H3SEInfo::information(error, ep, true, code, true);
+		H3SEInfo::information(error, ep, code, true);
 		throw H3Exception(error);
 	}
 }
@@ -224,11 +212,11 @@ namespace NH3Error
 
 inline VOID H3Exception::LogError(LPCSTR path)
 {
-	FILE *f = fopen(path, "wb+");
+	FILE *f = F_fopen(path, "wb+");
 	if (!f)
 		return;
-	fwrite(what(), 1, strlen(what()), f);
-	fclose(f);
+	F_fwrite(what(), 1, strlen(what()) - sizeof(NH3Error::OfferToLog), f);
+	F_fclose(f);
 }
 
 #endif /* #ifdef _CPPUNWIND */

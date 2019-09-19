@@ -58,6 +58,16 @@
 // * disable sprintf warning
 #pragma warning(disable:4996)
 
+// * true if your IDE version is C++11 compatible
+#define CPLUSPLUS11 (__cplusplus > 199711L || (_MSC_VER && _MSC_VER >= 1900))
+
+#ifndef CPLUSPLUS11
+// * nullptr was added with C++11
+#define nullptr NULL
+// * constexpr was added with C++11
+#define constexpr const
+#endif
+
 // * Slaps top of car
 // * This bad boy can hold just about anything
 typedef void			(*naked_t)(void);
@@ -111,6 +121,11 @@ typedef void				*PVOID;
 #ifndef ArraySize
 // * returns number of elements in an array
 #define ArraySize(arr) (sizeof(arr) / sizeof(arr[0]))
+#endif
+
+#ifndef Abs
+// * returns absolute value of number
+#define Abs(num) (num >= 0 ? num : (-num))
 #endif
 
 #ifndef StrAt
@@ -401,38 +416,13 @@ typedef void				*PVOID;
 #ifndef CDECL_VA
 #define CDECL_VA(return_type, address, a1, ...) ((return_type(__cdecl *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
 #endif
+
+#ifndef CDECL_VA2
+#define CDECL_VA2(return_type, address, a1, a2, ...) ((return_type(__cdecl *)(UINT, UINT, ...))(address))((UINT)(a1), (UINT)(a2), __VA_ARGS__)
+#endif
+
 #pragma endregion
 
-// * heap realloc using H3 assets
-inline PVOID F_realloc(PVOID obj, UINT new_size)
-{
-	return CDECL_2(PVOID, 0x619890, obj, new_size);
-}
-
-// * heapalloc using H3 assets
-inline PVOID F_malloc(UINT size)
-{
-	return CDECL_1(PVOID, 0x617492, size);
-}
-
-// * heapfree using H3 assets
-inline VOID F_delete(PVOID obj)
-{
-	if (obj)
-		CDECL_1(VOID, 0x60B0F0, (PVOID)obj);
-}
-
-// * memcpy using H3 assets
-inline VOID F_memcpy(PVOID dest, PVOID src, UINT len)
-{
-	CDECL_3(VOID, 0x61AD70, dest, src, len);
-}
-
-// * compares two strings, not-case-sensitive
-inline INT F_strcmpi(LPCSTR string1, LPCSTR string2)
-{
-	return CDECL_2(INT, 0x6197C0, string1, string2);
-}
 
 // * movement bonuses
 #define SPEED_BONUS_BOOTS					IntAt(0x698B50) // usually 600 mp
@@ -481,12 +471,78 @@ inline INT F_strcmpi(LPCSTR string1, LPCSTR string2)
 #define h3_NullString						((LPCSTR)0x691260)
 #define h3_SaveName							((PCHAR)0x69FC88)
 
+// * heap realloc using H3 assets
+inline PVOID F_realloc(PVOID obj, UINT new_size)
+{
+	return CDECL_2(PVOID, 0x619890, obj, new_size);
+}
+
+// * calloc using h3 assets
+inline PVOID F_calloc(UINT count, UINT size = 1)
+{
+	return CDECL_2(PVOID, 0x61AA61, count, size);
+}
+
+// * heapalloc using H3 assets
+inline PVOID F_malloc(UINT size)
+{
+	return CDECL_1(PVOID, 0x617492, size);
+}
+
+// * heapfree using H3 assets
+inline VOID F_delete(PVOID obj)
+{
+	if (obj)
+		CDECL_1(VOID, 0x60B0F0, (PVOID)obj);
+}
+
+// * memcpy using H3 assets
+inline VOID F_memcpy(PVOID dest, PVOID src, UINT len)
+{
+	CDECL_3(VOID, 0x61AD70, dest, src, len);
+}
+
+// * compares two strings, not-case-sensitive
+inline INT F_strcmpi(LPCSTR string1, LPCSTR string2)
+{
+	return CDECL_2(INT, 0x6197C0, string1, string2);
+}
+
+// * sets dest to value
+inline PVOID F_memset(PVOID dest, UINT value, UINT len)
+{
+	return CDECL_3(PVOID, 0x61B7E0, dest, value, len);
+}
+
+// * vsprintf using h3 assets
+// * you need to handle va_list yourself to use this!
+// * otherwise use F_sprintf which will do both
+inline INT F_vsprintf(PCHAR buffer, LPCSTR format, va_list args)
+{
+	return CDECL_3(INT, 0x6190DE, buffer, format, args);
+}
+
+// * sprintf using h3 assets and buffer
+inline INT F_sprintf(LPCSTR format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	INT r = F_vsprintf(h3_TextBuffer, format, args);
+	va_end(args);
+	return r;
+}
+
 // * The new, new[], delete and delete[] operators are
 // * placed behind the _H3API_OPERATORS_ guards.
 // * If you want to use them in your project, you
-// * should first define it i.e.
+// * should first uncomment the last line of this paragraph
 // * #define _H3API_OPERATORS_
-// * #include "<...>/H3API.h"
+// * * * * * * * * * NOTE * * * * * * * *
+// * If defined, H3Vector will use the new[] and delete[] operators
+// * gaining greater autonomy to use
+// * appropriate constructors and destructors
+#define _H3API_OPERATORS_
+
 #ifdef _H3API_OPERATORS_
 
 #pragma warning(push)
@@ -597,7 +653,7 @@ inline int H3Numbers::AddCommas(const int num, char * out)
  */
 inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals)
 {
-#define RN_MIN_VALUE 10000
+	constexpr INT RN_MIN_VALUE = 10000;
 	int d, power, plus, div, dec;
 	char buf[32];
 
@@ -671,30 +727,36 @@ protected:
 	BOOL _init; // useless
 public:
 	// * the first item, also start of list
-	_Elem *first;
+	_Elem *m_first;
 	// * the end of last item
-	_Elem *end;
+	_Elem *m_end;
 	// * end of allocated memory
-	_Elem *capacity;
+	_Elem *m_capacity;
 
+	H3Vector(const int number_elements)
+	{
+		Init();
+		Reserve(number_elements);
+	}
 	H3Vector() { Init(); }
 	~H3Vector() { Deref(); }
+
 	// * ~constructor
 	VOID Init();
 	// * ~destructor.
 	VOID Deref();
 	// * If list is empty
-	BOOL IsEmpty();
+	BOOL IsEmpty() const;
 	// * If vector is full
-	BOOL IsFull();
+	BOOL IsFull() const;
 	// * the number of items
-	INT32 Count();
+	INT32 Count() const;
 	// * the maximum number of items
-	INT32 CountMax();
+	INT32 CountMax() const;
 	// * calculates size
-	UINT32 Size();
+	UINT32 Size() const;
 	// * calculates allocated size
-	UINT32 SizeAllocated();
+	UINT32 SizeAllocated() const;
 	// * removes the last item
 	VOID RemoveLast();
 	// * empties list
@@ -709,8 +771,14 @@ public:
 	BOOL Expand();
 	// * returns First item
 	_Elem *First();
+	const _Elem *CFirst() const { return First(); }
+	_Elem& RFirst() { return *First(); }
+	const _Elem& CRFirst() const { return RFirst(); }
 	// * returns Last item
 	_Elem *Last();
+	const _Elem *CLast() const { return Last(); }
+	_Elem& RLast() { return *Last(); }
+	const _Elem& CRLast() const { return RLast(); }
 	// * Add one item to end
 	_Elem* Append(_Elem & item) { return Add(item); }
 	// * Add a single item, expanding by 1
@@ -719,10 +787,16 @@ public:
 	_Elem* Pop();
 	// * Returns item at position, can be negative to get from end
 	_Elem* At(INT32 pos);
-	// * remove one item, list shifts left
+	const _Elem* CAt(INT32 pos) const;
+	// * returns reference to item at position
+	_Elem& RAt(INT32 pos) { return *At(pos); }
+	const _Elem& CRAt(INT32 pos) const { return RAt(pos); }
+	// * remove one item, elements shift left
 	BOOL Remove(INT32 pos);
 	// * remove range, list shifts left
 	BOOL Remove(INT32 fromPos, INT32 toPos);
+	// * reserves a number of elements, always greater than current
+	BOOL Reserve(const INT number);
 
 	// * returns pointer to element at pos, positive only
 	_Elem* operator[](INT32 pos);
@@ -730,6 +804,11 @@ public:
 	_Elem* operator+=(_Elem & item);
 	// * Adds item to end of list
 	_Elem* operator<<(_Elem & item) { return operator+=(item); }
+
+	// * this is used in combination of C++11 'for :' range-based for loop iterator operations
+	_Elem* begin() { return m_first; }
+	// * this is used in combination of C++11 'for :' range-based for loop iterator operations
+	_Elem* end() { return m_end; }
 };
 
 // * a string following the H3 format
@@ -741,9 +820,11 @@ protected:
 	INT32 length;
 	INT32 capacity;
 
-	VOID Deref() { str = NULL; length = 0; capacity = 0; }
+	VOID Deref() { str = nullptr; length = 0; capacity = 0; }
 	VOID NullTerminate() { *End() = 0; }
 	BOOL Realloc(int newSize);
+
+
 public:
 	// * constructor
 	H3String();
@@ -771,17 +852,17 @@ public:
 	// * returns the last char of string
 	CHAR Last();
 	// * sets string as mes
-	H3String* Assign(LPCSTR mes, INT32 len);
+	H3String& Assign(LPCSTR mes, const INT32 len);
 	// * Assign(mes, strlen(mes))
-	H3String* Assign(LPCSTR mes);
+	H3String& Assign(LPCSTR mes);
 	// * sets *string as ch
-	H3String* Assign(CHAR ch);
+	H3String& Assign(CHAR ch);
 	// * sets &string as h3string
-	H3String* Assign(H3String *h3string);
+	H3String& Assign(const H3String *h3string);
 	// * sets string as h3string
-	H3String* Assign(H3String &h3string);
+	H3String& Assign(const H3String &h3string);
 	// * prints number to string
-	H3String* Assign(const INT32 number);
+	H3String& Assign(const INT32 number);
 	// * sets new capacity, 0x1F is default
 	BOOL Reserve(INT32 newSize = 0x1E);
 	// * returns constant char* string
@@ -794,80 +875,200 @@ public:
 	BOOL SetLength(INT32 len);
 	// * Adds mes to end of string
 	BOOL Append(LPCSTR mes, INT32 len);
+
+	// * reduces buffer capacity to length + 1
+	VOID ShrinkToFit();
+
+	template<INT32 sz>
+	H3String& Append(const CHAR (&buffer)[sz]);
 	// * Adds h3string to end of string
 	BOOL Append(H3String & h3string);
 	// * Adds h3string to end of string
 	BOOL Append(H3String *h3string);
 	// * Adds number to string
-	H3String* Append(int number);
+	H3String& Append(const int number);
+	// * Adds hex number to string
+	H3String& Append(const unsigned int number);
 	// * Adds ch to end of string
-	BOOL Append(CHAR ch);
+	BOOL Append(const CHAR ch);
 	// * Finds position of first ch
-	INT FindFirst(CHAR ch);
+	LPCSTR FindFirst(const CHAR ch);
 	// * Finds position of first substring
-	INT FindFirst(LPCSTR substr);
+	LPCSTR FindFirst(LPCSTR substr) const;
 	// * returns string offset at pos
-	PCHAR At(INT32 pos);
+	PCHAR At(const INT32 pos);
+	const CHAR GetCharAt(const INT32 pos) const;
 	// * Removes all instances of ch
-	INT32 Remove(CHAR ch);
+	INT32 Remove(const CHAR ch);
 	// * Removes all instances of substring
 	INT32 Remove(LPCSTR substr);
 	// * Removes all instances of substring
 	INT32 Remove(LPCSTR substr, INT32 sublen);
 	// * Remove chars from start to end
 	INT32 Remove(INT32 start, INT32 end);
+	// * Splits a string on a given char
+	// * The character is removed
+	// * the original string is truncated
+	// * The outgoing string gets the remainder
+	// * of the original string
+	BOOL Split(const CHAR ch, H3String& out);
 	// * sets string to all 0s
 	VOID Erase();
 	// * memcmp ~ case sensitive
-	BOOL Equals(LPCSTR msg, INT32 len);
+	BOOL Equals(LPCSTR msg, INT32 len) const;
 	// * Equals(msg, strlen(msg))
-	BOOL Equals(LPCSTR msg);
+	BOOL Equals(LPCSTR msg) const;
 	// * strcmpi ~ not case-sensitive
-	BOOL Equals_i(LPCSTR msg);
+	BOOL Equals_i(LPCSTR msg) const;
+	// * strcmpi ~ not case-sensitive
+	BOOL Equals_i(const H3String& other) const;
+	// * strcmpi ~ not case-sensitive
+	BOOL Equals_i(const H3String* other) const;
 	// * memcmp ~ case sensitive
-	BOOL Equals(H3String *h3string);
+	BOOL Equals(H3String *h3string) const;
+
+	// * Inserts string within h3string at position
+	BOOL Insert(INT32 pos, LPCSTR msg, INT32 len);
+	// * Inserts string within h3string at position
+	BOOL Insert(INT32 pos, LPCSTR msg) { return Insert(pos, msg, strlen(msg)); }
+	// * Inserts string within h3string at position
+	BOOL Insert(INT32 pos, H3String& to_insert) { return Insert(pos, to_insert.String(), to_insert.Length()); }
+	// * Inserts string within h3string at position
+	BOOL Insert(INT32 pos, H3String* to_insert) { return Insert(pos, *to_insert); }
+	// * Inserts string within h3string at position
+	BOOL Insert(INT32 pos, const CHAR ch);
+
 	// * Ends string at position
 	BOOL Truncate(INT32 position);
+
 	// * Assign(h3str)
-	H3String* operator=(H3String &h3str);
+	H3String& operator=(H3String &h3str);
 	// * Assign(h3str)
-	H3String* operator=(H3String *h3str);
+	H3String& operator=(H3String *h3str);
 	// * Assign(msg)
-	H3String* operator=(LPCSTR msg);
+	H3String& operator=(LPCSTR msg);
 	// * Assign(ch)
-	H3String* operator=(CHAR ch);
+	H3String& operator=(CHAR ch);
+
+#ifdef CPLUSPLUS11
+	H3String& operator=(H3String&& other);
+	H3String(H3String&& other);
+#endif
+
 	// * Append(h3str)
-	H3String* operator+=(H3String &h3str);
+	H3String& operator+=(H3String &h3str);
 	// * Append(h3str)
-	H3String* operator+=(H3String *h3str);
+	H3String& operator+=(H3String *h3str);
 	// * Append(msg)
-	H3String* operator+=(LPCSTR msg);
+	template<INT32 sz>
+	H3String & operator+=(const CHAR(&buffer)[sz]);
+	// * Append(msg)
+	H3String& operator+=(LPCSTR msg);
 	// * Append(ch)
-	H3String* operator+=(CHAR ch);
+	H3String& operator+=(CHAR ch);
+
+	// * Append(signed int)
+	// * Adds number to string
+	H3String& operator+=(const int number) { return Append(number); }
+	// * Adds hex number to string
+	H3String& operator+=(const unsigned int number) { return Append(number); }
+
+	// * Appends char
+	H3String& operator<<(CHAR ch) { return operator+=(ch); }
+	// * Appends string
+	H3String& operator<<(LPCSTR msg) { return operator+=(msg); }
+	// * Appends h3string
+	H3String& operator<<(H3String & h3str) { return operator+=(h3str); }
 	// * Appends
-	H3String* operator<<(CHAR ch) { return operator+=(ch); }
-	// * Appends
-	H3String* operator<<(LPCSTR msg) { return operator+=(msg); }
-	// * Appends
-	H3String* operator<<(H3String & h3str) { return operator+=(h3str); }
-	// * Appends
-	H3String* operator<<(H3String * h3str) { return operator+=(h3str); }
+	H3String& operator<<(H3String * h3str) { return operator+=(h3str); }
+	// * Adds number to string
+	H3String& operator<<(const int number) { return Append(number); }
+	// * Adds hex number to string
+	H3String& operator<<(const unsigned int number) { return Append(number); }
+
 	// * Equals(h3str)
-	BOOL operator==(H3String *h3str);
+	BOOL operator==(H3String *h3str) const;
 	// * Equals(h3str)
-	BOOL operator==(H3String & h3str) { return operator==(&h3str); }
+	BOOL operator==(H3String & h3str) const { return operator==(&h3str); }
 	// * Equals(str)
-	BOOL operator==(LPCSTR str);
-	// * Returns string at offset
-	PCHAR operator[](INT32 pos);
+	BOOL operator==(LPCSTR str) const;
+
+	// * Returns char at offset
+	const CHAR operator[](INT32 pos) const;
 
 	// * The number of times this string is referenced - avoids deletion from destructor in references
 	INT8 References();
+
 	// * Increase the number of references to this string
 	VOID IncreaseReferences();
 
+	// * assigns a number with commas to a string
 	BOOL FormattedNumber(int number);
+
+	// * assigns a scaled number with k, M or B index and number of decimals
 	BOOL ScaledNumber(int number, int decimals = 1);
+
+#if CPLUSPLUS11
+	// * use sprintf on a H3String directly
+	template<typename ... Args>
+	H3String& Printf(LPCSTR format, Args ... args)
+	{
+		// * snprintf with null buffer returns print length
+		int len = _snprintf(nullptr, 0, format, args ...);
+		if (len > 0 && Reserve(len + 1))
+		{
+			len = _snprintf(Begin(), len, format, args ...);
+			if (len)
+			{
+				length = len - 1;
+				str[len] = 0;
+			}
+		}
+		return *this;
+	}
+
+	// * use sprintf on a H3String, appending the result to the end
+	template<typename ... Args>
+	H3String& PrintfAppend(LPCSTR format, Args ... args)
+	{
+		H3String appendme;
+		appendme.Printf(format, args ...);
+		Append(appendme);
+		return *this;
+	}
+#else // non c++11 versions
+	// * use sprintf on a H3String directly
+	H3String& Printf(LPCSTR format, ...)
+	{
+		va_list args;
+		va_start(args, format);
+		int len = _snprintf(nullptr, 0, format, args);
+		if (len > 0 && Reserve(len + 1))
+		{
+			len = F_vsprintf(Begin(), format, args);
+			Truncate(len);
+		}
+		va_end(args);
+		return *this;
+	}
+	// * use sprintf on a H3String, appending the result to the end
+	H3String& PrintfAppend(LPCSTR format, ...)
+	{
+		H3String appendme;
+		va_list args;
+		va_start(args, format);
+		int len = _snprintf(nullptr, 0, format, args);
+		if (len > 0 && appendme.Reserve(len + 1))
+		{
+			len = F_vsprintf(appendme.Begin(), format, args);
+			appendme.Truncate(len);
+		}
+		va_end(args);
+		Append(appendme);
+		return *this;
+	}
+#endif
+
 
 	/*
 	*
@@ -893,6 +1094,29 @@ public:
 		HS_SUCCESS = 1
 	};
 };
+
+#ifdef CPLUSPLUS11
+inline H3String& H3String::operator=(H3String&& other)
+{
+	if (&other == this)
+		return *this;
+
+	str = other.str;
+	length = other.length;
+	capacity = other.capacity;
+	other.Deref();
+
+	return *this;
+}
+
+inline H3String::H3String(H3String&& other) :
+	str(other.str),
+	length(other.length),
+	capacity(other.capacity)
+{
+	other.Deref();
+}
+#endif
 
 // * dword used as bitfield
 // * can be used as an array of bitfields
@@ -926,35 +1150,35 @@ struct H3Bitfield
 
 // * H3String member function definitions
 
-inline H3String * H3String::Assign(CHAR ch)
+inline H3String & H3String::Assign(CHAR ch)
 {
 	if (str || Realloc(1))
 	{
 		*Begin() = ch;
 		SetLength(1);
 	}
-	return this;
+	return *this;
 }
 
-inline H3String * H3String::Assign(H3String & h3string)
+inline H3String & H3String::Assign(const H3String & h3string)
 {
 	if (h3string.str)
 		Assign(h3string.String(), h3string.Length());
-	return this;
+	return *this;
 }
 
-inline H3String * H3String::Assign(H3String * h3string)
+inline H3String & H3String::Assign(const H3String * h3string)
 {
 	if (h3string)
-		Assign(h3string->Begin(), h3string->Length());
-	return this;
+		Assign(h3string->String(), h3string->Length());
+	return *this;
 }
 
-inline H3String * H3String::Assign(const INT32 number)
+inline H3String & H3String::Assign(const INT32 number)
 {
 	if (str || Reserve())
 		length = sprintf(str, "%d", number);
-	return this;
+	return *this;
 }
 
 inline BOOL H3String::Reserve(const INT32 newSize)
@@ -1060,18 +1284,18 @@ inline CHAR H3String::Last()
 	return str[length - 1];
 }
 
-inline H3String * H3String::Assign(LPCSTR mes)
+inline H3String & H3String::Assign(LPCSTR mes)
 {
 	return Assign(mes, strlen(mes));
 }
 
-inline H3String * H3String::Assign(LPCSTR mes, INT32 len)
+inline H3String & H3String::Assign(LPCSTR mes, const INT32 len)
 {
 #if H3API_SAFE
 	if (!mes)
 		return this;
 #endif
-	return THISCALL_3(H3String*, 0x404180, this, mes, len);
+	return THISCALL_3(H3String&, 0x404180, this, mes, len);
 }
 
 inline BOOL H3String::SetLength(INT32 len)
@@ -1102,6 +1326,35 @@ inline BOOL H3String::Append(LPCSTR mes, INT32 len)
 	return HS_SUCCESS;
 }
 
+inline VOID H3String::ShrinkToFit()
+{
+	if (capacity == 0)
+		return;
+	int min_len = length + 2;
+	if (min_len >= capacity)
+		return;
+
+	PCHAR tmp = (PCHAR)F_malloc(min_len);
+	F_memcpy(tmp, str - 1, min_len);
+	F_delete(str - 1);
+	str = tmp;
+	capacity = min_len - 1;
+}
+
+template<INT32 sz>
+inline H3String & H3String::Append(const CHAR (&buffer)[sz])
+{
+	Append(buffer, sz - 1);
+	return *this;
+}
+
+template<INT32 sz>
+inline H3String & H3String::operator+=(const CHAR(&buffer)[sz])
+{
+	Append(buffer, sz - 1);
+	return *this;
+}
+
 inline BOOL H3String::Append(H3String & h3string)
 {
 	if (!h3string.Begin())
@@ -1116,14 +1369,17 @@ inline BOOL H3String::Append(H3String * h3string)
 	return Append(h3string->Begin(), h3string->Length());
 }
 
-inline H3String * H3String::Append(int number)
+inline H3String & H3String::Append(const int number)
 {
-	if (Length() + 12 < MaxLength() || Realloc(Length() + 12))
-		sprintf(End(), "%d", number);
-	return this;
+	return PrintfAppend("%d", number);
 }
 
-inline BOOL H3String::Append(CHAR ch)
+inline H3String & H3String::Append(const unsigned int number)
+{
+	return PrintfAppend("0x%X", number);
+}
+
+inline BOOL H3String::Append(const CHAR ch)
 {
 	if (!ch) // null char already done
 		return HS_SUCCESS;
@@ -1138,49 +1394,46 @@ inline BOOL H3String::Append(CHAR ch)
 	return HS_SUCCESS;
 }
 
-inline INT H3String::FindFirst(CHAR ch)
+inline LPCSTR H3String::FindFirst(const CHAR ch)
 {
 	PCHAR f = Begin();
 	int pos = 0;
-	while (*f)
+	int len = Length();
+	while (*f && pos < len)
 	{
 		if (*f == ch)
-			return pos;
-		f++;
-		pos++;
+			return f;
+		++f;
+		++pos;
 	}
-	return HS_NOTFOUND;
+	return nullptr;
 }
 
-inline INT H3String::FindFirst(LPCSTR substr)
+inline LPCSTR H3String::FindFirst(LPCSTR substr) const
 {
 	if (String())
-	{
-		LPCSTR s = strstr(String(), substr);
-		if (s)
-			return s - String();
-	}
-	return HS_NOTFOUND;
+		return strstr(String(), substr);
+	return nullptr;
 }
 
-inline INT32 H3String::Remove(CHAR ch)
+inline INT32 H3String::Remove(const CHAR ch)
 {
 	if (!str || *str == 0) // no text or NULL string
 		return HS_FAILED;
 
 	INT32 len = Length();
-	register INT32 l = len;
+	register INT32 l = Length() + 1;
 
 	char *src, *dst;
-	for (src = dst = str; *src && l--; src++)
+	for (src = dst = str; *src && --l; src++)
 	{
 		if (*src == ch) // skip over this char
 		{
-			++src;
 			--length;
+			continue;
 		}
 		*dst = *src;
-		dst++;
+		++dst;
 	}
 	*dst = 0; // place end character
 
@@ -1197,12 +1450,12 @@ inline INT32 H3String::Remove(LPCSTR substr, INT32 sublen)
 	PCHAR s, copyFrom, copyEnd;
 	if (!String())
 		return HS_FAILED;
-	if (NULL == (s = strstr(str, substr)))
+	if (nullptr == (s = strstr(str, substr)))
 		// no match
 		return 0;
 	INT rem = length;
 	copyFrom = s + sublen;
-	while (NULL != (copyEnd = strstr(copyFrom, substr)))
+	while (nullptr != (copyEnd = strstr(copyFrom, substr)))
 	{
 		memmove(s, copyFrom, copyEnd - copyFrom);
 		s += copyEnd - copyFrom;
@@ -1213,11 +1466,18 @@ inline INT32 H3String::Remove(LPCSTR substr, INT32 sublen)
 	return rem - length;
 }
 
-inline PCHAR H3String::At(INT32 pos)
+inline PCHAR H3String::At(const INT32 pos)
 {
 	if (Begin() && pos >= 0)
 		return str + min(pos, Length());
-	return NULL;
+	return nullptr;
+}
+
+inline const CHAR H3String::GetCharAt(const INT32 pos) const
+{
+	if (str && pos >= 0 && Length())
+		return str[min(pos, Length())];
+	return 0;
 }
 
 inline INT32 H3String::Remove(INT32 start, INT32 end)
@@ -1240,39 +1500,109 @@ inline INT32 H3String::Remove(INT32 start, INT32 end)
 	return n;
 }
 
+inline BOOL H3String::Split(const CHAR ch, H3String & out)
+{
+	LPCSTR limiter = FindFirst(ch);
+	if (!limiter)
+		return FALSE;
+
+	INT pos = INT(limiter - String());
+	INT rem_len = Length() - pos - 1;
+	// * if it's the last char of string, no split can occur...
+	// * still we remove the found char
+	if (rem_len <= 0)
+	{
+		Truncate(pos == 0 ? 0 : pos - 1);
+		return FALSE;
+	}
+
+	out.Assign(limiter + 1, rem_len);
+	Truncate(pos == 0 ? 0 : pos - 1);
+	return TRUE;
+}
+
 inline VOID H3String::Erase()
 {
-	memset(Begin(), 0, Length());
+	F_memset(Begin(), 0, Length());
 	length = 0;
 }
 
-inline BOOL H3String::Equals(LPCSTR msg, INT32 len)
+inline BOOL H3String::Equals(LPCSTR msg, INT32 len) const
 {
 	if (!msg || Length() != len)
 		return FALSE;
 
-	return memcmp(msg, Begin(), Length()) == 0;
+	return memcmp(msg, String(), Length()) == 0;
 }
 
-inline BOOL H3String::Equals(LPCSTR msg)
+inline BOOL H3String::Equals(LPCSTR msg) const
 {
 	if (!msg)
 		return HS_FAILED;
 	return Equals(msg, strlen(msg));
 }
 
-inline BOOL H3String::Equals_i(LPCSTR msg)
+inline BOOL H3String::Equals_i(LPCSTR msg) const
 {
 	if (!msg)
 		return HS_FAILED;
 	return (F_strcmpi(msg, String()) == 0);
 }
 
-inline BOOL H3String::Equals(H3String * h3string)
+inline BOOL H3String::Equals_i(const H3String & other) const
+{
+	if (Length() != other.Length())
+		return FALSE;
+	return Equals_i(other.String());
+}
+
+inline BOOL H3String::Equals_i(const H3String * other) const
+{
+	if (!other)
+		return HS_FAILED;
+	return Equals_i(*other);
+}
+
+inline BOOL H3String::Equals(H3String * h3string) const
 {
 	if (!h3string)
 		return HS_FAILED;
+	if (Length() != h3string->Length())
+		return FALSE;
 	return Equals(h3string->Begin(), h3string->Length());
+}
+
+inline BOOL H3String::Insert(INT32 pos, LPCSTR msg, INT32 len)
+{
+	if (len == 0 || msg == nullptr)
+		return FALSE;
+	// * trying to insert at or after end
+	if (pos >= Length())
+		return Append(msg, len);
+
+	if (!Reserve(Length() + len))
+		return FALSE;
+
+	INT copylen = Length() - pos;
+	// * simpler than malloc + free
+	H3String temp;
+	temp.Assign(str + pos, copylen);
+	// * temporarily cut out
+	Truncate(pos);
+	// * insert msg
+	Append(msg, len);
+	// * insert original end
+	Append(temp);
+
+	return TRUE;
+}
+
+inline BOOL H3String::Insert(INT32 pos, const CHAR ch)
+{
+	CHAR temp[2];
+	temp[0] = ch;
+	temp[1] = 0;
+	return Insert(pos, temp, 1);
 }
 
 inline BOOL H3String::Truncate(INT32 position)
@@ -1280,66 +1610,66 @@ inline BOOL H3String::Truncate(INT32 position)
 	if (position < Length() && String())
 	{
 		length = position;
-		NullTerminate();
+		str[length] = 0;
 	}
 	return FALSE;
 }
 
-inline H3String * H3String::operator=(H3String & h3str)
+inline H3String & H3String::operator=(H3String & h3str)
 {
 	return Assign(h3str);
 }
 
-inline H3String * H3String::operator=(H3String * h3str)
+inline H3String & H3String::operator=(H3String * h3str)
 {
 	return Assign(h3str);
 }
 
-inline H3String * H3String::operator+=(H3String & h3str)
+inline H3String & H3String::operator+=(H3String & h3str)
 {
 	Append(h3str);
-	return this;
+	return *this;
 }
 
-inline H3String * H3String::operator+=(H3String * h3str)
+inline H3String & H3String::operator+=(H3String * h3str)
 {
 	Append(h3str);
-	return this;
+	return *this;
 }
 
-inline H3String * H3String::operator+=(LPCSTR msg)
+inline H3String & H3String::operator+=(LPCSTR msg)
 {
 	Append(msg, strlen(msg));
-	return this;
+	return *this;
 }
 
-inline H3String * H3String::operator+=(CHAR ch)
+inline H3String & H3String::operator+=(CHAR ch)
 {
 	Append(ch);
-	return this;
+	return *this;
 }
 
-inline BOOL H3String::operator==(H3String * h3str)
+inline BOOL H3String::operator==(H3String * h3str) const
 {
 	return Equals(h3str);
 }
 
-inline BOOL H3String::operator==(LPCSTR str)
+inline BOOL H3String::operator==(LPCSTR str) const
 {
 	return Equals(str);
 }
 
-inline PCHAR H3String::operator[](INT32 pos)
+inline const CHAR H3String::operator[](INT32 pos) const
 {
 #if H3API_SAFE
 	if (!str)
-		return h3_NullString;
+		return 0;
 	if (pos < 0)
-		return str;
+		return str[0];
 	if (pos > Length())
-		return End();
+		return str[Length() - 1];
 #endif
-	return str + pos;
+	return str[pos];
 }
 
 inline INT8 H3String::References()
@@ -1359,16 +1689,16 @@ inline VOID H3String::IncreaseReferences()
 		str[-1]++;
 }
 
-inline H3String * H3String::operator=(LPCSTR msg)
+inline H3String & H3String::operator=(LPCSTR msg)
 {
 	Assign(msg);
-	return this;
+	return *this;
 }
 
-inline H3String * H3String::operator=(CHAR ch)
+inline H3String & H3String::operator=(CHAR ch)
 {
 	Assign(ch);
-	return this;
+	return *this;
 }
 
 inline BOOL H3String::FormattedNumber(int number)
@@ -1440,182 +1770,76 @@ inline H3String operator+(H3String & lhs, LPCSTR rhs)
 	return ans;
 }
 
+// * * * * * * * * * * * * * * * * * * * *
+// *
 // * H3Vector member function definitions
+// *
+// * * * * * * * * * * * * * * * * * * * *
 
 template<typename _Elem>
 inline VOID H3Vector<_Elem>::Init()
 {
-	first = NULL;
-	end = NULL;
-	capacity = NULL;
+	m_first = nullptr;
+	m_end = nullptr;
+	m_capacity = nullptr;
 }
 
 template<typename _Elem>
-inline VOID H3Vector<_Elem>::Deref()
+inline BOOL H3Vector<_Elem>::IsEmpty() const
 {
-	if (first)
-		F_delete(first);
-	first = NULL;
-	end = NULL;
-	capacity = NULL;
-}
-
-template<typename _Elem>
-inline BOOL H3Vector<_Elem>::IsEmpty()
-{
-	if (!first || first == end)
+	if (!m_first || m_first == m_end)
 		return TRUE;
 	return FALSE;
 }
 
 template<typename _Elem>
-inline BOOL H3Vector<_Elem>::IsFull()
+inline BOOL H3Vector<_Elem>::IsFull() const
 {
-	if (end == capacity)
+	if (m_end == m_capacity)
 		return TRUE;
 	return FALSE;
 }
 
 template<typename _Elem>
-inline INT32 H3Vector<_Elem>::Count()
+inline INT32 H3Vector<_Elem>::Count() const
 {
-	return end - first;
+	return m_end - m_first;
 }
 
 template<typename _Elem>
-inline INT32 H3Vector<_Elem>::CountMax()
+inline INT32 H3Vector<_Elem>::CountMax() const
 {
-	return capacity - first;
+	return m_capacity - m_first;
 }
 
 template<typename _Elem>
-inline UINT32 H3Vector<_Elem>::Size()
+inline UINT32 H3Vector<_Elem>::Size() const
 {
-	return (UINT32)end - (UINT32)first;
+	return (UINT32)m_end - (UINT32)m_first;
 }
 
 template<typename _Elem>
-inline UINT32 H3Vector<_Elem>::SizeAllocated()
+inline UINT32 H3Vector<_Elem>::SizeAllocated() const
 {
-	return (UINT32)capacity - (UINT32)first;
-}
-
-template<typename _Elem>
-inline VOID H3Vector<_Elem>::RemoveLast()
-{
-	if (end > first)
-		end--;
-}
-
-template<typename _Elem>
-inline VOID H3Vector<_Elem>::RemoveAll()
-{
-	end = first;
-}
-
-template<typename _Elem>
-inline _Elem * H3Vector<_Elem>::Add(_Elem & item)
-{
-	if (!first || IsFull())
-	{
-		if (!Expand())
-			return NULL; // failed
-	}
-	F_memcpy(end, &item, sizeof(_Elem));
-	end++;
-	return end - 1;  // returns position where it was added
-}
-
-template<typename _Elem>
-inline _Elem * H3Vector<_Elem>::AddOne(_Elem & item)
-{
-	if (!first)
-	{
-		first = (_Elem*)F_malloc(sizeof(_Elem));
-		end = first;
-		if (first)
-			capacity = first + 1;
-		else
-			return FALSE;
-	}
-	else if (IsFull())
-	{
-		UINT32 size = Size();
-		UINT32 newSize = size + sizeof(_Elem);
-
-		_Elem *temp = (_Elem*)F_realloc(first, newSize);
-
-		if (temp)
-		{
-			first = temp;
-			end = (_Elem*)((UINT32)first + size);
-			capacity = (_Elem*)((UINT32)first + newSize);
-		}
-		else
-			return FALSE;
-	}
-	F_memcpy(end, &item, sizeof(_Elem));
-	end++;
-	return end - 1;  // returns position where it was added
+	return (UINT32)m_capacity - (UINT32)m_first;
 }
 
 template<typename _Elem>
 inline VOID H3Vector<_Elem>::AddSize4(_Elem item)
 {
-	THISCALL_4(VOID, 0x5FE2D0, this, end, 1, &item);
-}
-
-template<typename _Elem>
-inline BOOL H3Vector<_Elem>::Expand()
-{
-#define MIN_ELEMENTS 10
-#define SIZE_MULTIPLIER 2
-
-	if (!first)
-	{
-		//first = h3_new(_Elem, MIN_ELEMENTS);
-		first = (_Elem*)F_malloc(sizeof(_Elem) * MIN_ELEMENTS);
-		end = first;
-		if (first)
-			capacity = first + MIN_ELEMENTS;
-		return first != NULL;
-	}
-	else
-	{
-		UINT32 size = SizeAllocated();
-		UINT32 cSize = Size();
-		UINT32 newSize = size * SIZE_MULTIPLIER;
-		_Elem *temp = (_Elem*)F_realloc(first, newSize);
-		if (temp)
-		{
-			first = temp;
-			end = (_Elem*)((UINT32)first + cSize);
-			capacity = (_Elem*)((UINT32)first + newSize);
-			return TRUE;
-		}
-	}
-	return FALSE;
-#undef MIN_ELEMENTS
-#undef SIZE_MULTIPLIER
+	THISCALL_4(VOID, 0x5FE2D0, this, m_end, 1, &item);
 }
 
 template<typename _Elem>
 inline _Elem * H3Vector<_Elem>::First()
 {
-	return first;
+	return m_first;
 }
 
 template<typename _Elem>
 inline _Elem * H3Vector<_Elem>::Last()
 {
-	return end - 1;
-}
-
-template<typename _Elem>
-inline _Elem * H3Vector<_Elem>::Pop()
-{
-	end--;
-	return end;
+	return m_end - 1;
 }
 
 template<typename _Elem>
@@ -1627,10 +1851,25 @@ inline _Elem * H3Vector<_Elem>::At(INT32 pos)
 	else
 	{
 		int c = Count();
-		n = min(-(n), c);
+		n = min(-(pos), c);
 		n = c - n;
 	}
-	return this[n];
+	return m_first + n;
+}
+
+template<typename _Elem>
+inline const _Elem * H3Vector<_Elem>::CAt(INT32 pos) const
+{
+	INT32 n;
+	if (pos >= 0)
+		n = min(pos, Count() - 1);
+	else
+	{
+		int c = Count();
+		n = min(-(pos), c);
+		n = c - n;
+	}
+	return m_first + n;
 }
 
 template<typename _Elem>
@@ -1640,30 +1879,9 @@ inline BOOL H3Vector<_Elem>::Remove(INT32 pos)
 }
 
 template<typename _Elem>
-inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
-{
-	if (fromPos < 0 || toPos < 0 || toPos < first)
-		return FALSE;
-	INT32 num = Count();
-	if (fromPos >= num)
-		return FALSE;
-
-	INT32 to = min(num - 1, toPos); // don't go further than end!
-	INT32 r = to - fromPos + 1; // number removed
-
-	_Elem* rem = first + fromPos;
-	_Elem* remEnd = rem + r;
-
-	size_t copyLen = (size_t)end - (size_t)remEnd;
-	memmove((PVOID)rem, (PVOID)remEnd, copyLen);
-	end -= r;
-	return TRUE;
-}
-
-template<typename _Elem>
 inline _Elem * H3Vector<_Elem>::operator[](INT32 pos)
 {
-	return first + pos;
+	return m_first + pos;
 }
 
 template<typename _Elem>
@@ -1671,5 +1889,253 @@ inline _Elem* H3Vector<_Elem>::operator+=(_Elem & item)
 {
 	return Add(item);
 }
+
+template<typename _Elem>
+inline _Elem * H3Vector<_Elem>::Pop()
+{
+	if (m_end > m_first)
+	{
+		--m_end;
+		m_end->~_Elem();
+	}
+	return m_end;
+}
+
+template<typename _Elem>
+inline VOID H3Vector<_Elem>::RemoveAll()
+{
+	while (m_end > m_first)
+	{
+		--m_end;
+		m_end->~_Elem();
+	}
+}
+
+template<typename _Elem>
+inline VOID H3Vector<_Elem>::RemoveLast()
+{
+	Pop();
+}
+
+#ifdef _H3API_OPERATORS_
+
+	template<typename _Elem>
+	inline VOID H3Vector<_Elem>::Deref()
+	{
+		if (m_first)
+			delete[] m_first;
+		m_first = nullptr;
+		m_end = nullptr;
+		m_capacity = nullptr;
+	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Reserve(const INT number)
+	{
+		if (number <= 0)
+			return FALSE;
+
+		INT num = Count();
+		if (number <= num)
+			return FALSE;
+
+		_Elem *t = new _Elem[number];
+		if (!t)
+			return FALSE;
+
+#ifdef CPLUSPLUS11
+		for (int i = 0; i < num; ++i)
+			t[i] = std::move(m_first[i]);
+#else
+		for (int i = 0; i < num; ++i)
+			t[i] = m_first[i];
+#endif
+
+		delete[] m_first;
+
+		m_first = t;
+		m_end = m_first + num;
+		m_capacity = m_first + number;
+
+		return TRUE;
+	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Expand()
+	{
+		constexpr INT MIN_ELEMENTS    = 10;
+		constexpr INT SIZE_MULTIPLIER = 2;
+
+		if (!m_first)
+			return Reserve(MIN_ELEMENTS);
+		else
+			return Reserve(CountMax() * SIZE_MULTIPLIER);
+	}
+
+	template<typename _Elem>
+	inline _Elem * H3Vector<_Elem>::Add(_Elem & item)
+	{
+		if (!m_first || IsFull())
+		{
+			if (!Expand())
+				return nullptr; // failed
+		}
+		*m_end = item;
+		++m_end;
+		return m_end - 1;  // returns position where it was added
+	}
+
+	template<typename _Elem>
+	inline _Elem * H3Vector<_Elem>::AddOne(_Elem & item)
+	{
+		if (!m_first)
+		{
+			if (!Reserve(1))
+				return nullptr;
+		}
+		else if (IsFull())
+		{
+			if (!Reserve(CountMax() + 1))
+				return nullptr;
+		}
+		*m_end = item;
+		++m_end;
+		return m_end - 1;  // returns position where it was added
+	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
+	{
+		if (fromPos < 0 || toPos < 0 || toPos < fromPos)
+			return FALSE;
+		INT num = Count();
+		if (fromPos >= num)
+			return FALSE;
+
+		INT to = min(num - 1, toPos);
+		INT r = to - fromPos + 1;
+
+		for (int i = fromPos; i <= toPos; ++i)
+			m_first[i]->~_Elem();
+
+		_Elem* rem = m_first + fromPos;
+		_Elem* remEnd = rem + r;
+		size_t copyLen = (size_t)m_end - (size_t)remEnd;
+		// * move any elements from the end
+		memmove(PVOID(rem), PVOID(remEnd), copyLen);
+		// * blank out the moved end elements
+		F_memset(PVOID(remEnd), 0, copyLen);
+		m_end -= r;
+		return TRUE;
+	}
+
+#else /* _H3API_OPERATORS_ is not defined */
+
+	template<typename _Elem>
+	inline VOID H3Vector<_Elem>::Deref()
+	{
+		if (m_first)
+		{
+			for (_Elem* i = m_first; i < m_end; ++i)
+				i->~_Elem();
+
+			F_delete((PVOID)m_first);
+			m_first = nullptr;
+		}
+		m_end = nullptr;
+		m_capacity = nullptr;
+	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Expand()
+	{
+		constexpr INT MIN_ELEMENTS = 10;
+		constexpr INT SIZE_MULTIPLIER = 2;
+
+		if (!m_first)
+			return Reserve(MIN_ELEMENTS);
+		else
+			return Reserve(CountMax() * SIZE_MULTIPLIER);
+	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
+	{
+		if (fromPos < 0 || toPos < 0 || toPos < fromPos)
+			return FALSE;
+		INT32 num = Count();
+		if (fromPos >= num)
+			return FALSE;
+
+		INT32 to = min(num - 1, toPos); // don't go further than end!
+		INT32 r = to - fromPos + 1; // number removed
+
+		_Elem* rem = m_first + fromPos;
+		_Elem* remEnd = rem + r;
+
+		for (_Elem* i = rem; i <= remEnd; ++i)
+			i->~_Elem();
+
+		size_t copyLen = (size_t)m_end - (size_t)remEnd;
+		memmove((PVOID)rem, (PVOID)remEnd, copyLen);
+		F_memset(PVOID(remEnd), 0, copyLen);
+
+		m_end -= r;
+
+		return TRUE;
+	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Reserve(const INT number)
+	{
+		INT num = Count();
+		if (number <= num)
+			return FALSE;
+
+		UINT32 cSize = Size();
+		UINT32 newSize = sizeof(_Elem) * number;
+
+		_Elem *t = (_Elem*)F_calloc(newSize);
+		if (!t)
+			return FALSE;
+
+		for (int i = 0; i < number; ++i)
+			t[i] = _Elem();
+
+		F_memcpy((PVOID)t, (PVOID)m_first, cSize);
+		F_delete((PVOID)m_first);
+		m_first = t;
+		m_end = (_Elem*)((UINT32)m_first + cSize);
+		m_capacity = (_Elem*)((UINT32)m_first + newSize);
+		return TRUE;
+	}
+
+	template<typename _Elem>
+	inline _Elem * H3Vector<_Elem>::AddOne(_Elem & item)
+	{
+		if (!m_first)
+			if (!Reserve(1))
+				return nullptr;
+		else if (IsFull())
+			if (!Reserve(CountMax() + 1))
+				return nullptr;
+
+		m_end = item;
+		++m_end;
+		return m_end - 1;  // returns position where it was added
+	}
+
+	template<typename _Elem>
+	inline _Elem * H3Vector<_Elem>::Add(_Elem & item)
+	{
+		if (!m_first || IsFull())
+			if (!Expand())
+				return nullptr; // failed
+		m_end = item;
+		++m_end;
+		return m_end - 1;  // returns position where it was added
+	}
+
+#endif /* #ifdef _H3API_OPERATORS_ */
 
 #endif /* #define _H3BASE_H_ */

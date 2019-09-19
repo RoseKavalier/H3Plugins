@@ -45,6 +45,7 @@
 
 #include "H3Base.h"
 #include "H3Structures.h"
+#include "H3BinaryItems.h"
 
 #define h3_DataPath							((H3String*)0x69E528)
 #define h3_ActivePlayer						(*(H3Player**)0x69CCFC)
@@ -81,13 +82,22 @@
 #define P_TurnTimer							(*(H3TurnTimer**)(0x4AD194 + 1))
 #define P_HeroSpecialty						(*(H3HeroSpecialty**)(0x4B8AF1 + 1))
 #define P_NewGameDlg						(*(H3Dlg**)0x69FC44)
+#define P_GamePalette						(*(H3Palette565**)0x6AAD18)
+#define P_PlayersPalette					(*(H3Palette565**)0x6AAD10)
+#define P_TinyFont							(*(H3Font**)0x698A54)
+#define P_SmallFont							(*(H3Font**)0x698A58)
+#define P_MediumFont						(*(H3Font**)0x698A5C)
+#define P_BigFont							(*(H3Font**)0x698A60)
+#define P_CalliFont							(*(H3Font**)0x698A64)
+#define P_BinaryTree						((H3BinTreeList*)0x69E560)
+
 
 // Constants C_ from Heroes3.exe
 
 #define C_ButtonWav							(*(H3WavFile**)0x694DF4)
 
 // others
-#define COMBATSQUARE_DIMENSION				44
-#define MULTIPLAYER_ICON					0x66
+constexpr INT COMBATSQUARE_DIMENSION	= 44;
+constexpr INT MULTIPLAYER_ICON			= 0x66;
 
 #endif /* #define _H3DEFINES_H_ */

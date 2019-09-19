@@ -56,24 +56,39 @@ public:
 	// * external messagebox showing message
 	static VOID ShowError(LPCSTR message, LPCSTR title = "H3Error!")
 	{
-		MessageBoxA(NULL, message, title, MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, message, title, MB_OK | MB_ICONERROR);
 	}
 	// * external messagebox showing message and offering OK / Cancel choice
 	static BOOL ShowErrorChoice(LPCSTR message, LPCSTR title = "H3Error!")
 	{
-		return MessageBoxA(NULL, message, title, MB_OKCANCEL | MB_ICONERROR);
+		return MessageBoxA(nullptr, message, title, MB_OKCANCEL | MB_ICONERROR) == IDOK;
 	}
 	// * external messagebox showing message
 	// * wide char format
 	static VOID _ShowError(LPCWSTR message, LPCWSTR title = L"H3Error!")
 	{
-		MessageBoxW(NULL, message, title, MB_OK | MB_ICONERROR);
+		MessageBoxW(nullptr, message, title, MB_OK | MB_ICONERROR);
 	}
 	// * external messagebox showing message and offering OK / Cancel choice
 	// * wide char format
 	static BOOL _ShowErrorChoice(LPCWSTR message, LPCWSTR title = L"H3Error!")
 	{
-		return MessageBoxW(NULL, message, title, MB_OKCANCEL | MB_ICONERROR);
+		return MessageBoxW(nullptr, message, title, MB_OKCANCEL | MB_ICONERROR);
+	}
+
+	static VOID ShowError(H3String& message, LPCSTR title = "H3Error!")
+	{
+		ShowError(message.String(), title);
+	}
+
+	static VOID ShowError(H3String* message, LPCSTR title = "H3Error!")
+	{
+		ShowError(message->String(), title);
+	}
+
+	static VOID ShowError(H3String& message, H3String& title)
+	{
+		ShowError(message.String(), title.String());
 	}
 };
 
@@ -83,6 +98,27 @@ class H3Random
 public:
 	static int Random(int high);
 	static int RandBetween(int low, int high);
+};
+
+// * raii virtual protect
+class H3Protect
+{
+	UINT32 m_address;
+	UINT32 m_size;
+	DWORD m_old_protect;
+	BOOL m_protect_edited;
+public:
+	H3Protect(UINT32 address, UINT32 size) :
+		m_address(address), m_size (size), m_old_protect()
+	{
+		m_protect_edited = VirtualProtect((LPVOID)m_address, m_size, PAGE_EXECUTE_WRITECOPY, &m_old_protect);
+	}
+	~H3Protect()
+	{
+		if (m_protect_edited)
+			VirtualProtect((LPVOID)m_address, m_size, m_old_protect, &m_old_protect);
+	}
+	BOOL CanWrite() { return m_protect_edited; }
 };
 
 // * perform operations on loaded memory
@@ -118,7 +154,7 @@ struct H3DLL
 	PUINT8 data;
 	UINT32 dataSize;
 
-	H3DLL() { code = NULL; size = 0; dllName = NULL; }
+	H3DLL() { code = nullptr; size = 0; dllName = nullptr; }
 
 	// for debug purposes
 	VOID NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode = TRUE);
@@ -158,13 +194,6 @@ struct H3DLL
 #define Color32To15(Color) (((Color & 0x0000F8) >> 3) | ((Color & 0x00F800) >> 6) | ((Color & 0xF80000) >> 9))
 
 #pragma pack(push, 1)
-// * used by H3.TextColor
-struct H3NamedColors
-{
-	LPCSTR name;
-	UINT32 rgb;
-	UINT16 rgb565;
-};
 
 // * HDmod's format for ini files lines
 struct HDIniEntry // size 0xD ~ 13
@@ -222,7 +251,7 @@ struct HDIni
 				e++;
 			}
 		}
-		return NULL;
+		return nullptr;
 	}
 };
 
@@ -324,7 +353,7 @@ inline PUCHAR H3Patcher::Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needl
 	size_t plen = hlen;
 
 	if (!nlen)
-		return NULL;
+		return nullptr;
 
 	needle_first = *(unsigned char *)needle;
 
@@ -336,7 +365,7 @@ inline PUCHAR H3Patcher::Memmem(PUCHAR haystack, size_t hlen, const PUCHAR needl
 		plen = hlen - (p - haystack);
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 inline UINT32 H3Patcher::FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset)
@@ -352,53 +381,38 @@ inline UINT32 H3Patcher::FindByNeedle(PUINT8 address, UINT32 max_search_length, 
 
 inline VOID H3Patcher::WriteBytePatch(UINT32 start, UINT8 code)
 {
-	DWORD old_protect = 0;
-	if (VirtualProtect((LPVOID)start, 1, PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(start, 1);
+	if (protect.CanWrite())
 		ByteAt(start) = code;
-		VirtualProtect((LPVOID)start, 1, old_protect, &old_protect);
-	}
 }
 
 inline VOID H3Patcher::WriteWordPatch(UINT32 start, UINT16 code)
 {
-	DWORD old_protect = 0;
-	if (VirtualProtect((LPVOID)start, 2, PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(start, 2);
+	if (protect.CanWrite())
 		WordAt(start) = code;
-		VirtualProtect((LPVOID)start, 2, old_protect, &old_protect);
-	}
 }
 
 inline VOID H3Patcher::WriteDwordPatch(UINT32 start, UINT32 code)
 {
-	DWORD old_protect = 0;
-	if (VirtualProtect((LPVOID)start, 4, PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(start, 4);
+	if (protect.CanWrite())
 		DwordAt(start) = code;
-		VirtualProtect((LPVOID)start, 4, old_protect, &old_protect);
-	}
 }
 
 inline VOID H3Patcher::WriteFloatPatch(UINT32 start, FLOAT code)
 {
-	DWORD old_protect = 0;
-	if (VirtualProtect((LPVOID)start, 4, PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(start, 4);
+	if (protect.CanWrite())
 		FloatAt(start) = code;
-		VirtualProtect((LPVOID)start, 4, old_protect, &old_protect);
-	}
 }
 
 inline VOID H3Patcher::WriteHexPatch(const UINT32 start, const PUINT8 code, const UINT codeLength)
 {
-	DWORD old_protect = 0;
-	if (VirtualProtect((LPVOID)start, codeLength, PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(start, codeLength);
+	if (protect.CanWrite())
 		for (UINT i = 0; i < codeLength; i++)
 			ByteAt(start + i) = code[i];
-		VirtualProtect((LPVOID)start, codeLength, old_protect, &old_protect);
-	}
 }
 
 // * This removes the following warning when using enum
@@ -407,12 +421,12 @@ inline VOID H3Patcher::WriteHexPatch(const UINT32 start, const PUINT8 code, cons
 #pragma warning(disable : 4482)
 inline VOID H3Patcher::NakedHook5(UINT32 start, VOID * function)
 {
-	DWORD old_protect = 0;
-	if (VirtualProtect((LPVOID)start, 5, PAGE_EXECUTE_WRITECOPY, &old_protect))
+	H3Protect protect(start, 5);
+	if (protect.CanWrite())
 	{
+
 		ByteAt(start) = mnemonics::jmp;
-		DwordAt(start + 1) = (UINT32)(function)-(UINT32)(start)-5;
-		VirtualProtect((LPVOID)start, 5, old_protect, &old_protect);
+		DwordAt(start + 1) = (UINT32)(function) - (UINT32)(start) - 5;
 	}
 }
 #pragma warning(pop)
@@ -420,21 +434,17 @@ inline VOID H3Patcher::NakedHook5(UINT32 start, VOID * function)
 template<typename T>
 inline VOID H3Patcher::WriteValue(const UINT32 address, T value)
 {
-	if (VirtualProtect((LPVOID)start, sizeof(T), PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(address, sizeof(T));
+	if (protect.CanWrite())
 		*(T*)address = value;
-		VirtualProtect((LPVOID)start, sizeof(T), old_protect, &old_protect);
-	}
 }
 
 template<typename T, size_t size>
 inline VOID H3Patcher::WriteValue(const UINT32 address, T(&value)[size])
 {
-	if (VirtualProtect((LPVOID)start, size, PAGE_EXECUTE_WRITECOPY, &old_protect))
-	{
+	H3Protect protect(address, size);
+	if (protect.CanWrite())
 		memcpy((PVOID)address, (PVOID)value, size);
-		VirtualProtect((LPVOID)start, size, old_protect, &old_protect);
-	}
 }
 
 template<size_t size>
@@ -553,70 +563,42 @@ inline VOID H3DLL::GetDLLInfo(LPCSTR name)
 
 inline VOID H3DLL::NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode)
 {
-	PCHAR buffer = (PCHAR)calloc(1, needleSize * 3 + strlen(dllName) + 512); // * 3 to show space in between hex codes
-	PCHAR needleBuffer = (PCHAR)calloc(1, needleSize * 3);
-	PCHAR nB = needleBuffer;
-	if (nB && buffer)
-	{
-		for (int i = 0; i < needleSize; i++)
-		{
-			sprintf(nB, "%02X ", needle[i]); // note the whitespace at the end
-			nB += 3;
-		}
-		if (inCode)
-			sprintf(buffer, "Could not find needle:\n\n%s\n\nIn module: \"%s\".\n\nCode start: 0x%08X\n\nDLL size: 0x%08X", needleBuffer, dllName, (UINT32)code, size);
-		else
-			sprintf(buffer, "Could not find needle:\n\n%s\n\nIn data of module: \"%s\".\n\nData start: 0x%08X\n\nDLL data size: 0x%08X", needleBuffer, dllName, (UINT32)rdata, rdataSize);
-		H3Error::ShowError(buffer, "Needle not found!");
-	}
-	free(buffer);
-	free(needleBuffer);
+	H3String needleBuffer, message;
+	for (int i = 0; i < needleSize; i++)
+		needleBuffer.PrintfAppend("%02X ", needle[i]);
+
+	if (inCode)
+		message.Printf("Could not find needle:\n\n%s\n\nIn module: \"%s\".\n\nCode start: 0x%08X\n\nDLL size: 0x%08X",
+			needleBuffer.String(), dllName, (UINT32)code, size);
+	else
+		message.Printf("Could not find needle:\n\n%s\n\nIn data of module: \"%s\".\n\nData start: 0x%08X\n\nDLL data size: 0x%08X",
+			needleBuffer.String(), dllName, (UINT32)rdata, rdataSize);
+	H3Error::ShowError(message, "Needle not found!");
 }
 
 inline VOID H3DLL::NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize)
 {
-	PCHAR buffer = (PCHAR)calloc(1, needleSize * 3 + expectedSize * 3 * 2 + strlen(dllName) + 512); // * 3 to show space in between hex codes
-	PCHAR needleBuffer = (PCHAR)calloc(1, needleSize * 3);
-	PCHAR expectedBuffer = (PCHAR)calloc(1, expectedSize * 3);
-	PCHAR foundBuffer = (PCHAR)calloc(1, expectedSize * 3);
-	if (buffer && needleBuffer && expectedBuffer && foundBuffer)
+	H3String message;
+	H3String needleBuffer, expectedBuffer, foundBuffer;
+	for (int i = 0; i < needleSize; i++)
+		needleBuffer.PrintfAppend("%02X ", needle[i]);
+
+	PCHAR adr = (PCHAR)address;
+	for (int i = 0; i < expectedSize; i++)
 	{
-		PCHAR nB = needleBuffer;
-		PCHAR eB = expectedBuffer;
-		PCHAR fB = foundBuffer;
-
-		for (int i = 0; i < needleSize; i++)
-		{
-			sprintf(nB, "%02X ", needle[i]); // note the whitespace at the end
-			nB += 3;
-		}
-		PCHAR adr = (PCHAR)address;
-		for (int i = 0; i < expectedSize; i++)
-		{
-			sprintf(eB, "%02X ", expectedCode[i]); // note the whitespace at the end
-			eB += 3;
-			sprintf(fB, "%02X ", adr[i]); // note the whitespace at the end
-			fB += 3;
-		}
-
-		sprintf(buffer, "Found needle:\n\n%s\n\nIn Module \"%s\".\n\nHowever, expected code...\n\n%s\n\n...does not match existing code:\n\n%s", needleBuffer, dllName, expectedBuffer, foundBuffer);
-		H3Error::ShowError(buffer, "Needle not found!");
+		expectedBuffer.PrintfAppend("%02X ", expectedCode[i]);
+		foundBuffer.PrintfAppend("%02X ", adr[i]);
 	}
-	free(buffer);
-	free(needleBuffer);
-	free(expectedBuffer);
-	free(foundBuffer);
+	message.Printf("Found needle:\n\n%s\n\nIn Module \"%s\".\n\nHowever, expected code...\n\n%s\n\n...does not match existing code:\n\n%s",
+		needleBuffer.String(), dllName, expectedBuffer.String(), foundBuffer.String());
+	H3Error::ShowError(message, "Needle not found!");
 }
 
 inline VOID H3DLL::DLLNotFound()
 {
-	PCHAR buffer = (PCHAR)calloc(1, strlen(dllName) + 512);
-	if (buffer)
-	{
-		sprintf(buffer, "Module \"%s\" could not be found!", dllName);
-		H3Error::ShowError(buffer, "DLL not found!");
-	}
-	free(buffer);
+	H3String message;
+	message.Printf("Module \"%s\" could not be found!", dllName);
+	H3Error::ShowError(message, "DLL not found!");
 }
 
 template<INT32 sz>

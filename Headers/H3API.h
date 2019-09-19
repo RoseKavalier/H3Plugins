@@ -83,15 +83,29 @@
 #include "H3Defines.h"
 // * Various functions and structures
 #include "H3Varia.h"
+// * Read from or write to file using game assets
+#include "H3Stream.h"
+// * AVL binary search tree for storing and finding data quickly
+#include "H3Tree.h"
 
 // * The H3Exception is hidden behind the _H3API_EXCEPTION_ guard.
 // * Uncomment the line below to be able to use it.
-//#define _H3API_EXCEPTION_
+#define _H3API_EXCEPTION_
 
 #ifdef _H3API_EXCEPTION_
 // * SEH error handler, requies \EHa compiler flag
 #include "H3Exception.h"
 #endif /* #ifdef _H3API_EXCEPTION_ */
+
+// * The H3Plugins headers are not necessary to be
+// * included in your project to get access to the
+// * rest of the H3API. They are here simply if you
+// * wish to take advantage of shared use they provide.
+#define _H3API_PLUGINS_
+
+#ifdef _H3API_PLUGINS_
+#include "Plugins/H3Plugins.hpp"
+#endif /* #ifdef _H3API_PLUGINS_ */
 
 #endif /* #define _H3API_H_ */
 

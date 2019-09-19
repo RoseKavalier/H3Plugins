@@ -188,12 +188,6 @@ inline BOOL8 F_Multiplayer()
 	return STDCALL_0(BOOL8, 0x4CE950);
 }
 
-// * sets dest to value
-inline PVOID F_memset(PVOID dest, UINT value, UINT len)
-{
-	return CDECL_3(PVOID, 0x61B7E0, dest, value, len);
-}
-
 // * converts text to wide char, destination is buffer that needs to be pre-allocated
 inline LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR *buffer)
 {
@@ -205,12 +199,79 @@ inline INT F_MultiplayerRNG(INT min_value, INT max_value)
 	return FASTCALL_2(INT, 0x50B3C0, min_value, max_value);
 }
 
-inline PCHAR F_GetLocalTime()
+inline INT F_GetLocalTime()
 {
 	SYSTEMTIME time;
 	STDCALL_1(VOID, PtrAt(0x63A248), &time);
-	sprintf(h3_TextBuffer, "%04d.%02d.%02d - %02dh%02dm%02ds", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
-	return h3_TextBuffer;
+	return F_sprintf("%04d.%02d.%02d - %02dh%02dm%02ds", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+}
+
+inline FILE* F_fopen(LPCSTR filename, LPCSTR mode)
+{
+	return CDECL_2(FILE*, 0x619691, filename, mode);
+}
+
+inline int F_fclose(FILE *f)
+{
+	return CDECL_1(int, 0x618F5E, f);
+}
+
+inline DWORD F_ftell(FILE *f)
+{
+	return CDECL_1(DWORD, 0x6194DD, f);
+}
+
+inline INT F_fseek(FILE *f, INT offset, INT origin)
+{
+	return CDECL_3(INT, 0x618C78, f, offset, origin);
+}
+
+inline DWORD F_GetFileSize(FILE *f)
+{
+	F_fseek(f, 0, SEEK_END);
+	DWORD size = F_ftell(f);
+	F_fseek(f, 0, SEEK_SET);
+	return size;
+}
+
+inline size_t F_fread(PVOID buffer, size_t size, size_t count, FILE *f)
+{
+	return CDECL_4(size_t, 0x6196A4, buffer, size, count, f);
+}
+
+inline size_t F_fwrite(const VOID* buffer, size_t size, size_t count, FILE *f)
+{
+	return CDECL_4(size_t, 0x618A1A, buffer, size, count, f);
+}
+
+inline int F_fsetpos(FILE *f, const fpos_t & pos)
+{
+	return CDECL_2(int, 0x618D31, f, &pos);
+}
+
+inline int F_fgetpos(FILE *f, fpos_t & pos)
+{
+	return CDECL_2(int, 0x618C56, f, &pos);
+}
+
+inline int F_fputc(const CHAR c, FILE *f)
+{
+	return CDECL_2(int, 0x618B53, c, f);
+}
+
+inline INT F_strtol(LPCSTR str, INT base, PCHAR* end = nullptr)
+{
+	return CDECL_3(INT, 0x619BF8, str, &end, nullptr);
+}
+
+inline UINT F_strtoul(LPCSTR str, INT base, PCHAR* end = nullptr)
+{
+	return CDECL_3(INT, 0x619E14, str, end, base);
+}
+
+inline PCHAR F_strtok(LPCSTR str, LPCSTR delimiters)
+{
+	return CDECL_2(PCHAR, 0x617FBB, str, delimiters);
 }
 
 inline VOID H3SoundManager::ClickSound()

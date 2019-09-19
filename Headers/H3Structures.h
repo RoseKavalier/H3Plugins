@@ -601,7 +601,7 @@ struct H3HeroSpecialty
 
 // * the start of the save/load structure used by H3
 // * probably some stream or similar
-struct H3Stream
+struct H3Streambuf
 {
 protected:
 	struct {
@@ -3261,7 +3261,8 @@ protected:
 
 	H3Manager *parent;
 	H3Manager *child;
-	h3unk _f_0C[8];
+	h3unk _f_0C[4];
+	INT z_order;
 	CHAR name[28]; // 0x14
 	INT32 nameEnd; // 0x30
 	h3unk _f_34[4];
@@ -3278,6 +3279,7 @@ struct H3Executive
 	h3unk _f_08[8];
 
 	VOID RemoveManager(H3Manager *mgr) { THISCALL_2(VOID, 0x4B0950, this, mgr); }
+	INT AddManager(H3Manager *mgr, int order) { return THISCALL_3(INT, 0x4B0880, this, mgr, order); }
 };
 
 // * This removes the following warning when using enum
@@ -4008,14 +4010,14 @@ struct H3Pointers
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline BOOL H3Stream::Save(const PVOID data, const UINT data_size)
+inline BOOL H3Streambuf::Save(const PVOID data, const UINT data_size)
 {
 	if (data_size && THISCALL_3(UINT, vTable->saveRegion, this, data, data_size) >= data_size)
 		return TRUE;
 	return FALSE;
 }
 
-inline BOOL H3Stream::Load(const PVOID data, const UINT data_size)
+inline BOOL H3Streambuf::Load(const PVOID data, const UINT data_size)
 {
 	if (data_size && THISCALL_3(UINT, vTable->loadRegion, this, data, data_size) >= data_size)
 		return TRUE;
@@ -4139,13 +4141,13 @@ inline INT32 H3Army::FindExistingByIndex(INT32 index)
 
 inline VOID H3CreatureInformation::UpgradeCost(H3Resources * res, H3CreatureInformation * upg, INT32 count)
 {
-	res->wood = (upg->cost.wood - cost.wood) * count;
+	res->wood    = (upg->cost.wood - cost.wood) * count;
 	res->mercury = (upg->cost.mercury - cost.mercury) * count;
-	res->ore = (upg->cost.ore - cost.ore) * count;
-	res->sulfur = (upg->cost.sulfur - cost.sulfur) * count;
+	res->ore     = (upg->cost.ore - cost.ore) * count;
+	res->sulfur  = (upg->cost.sulfur - cost.sulfur) * count;
 	res->crystal = (upg->cost.crystal - cost.crystal) * count;
-	res->gems = (upg->cost.gems - cost.gems) * count;
-	res->gold = (upg->cost.gold - cost.gold) * count;
+	res->gems    = (upg->cost.gems - cost.gems) * count;
+	res->gold    = (upg->cost.gold - cost.gold) * count;
 }
 
 inline BOOL H3Resources::EnoughResources(H3Resources * cost)
@@ -4175,13 +4177,13 @@ inline BOOL H3Resources::EnoughResources(H3Resources * cost)
 
 inline VOID H3Resources::RemoveResources(H3Resources * cost)
 {
-	wood -= cost->wood;
+	wood    -= cost->wood;
 	mercury -= cost->mercury;
-	ore -= cost->ore;
-	sulfur -= cost->sulfur;
+	ore     -= cost->ore;
+	sulfur  -= cost->sulfur;
 	crystal -= cost->crystal;
-	gems -= cost->gems;
-	gold -= cost->gold;
+	gems    -= cost->gems;
+	gold    -= cost->gold;
 }
 
 inline VOID H3Resources::GainResourcesOF(H3Resources * gain)
@@ -4236,7 +4238,7 @@ inline VOID H3CombatMonster::ShowStatsDialog(BOOL RightClick)
 inline VOID H3MainSetup::AddObjectAttribute(H3ObjectAttributes * oa)
 {
 	H3Vector<H3ObjectAttributes> *list = &objectLists[oa->type];
-	THISCALL_4(VOID, 0x4D15F0, list, list->end, 1, oa);
+	THISCALL_4(VOID, 0x4D15F0, list, list->m_end, 1, oa);
 }
 
 inline VOID H3CreatureBank::SetupBank(int type, int level)
