@@ -93,7 +93,7 @@
 #define _H3API_EXCEPTION_
 
 #ifdef _H3API_EXCEPTION_
-// * SEH error handler, requies \EHa compiler flag
+// * SEH error handler, requires \EHa compiler flag
 #include "H3Exception.h"
 #endif /* #ifdef _H3API_EXCEPTION_ */
 

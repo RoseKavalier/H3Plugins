@@ -90,6 +90,24 @@ inline INT F_GetCurrentDirectory(PCHAR buf, INT bufLen = MAX_PATH)
 	return STDCALL_2(INT, IntAt(0x63A1A4), bufLen, buf);
 }
 
+// * GetCurrentDirectoryA using h3 assets
+// * Assigned to path string and adds terminating '\' at request
+inline BOOL F_GetCurrentDirectory(H3String& path, BOOL add_backslash)
+{
+	if (int len = STDCALL_2(INT, IntAt(0x63A1A4), MAX_PATH, h3_TextBuffer))
+	{
+#ifdef _H3API_ERA_
+		// * ERA hooks GetCurrentDirectory and adds +1 length
+		--len;
+#endif
+		path.Assign(h3_TextBuffer, len);
+		if (add_backslash)
+			path += '\\';
+		return TRUE;
+	}
+	return FALSE;
+}
+
 // * message box with text shown (default h3_TextBuffer) on right mouse button click
 inline VOID F_MessageBoxRMB(LPCSTR text = h3_TextBuffer)
 {

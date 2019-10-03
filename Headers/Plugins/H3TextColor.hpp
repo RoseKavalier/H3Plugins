@@ -4,7 +4,6 @@
 #pragma once
 
 #include "../H3Base.h"
-//#include "../H3Functions.h"
 
 namespace H3Plugin
 {

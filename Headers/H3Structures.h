@@ -923,15 +923,15 @@ protected:
 	UINT8  _u8[24];
 public:
 	// * calculates maximum daily movement on land
-	INT32 MaxLandMovement(VOID) { return THISCALL_2(INT32, 0x4E4C00, this, 0); }
+	INT32 MaxLandMovement() { return THISCALL_2(INT32, 0x4E4C00, this, 0); }
 	// * calculates maximum daily movement on water
-	INT32 MaxWaterMovement(VOID) { return THISCALL_2(INT32, 0x4E4C00, this, 1); }
+	INT32 MaxWaterMovement() { return THISCALL_2(INT32, 0x4E4C00, this, 1); }
 	// * calculates maximum daily movement automatically
-	INT32 CalcMaxMovement(VOID) { return THISCALL_1(INT32, 0x4E5000, this); }
+	INT32 CalcMaxMovement() { return THISCALL_1(INT32, 0x4E5000, this); }
 	// * give an artifact by reference
 	VOID GiveArtifact(H3Artifact *art, INT32 slot) { THISCALL_3(VOID, 0x4E2C70, this, art, slot); }
 	// * learn secondary skill by given increase
-	VOID LearnSecondarySkill(INT32 id, INT32 increase) { return THISCALL_3(VOID, 0x4E52F0, this, id, increase); }
+	VOID LearnSecondarySkill(INT32 id, INT32 increase) { return THISCALL_3(VOID, 0x4E5240, this, id, increase); }
 	// * returns effect (none, basic, ... expert) of a spell on a given terrain
 	INT32 GetSpellExpertise(INT32 spell_id, INT32 special_terrain) { return THISCALL_3(INT32, 0x4E52F0, this, spell_id, special_terrain); }
 	// * does this hero own creature of type...?
@@ -945,7 +945,7 @@ public:
 	// * combined effects of a spell on a creature
 	INT32 GetRealSpellDamage(INT32 baseDamage, H3CombatMonster *mon, INT32 spellID, H3Hero *enemy);
 	// * checks under the hero for special terrain
-	INT32 GetSpecialTerrain(VOID) { return THISCALL_1(INT32, 0x4E5130, this); }
+	INT32 GetSpecialTerrain() { return THISCALL_1(INT32, 0x4E5130, this); }
 	// * checks if hero has access to a spell
 	BOOL HasSpell(INT32 spell) { return learned_spell[spell] | available_spell[spell]; }
 	// * attempts to combine body artifacts into combo
@@ -1634,6 +1634,14 @@ struct H3ObjectDraw
 	// * +3
 	// * 0~6 drawing layer, 6 being top and 0 bottom
 	UINT8 layer;
+
+
+	H3ObjectDraw(UINT16 sprite, UINT8 tile_id, UINT8 layer)
+		: sprite(sprite),
+		  tileID(tile_id),
+		  layer(layer)
+	{
+	}
 };
 
 // * data on a given tile on the adventure map
@@ -3629,7 +3637,30 @@ public:
 // * keyboard and mouse input
 struct H3InputManager : public H3Manager
 {
-	// ...
+	// * modifies equivalent WM_ messages into H3 messages
+	enum MessageType
+	{
+		MT_KEYDOWN       = 1,  // 0x100
+		MT_KEYUP         = 2,  // 0x101
+		MT_MOUSEMOVE     = 4,  // 0x200
+		MT_LBUTTONDOWN   = 8,  // 0x201
+		MT_LBUTTONUP     = 16, // 0x202
+		MT_LBUTTONDBLCLK = 8,  // 0x203
+		MT_RBUTTONDOWN   = 32, // 0x204
+		MT_RBUTTONUP     = 64, // 0x205
+		MT_RBUTTONDBLCLK = 32, // 0x206
+	};
+
+	struct InputMessages
+	{
+		UINT message;
+		h3unk f_4[28]; // contents vary
+	}messages[64]; // see 0x4EC6B8, % 64
+	INT current_message;
+	INT next_message;
+	// ... goes on a bit
+
+	InputMessages& GetCurrentMessage() { return messages[current_message]; }
 };
 
 // * data for a single battlefield square
@@ -3973,6 +4004,7 @@ public:
 	VOID RefreshCreatures() { THISCALL_1(VOID, 0x495770, this); }
 	VOID ShadeSquare(int index);
 	BOOL8 IsHumanTurn() { return isHuman[currentActiveSide]; }
+	VOID AddStatusMessage(LPCSTR message, BOOL permanent = TRUE) { THISCALL_4(VOID, 0x4729D0, dlg, message, permanent, 0); }
 };
 
 #pragma pack(pop)

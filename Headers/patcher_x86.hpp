@@ -179,59 +179,89 @@ struct HookContext
 		return r;
 	}
 	// gives the return address from last call
-	inline _dword_ _retn()
+	_dword_ _retn()
 	{
 		return *(_dword_*)(ebp + 4);
 	}
 	// gives the return address from 2 calls ago
-	inline _dword_ _retn2()
+	_dword_ _retn2()
 	{
 		return *(_dword_*)(*(_dword_*)(ebp)+4);
 	}
 	// gives the return address from 3 calls ago
-	inline _dword_ _retn3()
+	_dword_ _retn3()
 	{
 		return *(_dword_*)(*(_dword_*)*(_dword_*)(ebp)+4);
 	}
 	// gives the nth argument used in the last call.
 	// Should be >= 1
-	inline _dword_ arg_n(int n)
+	_dword_ arg_n(int n)
 	{
 		return *(_dword_*)(ebp + 4 + 4 * n);
 	}
 
+	int& ref_arg_n(int n)
+	{
+		return *reinterpret_cast<int*>(ebp + 4 + 4 * n);
+	}
+
 	// gives the nth local variable value used
 	// Should be >= 1
-	inline _dword_ local_n(int n)
+	_dword_ local_n(int n)
 	{
 		return *(_dword_*)(ebp - 4 * n);
 	}
 
+	int& ref_local_n(int n)
+	{
+		return *reinterpret_cast<int*>(ebp - 4 * n);
+	}
+
 	// gives the nth local variable address
 	// Should be >= 1
-	inline _ptr_ local_stack(int n)
+	_ptr_ local_stack(int n)
 	{
 		return (ebp - 4 * n);
 	}
 
-	inline _byte_ AL()
+	_byte_ AL()
 	{
 		return (_byte_)eax;
 	}
 
-	inline _byte_ CL()
+	_byte_& ref_al()
+	{
+		return *reinterpret_cast<_byte_*>(&eax);
+	}
+
+	_byte_ CL()
 	{
 		return (_byte_)ecx;
 	}
 
-	inline _byte_ DL()
+	_byte_& ref_cl()
+	{
+		return *reinterpret_cast<_byte_*>(&ecx);
+	}
+
+	_byte_ DL()
 	{
 		return (_byte_)edx;
 	}
 
-	inline _byte_ BL()
+	_byte_& ref_dl()
+	{
+		return *reinterpret_cast<_byte_*>(&edx);
+	}
+
+	_byte_ BL()
 	{
 		return (_byte_)ebx;
+	}
+
+	_byte_& ref_bl()
+	{
+		return *reinterpret_cast<_byte_*>(&ebx);
 	}
 };
 

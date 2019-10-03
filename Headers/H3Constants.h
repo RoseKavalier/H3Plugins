@@ -945,17 +945,17 @@ namespace NH3VKey
 	constexpr INT H3VK_F10           = 68;
 	constexpr INT H3VK_PAUSE         = 69;
 	constexpr INT H3VK_SCROLL_LOCK   = 70;
-	constexpr INT H3VK_HOME          = 71;
-	constexpr INT H3VK_UP            = 72;
-	constexpr INT H3VK_PAGE_UP       = 73;
+	constexpr INT H3VK_HOME          = 71; // numpad7
+	constexpr INT H3VK_UP            = 72; // numpad8
+	constexpr INT H3VK_PAGE_UP       = 73; // numpad9
 	constexpr INT H3VK_NUMPAD_MINUS  = 74;
-	constexpr INT H3VK_LEFT          = 75;
+	constexpr INT H3VK_LEFT          = 75; // numpad4
 	constexpr INT H3VK_NUMPAD5       = 76;
-	constexpr INT H3VK_RIGHT         = 77;
+	constexpr INT H3VK_RIGHT         = 77; // numpad6
 	constexpr INT H3VK_NUMPAD_PLUS   = 78;
-	constexpr INT H3VK_END           = 79;
-	constexpr INT H3VK_DOWN          = 80;
-	constexpr INT H3VK_PAGE_DOWN     = 81;
+	constexpr INT H3VK_END           = 79; // numpad1
+	constexpr INT H3VK_DOWN          = 80; // numpad2
+	constexpr INT H3VK_PAGE_DOWN     = 81; // numpad3
 	constexpr INT H3VK_INSERT        = 82;
 	constexpr INT H3VK_DELETE        = 83;
 

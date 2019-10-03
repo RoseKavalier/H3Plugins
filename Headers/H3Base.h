@@ -70,7 +70,7 @@
 
 // * Slaps top of car
 // * This bad boy can hold just about anything
-typedef void			(*naked_t)(void);
+typedef void			(*naked_t)();
 // * generic typedef to indicate this is a h3 function
 typedef unsigned long	h3func;
 // * 1-byte sized boolean
@@ -430,7 +430,7 @@ typedef void				*PVOID;
 #define WATER_BONUS_NECKLACE				IntAt(0x698B54) // usually 1000 mp
 #define WATER_BONUS_SEA_CAPTAIN				IntAt(0x698B5C) // usually 500 mp
 #define SPEED_BONUS_STABLES					IntAt(0x698AE4) // usually 400 mp
-#define WATER_BONUS_LIGHTOUSE				WATER_BONUS_SEA_CAPTAIN // same as sea_captain's hat bonus ~500
+#define WATER_BONUS_LIGHTHOUSE				WATER_BONUS_SEA_CAPTAIN // same as sea_captain's hat bonus ~500
 
 // * various integer constants
 #define h3_ArtifactCount					IntAt(0x44D1A8 + 2)
@@ -470,6 +470,62 @@ typedef void				*PVOID;
 #define h3_TextBuffer						((PCHAR)0x697428) // 512 bytes of char buffer to be used
 #define h3_NullString						((LPCSTR)0x691260)
 #define h3_SaveName							((PCHAR)0x69FC88)
+
+// * checks for SoD, HotA and WoG/ERA
+class H3Version
+{
+	enum GameVersion : INT
+	{
+		UNKNOWN = -1,
+		ROE,
+		SOD,
+		SOD_POLISH_GOLD,
+		HOTA,
+		ERA,
+		WOG,
+	};
+	GameVersion m_version;
+public:
+	H3Version()
+	{
+		IMAGE_DOS_HEADER* pDOSHeader = (IMAGE_DOS_HEADER*)0x400000;
+		IMAGE_NT_HEADERS* pNTHeaders = (IMAGE_NT_HEADERS*)((BYTE*)pDOSHeader + pDOSHeader->e_lfanew);
+		DWORD entry = pNTHeaders->OptionalHeader.AddressOfEntryPoint;
+
+		// * checks entry point of exe
+		switch (entry)
+		{
+		case 0x19A0AE: // 1.0
+			m_version = ROE;
+			break;
+		case 0x21A884:
+			m_version = SOD;
+			break;
+		case 0x21AB84:
+			m_version = SOD_POLISH_GOLD;
+			break;
+		case 0x239C00:
+			m_version = HOTA;
+			break;
+		case 0x301000:
+			m_version = ERA;
+			break;
+		case 0x3017B0:
+			m_version = WOG;
+			break;
+		default:
+			m_version = UNKNOWN;
+		}
+	}
+
+	const GameVersion version() const { return m_version; }
+
+	BOOL roe()  const { return version() == ROE;  }
+	BOOL sod()  const { return version() == SOD;  }
+	BOOL hota() const { return version() == HOTA; }
+	BOOL era()  const { return version() == ERA;  }
+	BOOL wog()  const { return version() == WOG;  }
+};
 
 // * heap realloc using H3 assets
 inline PVOID F_realloc(PVOID obj, UINT new_size)
@@ -583,9 +639,9 @@ inline VOID operator delete[](PVOID ptr)
 struct H3Numbers
 {
 	// * add thousands commas to numbers
-	static int AddCommas(const int num, char *out);
+	static int AddCommas(int num, char *out);
 	// * show a number in short scale format with specified number of decimals
-	static int MakeReadable(const int num, char *out, const int decimals = 1);
+	static int MakeReadable(int num, char *out, int decimals = 1);
 };
 
 /*
@@ -596,7 +652,7 @@ struct H3Numbers
  * from idea by Greg Hewgill:
  * https://stackoverflow.com/a/1449849
  *
- * ever so slightly modifed by RoseKavalier
+ * ever so slightly modified by RoseKavalier
  *
  */
 inline int H3Numbers::AddCommas(const int num, char * out)
@@ -605,9 +661,7 @@ inline int H3Numbers::AddCommas(const int num, char * out)
 	char *src = buf;
 	char *dst = out;
 
-	int num_len, commas;
-
-	num_len = sprintf(buf, "%d", num);
+	int num_len = sprintf(buf, "%d", num);
 
 	if (*src == '-')
 	{
@@ -615,7 +669,7 @@ inline int H3Numbers::AddCommas(const int num, char * out)
 		num_len--;
 	}
 
-	for (commas = 2 - num_len % 3; *src; commas = (commas + 1) % 3)
+	for (int commas = 2 - num_len % 3; *src; commas = (commas + 1) % 3)
 	{
 		*dst++ = *src++;
 		if (commas == 1)
@@ -654,7 +708,7 @@ inline int H3Numbers::AddCommas(const int num, char * out)
 inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals)
 {
 	constexpr INT RN_MIN_VALUE = 10000;
-	int d, power, plus, div, dec;
+	int power;
 	char buf[32];
 
 	// * work with positives
@@ -665,15 +719,15 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 		return sprintf(out, "%d", num);
 
 	// * round the number to required precision
-	dec = min(decimals, 3);
-	plus = 500;
-	div = 1000;
+	int dec = min(decimals, 3);
+	int plus = 500;
+	int div = 1000;
 	for (int i = 0; i < dec; i++)
 	{
 		plus /= 10;
 		div /= 10;
 	}
-	d = power = 0;
+	int d = power = 0;
 	while (m >= 1000)
 	{
 		d = m;
@@ -796,7 +850,7 @@ public:
 	// * remove range, list shifts left
 	BOOL Remove(INT32 fromPos, INT32 toPos);
 	// * reserves a number of elements, always greater than current
-	BOOL Reserve(const INT number);
+	BOOL Reserve(INT number);
 
 	// * returns pointer to element at pos, positive only
 	_Elem* operator[](INT32 pos);
@@ -831,13 +885,13 @@ public:
 	// * constructor and Assign(msg)
 	H3String(LPCSTR msg);
 	// * constructor and Assign(msg, len)
-	H3String(LPCSTR msg, const INT32 len);
+	H3String(LPCSTR msg, INT32 len);
 	// * constructor and Assign(h3str)
 	H3String(H3String *h3str);
 	// * constructor and Assign(h3str)
 	H3String(H3String & h3str);
 	// * constructor and Assign(ch)
-	H3String(const CHAR ch);
+	H3String(CHAR ch);
 	// * destructor
 	~H3String();
 	// * H3 constructor
@@ -852,7 +906,7 @@ public:
 	// * returns the last char of string
 	CHAR Last();
 	// * sets string as mes
-	H3String& Assign(LPCSTR mes, const INT32 len);
+	H3String& Assign(LPCSTR mes, INT32 len);
 	// * Assign(mes, strlen(mes))
 	H3String& Assign(LPCSTR mes);
 	// * sets *string as ch
@@ -862,7 +916,7 @@ public:
 	// * sets string as h3string
 	H3String& Assign(const H3String &h3string);
 	// * prints number to string
-	H3String& Assign(const INT32 number);
+	H3String& Assign(INT32 number);
 	// * sets new capacity, 0x1F is default
 	BOOL Reserve(INT32 newSize = 0x1E);
 	// * returns constant char* string
@@ -886,20 +940,20 @@ public:
 	// * Adds h3string to end of string
 	BOOL Append(H3String *h3string);
 	// * Adds number to string
-	H3String& Append(const int number);
+	H3String& Append(int number);
 	// * Adds hex number to string
-	H3String& Append(const unsigned int number);
+	H3String& Append(unsigned int number);
 	// * Adds ch to end of string
-	BOOL Append(const CHAR ch);
+	BOOL Append(CHAR ch);
 	// * Finds position of first ch
-	LPCSTR FindFirst(const CHAR ch);
+	LPCSTR FindFirst(CHAR ch);
 	// * Finds position of first substring
 	LPCSTR FindFirst(LPCSTR substr) const;
 	// * returns string offset at pos
-	PCHAR At(const INT32 pos);
-	const CHAR GetCharAt(const INT32 pos) const;
+	PCHAR At(INT32 pos);
+	const CHAR GetCharAt(INT32 pos) const;
 	// * Removes all instances of ch
-	INT32 Remove(const CHAR ch);
+	INT32 Remove(CHAR ch);
 	// * Removes all instances of substring
 	INT32 Remove(LPCSTR substr);
 	// * Removes all instances of substring
@@ -911,7 +965,7 @@ public:
 	// * the original string is truncated
 	// * The outgoing string gets the remainder
 	// * of the original string
-	BOOL Split(const CHAR ch, H3String& out);
+	BOOL Split(CHAR ch, H3String& out);
 	// * sets string to all 0s
 	VOID Erase();
 	// * memcmp ~ case sensitive
@@ -936,7 +990,11 @@ public:
 	// * Inserts string within h3string at position
 	BOOL Insert(INT32 pos, H3String* to_insert) { return Insert(pos, *to_insert); }
 	// * Inserts string within h3string at position
-	BOOL Insert(INT32 pos, const CHAR ch);
+	BOOL Insert(INT32 pos, CHAR ch);
+
+	INT Compare(const H3String* other) const;
+	INT Compare(const H3String& other) const;
+	INT Compare(LPCSTR other) const;
 
 	// * Ends string at position
 	BOOL Truncate(INT32 position);
@@ -986,12 +1044,12 @@ public:
 	// * Adds hex number to string
 	H3String& operator<<(const unsigned int number) { return Append(number); }
 
-	// * Equals(h3str)
-	BOOL operator==(H3String *h3str) const;
-	// * Equals(h3str)
-	BOOL operator==(H3String & h3str) const { return operator==(&h3str); }
-	// * Equals(str)
-	BOOL operator==(LPCSTR str) const;
+	// * Compare(h3str)
+	INT operator==(const H3String *h3str) const { return Compare(h3str); }
+	// * Compare(h3str)
+	INT operator==(const H3String & h3str) const { return Compare(h3str); }
+	// * Compare(str)
+	INT operator==(LPCSTR str) const;
 
 	// * Returns char at offset
 	const CHAR operator[](INT32 pos) const;
@@ -1424,8 +1482,8 @@ inline INT32 H3String::Remove(const CHAR ch)
 	INT32 len = Length();
 	register INT32 l = Length() + 1;
 
-	char *src, *dst;
-	for (src = dst = str; *src && --l; src++)
+	char* dst;
+	for (char* src = dst = str; *src && --l; src++)
 	{
 		if (*src == ch) // skip over this char
 		{
@@ -1447,19 +1505,19 @@ inline INT32 H3String::Remove(LPCSTR substr)
 
 inline INT32 H3String::Remove(LPCSTR substr, INT32 sublen)
 {
-	PCHAR s, copyFrom, copyEnd;
+	PCHAR s, copy_end;
 	if (!String())
 		return HS_FAILED;
 	if (nullptr == (s = strstr(str, substr)))
 		// no match
 		return 0;
 	INT rem = length;
-	copyFrom = s + sublen;
-	while (nullptr != (copyEnd = strstr(copyFrom, substr)))
+	PCHAR copyFrom = s + sublen;
+	while (nullptr != (copy_end = strstr(copyFrom, substr)))
 	{
-		memmove(s, copyFrom, copyEnd - copyFrom);
-		s += copyEnd - copyFrom;
-		copyFrom = copyEnd + sublen;
+		memmove(s, copyFrom, copy_end - copyFrom);
+		s += copy_end - copyFrom;
+		copyFrom = copy_end + sublen;
 	}
 	memmove(s, copyFrom, 1 + strlen(copyFrom));
 	length = strlen(str);
@@ -1486,9 +1544,8 @@ inline INT32 H3String::Remove(INT32 start, INT32 end)
 	if (n <= 0)
 		return HS_FAILED;
 
-	PCHAR dest, src;
-	dest = At(start);
-	src = At(end);
+	PCHAR dest = At(start);
+	PCHAR src = At(end);
 	if (!dest || !src)
 		return HS_FAILED;
 
@@ -1605,6 +1662,21 @@ inline BOOL H3String::Insert(INT32 pos, const CHAR ch)
 	return Insert(pos, temp, 1);
 }
 
+inline INT H3String::Compare(const H3String * other) const
+{
+	return Compare(other->String());
+}
+
+inline INT H3String::Compare(const H3String & other) const
+{
+	return Compare(other.String());
+}
+
+inline INT H3String::Compare(const LPCSTR other) const
+{
+	return strcmp(String(), other);
+}
+
 inline BOOL H3String::Truncate(INT32 position)
 {
 	if (position < Length() && String())
@@ -1649,14 +1721,9 @@ inline H3String & H3String::operator+=(CHAR ch)
 	return *this;
 }
 
-inline BOOL H3String::operator==(H3String * h3str) const
+inline INT H3String::operator==(LPCSTR str) const
 {
-	return Equals(h3str);
-}
-
-inline BOOL H3String::operator==(LPCSTR str) const
-{
-	return Equals(str);
+	return Compare(str);
 }
 
 inline const CHAR H3String::operator[](INT32 pos) const

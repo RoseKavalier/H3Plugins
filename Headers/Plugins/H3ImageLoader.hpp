@@ -4,12 +4,48 @@
 #pragma once
 
 #include "../H3Base.h"
-#include "../H3Functions.h"
 
 namespace H3Plugin
 {
 	namespace ImageLoader
 	{
+		// * follows the format of H3 PCX files with indexed palette
+		// * as they appear when read from LOD archives
+		class H3PCX8
+		{
+			UINT32 m_size;
+			UINT32 m_width;
+			UINT32 m_height;
+			// * UINT8 pixels[m_height][m_width];
+			// * H3RGB888 palette[256];
+		public:
+			const PUINT8    Pixels()             const { return PUINT8(this) + sizeof(*this); }
+			const UINT8     Pixels(INT x, INT y) const { return ByteAt(Pixels() + m_width * y + x); }
+			const H3RGB888* Palette()            const { return (H3RGB888*)(Pixels() + m_size); }
+			const H3RGB888* Color(INT x, INT y)  const { return &Palette()[Pixels(x, y)]; }
+			const BOOL      IsIndexed()          const { return m_width * m_height == m_size; }
+			const UINT32    Height()             const { return m_height; }
+			const UINT32    Width()              const { return m_width; }
+			const UINT32    Size()               const { return m_size; }
+		};
+		// * follows the format of H3 PCX files without index
+		// * as they appear when read from LOD archives
+		class H3PCX24
+		{
+			UINT32 m_size;
+			UINT32 m_width;
+			UINT32 m_height;
+			// * H3RGB888 pixels[m_height][m_width];
+		public:
+			const H3RGB888* Pixels()             const { return (H3RGB888*)(PUINT8(this) + sizeof(*this)); }
+			const H3RGB888* Pixels(INT x, INT y) const { return Pixels() + m_width * y + x; }
+			const BOOL      RGBFormat()          const { return m_width * m_height * 3 == m_size; }
+			const UINT32    Height()             const { return m_height; }
+			const UINT32    Width()              const { return m_width; }
+			const UINT32    Size()               const { return m_size; }
+		};
+
+
 		LPCSTR const ImageLoaderPluginName = "H3.ImageLoader.dll";
 
 		// * This virtual class can be accessed

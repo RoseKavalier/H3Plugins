@@ -65,7 +65,7 @@ struct H3Lod
 	// * +0
 	LPCSTR name;
 	// * +4
-	PUINT8 filePosition;
+	FILE* filePosition;
 	// * +8
 	CHAR path[256]; // possibly less, not important
 	h3unk _f_108[112];
