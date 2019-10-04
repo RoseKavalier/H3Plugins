@@ -941,7 +941,9 @@ public:
 	// * the bonus effect on a spell from sorcery
 	INT32 GetSorceryEffect(INT32 spellID, INT32 baseDamage, H3CombatMonster *mon) { return THISCALL_4(INT32, 0x4E59D0, this, spellID, baseDamage, mon); }
 	// * the bonus/decreased effect on a spell from targetting a creature
-	INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID, H3CombatMonster *mon) { return THISCALL_4(INT32, 0x5A7EC0, this, damage, spellID, mon); }
+	// INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID, H3CombatMonster *mon) { return THISCALL_4(INT32, 0x5A7EC0, this, damage, spellID, mon); }
+	INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID, H3CombatMonster *mon) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, mon); }
+	// maby-->> H3CombatMonster::GetProtectiveSpellEffect(INT32 damage, INT32 spellID) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, this); }
 	// * combined effects of a spell on a creature
 	INT32 GetRealSpellDamage(INT32 baseDamage, H3CombatMonster *mon, INT32 spellID, H3Hero *enemy);
 	// * checks under the hero for special terrain
