@@ -292,6 +292,11 @@ inline PCHAR F_strtok(LPCSTR str, LPCSTR delimiters)
 	return CDECL_2(PCHAR, 0x617FBB, str, delimiters);
 }
 
+inline LPCSTR F_GetTownName(int town_id)
+{
+	return reinterpret_cast<LPCSTR*>(PtrAt(0x5C1857))[town_id];
+}
+
 inline VOID H3SoundManager::ClickSound()
 {
 	H3WavFile *buttonWav = C_ButtonWav;

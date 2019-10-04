@@ -77,7 +77,7 @@ struct H3Lod
 	h3unk _f_184[12];
 
 	H3Lod* Create(LPCSTR fileName) { return THISCALL_2(H3Lod*, 0x559420, this, fileName); }
-	H3Lod* Destroy() { THISCALL_1(H3Lod*, 0x559460, this); }
+	VOID Destroy() { THISCALL_1(VOID, 0x559460, this); }
 
 	// * 1 means READ_ONLY
 	BOOL Load(LPCSTR fileName) { return THISCALL_3(BOOL, 0x4FAF30, &filePosition, fileName, 1); }

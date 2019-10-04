@@ -940,10 +940,6 @@ public:
 	INT32 GetSpellSpecialtyEffect(INT32 spellID, INT32 creatureLevel, INT32 baseDamage) { return THISCALL_4(INT32, 0x4E6260, this, spellID, creatureLevel, baseDamage); }
 	// * the bonus effect on a spell from sorcery
 	INT32 GetSorceryEffect(INT32 spellID, INT32 baseDamage, H3CombatMonster *mon) { return THISCALL_4(INT32, 0x4E59D0, this, spellID, baseDamage, mon); }
-	// * the bonus/decreased effect on a spell from targetting a creature
-	// INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID, H3CombatMonster *mon) { return THISCALL_4(INT32, 0x5A7EC0, this, damage, spellID, mon); }
-	INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID, H3CombatMonster *mon) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, mon); }
-	// maby-->> H3CombatMonster::GetProtectiveSpellEffect(INT32 damage, INT32 spellID) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, this); }
 	// * combined effects of a spell on a creature
 	INT32 GetRealSpellDamage(INT32 baseDamage, H3CombatMonster *mon, INT32 spellID, H3Hero *enemy);
 	// * checks under the hero for special terrain
@@ -968,6 +964,8 @@ public:
 	INT32 GetHeroPrimary(INT primary) { return THISCALL_2(INT32, 0x5BE240, this, primary); }
 	// * used for diplomacy
 	INT32 HasSimilarCreature(INT id) { return FASTCALL_2(INT32, 0x4A7230, this, id); }
+	// * the class name of the current hero
+	LPCSTR GetHeroClassName() { return THISCALL_1(LPCSTR, 0x4D91E0, this); }
 };
 
 // * how date is represented
@@ -2485,6 +2483,8 @@ public:
 	INT32 GetSide() { return THISCALL_1(INT, 0x43FE60, this); }
 	// * Checks if hypnotized
 	H3Hero * GetOwner() { return THISCALL_1(H3Hero*, 0x4423B0, this); }
+	// * the bonus/decreased effect on a spell from targeting a creature
+	INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, this); }
 };
 
 struct H3PrimarySkills
@@ -4062,7 +4062,7 @@ inline INT32 H3Hero::GetRealSpellDamage(INT32 baseDamage, H3CombatMonster * mon,
 {
 	INT32 dmg = GetSorceryEffect(spellID, baseDamage, mon);
 	dmg = FASTCALL_3(INT32, 0x44B180, dmg, spellID, mon->type); // golem-style resistance
-	return enemy->GetProtectiveSpellEffect(dmg, spellID, mon);
+	return mon->GetProtectiveSpellEffect(dmg, spellID);
 }
 
 inline BOOL H3Hero::UnlearnSkill(INT32 id)

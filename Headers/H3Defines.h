@@ -90,7 +90,7 @@
 #define P_BigFont							(*(H3Font**)0x698A60)
 #define P_CalliFont							(*(H3Font**)0x698A64)
 #define P_BinaryTree						((H3BinTreeList*)0x69E560)
-
+#define P_HeroInfo							(*(H3HeroInfo**)0x67DCE8)
 
 // Constants C_ from Heroes3.exe
 
