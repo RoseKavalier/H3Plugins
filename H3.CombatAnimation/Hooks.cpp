@@ -31,7 +31,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 	for (int side = 0; side < 2; ++side)
 	{
 		// only consider creatures on battlefield
-		for (int i = 0; i < combat->heroMonCount[side]; ++i)
+		for (int i = 0; i < combat->heroMonCount[side] && i < 20; ++i)
 		{
 			auto mon = &combat->stacks[side][i];
 			// under these conditions, a creature should not be animated
@@ -40,6 +40,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 				or mon->activeSpellsDuration[H3Spell::BLIND]
 				or mon->activeSpellsDuration[H3Spell::PARALYZE]
 				or mon->activeSpellsDuration[H3Spell::STONE]
+				or mon->numberAlive == 0
 				)
 				continue;
 
@@ -48,6 +49,9 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 				continue;
 
 			auto def = mon->def;
+			if (!def)
+				continue;
+
 			if (def->groupsCount <= 1)
 				continue;
 			// check the standing defgroup is loaded...
@@ -80,7 +84,14 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 	return THISCALL_1(int, h->GetDefaultFunc(), combat);
 }
 
+_LHF_(ResetDrawingRequest)
+{
+	memset(P_CombatMgr->RedrawCreatureFrame, 0, sizeof(P_CombatMgr->RedrawCreatureFrame));
+	return EXEC_DEFAULT;
+}
+
 void Hooks_init(PatcherInstance *pi)
 {
 	pi->WriteHiHook(0x495C50, SPLICE_, THISCALL_, _HH_CycleCombatScreen);
+	pi->WriteLoHook(0x4631E6, ResetDrawingRequest);
 }

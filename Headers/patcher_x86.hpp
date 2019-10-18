@@ -566,6 +566,21 @@ public:
 	{
 		return WriteHiHook(address, hooktype, EXTENDED_, calltype, new_func);
 	}
+	// @@@calltype@@@
+	// STDCALL_ for __stdcall
+	// THISCALL_ for __thiscall
+	// FASTCALL_ for __fastcall
+	// CDECL_ for __cdecl
+	//
+	// Automatically sets subtype to EXTENDED_
+	// Checks whether to use CALL_ or SPLICE_ hooktype
+	// based on the bytes at address
+	HiHook* WriteHiHook(_ptr_ address, int calltype, void* new_func)
+	{
+		if (*reinterpret_cast<_byte_*>(address) == 0xE8 || *reinterpret_cast<_word_*>(address) == 0x15FF)
+			return WriteHiHook(address, CALL_, EXTENDED_, calltype, new_func);
+		return WriteHiHook(address, SPLICE_, EXTENDED_, calltype, new_func);
+	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Methods Create ...
@@ -1113,7 +1128,9 @@ public:
 // restore the alignment of members of structures and classes
 #pragma pack(pop)
 
+#define NOMINMAX
 #include <windows.h>
+#undef NOMINMAX
 
 #define CALL_0(return_type, func_type, address) ((return_type(func_type *)(void))address)()
 

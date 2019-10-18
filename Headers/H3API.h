@@ -90,7 +90,7 @@
 
 // * The H3Exception is hidden behind the _H3API_EXCEPTION_ guard.
 // * Uncomment the line below to be able to use it.
-#define _H3API_EXCEPTION_
+//#define _H3API_EXCEPTION_
 
 #ifdef _H3API_EXCEPTION_
 // * SEH error handler, requires \EHa compiler flag
@@ -101,7 +101,7 @@
 // * included in your project to get access to the
 // * rest of the H3API. They are here simply if you
 // * wish to take advantage of shared use they provide.
-#define _H3API_PLUGINS_
+//#define _H3API_PLUGINS_
 
 #ifdef _H3API_PLUGINS_
 #include "Plugins/H3Plugins.hpp"

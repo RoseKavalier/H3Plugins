@@ -172,7 +172,7 @@ inline H3Stream::H3Stream(LPCSTR filename, StreamMode read_write_mode, BOOL read
 	LPCSTR mode = GetModeFormat();
 	if (mode)
 	{
-		if (m_file = F_fopen(filename, mode))
+		if ((m_file = F_fopen(filename, mode)))
 		{
 			m_status = SS_OK;
 			m_size = F_GetFileSize(m_file);
@@ -198,13 +198,13 @@ inline H3Stream::H3Stream(LPCSTR filename, LPCSTR read_write_mode, BOOL read_to_
 		switch (read_write_mode[0])
 		{
 		case 'r':
-			m_mode = (StreamMode)(m_mode | MV_READ);
+			m_mode = StreamMode(m_mode | StreamMode(MV_READ));
 			break;
 		case 'w':
-			m_mode = (StreamMode)(m_mode | MV_WRITE);
+			m_mode = StreamMode(m_mode | StreamMode(MV_WRITE));
 			break;
 		case 'a':
-			m_mode = (StreamMode)(m_mode | MV_APPEND);
+			m_mode = StreamMode(m_mode | StreamMode(MV_APPEND));
 			break;
 		default:
 			break;
@@ -215,19 +215,19 @@ inline H3Stream::H3Stream(LPCSTR filename, LPCSTR read_write_mode, BOOL read_to_
 			switch (read_write_mode[1])
 			{
 			case 'r':
-				m_mode = (StreamMode)(m_mode | MV_READ);
+				m_mode = StreamMode(m_mode | StreamMode(MV_READ));
 				break;
 			case 'w':
-				m_mode = (StreamMode)(m_mode | MV_WRITE);
+				m_mode = StreamMode(m_mode | StreamMode(MV_WRITE));
 				break;
 			case 'a':
-				m_mode = (StreamMode)(m_mode | MV_APPEND);
+				m_mode = StreamMode(m_mode | StreamMode(MV_APPEND));
 				break;
 			case '+':
-				m_mode = (StreamMode)(m_mode | MV_UPDATE);
+				m_mode = StreamMode(m_mode | StreamMode(MV_UPDATE));
 				break;
 			case 'b':
-				m_mode = (StreamMode)(m_mode | MV_BINARY);
+				m_mode = StreamMode(m_mode | StreamMode(MV_BINARY));
 				break;
 			default:
 				break;
@@ -238,19 +238,19 @@ inline H3Stream::H3Stream(LPCSTR filename, LPCSTR read_write_mode, BOOL read_to_
 				switch (read_write_mode[2])
 				{
 				case 'r':
-					m_mode = (StreamMode)(m_mode | MV_READ);
+					m_mode = StreamMode(m_mode | StreamMode(MV_READ));
 					break;
 				case 'w':
-					m_mode = (StreamMode)(m_mode | MV_WRITE);
+					m_mode = StreamMode(m_mode | StreamMode(MV_WRITE));
 					break;
 				case 'a':
-					m_mode = (StreamMode)(m_mode | MV_APPEND);
+					m_mode = StreamMode(m_mode | StreamMode(MV_APPEND));
 					break;
 				case '+':
-					m_mode = (StreamMode)(m_mode | MV_UPDATE);
+					m_mode = StreamMode(m_mode | StreamMode(MV_UPDATE));
 					break;
 				case 'b':
-					m_mode = (StreamMode)(m_mode | MV_BINARY);
+					m_mode = StreamMode(m_mode | StreamMode(MV_BINARY));
 					break;
 				default:
 					break;
@@ -261,7 +261,7 @@ inline H3Stream::H3Stream(LPCSTR filename, LPCSTR read_write_mode, BOOL read_to_
 
 	if (m_mode != SM_INVALID)
 	{
-		if (m_file = F_fopen(filename, read_write_mode))
+		if ((m_file = F_fopen(filename, read_write_mode)))
 		{
 			m_status = SS_OK;
 			m_size = F_GetFileSize(m_file);
@@ -318,7 +318,7 @@ inline H3Stream & H3Stream::endl()
 
 inline BOOL H3Stream::Copy(LPCSTR destination)
 {
-	if (!(m_mode && (MV_READ | MV_UPDATE)))
+	if (!(m_mode & (MV_READ | MV_UPDATE)))
 		return FALSE;
 
 	if ((!m_buffer_size || !m_buffer) && !ReadFile(m_size))
@@ -498,12 +498,12 @@ inline VOID H3Stream::WriteNewLine()
 
 inline BOOL H3Stream::CanWrite()
 {
-	return m_mode && (MV_WRITE | MV_APPEND | MV_UPDATE);
+	return m_mode & (MV_WRITE | MV_APPEND | MV_UPDATE);
 }
 
 inline BOOL H3Stream::CanRead()
 {
-	return m_mode && (MV_READ | MV_UPDATE);
+	return m_mode & (MV_READ | MV_UPDATE);
 }
 
 inline BOOL H3Stream::ReadFile(DWORD size_to_read)
@@ -511,13 +511,13 @@ inline BOOL H3Stream::ReadFile(DWORD size_to_read)
 	if (!IsReady() || !CanRead())
 		return FALSE;
 
-	DWORD sz = min(m_size, size_to_read);
+	const DWORD sz = std::min(m_size, size_to_read);
 
-	if (m_buffer_size < size_to_read)
+	if (m_buffer_size < sz)
 	{
 		delete m_buffer;
-		m_buffer_size = size_to_read;
-		m_buffer = (PBYTE)F_calloc(m_buffer_size);
+		m_buffer_size = sz;
+		m_buffer = static_cast<PBYTE>(F_calloc(m_buffer_size));
 	}
 
 	m_buffer_position = 0;
@@ -531,7 +531,7 @@ template<INT32 sz>
 inline H3Stream & H3Stream::operator<<(const CHAR(&expression)[sz])
 {
 	if (IsReady() && CanWrite())
-		F_fwrite((PVOID)&expression, 1, sz, m_file);
+		F_fwrite(reinterpret_cast<PVOID>(&expression), 1, sz, m_file);
 	return *this;
 }
 

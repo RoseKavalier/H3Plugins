@@ -119,20 +119,20 @@ struct H3Msg
 	VOID      SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2);
 	VOID      SetCommand(INT32 cmd, INT32 param);
 	H3DlgItem *ItemAtPosition(H3Dlg *dlg);
-	INT32     KeyPressed()   { return subtype; }
-	BOOL      IsMouseOver()  { return command == MC_MouseOver; }
-	BOOL      IsKeyPress()   { return command == MC_KeyUp; }
-	BOOL      IsKeyDown()    { return command == MC_KeyDown; }
-	BOOL      IsLeftClick()  { return (command == MC_MouseButton && subtype == MS_LButtonClick); }
-	BOOL      IsLeftDown()   { return (command == MC_MouseButton && subtype == MS_LButtonDown);}
-	BOOL      IsRightClick() { return (command == MC_MouseButton && subtype == MS_RButtonDown);	}
-	INT32     CloseDialog()  { return STDCALL_1(INT32, 0x491640, this); }
-	BOOL      ClickOutside() { return command == MC_RClickOutside || command == MC_LClickOutside; }
+	INT32     KeyPressed()   const { return subtype; }
+	BOOL      IsKeyPress()   const { return command == MC_KeyUp; }
+	BOOL      IsKeyDown()    const { return command == MC_KeyDown; }
+	BOOL      IsMouseOver()  const { return command == MC_MouseOver; }
+	BOOL      IsLeftClick()  const { return (command == MC_MouseButton && subtype == MS_LButtonClick); }
+	BOOL      IsLeftDown()   const { return (command == MC_MouseButton && subtype == MS_LButtonDown); }
+	BOOL      IsRightClick() const { return (command == MC_MouseButton && subtype == MS_RButtonDown); }
+	BOOL      ClickOutside() const { return command == MC_RClickOutside || command == MC_LClickOutside; }
+	INT32     CloseDialog()        { return STDCALL_1(INT32, 0x491640, this); }
 };
 
 struct H3MsgCustom : public H3Msg
 {
-	H3Dlg * GetDlg() { return (H3Dlg*)flags2; }
+	H3Dlg * GetDlg() const { return reinterpret_cast<H3Dlg*>(flags2); }
 };
 
 // * actually __thiscall but declaration is not allowed
@@ -169,7 +169,7 @@ public: // copied from vTable at 0x63A6A8
 		runDlg            = 0x5FFA20;
 		initDlgItems      = 0x5FFB30;
 		activateDlg       = 0x5FFBB0;
-		dlgProc           = (H3Dlg_proc)H3DlgCustomProc; // custom proc to show hint messages and call our own dlg proc, default 0x41B120.
+		dlgProc           = reinterpret_cast<H3Dlg_proc>(H3DlgCustomProc); // custom proc to show hint messages and call our own dlg proc, default 0x41B120.
 		mouseMove         = 0x5FFCA0;
 		rightClick        = 0x5FFD50;
 		clickRet          = 0x5FFE90;
@@ -242,11 +242,10 @@ public:
 	// Constructor and destructor
 	////////////////////////////////////////////////////////////////////////
 	// * default constructor
-	H3Dlg(int width, int heigh, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = nullptr, BOOL makeBackground = TRUE, INT32 colorIndex = IntAt(0x69CCF4));
+	H3Dlg(int width, int height, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = nullptr, BOOL makeBackground = TRUE, INT32 colorIndex = IntAt(0x69CCF4));
 	// * default destructor
-	// * if you prefer to allocate your own dialogs,
-	// * change the last value to a 1 --- or use
-	// * H3Dlg* MyDlg = new H3Dlg();
+	// * if you prefer to allocate your own dialogs, use this style:
+	// * H3Dlg* MyDlg = new H3Dlg(.......);
 	// * ...
 	// * delete MyDlg;
 	// * this will automatically call the destructor before deallocating memory
@@ -420,13 +419,13 @@ public:
 	VOID   EnableItem(BOOL enable) { THISCALL_2(VOID, vTable->setEnabled, this, enable); }
 	VOID   Enable()                { EnableItem(TRUE); }
 	VOID   Disable()               { EnableItem(FALSE); }
-	INT16  GetX()                  { return xPos; }
-	INT16  GetY()                  { return yPos; }
-	BOOL   IsEnabled()             { return !(state & 0x20); }
+	INT16  GetX() const            { return xPos; }
+	INT16  GetY() const            { return yPos; }
+	BOOL   IsEnabled() const       { return !(state & 0x20); }
 	VOID   SetX(UINT16 x)          { xPos = x; }
 	VOID   SetY(UINT16 y)          { yPos = y; }
-	INT32  GetHeight()             { return heightItem; }
-	INT32  GetWidth()              { return widthItem; }
+	INT32  GetHeight() const       { return heightItem; }
+	INT32  GetWidth() const        { return widthItem; }
 	VOID   SetWidth(UINT16 w)      { widthItem = w; }
 	VOID   SetHeight(UINT16 h)     { heightItem = h; }
 	VOID   Draw(); // draw new contents through vTable
@@ -436,10 +435,10 @@ public:
 	VOID   Shade()                 { state |= 8; }
 	VOID   UnShade()               { state &= ~8; }
 	VOID   SetFocus(BOOL8 focus)   { THISCALL_2(VOID, vTable->setFocus, this, focus); }
-	BOOL   IsVisible()             { return state & 4; }
-	LPCSTR GetHint()               { return hint; }
+	BOOL   IsVisible() const       { return state & 4; }
+	LPCSTR GetHint() const         { return hint; }
 	VOID   SetHint(LPCSTR msg)     { hint = msg; }
-	UINT16 GetID()                 { return id; }
+	UINT16 GetID() const           { return id; }
 	VOID   ParentRedraw(); // redraw through parent
 	VOID   ColorToPlayer(INT8 player);
 	VOID   SendCommand(INT32 command, INT32 parameter);
@@ -505,12 +504,12 @@ public:
 	static H3DlgDef* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	static H3DlgDef* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 	static H3DlgDef* Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame = 0, INT32 group = 0);
-	VOID SetFrame(INT32 frame) { defFrame = frame; }
-	INT ToggleFrame() { defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; return defFrame; }
-	INT32 GetFrame() { return defFrame; }
-	VOID Copy(H3DlgDef* src);
-	VOID ColorDefToPlayer(INT32 id);
-	VOID SetClickFrame(INT32 clickFrame) { defFrameOnClick = clickFrame; }
+	VOID  SetFrame(INT32 frame) { defFrame = frame; }
+	INT   ToggleFrame() { defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; return defFrame; }
+	INT32 GetFrame() const { return defFrame; }
+	VOID  Copy(H3DlgDef* src);
+	VOID  ColorDefToPlayer(INT32 id);
+	VOID  SetClickFrame(INT32 clickFrame) { defFrameOnClick = clickFrame; }
 };
 
 struct H3DlgDefButton : public H3DlgDef // size 0x68 ~ although there is room for CustomProc, which is the same as H3DlgCustomButton, however it is not passed as an argument to the function
@@ -563,8 +562,10 @@ public:
 	static H3DlgPcx* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
 	static H3DlgPcx* Create(INT32 x, INT32 y, LPCSTR pcxName);
 	VOID Copy(H3DlgPcx* src);
-
+	VOID SetPcx(H3LoadedPCX* pcx) { loadedPcx = pcx; }
 	VOID AdjustColor(INT player) { THISCALL_2(VOID, 0x4501D0, this, player); }
+	H3LoadedPCX* GetPcx() { return loadedPcx; }
+	H3LoadedPCX* GetPcx() const { return loadedPcx; }
 };
 
 struct H3DlgPcx16 : public H3DlgItem
@@ -577,6 +578,11 @@ public:
 	static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
 	static H3DlgPcx16* Create(INT32 x, INT32 y, LPCSTR pcxName);
 	VOID SetPcx(H3LoadedPCX16* pcx16) { loadedPcx16 = pcx16; }
+	H3LoadedPCX16* GetPcx() { return loadedPcx16; }
+	VOID SinkArea(INT32 x, INT32 y, INT32 w, INT32 h)  { loadedPcx16->SinkArea(x, y, w, h); }
+	VOID BevelArea(INT32 x, INT32 y, INT32 w, INT32 h) { loadedPcx16->BevelArea(x, y, w, h); }
+	VOID SinkArea(H3DlgItem* it)  { SinkArea(it->GetX() - 1,  it->GetY() - 1, it->GetWidth() + 2, it->GetHeight() + 2); }
+	VOID BevelArea(H3DlgItem* it) { BevelArea(it->GetX() - 1, it->GetY() - 1, it->GetWidth() + 2, it->GetHeight() + 2); }
 };
 
 struct H3DlgEdit : public H3DlgItem // size 0x70
@@ -617,7 +623,7 @@ protected:
 	h3unk _f_6F;
 public:
 	static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
-	LPCSTR   GetText()                { return text.String(); }
+	LPCSTR   GetText() const          { return text.String(); }
 	H3String *GetString()             { return &text; }
 	VOID     SetText(LPCSTR text)     { _SetText(text); }
 	VOID     DecreaseCaret()          { caretPos--; }
@@ -709,16 +715,16 @@ protected:
 
 public:
 	static H3DlgScrollbar* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc, BOOL isBlue, INT32 stepSize, BOOL arrowsEnabled);
-	INT32 GetTick()              { return tick; }
-	VOID  SetTick(INT32 index)   { tick = index; }
-	VOID  SetBigStep(INT32 step) { bigStepSize = step; } // used for pageup, pagedown
-	VOID  SetButtonPosition()    { btnPosition = sizeFree * tick / (ticksCount - 1) + btnSize2; }
-	BOOL  IsHorizontal()         { return widthItem > heightItem; }
-	INT32 GetRightButtonX()      { return parent->GetX() + xPos + sizeMax - btnSize2; } // for horizontal scrollbar only!
-	INT32 GetHorizontalY()       { return parent->GetY() + yPos; }
-	INT32 GetBackgroundWidth()   { return sizeMax - 2 * btnSize2; }
-	INT32 GetBackgroundX()       { return parent->GetX() + xPos + btnSize2; }
-	INT32 GetSliderX()           { return parent->GetX() + xPos + btnPosition; }
+	INT32 GetTick() const            { return tick; }
+	VOID  SetTick(INT32 index)       { tick = index; }
+	VOID  SetBigStep(INT32 step)     { bigStepSize = step; } // used for pageup, pagedown
+	VOID  SetButtonPosition()        { btnPosition = sizeFree * tick / (ticksCount - 1) + btnSize2; }
+	BOOL  IsHorizontal() const       { return widthItem > heightItem; }
+	INT32 GetRightButtonX() const    { return parent->GetX() + xPos + sizeMax - btnSize2; } // for horizontal scrollbar only!
+	INT32 GetHorizontalY() const     { return parent->GetY() + yPos; }
+	INT32 GetBackgroundWidth() const { return sizeMax - 2 * btnSize2; }
+	INT32 GetBackgroundX() const     { return parent->GetX() + xPos + btnSize2; }
+	INT32 GetSliderX() const         { return parent->GetX() + xPos + btnPosition; }
 };
 
 #pragma pack(pop)
@@ -999,8 +1005,8 @@ inline VOID H3Dlg::PlaceAtMouse()
 	F_GetCursorPosition(x, y);
 
 	// adjust x & y to make certain the dialog will fit
-	x = min(x, gameWidth - widthDlg - 200); // 200 is width of adventure bar on right
-	y = min(y, gameHeight - heightDlg - 48); // 48 is height of resource bar on bottom
+	x = std::min(x, gameWidth - widthDlg - 200); // 200 is width of adventure bar on right
+	y = std::min(y, gameHeight - heightDlg - 48); // 48 is height of resource bar on bottom
 	if (x < 0)
 		x = 0;
 	if (y < 0)
@@ -1033,7 +1039,7 @@ inline BOOL H3Dlg::OldDlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex
 	INT32 x, y, _w, _h;
 	INT32 dh;
 	y = 0;
-	H3DlgPcx *bg = H3DlgPcx::Create(0, 0, min(w, 256), min(h, 256), 0, NH3Dlg::Assets::DIBOXBACK); // template background to copy
+	H3DlgPcx *bg = H3DlgPcx::Create(0, 0, std::min(w, 256), std::min(h, 256), 0, NH3Dlg::Assets::DIBOXBACK); // template background to copy
 	if (!bg)
 		return FALSE;
 	_h = h;
@@ -1043,7 +1049,7 @@ inline BOOL H3Dlg::OldDlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex
 	while (_h > 0) // vertical pass second
 	{
 		x = 0;
-		dh = min(256, _h);
+		dh = std::min(256, _h);
 		_w = w; // reset variable to dialog width
 		while (_w > 0) // horizontal pass first
 		{
@@ -1056,7 +1062,7 @@ inline BOOL H3Dlg::OldDlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex
 			bg2->Copy(bg); // copy contents
 			bg2->SetX(x); // update position
 			bg2->SetY(y);
-			bg2->SetWidth(min(_w, 256)); // update dimensions
+			bg2->SetWidth(std::min(_w, 256)); // update dimensions
 			bg2->SetHeight(dh);
 			AddItem(bg2);
 			x += 256;
@@ -1401,32 +1407,7 @@ inline BOOL H3Dlg::BackgroundRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL is_
 	if (!background || w <= 0 || h <= 0)
 		return FALSE;
 
-	H3LoadedPCX* back = H3LoadedPCX::Load(is_blue ? NH3Dlg::HDassets::DLGBLUEBACK : NH3Dlg::Assets::DIBOXBACK);
-	if (!back)
-		return FALSE;
-
-	int _x, _y, _w, _h, dh;
-	_y = y;
-	_h = h;
-
-	// * add background region
-	while (_h > 0)
-	{
-		_x = x;
-		dh = min(256, _h);
-		_w = w;
-		while (_w > 0)
-		{
-			back->DrawToPcx16(0, 0, min(_w, 256), dh, background, _x, _y, FALSE);
-			_x += 256;
-			_w -= 256;
-		}
-		_y += 256;
-		_h -= 256;
-	}
-	back->Dereference();
-
-	return TRUE;
+	return background->BackgroundRegion(x, y, w, h, is_blue);
 }
 
 inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPCX16 *destination)
@@ -1436,182 +1417,18 @@ inline BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, I
 	if (!target)
 		return FALSE;
 
-	INT32 xEnd, yEnd, dX, dY;
-	dX = _width;
-	dY = _height;
-	xEnd = xStart + _width;
-	yEnd = yStart + _height;
-	if (dX < 4 || dY < 4)
-		return FALSE;
-
-	// * helper struct
-	struct HDFrames
-	{
-		enum
-		{
-			up,
-			down,
-			left,
-			right,
-			tl,
-			tr,
-			bl,
-			br
-		};
-
-		H3LoadedPCX *frames[8];
-		H3LoadedPCX16 *tgt;
-		HDFrames(H3LoadedPCX16* bg) :
-			tgt(bg)
-		{
-			frames[up]    = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_U);
-			frames[down]  = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_D);
-			frames[left]  = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_L);
-			frames[right] = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_R);
-			frames[tl]    = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_LU);
-			frames[tr]    = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_RU);
-			frames[bl]    = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_LD);
-			frames[br]    = H3LoadedPCX::Load(NH3Dlg::HDassets::FRAME_RD);
-		}
-		BOOL AllLoaded()
-		{
-			for (int i = 0; i < 8; ++i)
-				if (frames[i] == nullptr)
-					return FALSE;
-			return TRUE;
-		}
-
-		~HDFrames()
-		{
-			for (int i = 0; i < 8; ++i)
-				if (frames[i])
-					frames[i]->Dereference();
-		}
-
-		VOID Draw(INT x, INT y, INT frame)
-		{
-			frames[frame]->DrawToPcx16(0, 0, 4, 4, tgt, x, y, FALSE);
-		}
-	};
-
-	HDFrames frames(target);
-	if (!frames.AllLoaded())
-		return FALSE;
-
-	////////////////////////////////////////
-	// do horizontal sides - bottom to top
-	////////////////////////////////////////
-	while (dX >= 4)
-	{
-		dX -= 4;
-		frames.Draw(xStart + dX, yStart,   frames.up);
-		frames.Draw(xStart + dX, yEnd - 4, frames.down);
-	}
-
-	////////////////////////////////////////
-	// do vertical sides - right to left
-	////////////////////////////////////////
-	while (dY >= 4)
-	{
-		dY -= 4;
-		frames.Draw(xStart,   yStart + dY, frames.left);
-		frames.Draw(xEnd - 4, yStart + dY, frames.right);
-	}
-
-	////////////////////
-	// Add corners
-	////////////////////
-	frames.Draw(xStart,   yStart,   frames.tl);
-	frames.Draw(xStart,   yEnd - 4, frames.bl);
-	frames.Draw(xEnd - 4, yStart,   frames.tr);
-	frames.Draw(xEnd - 4, yEnd - 4, frames.br);
-
-	return TRUE;
+	return target->SimpleFrameRegion(xStart, yStart, _width, _height);
 }
 
 inline BOOL H3Dlg::FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL statusBar, INT32 colorIndex, BOOL is_blue)
 {
-	enum eBackgroundFrames
-	{
-		BF_tl,
-		BF_tr,
-		BF_bl,
-		BF_br,
-		BF_ml,
-		BF_mr,
-		BF_tm,
-		BF_bm,
-		BF_blstat,
-		BF_brstat,
-		BF_bmstat
-	};
-
 	if (!background)
 		return FALSE;
 
 	if (w < 64 || h < 64)
 		return FALSE;
 
-	H3LoadedDEF* box = H3LoadedDEF::Load(is_blue ? NH3Dlg::HDassets::DLGBLUEBOX : NH3Dlg::Assets::DLGBOX);
-	if (!box)
-		return FALSE;
-
-	INT f_bl, f_br, f_bm;
-	if (statusBar)
-	{
-		f_bl = BF_blstat;
-		f_br = BF_brstat;
-		f_bm = BF_bmstat;
-	}
-	else
-	{
-		f_bl = BF_bl;
-		f_br = BF_br;
-		f_bm = BF_bm;
-	}
-
-	// * copying to this local palette prevents recoloration of def for others
-	H3Palette565 pal565, *pal;
-	if (!is_blue)
-	{
-		F_memcpy(&pal565, box->palette565, sizeof(pal565));
-		pal565.ColorToPlayer(colorIndex);
-		pal = &pal565;
-	}
-	else
-		pal = box->palette565;
-
-	// * add horizontal bars
-	int _w = w - 64 - 64;
-	H3DefFrame *tm = box->GetGroupFrame(0, eBackgroundFrames::BF_tm);
-	H3DefFrame *bm = box->GetGroupFrame(0, f_bm);
-	while (_w > 0)
-	{
-		tm->DrawToPcx16(0, 0, 64, 64, background, x + _w, y, pal);
-		bm->DrawToPcx16(0, 0, 64, 64, background, x + _w, y + h - 64, pal);
-		_w -= 64;
-	}
-
-	// * add vertical bars
-	int _h = h - 64 - 64;
-	H3DefFrame *ml = box->GetGroupFrame(0, eBackgroundFrames::BF_ml);
-	H3DefFrame *mr = box->GetGroupFrame(0, eBackgroundFrames::BF_mr);
-	while (_h > 0)
-	{
-		ml->DrawToPcx16(0, 0, 64, 64, background, x, y + _h, pal);
-		mr->DrawToPcx16(0, 0, 64, 64, background, x + w - 64, y + _h, pal);
-		_h -= 64;
-	}
-
-	// * add four corners
-	box->GetGroupFrame(0, eBackgroundFrames::BF_tl)->DrawToPcx16(0, 0, 64, 64, background, x, y, pal);
-	box->GetGroupFrame(0, eBackgroundFrames::BF_tr)->DrawToPcx16(0, 0, 64, 64, background, x + w - 64, y, pal);
-	box->GetGroupFrame(0, f_bl)->DrawToPcx16(0, 0, 64, 64, background, x, y + h - 64, pal);
-	box->GetGroupFrame(0, f_br)->DrawToPcx16(0, 0, 64, 64, background, x + w - 64, y + h - 64, pal);
-
-	box->Dereference();
-	return TRUE;
-
+	return background->FrameRegion(x, y, w, h, statusBar, colorIndex, is_blue);
 }
 
 inline VOID H3Dlg::Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
@@ -1634,7 +1451,7 @@ inline H3DlgItem * H3DlgItem::Create(INT32 x, INT32 y, INT32 width, INT32 height
 {
 	H3DlgItem *d = (H3DlgItem*)F_malloc(sizeof(H3DlgItem));
 	if (d)
-		THISCALL_7(H3DlgItem*, 0x5FE900, d, x, y, width, height, id, flags);
+		THISCALL_7(H3DlgItem*, 0x44FBE0, d, x, y, width, height, id, flags);
 	return d;
 }
 
@@ -1984,8 +1801,7 @@ INT32 __fastcall H3DlgCustomProc(H3Dlg * dlg, int, H3Msg * msg)
 		hint->ShowHint(msg);
 	if (H3Dlg_proc cProc = dlg->GetProc())
 		return STDCALL_2(INT32, cProc, dlg, msg);
-	else
-		return dlg->DefaultProc(msg);
+	return dlg->DefaultProc(msg);
 }
 
 #endif /* #define _H3DIALOGS_H_ */

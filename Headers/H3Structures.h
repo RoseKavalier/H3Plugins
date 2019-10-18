@@ -45,7 +45,6 @@
 
 #include "H3Base.h"
 #include "H3BinaryItems.h"
-#include "H3Dialogs.h"
 
 struct _PlayerUnk_;
 struct H3AdventureManager;
@@ -144,8 +143,26 @@ struct MapWindmill;
 struct MapWitchHut;
 struct TownTowerLoaded;
 struct H3Position;
+struct H3NetworkData;
 
 #pragma pack(push, 1)
+
+struct H3NetworkData
+{
+	// * +0
+	INT recipient_id; // -1 means everyone
+	INT _f_04;
+	// * +8
+	INT msg_id;
+	// * +C
+	INT buffer_size; // sizeof(*this) + extra size of H3NetworkData
+	INT _f_10;
+	// * +14
+	INT short_data;
+	// * more fields can be added here if more information is needed to be sent
+
+	INT32 SendData() { return FASTCALL_4(INT32, 0x5549E0, this, 127, 0, 1); }
+};
 
 // * stored (x,y,z) coordinates H3format
 struct H3Position
@@ -154,7 +171,7 @@ protected:
 	UINT pos;
 public:
 	// * returns the packed coordinates
-	UINT Mixed() { return pos; }
+	UINT Mixed() const { return pos; }
 	// * returns x from coordinates
 	UINT8 GetX() { return UnpackX(pos); }
 	// * returns y from coordinates
@@ -437,7 +454,7 @@ struct H3Resources
 
 	// * compares current values against cost
 	// * returns true if every current value is greater or equal
-	BOOL EnoughResources(H3Resources *cost);
+	BOOL EnoughResources(H3Resources *cost) const;
 	// * removes cost resources from current
 	VOID RemoveResources(H3Resources *cost);
 	// * adds resources to current
@@ -581,7 +598,7 @@ struct H3HeroSpecialty
 	UINT32  defenseBonus;
 	// * +10
 	// * to be used with creature bonus
-	UINT32  damangeBonus;
+	UINT32  damageBonus;
 	// * +14
 	// * the ID of the second creature that can be upgraded
 	UINT32  upgrade2;
@@ -615,8 +632,8 @@ protected:
 	// ...
 
 public:
-	BOOL Save(const PVOID data, const UINT data_size);
-	BOOL Load(const PVOID data, const UINT data_size);
+	BOOL Save(PVOID data, UINT data_size);
+	BOOL Load(PVOID data, UINT data_size);
 };
 
 // * the bitfield flags for heroes
@@ -975,7 +992,7 @@ struct H3Date
 	UINT16 week;
 	UINT16 month;
 	// * converts day, week, month into days from start, first day being 1
-	UINT32 CurrentDay() { return 28 * (month - 1) + 7 * (week - 1) + day - 1; }
+	UINT32 CurrentDay() const { return 28 * (month - 1) + 7 * (week - 1) + day - 1; }
 };
 
 // * how towns are represented in memory
@@ -1937,12 +1954,16 @@ struct H3ValidCatapultTargets
 // * town wall data
 struct H3WallSection
 {
+	// * +0
 	INT16 x;
+	// * +2
 	INT16 y;
-	h3unk _f_04[4];
+	// * +4
+	INT32 hex_id;
+	// * +8
 	LPCSTR names[5];
-	INT32 name;
-	INT16 hp;
+	INT32 name; // from walls.txt
+	INT16 hp;	// from walls.txt
 	h3unk _f_22[2];
 };
 
@@ -2487,6 +2508,8 @@ public:
 	INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, this); }
 };
 
+constexpr int t = sizeof(H3CombatMonster);
+
 struct H3PrimarySkills
 {
 	INT8 attack;
@@ -2598,7 +2621,7 @@ struct H3Quest
 		INT32 bePlayer;					// visit as a certain player
 	} data;
 
-	INT32 GetQuestType(VOID) { return (this ? ((DWORD)vTable - 0x641798) / 0x3C + 1 : 0); }
+	INT32 GetQuestType() { return (this ? (reinterpret_cast<DWORD>(vTable) - 0x641798) / 0x3C + 1 : 0); }
 };
 
 // * quest guard is a quest plus a byte to show who visited
@@ -3569,7 +3592,7 @@ public:
 	VOID MobilizeHero() { THISCALL_4(VOID, 0x417540, this, 0, 0, 0); }
 	VOID DemobilizeHero() { return THISCALL_3(VOID, 0x4175E0, this, 0, 0); }
 	/*VOID MovementCalculationsMouse(VOID) { THISCALL_2(VOID, 0x419400, this, mousePosition.mixed); }*/
-	VOID MovementCalculationsMouse(VOID) { THISCALL_2(VOID, 0x419400, this, mousePosition.Mixed()); }
+	VOID MovementCalculationsMouse() { THISCALL_2(VOID, 0x419400, this, mousePosition.Mixed()); }
 	VOID MovementCalculations(UINT32 mixedPosition) { THISCALL_2(VOID, 0x419400, this, mixedPosition); }
 	VOID MakeHeroPath() { THISCALL_4(VOID, 0x418D30, this, 1, 1, 1); }
 	VOID ShowCoordinates(INT32 x, INT32 y, INT8 z);
@@ -3753,11 +3776,7 @@ struct H3CombatManager : public H3Manager
 protected:
 	h3unk _f_0038[4];
 public:
-	// * +3C
-	// * see BATTLE_ACTION
-	INT32 action;
-
-	enum BATTLE_ACTION
+	enum BATTLE_ACTION : INT32
 	{
 		BA_CANCEL, //0 = Cancel Action(the stack can do a different action now but it may still be impossible to force it to do most actions through ERM).
 		BA_CAST_SPELL, //1 = Hero casts a spell
@@ -3774,6 +3793,8 @@ public:
 		BA_NOTHING //12 = No action(can be to disable stack for this round)
 	};
 
+	// * +3C
+	BATTLE_ACTION action;
 	// * +40
 	INT32 actionParameter;
 	// * +44
@@ -4044,14 +4065,14 @@ struct H3Pointers
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-inline BOOL H3Streambuf::Save(const PVOID data, const UINT data_size)
+inline BOOL H3Streambuf::Save(PVOID data, UINT data_size)
 {
 	if (data_size && THISCALL_3(UINT, vTable->saveRegion, this, data, data_size) >= data_size)
 		return TRUE;
 	return FALSE;
 }
 
-inline BOOL H3Streambuf::Load(const PVOID data, const UINT data_size)
+inline BOOL H3Streambuf::Load(PVOID data, UINT data_size)
 {
 	if (data_size && THISCALL_3(UINT, vTable->loadRegion, this, data, data_size) >= data_size)
 		return TRUE;
@@ -4098,7 +4119,6 @@ inline VOID H3Hero::RecalculateMovement()
 inline INT32 H3Hero::SSkillsLeftToLearn()
 {
 	int known_skills = 0;
-	int banned_skills = 0;
 	for (int i = 0; i < 28; i++)
 		known_skills += secSkill[i];
 
@@ -4132,8 +4152,8 @@ inline INT32 H3Hero::SSkillsLeftToLearn()
 	if ((hero_class == NH3Heroes::RANGER || hero_class == NH3Heroes::DRUID) && secSkill[NH3Skills::FIRE_MAGIC] == 0 && !main->bannedSkills[NH3Skills::FIRE_MAGIC])
 		skills_can_be_learned -= 3;
 
-	skills_can_be_learned = min(maxSkills - known_skills, skills_can_be_learned);
-	skills_can_be_learned = max(skills_can_be_learned, 1);
+	skills_can_be_learned = std::min(maxSkills - known_skills, skills_can_be_learned);
+	skills_can_be_learned = std::max(skills_can_be_learned, 1);
 	return skills_can_be_learned - 1; // -1 because it's already included in formula for level to go to
 }
 
@@ -4184,7 +4204,7 @@ inline VOID H3CreatureInformation::UpgradeCost(H3Resources * res, H3CreatureInfo
 	res->gold    = (upg->cost.gold - cost.gold) * count;
 }
 
-inline BOOL H3Resources::EnoughResources(H3Resources * cost)
+inline BOOL H3Resources::EnoughResources(H3Resources * cost) const
 {
 	BOOL r = FALSE;
 	while (!r)
@@ -4222,8 +4242,8 @@ inline VOID H3Resources::RemoveResources(H3Resources * cost)
 
 inline VOID H3Resources::GainResourcesOF(H3Resources * gain)
 {
-	int *This = (int*)this;
-	int *Gain = (int*)gain;
+	int *This = reinterpret_cast<int*>(this);
+	int *Gain = reinterpret_cast<int*>(gain);
 	INT resMax = INT_MAX;
 	for (int i = 0; i < 7; i++, This++, Gain++)
 	{
@@ -4283,8 +4303,7 @@ inline VOID H3CreatureBank::SetupBank(int type, int level)
 	creatureRewardType = cbs->creatureRewardType;
 	creatureRewardCount = cbs->creatureRewardCount;
 
-	int stacks = guardians.GetStackCount();
-	int stacks_to_add = 4 - stacks;
+	const int stacks = guardians.GetStackCount();
 	int stack_to_split;
 	int first_free_slot;
 	int fractions;

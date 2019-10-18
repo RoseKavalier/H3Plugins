@@ -30,7 +30,8 @@ class H3Node
 {
 public:
 	friend class H3Tree<Type>;
-	const Type& GetData() const { return m_data; }
+	Type& GetData() { return m_data; }
+	Type* GetDataPtr() { return &m_data; }
 
 	H3Node(Type &t) :
 		m_data(t),
@@ -55,8 +56,9 @@ class H3Tree
 	H3Node<Type>* m_root;
 	INT m_count;
 	const CompFunc m_compare;
-
-	H3Tree(); // this should not be used!
+#ifndef CPLUSPLUS11
+	H3Tree();
+#endif
 
 	INT _Height(H3Node<Type>* node);
 	H3Node<Type>* _RotateRight(H3Node<Type>* node);
@@ -65,9 +67,12 @@ class H3Tree
 	H3Node<Type>* _Insert(H3Node<Type>* root, Type& t, Type* result);
 	H3Node<Type>* _Remove(H3Node<Type>* root, Type& t);
 	VOID _Delete(H3Node<Type>* root);
-	VOID _Inorder(H3Node<Type>* root, H3Vector<Type*>& vector);
+	VOID _Inorder(H3Node<Type>* root, H3Vector<Type>& vector);
 
 public:
+#ifdef CPLUSPLUS11
+	H3Tree() = delete; // this should not be used!
+#endif
 	H3Tree(CompFunc TypeComparison) :
 		m_count(0),
 		m_compare(TypeComparison)
@@ -79,7 +84,7 @@ public:
 	VOID Remove(Type& t);
 	INT Count() const { return m_count; }
 	const Type* Find(Type& t) const;
-	H3Vector<Type*> OrderedTravel() const;
+	H3Vector<Type> OrderedTravel();
 };
 
 template<typename Type>
@@ -96,8 +101,8 @@ inline H3Node<Type>* H3Tree<Type>::_RotateRight(H3Node<Type>* node)
 	H3Node<Type>* root = node->m_left;
 	node->m_left = root->m_right;
 	root->m_right = node;
-	node->m_height = 1 + max(_Height(node->m_left), _Height(node->m_right));
-	root->m_height = 1 + max(_Height(root->m_left), _Height(root->m_right));
+	node->m_height = 1 + std::max(_Height(node->m_left), _Height(node->m_right));
+	root->m_height = 1 + std::max(_Height(root->m_left), _Height(root->m_right));
 	return root;
 }
 
@@ -107,8 +112,8 @@ inline H3Node<Type>* H3Tree<Type>::_RotateLeft(H3Node<Type>* node)
 	H3Node<Type>* root = node->m_right;
 	node->m_right = root->m_left;
 	root->m_left = node;
-	node->m_height = 1 + max(_Height(node->m_left), _Height(node->m_right));
-	root->m_height = 1 + max(_Height(root->m_left), _Height(root->m_right));
+	node->m_height = 1 + std::max(_Height(node->m_left), _Height(node->m_right));
+	root->m_height = 1 + std::max(_Height(root->m_left), _Height(root->m_right));
 	return root;
 }
 
@@ -151,7 +156,7 @@ inline H3Node<Type>* H3Tree<Type>::_Insert(H3Node<Type>* root, Type & t, Type* r
 	int height_left = _Height(root->m_left);
 	int height_right = _Height(root->m_right);
 
-	root->m_height = 1 + max(height_left, height_right);
+	root->m_height = 1 + std::max(height_left, height_right);
 
 	int balance = height_left - height_right;
 
@@ -198,12 +203,12 @@ inline H3Node<Type>* H3Tree<Type>::_Remove(H3Node<Type>* root, Type & t)
 		if (right == nullptr)
 		{
 			H3Node<Type>* left = root->m_left;
-			delete(root);
+			delete root;
 			root = left;
 		}
 		else if (root->m_left == nullptr)
 		{
-			delete(root);
+			delete root;
 			root = right;
 		}
 		else
@@ -227,22 +232,18 @@ inline H3Node<Type>* H3Tree<Type>::_Remove(H3Node<Type>* root, Type & t)
 		int left_compare = m_compare(t, root->m_left->m_data);
 		if (left_compare > 0)
 			return _RotateRight(root);
-		else
-		{
-			root->m_left = _RotateLeft(root->m_left);
-			return _RotateRight(root);
-		}
+
+		root->m_left = _RotateLeft(root->m_left);
+		return _RotateRight(root);
 	}
-	else if (balance < -1)
+	if (balance < -1)
 	{
 		int right_compare = m_compare(t, root->m_right->m_data);
 		if (right_compare < 0)
 			return _RotateLeft(root);
-		else
-		{
-			root->m_right = _RotateRight(root->m_right);
-			return _RotateLeft(root);
-		}
+
+		root->m_right = _RotateRight(root->m_right);
+		return _RotateLeft(root);
 	}
 
 	return root;
@@ -259,12 +260,12 @@ inline VOID H3Tree<Type>::_Delete(H3Node<Type>* root)
 }
 
 template<typename Type>
-inline VOID H3Tree<Type>::_Inorder(H3Node<Type>* root, H3Vector<Type*>& vector)
+inline VOID H3Tree<Type>::_Inorder(H3Node<Type>* root, H3Vector<Type>& vector)
 {
 	if (root == nullptr)
 		return;
 	_Inorder(root->m_left, vector);
-	vector += (&root->GetData());
+	vector.Add(root->GetData());
 	_Inorder(root->m_right, vector);
 }
 
@@ -292,9 +293,9 @@ inline const Type * H3Tree<Type>::Find(Type & t) const
 }
 
 template<typename Type>
-inline H3Vector<Type*> H3Tree<Type>::OrderedTravel() const
+inline H3Vector<Type> H3Tree<Type>::OrderedTravel()
 {
-	H3Vector<Type*> nodes;
+	H3Vector<Type> nodes;
 
 	_Inorder(m_root, nodes);
 

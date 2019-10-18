@@ -25,10 +25,10 @@ struct TextColorNode
 	INT32 color;
 
 	TextColorNode() :
-		name_end()
-	{}
+		name(), name_end() {}
 	TextColorNode(H3String& col, INT32 val) : TextColorNode(col.String(), val) {}
 	TextColorNode(LPCSTR col, INT32 val) :
+		name(),
 		name_end(),
 		color(val)
 	{
@@ -111,9 +111,9 @@ const H3Vector<H3String>* H3TextColor::GetColorNames()
 	auto vec = ColorsTree.OrderedTravel();
 	H3String str_name;
 	ColorNames.RemoveAll();
-	for (auto col : vec)
+	for (auto& col : vec)
 	{
-		str_name = col->name;
+		str_name = col.name;
 		ColorNames += str_name;
 	}
 	return &ColorNames;
@@ -126,8 +126,8 @@ VOID H3TextColor::DeleteColorNames()
 
 VOID H3TextColor::AddColor(LPCSTR name, UINT8 red, UINT8 green, UINT8 blue)
 {
-	INT32 color = 0;
-	switch (InternalTextColor.mode)
+	INT32 color;
+	switch (mode)
 	{
 	case H3TextColor::CM_555:
 		color = H3RGB555::Pack(red, green, blue);
@@ -159,7 +159,7 @@ VOID H3TextColor::AddColor(LPCSTR name, UINT8 red, UINT8 green, UINT8 blue)
 // * works at the start of a new line
 _LHF_(TextPositionNewLine)
 {
-	CurrentPosition = IntAt(c->esp) - (int)TextParser.String();
+	CurrentPosition = IntAt(c->esp) - reinterpret_cast<int>(TextParser.String());
 	return EXEC_DEFAULT;
 }
 
@@ -169,14 +169,14 @@ _LHF_(TextPositionLineMiddle)
 {
 	// * c->edx points to an offset of string
 	// * calculate the offset to know the matching color
-	CurrentPosition = c->edx - (int)TextParser.String();
+	CurrentPosition = c->edx - reinterpret_cast<int>(TextParser.String());
 	return EXEC_DEFAULT;
 }
 
 // * Sets the correct color to use while using GDI mode ~16bit
 _LHF_(DrawCharColor)
 {
-	INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = *CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 	{
 		c->eax = color;
@@ -188,7 +188,7 @@ _LHF_(DrawCharColor)
 // * Sets the correct color to use while using True mode
 _LHF_(TrueModeDrawCharColor)
 {
-	INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = *CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 		c->eax = color;
 	return EXEC_DEFAULT;
@@ -197,7 +197,7 @@ _LHF_(TrueModeDrawCharColor)
 // * Sets the correct color to use while using True Stretchable mode
 _LHF_(TrueStretchModeDrawCharColor)
 {
-	INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = *CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 	{
 		c->edi = color;
@@ -211,7 +211,7 @@ _LHF_(TrueStretchModeDrawCharColor)
 // * while storing custom colors to $CharColors
 _LHF_(ParseText) // 0x4B5255
 {
-	PCHAR text = (PCHAR)c->edx;
+	PCHAR text = reinterpret_cast<PCHAR>(c->edx);
 	INT32 len = c->local_n(5);
 
 	TextColorNode buffer;
@@ -231,7 +231,7 @@ _LHF_(ParseText) // 0x4B5255
 			currentColor = NO_COLOR;
 		else if (current[0] == '{' && current[1] == '~') // current[1] is always safe because strings are null-terminated
 		{
-			INT32 seekLen = min(TAG_LEN, len - i - 1); // why -1 ? because if the color tag is at the very end of the string, it will have no effect anyway
+			const INT32 seekLen = std::min(TAG_LEN, len - i - 1); // why -1 ? because if the color tag is at the very end of the string, it will have no effect anyway
 			F_strncpy(buffer.name, &current[2], seekLen); // make a temporary copy of text starting after '{~'
 			for (INT tagLen = 0; tagLen < seekLen; tagLen++)
 			{
@@ -248,7 +248,7 @@ _LHF_(ParseText) // 0x4B5255
 
 					// * set current color
 					currentColor = color_node->color;
-					INT removed = sizeof('{') + sizeof('~') + sizeof('}') + tagLen; // we are removing the {~Color} tag from parsed text
+					const INT removed = sizeof('{') + sizeof('~') + sizeof('}') + tagLen - 1; // we are removing the {~Color} tag from parsed text; -1 as Remove() is now inclusive
 					TextParser.Remove(i, i + removed); // remove this portion of text
 					len -= removed; // the string length for loop is now shorter
 					break;
@@ -260,9 +260,9 @@ _LHF_(ParseText) // 0x4B5255
 	} // parse text
 
 	// update registers
-	c->edx = (int)TextParser.String();
-	IntAt(c->ebp + 8) = (int)TextParser.String();
-	IntAt(c->ebp - 0x14) = TextParser.Length();
+	c->edx = reinterpret_cast<int>(TextParser.String());
+	c->ref_arg_n(1) = reinterpret_cast<int>(TextParser.String());
+	c->ref_local_n(5) = TextParser.Length();
 
 	return EXEC_DEFAULT;
 }
@@ -361,10 +361,8 @@ _LHF_(MainHook)
 			if (line.Split('=', color_value))
 			{
 				// * remove spaces and tabs
-				line.Remove(' ');
-				line.Remove('\t');
-				color_value.Remove(' ');
-				color_value.Remove('\t');
+				line.Trim();
+				color_value.Trim();
 
 				// * convert text to hexadecimal number
 				INT32 rgb = INT32(F_strtoul(color_value.String(), 16) & 0xFFFFFF);
@@ -377,6 +375,8 @@ _LHF_(MainHook)
 					break;
 				case H3TextColor::CM_565:
 					rgb = H3RGB565::Pack((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+					/* fall through */
+				default:
 					break;
 				}
 
@@ -403,9 +403,7 @@ _LHF_(MainHook)
 
 void Hooks_init(PatcherInstance *pi)
 {
-	INT len = F_GetCurrentDirectory(h3_TextBuffer);
-
-	ColorTextFile.Assign(h3_TextBuffer, len);
+	F_GetCurrentDirectory(ColorTextFile, false);
 	ColorTextFile.Append(ColorFileName);
 	// * place here to check which color format to use
 	pi->WriteLoHook(0x601BCF, MainHook);
