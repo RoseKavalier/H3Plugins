@@ -3584,6 +3584,7 @@ public:
 		// from 0 through 7
 	};
 
+	H3MapItem* GetMapItem()             { return THISCALL_2(H3MapItem*, 0x412B30, this, mousePosition.Mixed()); }
 	H3MapItem* GetMapItem(int mixedPos) { return THISCALL_2(H3MapItem*, 0x412B30, this, mixedPos); }
 	H3MapItem* GetMapItem(int x, int y, int z) { return THISCALL_4(H3MapItem*, 0x4086D0, map, x, y, z); }
 	UINT8 GetX() { return mousePosition.GetX(); }
@@ -3599,6 +3600,7 @@ public:
 	VOID ShowCoordinates(INT32 x, INT32 y, INT8 z);
 	INT SimulateMouseOver(INT x, INT y) { return THISCALL_3(int, 0x40E2C0, this, x, y); }
 	INT SimulateMouseOver(POINT & p) { return SimulateMouseOver(p.x, p.y); }
+	CHAR UpdateHintMessage() { return THISCALL_5(CHAR, 0x40B0B0, this, GetMapItem(), GetX(), GetY(), GetZ()); }
 };
 
 // * trading between two armies
