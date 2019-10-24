@@ -272,6 +272,7 @@ public:
 	INT32          GetX()                  { return xDlg; }
 	INT32          GetY()                  { return yDlg; }
 	H3LoadedPCX16* GetBackgroundPcx()      { return background; }
+	BOOL           IsTopDialog() const     { return nextDialog == nullptr; }
 
 	// * draws the background pcx only
 	BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL is_blue = FALSE);

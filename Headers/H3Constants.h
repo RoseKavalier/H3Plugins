@@ -960,7 +960,7 @@ namespace NH3VKey
 		H3VK_SLASH         = 53,
 		H3VK_RIGHT_SHIFT   = 54,
 		H3VK_PRINTSCREEN   = 55, // or * on numpad?
-
+		H3VK_ALT           = 56,
 		H3VK_SPACEBAR      = 57,
 
 		H3VK_F2            = 60,

@@ -979,7 +979,7 @@ public:
 
 	// * returns string offset at pos
 	PCHAR At(INT32 pos);
-	const CHAR GetCharAt(INT32 pos) const;
+	CHAR GetCharAt(INT32 pos) const;
 	// * Removes all instances of ch
 	INT32 Remove(CHAR ch);
 	// * Removes all instances of substring
@@ -1261,7 +1261,7 @@ inline H3String & H3String::Assign(const H3String & other)
 inline H3String & H3String::Assign(const H3String * other)
 {
 	if (other)
-		Assign(other->String(), other->Length());
+		Assign(*other);
 	return *this;
 }
 
@@ -1718,7 +1718,7 @@ inline PCHAR H3String::At(const INT32 pos)
 	return nullptr;
 }
 
-inline const CHAR H3String::GetCharAt(const INT32 pos) const
+inline CHAR H3String::GetCharAt(const INT32 pos) const
 {
 	if (str && pos >= 0 && Length())
 		return str[std::min(pos, Length())];

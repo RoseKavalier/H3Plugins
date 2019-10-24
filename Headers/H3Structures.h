@@ -3307,9 +3307,10 @@ public:
 // * the manager of managers
 struct H3Executive
 {
-	H3Manager *previous;
-	H3Manager *next;
-	h3unk _f_08[8];
+	H3Manager *first_mgr;
+	H3Manager *last_mgr;
+	H3Manager *active_mgr;
+	h3unk _f_0C[4];
 
 	VOID RemoveManager(H3Manager *mgr) { THISCALL_2(VOID, 0x4B0950, this, mgr); }
 	INT AddManager(H3Manager *mgr, int order) { return THISCALL_3(INT, 0x4B0880, this, mgr, order); }
@@ -4037,26 +4038,26 @@ public:
 // * You can always use it instead of the #define equivalents if you prefer
 struct H3Pointers
 {
-	inline static H3MouseManager			* MouseManager()			{ return *(H3MouseManager**)0x6992B0; }
-	inline static H3WindowManager			* WindowManager()			{ return *(H3WindowManager**)0x6992D0; }
-	inline static H3Executive				* Executive()				{ return *(H3Executive**)0x699550; }
-	inline static H3Main					* Main()					{ return *(H3Main**)0x699538; }
-	inline static H3CombatManager			* CombatManager()			{ return *(H3CombatManager**)0x699420; }
-	inline static H3TownManager				* TownManager()				{ return *(H3TownManager**)0x69954C; }
-	inline static H3SoundManager			* SoundManager()			{ return *(H3SoundManager**)0x699414; }
-	inline static H3InputManager			* InputManager()			{ return *(H3InputManager**)0x699530; }
-	inline static H3AdventureManager		* AdventureManager()		{ return *(H3AdventureManager**)0x6992B8; }
-	inline static H3MovementManager			* MovementManager()			{ return *(H3MovementManager**)0x6992D4; }
-	inline static H3GlobalObjectSettings	* GlobalObjectSettings()	{ return *(H3GlobalObjectSettings**)0x660428; }
-	inline static H3Spell					* Spell()					{ return *(H3Spell**)0x687FA8; }
-	inline static H3CreatureBankSetup		* CreatureBankSetup()		{ return *(H3CreatureBankSetup**)(0x47A3C1 + 1); }
-	inline static H3ValidCatapultTargets	* ValidCatapultTargets()	{ return *(H3ValidCatapultTargets**)(0x4929DD + 3); }
-	inline static H3ArtifactSetup			* ArtifactSetup()			{ return *(H3ArtifactSetup**)0x660B68; }
-	inline static H3CreatureInformation		* CreatureInformation()		{ return *(H3CreatureInformation**)0x6747B0; }
-	inline static H3ObstacleInfo			* ObstacleInfo()			{ return *(H3ObstacleInfo**)0x465C21; }
-	inline static H3Hero					* DialogHero()				{ return *(H3Hero**)0x698B70; }
-	inline static H3TurnTimer				* TurnTimer()				{ return *(H3TurnTimer**)(0x4AD194 + 1); }
-	inline static H3HeroSpecialty			* HeroSpecialty()			{ return *(H3HeroSpecialty**)(0x4B8AF1 + 1); }
+	inline static H3MouseManager			* MouseManager()			{ return *reinterpret_cast<H3MouseManager**>(0x6992B0); }
+	inline static H3WindowManager			* WindowManager()			{ return *reinterpret_cast<H3WindowManager**>(0x6992D0); }
+	inline static H3Executive				* Executive()				{ return *reinterpret_cast<H3Executive**>(0x699550); }
+	inline static H3Main					* Main()					{ return *reinterpret_cast<H3Main**>(0x699538); }
+	inline static H3CombatManager			* CombatManager()			{ return *reinterpret_cast<H3CombatManager**>(0x699420); }
+	inline static H3TownManager				* TownManager()				{ return *reinterpret_cast<H3TownManager**>(0x69954C); }
+	inline static H3SoundManager			* SoundManager()			{ return *reinterpret_cast<H3SoundManager**>(0x699414); }
+	inline static H3InputManager			* InputManager()			{ return *reinterpret_cast<H3InputManager**>(0x699530); }
+	inline static H3AdventureManager		* AdventureManager()		{ return *reinterpret_cast<H3AdventureManager**>(0x6992B8); }
+	inline static H3MovementManager			* MovementManager()			{ return *reinterpret_cast<H3MovementManager**>(0x6992D4); }
+	inline static H3GlobalObjectSettings	* GlobalObjectSettings()	{ return *reinterpret_cast<H3GlobalObjectSettings**>(0x660428); }
+	inline static H3Spell					* Spell()					{ return *reinterpret_cast<H3Spell**>(0x687FA8); }
+	inline static H3CreatureBankSetup		* CreatureBankSetup()		{ return *reinterpret_cast<H3CreatureBankSetup**>(0x47A3C1 + 1); }
+	inline static H3ValidCatapultTargets	* ValidCatapultTargets()	{ return *reinterpret_cast<H3ValidCatapultTargets**>(0x4929DD + 3); }
+	inline static H3ArtifactSetup			* ArtifactSetup()			{ return *reinterpret_cast<H3ArtifactSetup**>(0x660B68); }
+	inline static H3CreatureInformation		* CreatureInformation()		{ return *reinterpret_cast<H3CreatureInformation**>(0x6747B0); }
+	inline static H3ObstacleInfo			* ObstacleInfo()			{ return *reinterpret_cast<H3ObstacleInfo**>(0x465C21); }
+	inline static H3Hero					* DialogHero()				{ return *reinterpret_cast<H3Hero**>(0x698B70); }
+	inline static H3TurnTimer				* TurnTimer()				{ return *reinterpret_cast<H3TurnTimer**>(0x4AD194 + 1); }
+	inline static H3HeroSpecialty			* HeroSpecialty()			{ return *reinterpret_cast<H3HeroSpecialty**>(0x4B8AF1 + 1); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
