@@ -228,14 +228,6 @@ protected:
 	H3Dlg_proc customProc;
 	H3DlgHintBar *hintBar;
 	H3LoadedPCX16 *background;
-private:
-
-	// * to be deprecated in favor of AddBackground()
-	BOOL OldDlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex);
-	// * to be deprecated in favor of SimpleFrameRegion()
-	BOOL OldSimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height);
-	// * to be deprecated in favor of CreateBlackBox()
-	H3DlgText* OldCreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height);
 
 public:
 	////////////////////////////////////////////////////////////////////////
@@ -266,13 +258,13 @@ public:
 	BOOL           AddBackground(H3LoadedDEF *def, INT group = 0, INT frame = 0);
 	VOID           Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy); // redraw part of dialog
 	VOID           Redraw(); // redraw whole dialog
-	INT32          DefaultProc(H3Msg *msg) { return THISCALL_2(INT32, 0x41B120, this, msg); }
-	INT32          GetWidth()              { return widthDlg; }
-	INT32          GetHeight()             { return heightDlg; }
-	INT32          GetX()                  { return xDlg; }
-	INT32          GetY()                  { return yDlg; }
-	H3LoadedPCX16* GetBackgroundPcx()      { return background; }
-	BOOL           IsTopDialog() const     { return nextDialog == nullptr; }
+	INT32          DefaultProc(H3Msg *msg)  { return THISCALL_2(INT32, 0x41B120, this, msg); }
+	INT32          GetWidth() const         { return widthDlg; }
+	INT32          GetHeight() const        { return heightDlg; }
+	INT32          GetX() const             { return xDlg; }
+	INT32          GetY() const             { return yDlg; }
+	H3LoadedPCX16* GetBackgroundPcx() const { return background; }
+	BOOL           IsTopDialog() const      { return nextDialog == nullptr; }
 
 	// * draws the background pcx only
 	BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL is_blue = FALSE);
@@ -960,14 +952,6 @@ inline BOOL H3Dlg::CreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height)
 	return TRUE;
 }
 
-inline H3DlgText * H3Dlg::OldCreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height)
-{
-	H3DlgText *t = H3DlgText::Create(x, y, width, height, h3_NullString, NH3Dlg::Text::MEDIUM, 0, 0, 0, 9 + NH3Dlg::TextColor::BLACK);
-	if (t)
-		AddItem(t);
-	return t;
-}
-
 inline H3DlgHintBar * H3Dlg::CreateHint()
 {
 	H3DlgHintBar *h = H3DlgHintBar::Create(this);
@@ -1027,196 +1011,6 @@ inline VOID H3Dlg::Start()
 	THISCALL_2(VOID, vtable->runDlg, this, 0); // run H3Dlg
 
 	mmgr->SetCursor(mouseType, mouseFrame); // restore previous cursor
-}
-
-inline BOOL H3Dlg::OldDlgBackground(BOOL frame, BOOL statusBar, INT32 colorIndex)
-{
-	INT32 w = widthDlg;
-	INT32 h = heightDlg;
-
-	if (frame && (w < 64 || h < 64))
-		return FALSE;
-
-	INT32 x, y, _w, _h;
-	INT32 dh;
-	y = 0;
-	H3DlgPcx *bg = H3DlgPcx::Create(0, 0, std::min(w, 256), std::min(h, 256), 0, NH3Dlg::Assets::DIBOXBACK); // template background to copy
-	if (!bg)
-		return FALSE;
-	_h = h;
-	////////////////////
-	// make background first
-	////////////////////
-	while (_h > 0) // vertical pass second
-	{
-		x = 0;
-		dh = std::min(256, _h);
-		_w = w; // reset variable to dialog width
-		while (_w > 0) // horizontal pass first
-		{
-			H3DlgPcx *bg2 = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
-			if (!bg2)
-			{
-				F_delete(bg);
-				return FALSE;
-			}
-			bg2->Copy(bg); // copy contents
-			bg2->SetX(x); // update position
-			bg2->SetY(y);
-			bg2->SetWidth(std::min(_w, 256)); // update dimensions
-			bg2->SetHeight(dh);
-			AddItem(bg2);
-			x += 256;
-			_w -= 256;
-		}
-		y += 256; // go to next horizontal pass
-		_h -= 256;
-	}
-
-	F_delete(bg); // no longer needed
-
-	if (!frame)
-		return TRUE;
-
-	enum eBackgroundFrames
-	{
-		BF_tl,
-		BF_tr,
-		BF_bl,
-		BF_br,
-		BF_ml,
-		BF_mr,
-		BF_tm,
-		BF_bm,
-		BF_blstat,
-		BF_brstat,
-		BF_bmstat
-	};
-
-	////////////////////
-	////////////////////
-	// now make frame
-	////////////////////
-	////////////////////
-
-	// definitions
-	H3DlgDef *def, *def2;
-	INT8 f_bl, f_br, f_bm;
-	if (statusBar)
-	{
-		f_bl = BF_blstat;
-		f_br = BF_brstat;
-		f_bm = BF_bmstat;
-	}
-	else
-	{
-		f_bl = BF_bl;
-		f_br = BF_br;
-		f_bm = BF_bm;
-	}
-
-	////////////////////
-	// start with top left, as base - don't place yet
-	////////////////////
-	H3DlgDef *baseDef = H3DlgDef::Create(0, 0, NH3Dlg::Assets::DLGBOX, BF_tl);
-	if (!baseDef)
-		return FALSE;
-
-	////////////////////
-	// do middle sides
-	////////////////////
-	x = w - 64 - 64; // corners are written after
-
-	while (x > 0)
-	{
-		def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-		if (!def)
-			return FALSE;
-		def->Copy(baseDef);
-		def->SetX(x);
-		def->SetFrame(BF_tm);
-		AddItem(def);
-
-		def2 = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-		if (!def2)
-			return FALSE;
-		def2->Copy(def);
-		def2->SetY(h - 64);
-		def2->SetFrame(f_bm);
-		AddItem(def2);
-
-		x -= 64;
-	}
-
-	////////////////////
-	// do vertical sides ~ defs can only match their whole size
-	////////////////////
-	// start from bottom and move up
-	y = h - 64 - 64;
-
-	while (y >= 0)
-	{
-		def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-		if (!def)
-			return FALSE;
-		def->Copy(baseDef);
-		def->SetY(y);
-		def->SetFrame(BF_ml);
-		AddItem(def);
-
-		def2 = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-		if (!def2)
-			return FALSE;
-		def2->Copy(def);
-		def2->SetX(w - 64);
-		def2->SetFrame(BF_mr);
-		AddItem(def2);
-
-		y -= 64;
-	}
-
-	////////////////////
-	// All corners
-	////////////////////
-	// top left
-	AddItem(baseDef);
-
-	////////////////////
-	// now top right
-	////////////////////
-	def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-	if (!def)
-		return FALSE;
-	def->Copy(baseDef);
-	def->SetX(w - 64);
-	def->SetFrame(BF_tr);
-	AddItem(def);
-
-	////////////////////
-	// bottom left
-	////////////////////
-	def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-	if (!def)
-		return FALSE;
-	def->Copy(baseDef);
-	def->SetY(h - 64);
-	def->SetFrame(f_bl);
-	AddItem(def);
-
-	////////////////////
-	// bottom right
-	////////////////////
-	def = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
-	if (!def)
-		return FALSE;
-	def->Copy(baseDef);
-	def->SetX(w - 64);
-	def->SetY(h - 64);
-	def->SetFrame(f_br);
-	AddItem(def);
-
-	def->ColorDefToPlayer(colorIndex);
-	return TRUE;
 }
 
 inline BOOL H3Dlg::AddBackground(INT32 x, INT32 y, INT32 w, INT32 h, BOOL frame, BOOL statusBar, INT32 colorIndex, BOOL is_blue)
@@ -1313,92 +1107,6 @@ inline BOOL H3Dlg::AddBackground(H3LoadedDEF * def, INT group, INT frame)
 		return FALSE;
 
 	fr->DrawToPcx16(0, 0, fr->frameWidth, fr->frameHeight, background, 0, 0, def->palette565);
-
-	return TRUE;
-}
-
-inline BOOL H3Dlg::OldSimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height)
-{
-	INT32 xEnd, yEnd, dX, dY;
-	dX = _width;
-	dY = _height;
-	xEnd = xStart + _width;
-	yEnd = yStart + _height;
-	if (dX < 4 || dY < 4)
-		return FALSE;
-
-	H3DlgPcx *up, *down, *left, *right, *pcx;
-
-	up = H3DlgPcx::Create(xStart, yStart, NH3Dlg::HDassets::FRAME_U);
-	down = H3DlgPcx::Create(xStart, yEnd - 4, NH3Dlg::HDassets::FRAME_D);
-	left = H3DlgPcx::Create(xStart, yStart, NH3Dlg::HDassets::FRAME_L);
-	right = H3DlgPcx::Create(xEnd - 4, yStart, NH3Dlg::HDassets::FRAME_R);
-
-	if (!up || !down || !left || !right)
-	{
-		F_delete(up);
-		F_delete(down);
-		F_delete(left);
-		F_delete(right);
-		return FALSE;
-	}
-
-	////////////////////
-	// do horizontal sides
-	////////////////////
-	while (dX >= 4)
-	{
-		dX -= 4;
-		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
-		if (pcx)
-		{
-			pcx->Copy(up);
-			pcx->SetX(xStart + dX);
-			AddItem(pcx);
-		}
-		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
-		if (pcx)
-		{
-			pcx->Copy(down);
-			pcx->SetX(xStart + dX);
-			AddItem(pcx);
-		}
-	}
-
-	////////////////////
-	// do vertical sides
-	////////////////////
-	while (dY >= 4)
-	{
-		dY -= 4;
-		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
-		if (pcx)
-		{
-			pcx->Copy(left);
-			pcx->SetY(yStart + dY);
-			AddItem(pcx);
-		}
-		pcx = (H3DlgPcx*)F_malloc(sizeof(H3DlgPcx));
-		if (pcx)
-		{
-			pcx->Copy(right);
-			pcx->SetY(yStart + dY);
-			AddItem(pcx);
-		}
-	}
-
-	F_delete(up);
-	F_delete(down);
-	F_delete(left);
-	F_delete(right);
-
-	////////////////////
-	// Add corners
-	////////////////////
-	AddItem(H3DlgPcx::Create(xStart, yStart, NH3Dlg::HDassets::FRAME_LU));
-	AddItem(H3DlgPcx::Create(xStart, yEnd - 4, NH3Dlg::HDassets::FRAME_LD));
-	AddItem(H3DlgPcx::Create(xEnd - 4, yStart, NH3Dlg::HDassets::FRAME_RU));
-	AddItem(H3DlgPcx::Create(xEnd - 4, yEnd - 4, NH3Dlg::HDassets::FRAME_RD));
 
 	return TRUE;
 }

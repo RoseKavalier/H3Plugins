@@ -474,6 +474,7 @@ struct H3Font : public H3BinaryItem
 	INT32 GetLinesCountInText(LPCSTR str, INT32 width) { return THISCALL_3(INT32, 0x4B5580, this, str, width); }
 	INT32 GetMaxLineWidth(LPCSTR str) { return THISCALL_2(INT32, 0x4B56F0, this, str); }
 	INT32 GetMaxWordWidth(LPCSTR str) { return THISCALL_2(INT32, 0x4B5770, this, str); }
+	VOID TextDraw(H3LoadedPCX16* pcx, LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, NH3Dlg::TextColor::eTextColor colorIndex, NH3Dlg::TextAlignment::eTextAlignment alignment);
 };
 
 struct H3Palette888 : public H3BinaryItem
@@ -580,6 +581,8 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38 // vt 63B9C8
 	VOID FillRectangle(INT x, INT y, INT w, INT h, BYTE r, BYTE g, BYTE b);
 	VOID FillRectangle(INT x, INT y, INT w, INT h, DWORD color) { FillRectangle(x, y, w, h, (color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF); }
 
+	VOID DrawFrame(INT x, INT y, INT w, INT h, BYTE r = 232, BYTE g = 212, BYTE b = 120);
+
 	VOID DarkenArea(INT x, INT y, INT w, INT h, UINT8 amount);
 	VOID LightenArea(INT x, INT y, INT w, INT h, UINT8 amount);
 	VOID GrayScaleArea(INT x, INT y, INT w, INT h);
@@ -600,6 +603,8 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38 // vt 63B9C8
 	// * adds a 1 pixel border around the designated area to make it look
 	// * as if the contents were elevated
 	VOID BevelArea(INT32 x, INT32 y, INT32 w, INT32 h);
+	// * Draws text on the pcx
+	VOID TextDraw(H3Font* font, LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, NH3Dlg::TextColor::eTextColor colorIndex, NH3Dlg::TextAlignment::eTextAlignment alignment);
 
 protected:
 	// * returns row start in buffer
@@ -970,6 +975,14 @@ inline VOID H3LoadedPCX16::FillRectangle(INT x, INT y, INT w, INT h, BYTE r, BYT
 	}
 }
 
+inline VOID H3LoadedPCX16::DrawFrame(INT x, INT y, INT w, INT h, BYTE r, BYTE g, BYTE b)
+{
+	FillRectangle(x, y, w, 1, r, g, b);
+	FillRectangle(x, y + 1, 1, h - 2, r, g, b);
+	FillRectangle(x + w - 1, y + 1, 1, h - 2, r, g, b);
+	FillRectangle(x, y + h - 1, w, 1, r, g, b);
+}
+
 inline VOID H3LoadedPCX16::DarkenArea(INT x, INT y, INT w, INT h, UINT8 amount)
 {
 	if (x >= width || x < 0 || y >= height || y < 0 || !buffer)
@@ -1309,6 +1322,11 @@ inline VOID H3LoadedPCX16::BevelArea(INT32 x, INT32 y, INT32 w, INT32 h)
 	DarkenArea(_x + _w, _y + 1, 1, _h - 2, 50);
 }
 
+inline VOID H3LoadedPCX16::TextDraw(H3Font* font, LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height,	NH3Dlg::TextColor::eTextColor colorIndex, NH3Dlg::TextAlignment::eTextAlignment alignment)
+{
+	THISCALL_10(VOID, 0x4B51F0, font, text, this, x, y, width, height, colorIndex, alignment, -1);
+}
+
 inline VOID H3LoadedDEF::AddFrameFromDef(LPCSTR source, INT32 index)
 {
 	H3LoadedDEF *src = H3LoadedDEF::Load(source);
@@ -1355,6 +1373,11 @@ inline H3RGB888::H3RGB888(H3RGB565& rgb) :
 
 inline H3RGB888::H3RGB888(H3ARGB888& rgb) :
 	r(rgb.r), g(rgb.g), b(rgb.b) { }
+
+inline VOID H3Font::TextDraw(H3LoadedPCX16* pcx, LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, NH3Dlg::TextColor::eTextColor colorIndex, NH3Dlg::TextAlignment::eTextAlignment alignment)
+{
+	pcx->TextDraw(this, text, x, y, width, height, colorIndex, alignment);
+}
 
 inline H3LoadedPCX * H3LoadedPCX::Create(LPCSTR name, INT width, INT height)
 {

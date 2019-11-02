@@ -710,10 +710,10 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 	if (m < RN_MIN_VALUE)
 	{
 		const int r = F_sprintf("%d", num);
-		strcpy(out, h3_TextBuffer);
+		if (out != h3_TextBuffer)
+			strcpy(out, h3_TextBuffer);
 		return r;
 	}
-
 
 	// * round the number to required precision
 	int dec = std::min(decimals, 3);
@@ -754,10 +754,12 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 			// * if decimals are required
 			if (dec)
 			{
-				*dst++ = '.';
+				PCHAR dot = dst;
+				dst++;
 				// * add required precision
 				for (int i = 0; i < dec; i++)
 					*dst++ = *src++;
+				*dot = '.';
 			}
 			break;
 		}

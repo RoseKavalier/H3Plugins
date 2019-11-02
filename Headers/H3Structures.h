@@ -983,6 +983,8 @@ public:
 	INT32 HasSimilarCreature(INT id) { return FASTCALL_2(INT32, 0x4A7230, this, id); }
 	// * the class name of the current hero
 	LPCSTR GetHeroClassName() { return THISCALL_1(LPCSTR, 0x4D91E0, this); }
+	// * shows hero dialog in right-click mode
+	VOID ShowDialog() const { return FASTCALL_4(VOID, 0x4E1A70, id, 1, 1, 1);}
 };
 
 // * how date is represented

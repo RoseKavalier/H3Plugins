@@ -606,25 +606,25 @@ inline VOID H3DLL::DLLNotFound() const
 template<INT32 sz>
 inline UINT32 H3DLL::NeedleSearch(UINT8(&needle)[sz], INT32 offset)
 {
-	return NeedleSearch(&needle, sz, offset);
+	return NeedleSearch(PUINT8(needle), sz, offset);
 }
 
 template<INT32 sz, INT32 sz2>
 inline UINT32 H3DLL::NeedleSearchAround(UINT8(&needle)[sz], INT32 radius, UINT8(&needle2)[sz2])
 {
-	return NeedleSearchAround(&needle, sz, radius, &needle2, sz2);
+	return NeedleSearchAround(PUINT8(needle), sz, radius, PUINT8(needle2), sz2);
 }
 
 template<INT32 sz>
 inline UINT32 H3DLL::NeedleSearchAfter(UINT32 after, UINT8(&needle)[sz], INT32 offset)
 {
-	return NeedleSearchAfter(after, &needle, sz, offset);
+	return NeedleSearchAfter(after, PUINT8(needle), sz, offset);
 }
 
 template<INT32 sz, INT32 sz2>
 inline UINT32 H3DLL::NeedleSearchConfirm(UINT8(&needle)[sz], INT32 offset, UINT8(&expectedCode)[sz2])
 {
-	return NeedleSearchConfirm(&needle, sz, offset, &expectedCode, sz2);
+	return NeedleSearchConfirm(PUINT8(needle), sz, offset, &expectedCode, sz2);
 }
 
 template<INT32 sz>
@@ -636,7 +636,7 @@ inline UINT32 H3DLL::NeedleSearchRData(UINT8(&needle)[sz])
 template<INT32 sz>
 inline UINT32 H3DLL::NeedleSearchData(UINT8(&needle)[sz])
 {
-	return NeedleSearchData(&needle, sz);
+	return NeedleSearchData(PUINT8(needle), sz);
 }
 
 // * From https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range?answertab=active#tab-top
