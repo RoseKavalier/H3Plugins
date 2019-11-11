@@ -76,6 +76,12 @@
 #define constexpr const
 #endif
 
+// * allows conversion between some std:: classes and H3 classes
+#ifdef _H3_STD_CONVERSIONS_
+#include <string>
+#include <vector>
+#endif
+
 // * Slaps top of car
 // * This bad boy can hold just about anything
 typedef void			(*naked_t)();
@@ -464,8 +470,8 @@ class H3Version
 public:
 	H3Version()
 	{
-		IMAGE_DOS_HEADER* pDOSHeader = (IMAGE_DOS_HEADER*)0x400000;
-		IMAGE_NT_HEADERS* pNTHeaders = (IMAGE_NT_HEADERS*)((BYTE*)pDOSHeader + pDOSHeader->e_lfanew);
+		IMAGE_DOS_HEADER* pDOSHeader = reinterpret_cast<IMAGE_DOS_HEADER*>(0x400000);
+		IMAGE_NT_HEADERS* pNTHeaders = reinterpret_cast<IMAGE_NT_HEADERS*>((reinterpret_cast<BYTE*>(pDOSHeader) + pDOSHeader->e_lfanew));
 		DWORD entry = pNTHeaders->OptionalHeader.AddressOfEntryPoint;
 
 		// * checks entry point of exe
@@ -564,6 +570,16 @@ inline INT F_sprintf(LPCSTR format, ...)
 	return r;
 }
 
+// * sprintf using h3 assets and custom buffer
+inline INT F_sprintfbuffer(PCHAR buffer, LPCSTR format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	const INT r = F_vsprintf(buffer, format, args);
+	va_end(args);
+	return r;
+}
+
 // * The new, new[], delete and delete[] operators are
 // * placed behind the _H3API_OPERATORS_ guards.
 // * If you want to use them in your project, you
@@ -651,10 +667,11 @@ struct H3Numbers
  */
 inline int H3Numbers::AddCommas(const int num, char * out)
 {
-	char *src = h3_TextBuffer;
+	char buffer[64];
+	char *src = buffer;
 	char *dst = out;
 
-	int num_len = F_sprintf("%d", num);
+	int num_len = F_sprintfbuffer(buffer, "%d", num);
 
 	if (*src == '-')
 	{
@@ -703,15 +720,15 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 	constexpr INT RN_MIN_VALUE = 10000;
 	int power;
 
+	char buffer[64];
+
 	// * work with positives
 	int m = num < 0 ? -num : num;
 
 	// * if smaller than specified value, print regular number
 	if (m < RN_MIN_VALUE)
 	{
-		const int r = F_sprintf("%d", num);
-		if (out != h3_TextBuffer)
-			strcpy(out, h3_TextBuffer);
+		const int r = F_sprintfbuffer(out, "%d", num);
 		return r;
 	}
 
@@ -735,11 +752,11 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 	d = (d + plus) / div * div;
 
 	// * print template
-	int len = F_sprintf("%d", d);
+	int len = F_sprintfbuffer(buffer, "%d", d);
 	int c = 2 - len % 3;
 
 	char *dst = out;
-	char *src = h3_TextBuffer;
+	char *src = buffer;
 
 	// * leading negative
 	if (num < 0)
@@ -754,12 +771,10 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 			// * if decimals are required
 			if (dec)
 			{
-				PCHAR dot = dst;
-				dst++;
+				*dst++ = '.';
 				// * add required precision
 				for (int i = 0; i < dec; i++)
 					*dst++ = *src++;
-				*dot = '.';
 			}
 			break;
 		}
@@ -858,6 +873,14 @@ public:
 	_Elem* operator+=(_Elem & item);
 	// * Adds item to end of list
 	_Elem* operator<<(_Elem & item) { return operator+=(item); }
+
+#ifdef _H3_STD_CONVERSIONS_
+
+	H3Vector(std::vector<_Elem>& vec);
+
+	std::vector<_Elem> to_std_vector() const;
+
+#endif /* _H3_STD_CONVERSIONS_ */
 
 	// * this is used in combination of C++11 'for :' range-based for loop iterator operations
 	_Elem* begin() { return m_first; }
@@ -1054,7 +1077,7 @@ public:
 	H3String& operator+=(const H3String* other);
 	// * Append(msg)
 	template<INT32 Sz>
-	H3String & operator+=(const CHAR(&buffer)[Sz]);
+	H3String& operator+=(const CHAR(&buffer)[Sz]);
 	// * Append(msg)
 	H3String& operator+=(LPCSTR msg);
 	// * Append(ch)
@@ -1078,6 +1101,8 @@ public:
 	H3String& operator<<(const int number) { return Append(number); }
 	// * Adds hex number to string
 	H3String& operator<<(const unsigned int number) { return Append(number); }
+	// * cast operator
+	operator LPCSTR () const { return String(); }
 
 	// * Compare(h3str)
 	INT operator==(const H3String *h3str) const { return Compare(h3str); }
@@ -1162,6 +1187,16 @@ public:
 	}
 #endif
 
+#ifdef _H3_STD_CONVERSIONS_
+	// H3String to std::string conversions are handled through cast operator()
+	H3String(const std::string& str);
+	INT operator==(const std::string& str) const;
+	H3String& operator+=(const std::string& str);
+	H3String& operator=(const std::string& str);
+	H3String& Assign(const std::string& str);
+	H3String& Append(const std::string& str);
+	std::string to_std_string() const;
+#endif /* _H3_STD_CONVERSIONS_ */
 
 	/*
 	*
@@ -1270,11 +1305,7 @@ inline H3String & H3String::Assign(const H3String * other)
 inline H3String & H3String::Assign(const INT32 number)
 {
 	const int len = F_sprintf("%d", number);
-	if (Reserve(len))
-	{
-		length = len;
-		strcpy(str, h3_TextBuffer);
-	}
+	Assign(h3_TextBuffer, len);
 	return *this;
 }
 
@@ -1977,6 +2008,42 @@ inline BOOL H3String::ScaledNumber(int number, int decimals)
 	return TRUE;
 }
 
+#ifdef _H3_STD_CONVERSIONS_
+H3String::H3String(const std::string & str)
+{
+	Assign(str);
+}
+
+inline INT H3String::operator==(const std::string & str) const
+{
+	return Compare(str.c_str());
+}
+
+inline H3String & H3String::operator+=(const std::string & str)
+{
+	return Append(str);
+}
+
+inline H3String & H3String::operator=(const std::string & str)
+{
+	return Assign(str);
+}
+
+inline H3String & H3String::Assign(const std::string & str)
+{
+	return Assign(str.c_str(), str.length());
+}
+
+inline H3String & H3String::Append(const std::string & str)
+{
+	Append(str.c_str(), str.length());
+	return *this;
+}
+inline std::string H3String::to_std_string() const
+{
+	return std::string(String(), Length());
+}
+
 inline H3String operator+(H3String & lhs, H3String & rhs)
 {
 	H3String ans;
@@ -2148,6 +2215,26 @@ inline _Elem* H3Vector<_Elem>::operator+=(_Elem & item)
 {
 	return Add(item);
 }
+#ifdef _H3_STD_CONVERSIONS_
+template<typename _Elem>
+inline H3Vector<_Elem>::H3Vector(std::vector<_Elem>& vec)
+{
+	Init();
+	for (_Elem* i = vec.begin(); i < vec.end(); ++i)
+		Add(i);
+}
+
+template<typename _Elem>
+inline std::vector<_Elem> H3Vector<_Elem>::to_std_vector() const
+{
+	std::vector<_Elem> vec;
+	for (_Elem* i = begin(); i < end(); ++i)
+		vec.push_back(*i);
+
+	return vec;
+}
+
+#endif /* #ifdef _H3_STD_CONVERSIONS_ */
 
 template<typename _Elem>
 inline _Elem * H3Vector<_Elem>::Pop()

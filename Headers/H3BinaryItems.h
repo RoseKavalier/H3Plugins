@@ -459,7 +459,10 @@ struct H3Palette565 : public H3BinaryItem
 
 struct H3Font : public H3BinaryItem
 {
-	h3unk _f_1C[32];
+	h3unk _f_1C[5];
+	// * +21
+	INT8 height;
+	h3unk _f_22[26];
 	// * +3C
 	UINT8 width[3072]; // used to calculate line width
 	// * +C3C

@@ -67,9 +67,9 @@ inline VOID F_GetCursorPosition(POINT & p)
 }
 
 // * given power ratio k, returns the diplomacy power factor
-inline INT32 F_GetDiplomacyPowerFactor(float k)
+inline INT32 F_GetDiplomacyPowerFactor(FLOAT k)
 {
-	return STDCALL_1(INT32, 0x4A7330, k);
+	return STDCALL_1(INT32, 0x4A7330, DwordAt(&k));
 }
 
 // * returns a creature's upgraded version id
@@ -165,19 +165,19 @@ inline PCHAR F_strRev(PCHAR buffer)
 }
 
 // * FindFirstFileA using H3 assets
-inline HANDLE F_FindFirstFileA(LPCSTR path, WIN32_FIND_DATAA & data)
+inline HANDLE F_FindFirstFileA(LPCSTR path, WIN32_FIND_DATAA& data)
 {
 	return STDCALL_2(HANDLE, PtrAt(0x63A11C), path, &data);
 }
 
 // * FindFirstFileA using H3 assets
-inline HANDLE F_FindFirstFileA(H3String & path, WIN32_FIND_DATAA & data)
+inline HANDLE F_FindFirstFileA(H3String & path, WIN32_FIND_DATAA& data)
 {
 	return STDCALL_2(HANDLE, PtrAt(0x63A11C), path.String(), &data);
 }
 
 // * FindNextFileA using H3 assets
-inline HANDLE F_FindNextFileA(HANDLE handle, WIN32_FIND_DATAA & data)
+inline HANDLE F_FindNextFileA(HANDLE handle, WIN32_FIND_DATAA& data)
 {
 	return STDCALL_2(HANDLE, PtrAt(0x63A120), handle, &data);
 }

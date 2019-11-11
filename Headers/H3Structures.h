@@ -459,6 +459,20 @@ struct H3Resources
 	VOID RemoveResources(H3Resources *cost);
 	// * adds resources to current
 	VOID GainResourcesOF(H3Resources *gain);
+	// * Get resources as array
+	PINT AsArray() { return PINT(this); }
+	// * Number of non-zero resources
+	INT Count()
+	{
+		INT r = 0;
+		for (int i = 0; i < 7; ++i)
+			if (AsArray()[i] != 0)
+				++r;
+		return r;
+	}
+
+	PINT begin() { return AsArray(); }
+	PINT end() { return &AsArray()[7]; }
 };
 
 // * The arrangment of 7 creatures on various H3 structures
@@ -985,6 +999,8 @@ public:
 	LPCSTR GetHeroClassName() { return THISCALL_1(LPCSTR, 0x4D91E0, this); }
 	// * shows hero dialog in right-click mode
 	VOID ShowDialog() const { return FASTCALL_4(VOID, 0x4E1A70, id, 1, 1, 1);}
+	// * army value * (attack & defense power coefficient)
+	INT GetPower() const { return THISCALL_1(INT32, 0x427650, this); }
 };
 
 // * how date is represented
@@ -1197,6 +1213,147 @@ public:
 		/* CONFLUX */
 		B_MAGIC_UNIVERSITY = 21
 	};
+};
+
+struct H3SpecialBuildingCosts
+{
+	enum eSpecialBuildings
+	{
+		/* Castle */
+		LIGHTHOUSE = 0,
+		GRIFFIN_HORDE,
+		ROYAL_GRIFFIN_HORDE,
+		UNUSED_CASTLE1,
+		STABLES,
+		TAVERN_UPGRADE,
+		UNUSED_CASTLE2,
+		UNUSED_CASTLE3,
+		UNUSED_CASTLE4,
+
+		/* Rampart */
+		MYSTIC_GARDEN = 0,
+		DWARF_HORDE,
+		BATTLE_DWARF_HORDE,
+		UNUSED_RAMPART1,
+		RAINBOW,
+		TREASURY,
+		UNUSED_RAMPART2,
+		TREEFOLK_HORDE,
+		BRIAR_TREEFOLK_HORDE,
+
+		/* Tower */
+		ARTIFACT_MERCHANTS_TOWER = 0,
+		STONE_GARGOYLE_HORDE,
+		OBSIDIAN_GARGOYLE_HORDE,
+		UNUSED_TOWER1,
+		WATCHTOWER,
+		LIBRARY,
+		WALL_OF_GLYPHIC_KNOWLEDGE,
+		UNUSED_TOWER2,
+		UNUSED_TOWER3,
+
+		/* Inferno */
+		UNUSED_INFERNO1 = 0,
+		IMP_HORDE,
+		FAMILIAR_HORDE,
+		UNUSED_INFERNO2,
+		BRIMSTONE_STORMCLOUDS,
+		CASTLE_GATE,
+		ORDER_OF_FIRE,
+		HELL_HOUND_HORDE,
+		CERBERUS_HORDE,
+
+		/* Necropolis */
+		COVER_OF_DARKNESS = 0,
+		SKELETON_HORDE,
+		SKELETON_WARRIOR_HORDE,
+		UNUSED_NECROPOLIS1,
+		NECROMANCY_AMPLIFIER,
+		SKELETON_TRANSFORMER,
+		UNUSED_NECROPOLIS2,
+		UNUSED_NECROPOLIS3,
+		UNUSED_NECROPOLIS4,
+
+		/* Dungeon */
+		ARTIFACT_MERCHANTS_DUNGEON = 0,
+		TROGLODYTE_HORDE,
+		INFERNAL_TROGLODYTE_HORDE,
+		UNUSED_DUNGEON1,
+		MANA_VORTEX,
+		PORTAL_OF_SUMMONING,
+		ACADEMY_OF_BATTLE_SCHOLARS,
+		UNUSED_DUNGEON2,
+		UNUSED_DUNGEON3,
+
+		/* Stronghold */
+		ESCAPE_TUNNEL = 0,
+		GOBLIN_HORDE,
+		HOBGOBLIN_HORDE,
+		UNUSED_STRONGHOLD1,
+		FREELANCERS_GUILD,
+		BALLISTA_WORKS,
+		HALL_OF_VALHALLA,
+		UNUSED_STRONGHOLD2,
+		UNUSED_STRONGHOLD3,
+
+		/* Fortress */
+		DEFENSE_CAGE = 0,
+		GNOLL_HORDE,
+		GNOLL_MARAUDER_HORDE,
+		UNUSED_FORTRESS1,
+		SIEGE_DEFENSE,
+		SIEGE_ATTACK,
+		UNUSED_FORTRESS2,
+		UNUSED_FORTRESS3,
+		UNUSED_FORTRESS4,
+
+		/* Conflux */
+		ARTIFACT_MERCHANTS = 0,
+		PIXIE_HORDE,
+		SPRITE_HORDE,
+		UNUSED_CONFLUX1,
+		MAGIC_UNIVERSITY,
+		UNUSED_CONFLUX2,
+		UNUSED_CONFLUX3,
+		UNUSED_CONFLUX4,
+		UNUSED_CONFLUX5,
+	};
+
+	// * each town has its own
+	H3Resources cost[9];
+};
+
+struct H3NeutralBuildingCosts
+{
+	enum eNeutralBuildings
+	{
+		MAGE_GUILD = 0,
+		MAGE_GUILD2,
+		MAGE_GUILD3,
+		MAGE_GUILD4,
+		MAGE_GUILD5,
+		TAVERN,
+		DOCK,
+		CASTLE_FORT,
+		CASTLE_CITADEL,
+		CASTLE_CASTLE,
+		HALL_VILLAGE,
+		HALL_TOWN,
+		HALL_CITY,
+		HALL_CAPITOL,
+		MARKETPLACE,
+		MARKETPLACE_SILO,
+		BLACKSMITH,
+	};
+	// * same for all towns
+	H3Resources cost[17];
+};
+
+struct H3DwellingBuildingCosts
+{
+	// * each town has its own 2 * 7 levels
+	// * unupgraded first, then upgraded
+	H3Resources cost[2][7];
 };
 
 // * data about each of the 8 players on the map
@@ -1567,7 +1724,7 @@ struct MapCreatureBank
 // * data for pyramid on adventure map
 struct MapPyramid
 {
-	unsigned  taken : 1;
+	unsigned  available : 1;
 	unsigned  id : 4;
 	unsigned  visited : 8;
 	unsigned  spell : 8;
@@ -2510,14 +2667,15 @@ public:
 	INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID) { return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, this); }
 };
 
-constexpr int t = sizeof(H3CombatMonster);
-
 struct H3PrimarySkills
 {
 	INT8 attack;
 	INT8 defense;
 	INT8 spellPower;
 	INT8 knowledge;
+
+	PINT8 begin() { return PINT8(this); }
+	PINT8 end() { return &PINT8(this)[4]; }
 };
 
 struct H3PandorasBox
@@ -2571,17 +2729,33 @@ public:
 
 	INT32 Count() { return last - first; }
 	INT32 operator[](INT32 index) { return first[index]; }
+	INT32* begin() { return first; }
+	INT32* end() { return last; }
 };
 
 // * quest in memory, used for seer's hut and quest guards
 struct H3Quest
 {
+	enum eQuestType
+	{
+		QT_None = 0,
+		QT_ExperienceLevel = 1,
+		QT_PrimarySkill = 2,
+		QT_DefeatHero = 3,
+		QT_DefeatMonster = 4,
+		QT_BringArtifacts = 5,
+		QT_BringCreatures = 6,
+		QT_BringResources = 7,
+		QT_BeHero = 8,
+		QT_BePlayer = 9,
+	};
+
 	// * +0
 	// * 0x641798 + questType * 0x3C
 	h3func *vTable;
 	// * +4
 	// * 0 = quest guard, 1 = seer hut
-	INT32 questorType;
+	BOOL hasReward;
 	// * +8
 	H3String messageProposal;
 	// * +18
@@ -2597,7 +2771,7 @@ struct H3Quest
 	// * size 20h, varies depending on quest type.
 	union
 	{
-		INT32 achieveLevel;				// achieve level
+		INT32 achieveLevel;						// achieve level
 		H3PrimarySkills achievePrimarySkill;	// have primary skills
 		struct
 		{
@@ -2608,7 +2782,7 @@ struct H3Quest
 		struct
 		{
 			INT32 __0;
-			INT32 packedCoords;
+			UINT packedCoords;
 			INT32 displayCreatureType;
 			INT32 player;
 		} killMonster;					// kill a monster in certain position on the map
@@ -2636,6 +2810,20 @@ struct H3QuestGuard
 // * seer hut is a quest guard plus some information about reward
 struct H3SeerHut
 {
+	enum eSeerReward
+	{
+		SR_None = 0,
+		SR_Experience = 1,
+		SR_SpellPoints = 2,
+		SR_Morale = 3,
+		SR_Luck = 4,
+		SR_Resource = 5,
+		SR_PrimarySkill = 6,
+		SR_SecondarySkill = 7,
+		SR_Artifact = 8,
+		SR_Spell = 9,
+		SR_Creature = 10,
+	};
 	// * +0
 	H3Quest *quest;
 	// * +4
@@ -2644,12 +2832,27 @@ struct H3SeerHut
 	INT32 rewardType;
 	// * +9
 	INT32 rewardValue;
-	// * +C
+	// * +D
 	INT32 rewardValue2;
 	// * +11
 	BYTE seerNameId;
 	// * +12
 	h3unk _f_12;
+
+	WORD CreatureCount() const { return rewardValue2; }
+	INT8 Luck() const { return INT8(rewardValue); }
+	INT8 Morale() const { return INT8(rewardValue); }
+};
+
+struct H3QuestText
+{
+	struct
+	{
+	private:
+		H3String m_unused[5];
+	public:
+		H3String text[47];
+	}variants[3];
 };
 
 // * if a mapartifact has a custom setup, this is the referenced data
@@ -2658,7 +2861,7 @@ struct H3MapArtifact
 	// * +0
 	H3String message;
 	// * +10
-	INT8 isGuarded;
+	BOOL8 isGuarded;
 	h3unk _f_11[3];
 	// * +14
 	H3Army guardians;
@@ -2673,6 +2876,9 @@ struct H3MapResource : public H3MapArtifact
 struct H3University
 {
 	int sSkill[4];
+
+	PINT begin() { return sSkill; }
+	PINT end() { return &sSkill[4]; }
 };
 
 // * if a wandering monster has a custom setup, this is the referenced data

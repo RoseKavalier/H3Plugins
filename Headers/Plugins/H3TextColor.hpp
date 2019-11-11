@@ -52,16 +52,16 @@ namespace H3Plugin
 		{
 			static BOOL called = FALSE;
 			if (called)
-				return NULL;
+				return nullptr;
 			if (HMODULE h = LoadLibraryA(TextColorPluginName))
 			{
 				if (FARPROC f = GetProcAddress(h, "GetTextColor_"))
 				{
 					called = TRUE;
-					return ((H3TextColorInformation*(__stdcall *)(void))f)();
+					return reinterpret_cast<H3TextColorInformation*(__stdcall *)()>(f)();
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 	}
 }
