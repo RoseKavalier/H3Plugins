@@ -1066,7 +1066,7 @@ public:
 	// * Assign(ch)
 	H3String& operator=(CHAR ch);
 
-#ifdef CPLUSPLUS11
+#if CPLUSPLUS11
 	H3String& operator=(H3String&& other) noexcept;
 	H3String(H3String&& other) noexcept;
 #endif
@@ -1223,7 +1223,7 @@ public:
 	};
 };
 
-#ifdef CPLUSPLUS11
+#if CPLUSPLUS11
 inline H3String& H3String::operator=(H3String&& other) noexcept
 {
 	if (&other == this)
@@ -2288,7 +2288,7 @@ inline BOOL H3Vector<_Elem>::Reserve(const INT number)
 	if (!t)
 		return FALSE;
 
-#ifdef CPLUSPLUS11
+#if CPLUSPLUS11
 	for (int i = 0; i < num; ++i)
 		t[i] = std::move(m_first[i]);
 #else

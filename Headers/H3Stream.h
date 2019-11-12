@@ -347,7 +347,7 @@ inline BOOL H3Stream::Copy(const H3String * destination)
 	return FALSE;
 }
 
-#ifndef CPLUSPLUS11
+#if !CPLUSPLUS11
 inline H3Stream & H3Stream::Write(LPCSTR format, ...)
 {
 	if (IsReady() && CanWrite())

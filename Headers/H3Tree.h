@@ -56,7 +56,7 @@ class H3Tree
 	H3Node<Type>* m_root;
 	INT m_count;
 	const CompFunc m_compare;
-#ifndef CPLUSPLUS11
+#if !CPLUSPLUS11
 	H3Tree();
 #endif
 
@@ -70,7 +70,7 @@ class H3Tree
 	VOID _Inorder(H3Node<Type>* root, H3Vector<Type>& vector);
 
 public:
-#ifdef CPLUSPLUS11
+#if CPLUSPLUS11
 	H3Tree() = delete; // this should not be used!
 #endif
 	H3Tree(CompFunc TypeComparison) :
