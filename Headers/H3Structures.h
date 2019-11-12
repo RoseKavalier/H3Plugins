@@ -1356,6 +1356,65 @@ struct H3DwellingBuildingCosts
 	H3Resources cost[2][7];
 };
 
+struct H3TownDependencies
+{
+	enum eBuildingDependency : UINT64
+	{
+		NO_REQ                = 0,
+		BLD_REQ_MAGE1         = 0x01,
+		BLD_REQ_MAGE2         = 0x02,
+		BLD_REQ_MAGE3         = 0x04,
+		BLD_REQ_MAGE4         = 0x08,
+		BLD_REQ_MAGE5         = 0x10,
+		BLD_REQ_TAVERN        = 0x20,
+		BLD_REQ_WHARF         = 0x40,
+		BLD_REQ_FORT          = 0x80,
+		BLD_REQ_CITADEL       = 0x100,
+		BLD_REQ_CASTLE        = 0x200,
+		BLD_REQ_VILLAGE_HALL  = 0x400,
+		BLD_REQ_TOWN_HALL     = 0x800,
+		BLD_REQ_CITY_HALL     = 0x1000,
+		BLD_REQ_CAPITOL       = 0x2000,
+		BLD_REQ_MARKET        = 0x4000,
+		BLD_REQ_RESOURCE_SILO = 0x8000,
+		BLD_REQ_BLACKSMITH    = 0x10000,
+		BLD_REQ_SPEC17        = 0x20000,
+		BLD_REQ_HORDE1        = 0x40000,
+		BLD_REQ_HORDE1U       = 0x80000,
+		BLD_REQ_WHARF2        = 0x100000,
+		BLD_REQ_SPEC21        = 0x200000,
+		BLD_REQ_SPEC22        = 0x400000,
+		BLD_REQ_SPEC23        = 0x800000,
+		BLD_REQ_HORDE2        = 0x1000000,
+		BLD_REQ_HORDE2U       = 0x2000000,
+		BLD_REQ_GRAIL         = 0x4000000,
+		BLD_REQ_DECOR27       = 0x8000000,
+		BLD_REQ_DECOR28       = 0x10000000,
+		BLD_REQ_DECOR29       = 0x20000000,
+		BLD_REQ_DWELL1        = 0x40000000,
+		BLD_REQ_DWELL2        = 0x80000000,
+		BLD_REQ_DWELL3        = 0x100000000,
+		BLD_REQ_DWELL4        = 0x200000000,
+		BLD_REQ_DWELL5        = 0x400000000,
+		BLD_REQ_DWELL6        = 0x800000000,
+		BLD_REQ_DWELL7        = 0x1000000000,
+		BLD_REQ_DWELL1U       = 0x2000000000,
+		BLD_REQ_DWELL2U       = 0x4000000000,
+		BLD_REQ_DWELL3U       = 0x8000000000,
+		BLD_REQ_DWELL4U       = 0x10000000000,
+		BLD_REQ_DWELL5U       = 0x20000000000,
+		BLD_REQ_DWELL6U       = 0x40000000000,
+		BLD_REQ_DWELL7U       = 0x80000000000,
+	};
+
+protected:
+	UINT64 m_dependency[9][44];
+public:
+	VOID Set(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend) { m_dependency[town][building] = depend; }
+	VOID Add(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend) { m_dependency[town][building] |= depend; }
+	VOID Remove(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend) { m_dependency[town][building] &= ~depend; }
+};
+
 // * data about each of the 8 players on the map
 struct H3Player // size 0x168
 {

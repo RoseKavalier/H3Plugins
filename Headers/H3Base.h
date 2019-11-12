@@ -144,39 +144,39 @@ typedef void				*PVOID;
 
 #ifndef StrAt
 // * returns c-string at address
-#define StrAt(address) (*reinterpret_cast<LPCSTR*>(address))
+#define StrAt(address) (*(LPCSTR*)(address))
 #endif
 #ifndef PtrAt
 // * returns unsigned int at address
-#define PtrAt(address) (*reinterpret_cast<UINT*>(address))
+#define PtrAt(address) (*(UINT*)(address))
 #endif
 #ifndef DwordAt
 // * returns unsigned int at address
-#define DwordAt(address) (*reinterpret_cast<UINT*>(address))
+#define DwordAt(address) (*(UINT*)(address))
 #endif
 #ifndef IntAt
 // * returns signed int at address
-#define IntAt(address) (*reinterpret_cast<INT32*>(address))
+#define IntAt(address) (*(INT32*)(address))
 #endif
 #ifndef WordAt
 // * returns unsigned short at address
-#define WordAt(address) (*reinterpret_cast<UINT16*>(address))
+#define WordAt(address) (*(UINT16*)(address))
 #endif
 #ifndef ShortAt
 // * returns signed short at address
-#define ShortAt(address) (*reinterpret_cast<INT16*>(address))
+#define ShortAt(address) (*(INT16*)(address))
 #endif
 #ifndef ByteAt
 // * returns unsigned char at address
-#define ByteAt(address) (*reinterpret_cast<UINT8*>(address))
+#define ByteAt(address) (*(UINT8*)(address))
 #endif
 #ifndef CharAt
 // * returns signed char at address
-#define CharAt(address) (*reinterpret_cast<INT8*>(address))
+#define CharAt(address) (*(INT8*)(address))
 #endif
 #ifndef FloatAt
 // * returns float at address
-#define FloatAt(address) (*reinterpret_cast<FLOAT*>(address))
+#define FloatAt(address) (*(FLOAT*)(address))
 #endif
 
 #ifndef FuncAt

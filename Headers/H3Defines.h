@@ -99,6 +99,7 @@
 #define h3_NeutralBuildingCosts				(*(H3NeutralBuildingCosts*)(0x5C1509 + 3))
 #define h3_SpecialBuildingCosts				(*(H3SpecialBuildingCosts**)(0x5C1539 + 3))
 #define h3_DwellingBuildingCosts			(*(H3DwellingBuildingCosts**)(0x5C1566 + 3))
+#define h3_TownDependencies					(*(H3TownDependencies**)(0x5D6015 + 3))
 
 // Pointers P_ from Heroes3.exe
 #define P_GeneralText						(*(H3ColumnTextFile**)0x6A5DC4)
