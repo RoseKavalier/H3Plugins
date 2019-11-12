@@ -69,7 +69,7 @@
 // * true if your IDE version is C++11 compatible
 #define CPLUSPLUS11 (__cplusplus > 199711L || (_MSC_VER && _MSC_VER >= 1900))
 
-#ifndef CPLUSPLUS11
+#if !CPLUSPLUS11
 // * nullptr was added with C++11
 #define nullptr NULL
 // * constexpr was added with C++11
