@@ -2043,6 +2043,7 @@ inline std::string H3String::to_std_string() const
 {
 	return std::string(String(), Length());
 }
+#endif /* _H3_STD_CONVERSIONS_ */
 
 inline H3String operator+(H3String & lhs, H3String & rhs)
 {
@@ -2371,7 +2372,5 @@ inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
 	m_end -= r;
 	return TRUE;
 }
-
-#endif /* _H3_STD_CONVERSIONS_ */
 
 #endif /* #define _H3BASE_H_ */
