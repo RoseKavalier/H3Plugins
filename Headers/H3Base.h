@@ -2372,4 +2372,6 @@ inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
 	return TRUE;
 }
 
+#endif /* _H3_STD_CONVERSIONS_ */
+
 #endif /* #define _H3BASE_H_ */
