@@ -324,9 +324,8 @@ public:
 // * WARNING! this structure should only be used to hook existing dialogs
 struct HDDlg : H3Dlg
 {
-	typedef INT32(__stdcall *HDDlg_proc)(HDDlg* dlg, H3Msg* msg);
 protected:
-	HDDlg_proc GetProc() const { return HDDlg_proc(PBYTE(this) + 0x6C); }
+	h3func GetProc() const { return h3func(DwordAt(PBYTE(this) + 0x6C)); }
 private:
 	H3LoadedPCX16* GetCurrentPcx();
 	H3Dlg_proc GetProc();
@@ -338,7 +337,7 @@ private:
 	BOOL SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPCX16 *destination = nullptr);
 	BOOL FrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL statusBar, INT32 colorIndex, BOOL is_blue = FALSE);
 public:
-	INT CallHDProc(H3Msg& msg) { return GetProc()(this, &msg); }
+	INT CallHDProc(H3Msg& msg) { return STDCALL_2(INT, GetProc(), this, &msg); }
 };
 
 struct H3DlgPanel
