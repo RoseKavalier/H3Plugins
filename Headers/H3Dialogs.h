@@ -267,11 +267,11 @@ public:
 	BOOL           IsTopDialog() const      { return nextDialog == nullptr; }
 
 	// * draws the background pcx only
-	BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL is_blue = FALSE);
+	BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 w, INT32 h, BOOL is_blue = FALSE);
 	// * draws the HDmod simple frames only
 	BOOL SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPCX16 *destination = nullptr);
 	// * draws the outside frames only
-	BOOL FrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL statusBar, INT32 colorIndex, BOOL is_blue = FALSE);
+	BOOL FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL statusBar, INT32 colorIndex, BOOL is_blue = FALSE);
 
 	// *
 	// * this is what gets shown on the screen
@@ -324,19 +324,18 @@ public:
 // * WARNING! this structure should only be used to hook existing dialogs
 struct HDDlg : H3Dlg
 {
-	typedef INT32(__stdcall *HDDlg_proc)(HDDlg* dlg, H3Msg* msg);
+	typedef INT32(__stdcall* HDDlg_proc)(HDDlg*, H3Msg*);
 protected:
-	HDDlg_proc GetHDProc() const { return HDDlg_proc(DwordAt(PBYTE(this) + 0x6C)); }
+	HDDlg_proc GetHDProc() const { return HDDlg_proc(DwordAt(PBYTE(this) + 0x70)); }
 private:
 	H3LoadedPCX16* GetCurrentPcx();
 	H3Dlg_proc GetProc();
 	H3DlgHintBar* CreateHint();
 	H3DlgHintBar* GetHintBar();
-	VOID AdjustToPlayerColor(INT8 player, UINT16 itemId);
-	BOOL CreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height);
-	BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL is_blue = FALSE);
-	BOOL SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPCX16 *destination = nullptr);
-	BOOL FrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, BOOL statusBar, INT32 colorIndex, BOOL is_blue = FALSE);
+	BOOL CreateBlackBox(INT32, INT32, INT32, INT32);
+	BOOL BackgroundRegion(INT32, INT32, INT32, INT32, BOOL);
+	BOOL SimpleFrameRegion(INT32, INT32, INT32, INT32, H3LoadedPCX16*);
+	BOOL FrameRegion(INT32, INT32, INT32, INT32, BOOL, INT32, BOOL);
 public:
 	INT CallHDProc(H3Msg& msg) { return GetHDProc()(this, &msg); }
 };
