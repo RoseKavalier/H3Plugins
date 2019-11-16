@@ -67,6 +67,7 @@
 #pragma warning(disable:4996)
 
 // * true if your IDE version is C++11 compatible
+// * this checks for C++11 standard or Visual Studio 2015+
 #define CPLUSPLUS11 (__cplusplus > 199711L || (_MSC_VER && _MSC_VER >= 1900))
 
 #if !CPLUSPLUS11
@@ -415,17 +416,46 @@ typedef void				*PVOID;
 #pragma endregion
 
 #pragma region VA_DECLARATIONS
+
+// * you absolutely need c++11 to use STDCALL_VA, THISCALL_VA and FASTCALL_VA
+// * in prior versions, variadic templates don't exist
+// * va_list arguments would absolutely require __cdecl to clean the stack
+#if CPLUSPLUS11
+
+namespace h3vargs
+{
+	template<typename return_type, typename ...Args>
+	return_type Stdcall_Variadic(UINT address, Args... args)
+	{
+		return (reinterpret_cast<return_type(__stdcall*)(Args...)>(address))(args...);
+	}
+
+	template<typename return_type, typename ...Args>
+	return_type Thiscall_Variadic(UINT address, Args... args)
+	{
+		return (reinterpret_cast<return_type(__thiscall*)(Args...)>(address))(args...);
+	}
+
+	template<typename return_type, typename ...Args>
+	return_type Fastcall_Variadic(UINT address, Args... args)
+	{
+		return (reinterpret_cast<return_type(__fastcall*)(Args...)>(address))(args...);
+	}
+}
+
 #ifndef STDCALL_VA
-#define STDCALL_VA(return_type, address, a1, ...) ((return_type(__stdcall *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#define STDCALL_VA(return_type, address, ...) h3vargs::Stdcall_Variadic<return_type>(address, __VA_ARGS__)
 #endif
 
 #ifndef THISCALL_VA
-#define THISCALL_VA(return_type, address, a1, ...) ((return_type(__thiscall *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#define THISCALL_VA(return_type, address, ...) h3vargs::Thiscall_Variadic<return_type>(address, __VA_ARGS__)
 #endif
 
 #ifndef FASTCALL_VA
-#define FASTCALL_VA(return_type, address, a1, ...) ((return_type(__fastcall *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)
+#define FASTCALL_VA(return_type, address, ...) h3vargs::Fastcall_Variadic<return_type>(address, __VA_ARGS__)
 #endif
+
+#endif /* CPLUSPLUS11 */
 
 #ifndef CDECL_VA
 #define CDECL_VA(return_type, address, a1, ...) ((return_type(__cdecl *)(UINT, ...))(address))((UINT)(a1), __VA_ARGS__)

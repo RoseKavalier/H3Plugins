@@ -226,147 +226,147 @@ struct H3Artifact
 
 	enum eArtifacts
 	{
-		SPELLBOOK,
-		SPELL_SCROLL,
-		GRAIL,
-		CATAPULT,
-		BALLISTA,
-		AMMO_CART,
-		FIRST_AID_TENT,
-		CENTAUR_AXE,
-		BLACKSHARD_OF_THE_DEAD_KNIGHT,
-		GREATER_GNOLLS_FLAIL,
-		OGRES_CLUB_OF_HAVOC,
-		SWORD_OF_HELLFIRE,
-		TITANS_GLADIUS,
-		SHIELD_OF_THE_DWARVEN_LORDS,
-		SHIELD_OF_THE_YAWNING_DEAD,
-		BUCKLER_OF_THE_GNOLL_KING,
-		TARG_OF_THE_RAMPAGING_OGRE,
-		SHIELD_OF_THE_DAMNED,
-		SENTINELS_SHIELD,
-		HELM_OF_THE_ALABASTER_UNICORN,
-		SKULL_HELMET,
-		HELM_OF_CHAOS,
-		CROWN_OF_THE_SUPREME_MAGI,
-		HELLSTORM_HELMET,
-		THUNDER_HELMET,
-		BREASTPLATE_OF_PETRIFIED_WOOD,
-		RIB_CAGE,
-		SCALES_OF_THE_GREATER_BASILISK,
-		TUNIC_OF_THE_CYCLOPS_KING,
-		BREASTPLATE_OF_BRIMSTONE,
-		TITANS_CUIRASS,
-		ARMOR_OF_WONDER,
-		SANDALS_OF_THE_SAINT,
-		CELESTIAL_NECKLACE_OF_BLISS,
-		LIONS_SHIELD_OF_COURAGE,
-		SWORD_OF_JUDGEMENT,
-		HELM_OF_HEAVENLY_ENLIGHTENMENT,
-		QUIET_EYE_OF_THE_DRAGON,
-		RED_DRAGON_FLAME_TONGUE,
-		DRAGON_SCALE_SHIELD,
-		DRAGON_SCALE_ARMOR,
-		DRAGONBONE_GREAVES,
-		DRAGON_WING_TABARD,
-		NECKLACE_OF_DRAGONTEETH,
-		CROWN_OF_DRAGONTOOTH,
-		STILL_EYE_OF_THE_DRAGON,
-		CLOVER_OF_FORTUNE,
-		CARDS_OF_PROPHECY,
-		LADYBIRD_OF_LUCK,
-		BADGE_OF_COURAGE,
-		CREST_OF_VALOR,
-		GLYPH_OF_GALLANTRY,
-		SPECULUM,
-		SPYGLASS,
-		AMULET_OF_THE_UNDERTAKER,
-		VAMPIRES_COWL,
-		DEAD_MANS_BOOTS,
-		GARNITURE_OF_INTERFERENCE,
-		SURCOAT_OF_COUNTERPOISE,
-		BOOTS_OF_POLARITY,
-		BOW_OF_ELVEN_CHERRYWOOD,
-		BOWSTRING_OF_THE_UNICORNS_MANE,
-		ANGEL_FEATHER_ARROWS,
-		BIRD_OF_PERCEPTION,
-		STOIC_WATCHMAN,
-		EMBLEM_OF_COGNIZANCE,
-		STATESMANS_MEDAL,
-		DIPLOMATS_RING,
-		AMBASSADORS_SASH,
-		RING_OF_THE_WAYFARER,
-		EQUESTRIANS_GLOVES,
-		NECKLACE_OF_OCEAN_GUIDANCE,
-		ANGEL_WINGS,
-		CHARM_OF_MANA,
-		TALISMAN_OF_MANA,
-		MYSTIC_ORB_OF_MANA,
-		COLLAR_OF_CONJURING,
-		RING_OF_CONJURING,
-		CAPE_OF_CONJURING,
-		ORB_OF_THE_FIRMAMENT,
-		ORB_OF_SILT,
-		ORB_OF_TEMPESTUOUS_FIRE,
-		ORB_OF_DRIVING_RAIN,
-		RECANTERS_CLOAK,
-		SPIRIT_OF_OPPRESSION,
-		HOURGLASS_OF_THE_EVIL_HOUR,
-		TOME_OF_FIRE_MAGIC,
-		TOME_OF_AIR_MAGIC,
-		TOME_OF_WATER_MAGIC,
-		TOME_OF_EARTH_MAGIC,
-		BOOTS_OF_LEVITATION,
-		GOLDEN_BOW,
-		SPHERE_OF_PERMANENCE,
-		ORB_OF_VULNERABILITY,
-		RING_OF_VITALITY,
-		RING_OF_LIFE,
-		VIAL_OF_LIFEBLOOD,
-		NECKLACE_OF_SWIFTNESS,
-		BOOTS_OF_SPEED,
-		CAPE_OF_VELOCITY,
-		PENDANT_OF_DISPASSION,
-		PENDANT_OF_SECOND_SIGHT,
-		PENDANT_OF_HOLINESS,
-		PENDANT_OF_LIFE,
-		PENDANT_OF_DEATH,
-		PENDANT_OF_FREE_WILL,
-		PENDANT_OF_NEGATIVITY,
-		PENDANT_OF_TOTAL_RECALL,
-		PENDANT_OF_COURAGE,
-		EVERFLOWING_CRYSTAL_CLOAK,
-		RING_OF_INFINITE_GEMS,
-		EVERPOURING_VIAL_OF_MERCURY,
-		INEXHAUSTIBLE_CART_OF_ORE,
-		EVERSMOKING_RING_OF_SULFUR,
-		INEXHAUSTIBLE_CART_OF_LUMBER,
-		ENDLESS_SACK_OF_GOLD,
-		ENDLESS_BAG_OF_GOLD,
-		ENDLESS_PURSE_OF_GOLD,
-		LEGS_OF_LEGION,
-		LOINS_OF_LEGION,
-		TORSO_OF_LEGION,
-		ARMS_OF_LEGION,
-		HEAD_OF_LEGION,
-		SEA_CAPTAINS_HAT,
-		SPELLBINDERS_HAT,
-		SHACKLES_OF_WAR,
-		ORB_OF_INHIBITION,
-		VIAL_OF_DRAGON_BLOOD,
-		ARMAGEDDONS_BLADE,
-		ANGELIC_ALLIANCE,
-		CLOAK_OF_THE_UNDEAD_KING,
-		ELIXIR_OF_LIFE,
-		ARMOR_OF_THE_DAMNED,
-		STATUE_OF_LEGION,
-		POWER_OF_THE_DRAGON_FATHER,
-		TITANS_THUNDER,
-		ADMIRALS_HAT,
-		BOW_OF_THE_SHARPSHOOTER,
-		WIZARDS_WELL,
-		RING_OF_THE_MAGI,
-		CORNUCOPIA,
+		SPELLBOOK                      = 0,
+		SPELL_SCROLL                   = 1,
+		GRAIL                          = 2,
+		CATAPULT                       = 3,
+		BALLISTA                       = 4,
+		AMMO_CART                      = 5,
+		FIRST_AID_TENT                 = 6,
+		CENTAUR_AXE                    = 7,
+		BLACKSHARD_OF_THE_DEAD_KNIGHT  = 8,
+		GREATER_GNOLLS_FLAIL           = 9,
+		OGRES_CLUB_OF_HAVOC            = 10,
+		SWORD_OF_HELLFIRE              = 11,
+		TITANS_GLADIUS                 = 12,
+		SHIELD_OF_THE_DWARVEN_LORDS    = 13,
+		SHIELD_OF_THE_YAWNING_DEAD     = 14,
+		BUCKLER_OF_THE_GNOLL_KING      = 15,
+		TARG_OF_THE_RAMPAGING_OGRE     = 16,
+		SHIELD_OF_THE_DAMNED           = 17,
+		SENTINELS_SHIELD               = 18,
+		HELM_OF_THE_ALABASTER_UNICORN  = 19,
+		SKULL_HELMET                   = 20,
+		HELM_OF_CHAOS                  = 21,
+		CROWN_OF_THE_SUPREME_MAGI      = 22,
+		HELLSTORM_HELMET               = 23,
+		THUNDER_HELMET                 = 24,
+		BREASTPLATE_OF_PETRIFIED_WOOD  = 25,
+		RIB_CAGE                       = 26,
+		SCALES_OF_THE_GREATER_BASILISK = 27,
+		TUNIC_OF_THE_CYCLOPS_KING      = 28,
+		BREASTPLATE_OF_BRIMSTONE       = 29,
+		TITANS_CUIRASS                 = 30,
+		ARMOR_OF_WONDER                = 31,
+		SANDALS_OF_THE_SAINT           = 32,
+		CELESTIAL_NECKLACE_OF_BLISS    = 33,
+		LIONS_SHIELD_OF_COURAGE        = 34,
+		SWORD_OF_JUDGEMENT             = 35,
+		HELM_OF_HEAVENLY_ENLIGHTENMENT = 36,
+		QUIET_EYE_OF_THE_DRAGON        = 37,
+		RED_DRAGON_FLAME_TONGUE        = 38,
+		DRAGON_SCALE_SHIELD            = 39,
+		DRAGON_SCALE_ARMOR             = 40,
+		DRAGONBONE_GREAVES             = 41,
+		DRAGON_WING_TABARD             = 42,
+		NECKLACE_OF_DRAGONTEETH        = 43,
+		CROWN_OF_DRAGONTOOTH           = 44,
+		STILL_EYE_OF_THE_DRAGON        = 45,
+		CLOVER_OF_FORTUNE              = 46,
+		CARDS_OF_PROPHECY              = 47,
+		LADYBIRD_OF_LUCK               = 48,
+		BADGE_OF_COURAGE               = 49,
+		CREST_OF_VALOR                 = 50,
+		GLYPH_OF_GALLANTRY             = 51,
+		SPECULUM                       = 52,
+		SPYGLASS                       = 53,
+		AMULET_OF_THE_UNDERTAKER       = 54,
+		VAMPIRES_COWL                  = 55,
+		DEAD_MANS_BOOTS                = 56,
+		GARNITURE_OF_INTERFERENCE      = 57,
+		SURCOAT_OF_COUNTERPOISE        = 58,
+		BOOTS_OF_POLARITY              = 59,
+		BOW_OF_ELVEN_CHERRYWOOD        = 60,
+		BOWSTRING_OF_THE_UNICORNS_MANE = 61,
+		ANGEL_FEATHER_ARROWS           = 62,
+		BIRD_OF_PERCEPTION             = 63,
+		STOIC_WATCHMAN                 = 64,
+		EMBLEM_OF_COGNIZANCE           = 65,
+		STATESMANS_MEDAL               = 66,
+		DIPLOMATS_RING                 = 67,
+		AMBASSADORS_SASH               = 68,
+		RING_OF_THE_WAYFARER           = 69,
+		EQUESTRIANS_GLOVES             = 70,
+		NECKLACE_OF_OCEAN_GUIDANCE     = 71,
+		ANGEL_WINGS                    = 72,
+		CHARM_OF_MANA                  = 73,
+		TALISMAN_OF_MANA               = 74,
+		MYSTIC_ORB_OF_MANA             = 75,
+		COLLAR_OF_CONJURING            = 76,
+		RING_OF_CONJURING              = 77,
+		CAPE_OF_CONJURING              = 78,
+		ORB_OF_THE_FIRMAMENT           = 79,
+		ORB_OF_SILT                    = 80,
+		ORB_OF_TEMPESTUOUS_FIRE        = 81,
+		ORB_OF_DRIVING_RAIN            = 82,
+		RECANTERS_CLOAK                = 83,
+		SPIRIT_OF_OPPRESSION           = 84,
+		HOURGLASS_OF_THE_EVIL_HOUR     = 85,
+		TOME_OF_FIRE_MAGIC             = 86,
+		TOME_OF_AIR_MAGIC              = 87,
+		TOME_OF_WATER_MAGIC            = 88,
+		TOME_OF_EARTH_MAGIC            = 89,
+		BOOTS_OF_LEVITATION            = 90,
+		GOLDEN_BOW                     = 91,
+		SPHERE_OF_PERMANENCE           = 92,
+		ORB_OF_VULNERABILITY           = 93,
+		RING_OF_VITALITY               = 94,
+		RING_OF_LIFE                   = 95,
+		VIAL_OF_LIFEBLOOD              = 96,
+		NECKLACE_OF_SWIFTNESS          = 97,
+		BOOTS_OF_SPEED                 = 98,
+		CAPE_OF_VELOCITY               = 99,
+		PENDANT_OF_DISPASSION          = 100,
+		PENDANT_OF_SECOND_SIGHT        = 101,
+		PENDANT_OF_HOLINESS            = 102,
+		PENDANT_OF_LIFE                = 103,
+		PENDANT_OF_DEATH               = 104,
+		PENDANT_OF_FREE_WILL           = 105,
+		PENDANT_OF_NEGATIVITY          = 106,
+		PENDANT_OF_TOTAL_RECALL        = 107,
+		PENDANT_OF_COURAGE             = 108,
+		EVERFLOWING_CRYSTAL_CLOAK      = 109,
+		RING_OF_INFINITE_GEMS          = 110,
+		EVERPOURING_VIAL_OF_MERCURY    = 111,
+		INEXHAUSTIBLE_CART_OF_ORE      = 112,
+		EVERSMOKING_RING_OF_SULFUR     = 113,
+		INEXHAUSTIBLE_CART_OF_LUMBER   = 114,
+		ENDLESS_SACK_OF_GOLD           = 115,
+		ENDLESS_BAG_OF_GOLD            = 116,
+		ENDLESS_PURSE_OF_GOLD          = 117,
+		LEGS_OF_LEGION                 = 118,
+		LOINS_OF_LEGION                = 119,
+		TORSO_OF_LEGION                = 120,
+		ARMS_OF_LEGION                 = 121,
+		HEAD_OF_LEGION                 = 122,
+		SEA_CAPTAINS_HAT               = 123,
+		SPELLBINDERS_HAT               = 124,
+		SHACKLES_OF_WAR                = 125,
+		ORB_OF_INHIBITION              = 126,
+		VIAL_OF_DRAGON_BLOOD           = 127,
+		ARMAGEDDONS_BLADE              = 128,
+		ANGELIC_ALLIANCE               = 129,
+		CLOAK_OF_THE_UNDEAD_KING       = 130,
+		ELIXIR_OF_LIFE                 = 131,
+		ARMOR_OF_THE_DAMNED            = 132,
+		STATUE_OF_LEGION               = 133,
+		POWER_OF_THE_DRAGON_FATHER     = 134,
+		TITANS_THUNDER                 = 135,
+		ADMIRALS_HAT                   = 136,
+		BOW_OF_THE_SHARPSHOOTER        = 137,
+		WIZARDS_WELL                   = 138,
+		RING_OF_THE_MAGI               = 139,
+		CORNUCOPIA                     = 140,
 			/* WoG items */
 		MAGIC_WAND_,
 		GOLD_TOWER_ARROW,
@@ -402,32 +402,32 @@ struct H3Artifact
 
 	enum eArtifactSlots
 	{
-		sHEAD,
-		sSHOULDERS,
-		sNECK,
-		sRIGHT_HAND,
-		sLEFT_HAND,
-		sTORSO,
-		sRIGHT_RING,
-		sLEFT_RING,
-		sFEET,
-		sMISC1,
-		sMISC2,
-		sMISC3,
-		sMISC4,
-		sBALLISTA,
-		sAMMO_CART,
-		sFIRST_AID_TENT,
-		sCATAPULT,
-		sSPELLBOOK,
-		sMISC5
+		sHEAD           = 0,
+		sSHOULDERS      = 1,
+		sNECK           = 2,
+		sRIGHT_HAND     = 3,
+		sLEFT_HAND      = 4,
+		sTORSO          = 5,
+		sRIGHT_RING     = 6,
+		sLEFT_RING      = 7,
+		sFEET           = 8,
+		sMISC1          = 9,
+		sMISC2          = 10,
+		sMISC3          = 11,
+		sMISC4          = 12,
+		sBALLISTA       = 13,
+		sAMMO_CART      = 14,
+		sFIRST_AID_TENT = 15,
+		sCATAPULT       = 16,
+		sSPELLBOOK      = 17,
+		sMISC5          = 18,
 	};
 };
 
 // * a reference to the 3 animation speeds of H3
 struct H3AnimationSpeed
 {
-	float delay[3];
+	FLOAT delay[3];
 };
 
 // * An "array" representing the 7 resources
@@ -435,13 +435,13 @@ struct H3Resources
 {
 	enum H3ResType
 	{
-		RT_Wood,
-		RT_Mercury,
-		RT_Ore,
-		RT_Sulfur,
-		RT_Crystal,
-		RT_Gems,
-		RT_Gold
+		RT_Wood    = 0,
+		RT_Mercury = 1,
+		RT_Ore     = 2,
+		RT_Sulfur  = 3,
+		RT_Crystal = 4,
+		RT_Gems    = 5,
+		RT_Gold    = 6,
 	};
 
 	INT32 wood;
@@ -460,19 +460,21 @@ struct H3Resources
 	// * adds resources to current
 	VOID GainResourcesOF(H3Resources *gain);
 	// * Get resources as array
-	PINT AsArray() { return PINT(this); }
+	INT AsArray(int index) { return PINT(this)[index]; }
 	// * Number of non-zero resources
 	INT Count()
 	{
 		INT r = 0;
 		for (int i = 0; i < 7; ++i)
-			if (AsArray()[i] != 0)
+			if (AsArray(i) != 0)
 				++r;
 		return r;
 	}
 
-	PINT begin() { return AsArray(); }
-	PINT end() { return &AsArray()[7]; }
+	PINT begin() { return PINT(this); }
+	PINT end()   { return &begin()[7]; }
+	PINT cbegin() const { return PINT(this); }
+	PINT cend() const { return &cbegin()[7]; }
 };
 
 // * The arrangment of 7 creatures on various H3 structures
@@ -480,6 +482,16 @@ struct H3Army
 {
 	INT32 type[7];
 	INT32 count[7];
+
+	class H3ArmyIterator
+	{
+		INT32 m_type;
+		INT32 m_filler[6];
+		INT32 m_count;
+	public:
+		INT32& Type() { return m_type; }
+		INT32& Count() { return m_count; }
+	};
 
 	// * add amount creature of type to slot
 	VOID AddStack(INT32 type, INT32 amount, INT32 slot) { THISCALL_4(VOID, 0x44A9B0, this, type, amount, slot); }
@@ -489,7 +501,7 @@ struct H3Army
 	// * the first type[] index to hold no creature
 	INT32 FirstFreeSlot();
 	// * the slot position of the n-th existing stack
-	INT32 FindExistingByIndex(INT32 n);
+	INT32 FindExistingByIndex(INT32 index);
 	// * the number of existing stacks
 	INT32 GetStackCount() { return THISCALL_1(INT32, 0x44A990, this); }
 	// * Total number of creatures
@@ -511,6 +523,9 @@ struct H3Army
 	INT32 NumberAlignments(INT8 towns[9]) { return THISCALL_2(INT32, 0x44A880, this, towns); }
 	// * AI value total for army
 	INT32 GetArmyValue() { return THISCALL_1(INT32, 0x44A950, this); }
+
+	H3ArmyIterator* begin() { return reinterpret_cast<H3ArmyIterator*>(this); }
+	H3ArmyIterator* end()   { return &begin()[7]; }
 };
 
 // * not the hero on the map
@@ -592,14 +607,14 @@ struct H3HeroSpecialty
 	UINT32  type;
 	enum SpecialtyType
 	{
-		ST_skill,
-		ST_creatureLevel,
-		ST_resource,
-		ST_spell,
-		ST_staticCreature,
-		ST_speed,
-		ST_conversion,
-		ST_dragon
+		ST_skill          = 0,
+		ST_creatureLevel  = 1,
+		ST_resource       = 2,
+		ST_spell          = 3,
+		ST_staticCreature = 4,
+		ST_speed          = 5,
+		ST_conversion     = 6,
+		ST_dragon         = 7,
 	};
 	// * +4
 	// * the ID of skill, creature, resource, spell, creature to upgrade (Dracon/Gelu)
@@ -1110,108 +1125,108 @@ public:
 
 	enum eTown
 	{
-		CASTLE,
-		RAMPART,
-		TOWER,
-		INFERNO,
-		NECROPOLIS,
-		DUNGEON,
-		STRONGHOLD,
-		FORTRESS,
-		CONFLUX
+		CASTLE     = 0,
+		RAMPART    = 1,
+		TOWER      = 2,
+		INFERNO    = 3,
+		NECROPOLIS = 4,
+		DUNGEON    = 5,
+		STRONGHOLD = 6,
+		FORTRESS   = 7,
+		CONFLUX    = 8,
 	};
 
 	enum eBuildings // from ERM help
 	{
-		B_MAGE_GUILD1,
-		B_MAGE_GUILD2,
-		B_MAGE_GUILD3,
-		B_MAGE_GUILD4,
-		B_MAGE_GUILD5,
-		B_TAVERN,
-		B_WHARF,
-		B_FORT,
-		B_CITADEL,
-		B_CASTLE,
-		B_VILAGE_HALL,
-		B_TOWN_HALL,
-		B_CITY_HALL,
-		B_CAPITOL,
-		B_MARKET,
-		B_RESOURCE_SILO,
-		B_BLACKSMITH,
-		B_SPEC17,
-		B_HORDE1,
-		B_HORDE1U,
-		B_WHARF2,
-		B_SPEC21,
-		B_SPEC22,
-		B_SPEC23,
-		B_HORDE2,
-		B_HORDE2U,
-		B_GRAIL,
-		B_DECOR27,
-		B_DECOR28,
-		B_DECOR29,
-		B_DWELL1,
-		B_DWELL2,
-		B_DWELL3,
-		B_DWELL4,
-		B_DWELL5,
-		B_DWELL6,
-		B_DWELL7,
-		B_DWELL1U,
-		B_DWELL2U,
-		B_DWELL3U,
-		B_DWELL4U,
-		B_DWELL5U,
-		B_DWELL6U,
-		B_DWELL7U,
+		B_MAGE_GUILD1   = 0,
+		B_MAGE_GUILD2   = 1,
+		B_MAGE_GUILD3   = 2,
+		B_MAGE_GUILD4   = 3,
+		B_MAGE_GUILD5   = 4,
+		B_TAVERN        = 5,
+		B_WHARF         = 6,
+		B_FORT          = 7,
+		B_CITADEL       = 8,
+		B_CASTLE        = 9,
+		B_VILAGE_HALL   = 10,
+		B_TOWN_HALL     = 11,
+		B_CITY_HALL     = 12,
+		B_CAPITOL       = 13,
+		B_MARKET        = 14,
+		B_RESOURCE_SILO = 15,
+		B_BLACKSMITH    = 16,
+		B_SPEC17        = 17,
+		B_HORDE1        = 18,
+		B_HORDE1U       = 19,
+		B_WHARF2        = 20,
+		B_SPEC21        = 21,
+		B_SPEC22        = 22,
+		B_SPEC23        = 23,
+		B_HORDE2        = 24,
+		B_HORDE2U       = 25,
+		B_GRAIL         = 26,
+		B_DECOR27       = 27,
+		B_DECOR28       = 28,
+		B_DECOR29       = 29,
+		B_DWELL1        = 30,
+		B_DWELL2        = 31,
+		B_DWELL3        = 32,
+		B_DWELL4        = 33,
+		B_DWELL5        = 34,
+		B_DWELL6        = 35,
+		B_DWELL7        = 36,
+		B_DWELL1U       = 37,
+		B_DWELL2U       = 38,
+		B_DWELL3U       = 39,
+		B_DWELL4U       = 40,
+		B_DWELL5U       = 41,
+		B_DWELL6U       = 42,
+		B_DWELL7U       = 43,
 
 		/* CASTLE */
-		B_LIGHTHOUSE = 17,
-		B_STABLES = 21,
+		B_LIGHTHOUSE               = 17,
+		B_STABLES                  = 21,
 		B_BROTHERHOOD_OF_THE_SWORD = 22,
 
 		/* RAMPART */
-		B_MYSTIC_POND = 17,
-		B_FOUNTAIN_OF_FORTUNE = 21,
-		B_DWARVEN_TREASURY = 22,
+		B_MYSTIC_POND              = 17,
+		B_FOUNTAIN_OF_FORTUNE      = 21,
+		B_DWARVEN_TREASURY         = 22,
 
 		/* TOWER */
-		B_ARTIFACT_MERCHANT = 17, // same for Dungeon and Conflux
-		B_LOOKOUT_TOWER = 21,
-		B_LIBRARY = 22,
-		B_WALL_OF_KNOWLEDGE = 23,
+		B_ARTIFACT_MERCHANT        = 17, // same for Dungeon and Conflux
+		B_LOOKOUT_TOWER            = 21,
+		B_LIBRARY                  = 22,
+		B_WALL_OF_KNOWLEDGE        = 23,
 
 		/* INFERNO */
-		B_BRIMSTONECLOUDS = 21,
-		B_CASTLE_GATE = 22,
-		B_ORDER_OF_FIRE = 23,
+		B_BRIMSTONECLOUDS          = 21,
+		B_CASTLE_GATE              = 22,
+		B_ORDER_OF_FIRE            = 23,
 
 		/* NECROPOLIS */
-		B_VEIL_OF_DARKNESS = 17,
-		B_NECROMANCY_AMPLIFIER = 21,
-		B_SKELETON_TRANSFORMER = 22,
+		B_VEIL_OF_DARKNESS         = 17,
+		B_NECROMANCY_AMPLIFIER     = 21,
+		B_SKELETON_TRANSFORMER     = 22,
 
 		/*  DUNGEON */
-		B_MANA_VORTEX = 21,
-		B_PORTAL_OF_SUMMONING = 22,
-		B_BATTLE_ACADEMY = 23,
+		B_MANA_VORTEX              = 21,
+		B_PORTAL_OF_SUMMONING      = 22,
+		B_BATTLE_ACADEMY           = 23,
 
 		/* STRONGHOLD */
-		B_ESCAPE_TUNNEL = 17,
-		B_FREELANCERS_GUILD = 21,
-		B_BALLISTA_YARD = 22,
-		B_HALL_OF_VALHALLA = 23,
+		B_ESCAPE_TUNNEL            = 17,
+		B_FREELANCERS_GUILD        = 21,
+		B_BALLISTA_YARD            = 22,
+		B_HALL_OF_VALHALLA         = 23,
 
 		/* FORTRESS */
-		B_CAGE_OF_WARLORDS = 17,
-		B_GLYPHS_OF_FEAR = 21,
-		B_BLOOD_OBELISK = 22,
+		B_CAGE_OF_WARLORDS         = 17,
+		B_GLYPHS_OF_FEAR           = 21,
+		B_BLOOD_OBELISK            = 22,
 
 		/* CONFLUX */
-		B_MAGIC_UNIVERSITY = 21
+		B_MAGIC_UNIVERSITY         = 21
 	};
 };
 
@@ -1327,23 +1342,24 @@ struct H3NeutralBuildingCosts
 {
 	enum eNeutralBuildings
 	{
-		MAGE_GUILD = 0,
-		MAGE_GUILD2,
-		MAGE_GUILD3,
-		MAGE_GUILD4,
-		MAGE_GUILD5,
-		TAVERN,
-		DOCK,
-		CASTLE_FORT,
-		CASTLE_CITADEL,
-		CASTLE_CASTLE,
-		HALL_VILLAGE,
-		HALL_TOWN,
-		HALL_CITY,
-		HALL_CAPITOL,
-		MARKETPLACE,
-		MARKETPLACE_SILO,
-		BLACKSMITH,
+		MAGE_GUILD       = 0,
+		MAGE_GUILD2      = 1,
+		MAGE_GUILD3      = 2,
+		MAGE_GUILD4      = 3,
+		MAGE_GUILD5      = 4,
+		TAVERN           = 5,
+		DOCK             = 6,
+		CASTLE_FORT      = 7,
+		CASTLE_CITADEL   = 8,
+		CASTLE_CASTLE    = 9,
+		HALL_VILLAGE     = 10,
+		HALL_TOWN        = 11,
+		HALL_CITY        = 12,
+		HALL_CAPITOL     = 13,
+		MARKETPLACE      = 14,
+		MARKETPLACE_SILO = 15,
+		BLACKSMITH       = 16,
+
 	};
 	// * same for all towns
 	H3Resources cost[17];
@@ -2024,36 +2040,36 @@ struct H3ArtifactSetup
 
 	enum ArtifactPosition
 	{
-		ArtPos_HEAD,
-		ArtPos_SHOULDERS,
-		ArtPos_NECK,
-		ArtPos_RIGHT_HAND,
-		ArtPos_LEFT_HAND,
-		ArtPos_TORSO,
-		ArtPos_RIGHT_RING,
-		ArtPos_LEFT_RING,
-		ArtPos_FEET,
-		ArtPos_MISC_1,
-		ArtPos_MISC_2,
-		ArtPos_MISC_3,
-		ArtPos_MISC_4,
-		ArtPos_WAR_MACHINE_1,
-		ArtPos_WAR_MACHINE_2,
-		ArtPos_WAR_MACHINE_3, // First Aid Tent
-		ArtPos_WAR_MACHINE_4,
-		ArtPos_CATAPULT,
-		ArtPos_SPELL_BOOK,
-		ArtPos_MISC_5,
+		ArtPos_HEAD          = 0,
+		ArtPos_SHOULDERS     = 1,
+		ArtPos_NECK          = 2,
+		ArtPos_RIGHT_HAND    = 3,
+		ArtPos_LEFT_HAND     = 4,
+		ArtPos_TORSO         = 5,
+		ArtPos_RIGHT_RING    = 6,
+		ArtPos_LEFT_RING     = 7,
+		ArtPos_FEET          = 8,
+		ArtPos_MISC_1        = 9,
+		ArtPos_MISC_2        = 10,
+		ArtPos_MISC_3        = 11,
+		ArtPos_MISC_4        = 12,
+		ArtPos_WAR_MACHINE_1 = 13,
+		ArtPos_WAR_MACHINE_2 = 14,
+		ArtPos_WAR_MACHINE_3 = 15, // first aid tent
+		ArtPos_WAR_MACHINE_4 = 16,
+		ArtPos_CATAPULT      = 17,
+		ArtPos_SPELL_BOOK    = 18,
+		ArtPos_MISC_5        = 19,
 	};
 
 	enum ArtifactType
 	{
-		ART_SPECIAL = 1,
+		ART_SPECIAL  = 1,
 		ART_TREASURE = 2,
-		ART_MINOR = 4,
-		ART_MAJOR = 8,
-		ART_RELIC = 16,
-		ART_ALL = 30 // never special!
+		ART_MINOR    = 4,
+		ART_MAJOR    = 8,
+		ART_RELIC    = 16,
+		ART_ALL      = 30 // never special!
 	};
 };
 
@@ -2127,17 +2143,17 @@ struct H3CreatureBankSetup
 
 	enum eCrBank
 	{
-		CYCLOPS_STOCPILE,
-		DWARVEN_TREASURY,
-		GRIFFIN_CONSERVATORY,
-		IMP_CACHE,
-		MEDUA_STORES,
-		NAGA_BANK,
-		DRAGON_FLY_HIVE,
-		SHIPWRECK,
-		DERELICT_SHIP,
-		CRYPT,
-		DRAGON_UTOPIA
+		CYCLOPS_STOCPILE     = 0,
+		DWARVEN_TREASURY     = 1,
+		GRIFFIN_CONSERVATORY = 2,
+		IMP_CACHE            = 3,
+		MEDUA_STORES         = 4,
+		NAGA_BANK            = 5,
+		DRAGON_FLY_HIVE      = 6,
+		SHIPWRECK            = 7,
+		DERELICT_SHIP        = 8,
+		CRYPT                = 9,
+		DRAGON_UTOPIA        = 10,
 	};
 };
 
@@ -2148,24 +2164,24 @@ struct H3ValidCatapultTargets
 	h3unk f_04[8];
 
 	enum FORT_ELEMENTS {
-		FE_DRAWBRIDGE,	// 0
-		FE_DRAWBRIDGE_ROPE,
-		FE_MOAT,
-		FE_MOAT_LIP,
-		FE_BACK_WALL,
-		FE_UPPER_TOWER, // 5 ~ valid catapult target ~0
-		FE_UPPER_WALL, // 6 ~ valid catapult target ~1
-		FE_UPPER_BUTTRESS,
-		FE_MID_UPPER_WALL, // 8 ~ valid catapult target ~2
-		FE_GATE, // 9 ~ valid catapult target ~3
-		FE_MID_LOWER_WALL, // 10 ~ valid catapult target ~4
-		FE_LOWER_BUTTRESS,
-		FE_LOWER_WALL, // 12 ~ valid catapult target ~5
-		FE_LOWER_TOWER, // 13 ~ valid catapult target ~6
-		FE_KEEP, // 14 ~ valid catapult target ~7
-		FE_KEEP_CVR,
-		FE_LOWER_TWR_CVR,
-		FE_UPPER_TWR_CVR
+		FE_DRAWBRIDGE      = 0,
+		FE_DRAWBRIDGE_ROPE = 1,
+		FE_MOAT            = 2,
+		FE_MOAT_LIP        = 3,
+		FE_BACK_WALL       = 4,
+		FE_UPPER_TOWER     = 5,  // valid catapult target ~0
+		FE_UPPER_WALL      = 6,  // valid catapult target ~1
+		FE_UPPER_BUTTRESS  = 7,
+		FE_MID_UPPER_WALL  = 8,  // valid catapult target ~2
+		FE_GATE            = 9,  // valid catapult target ~3
+		FE_MID_LOWER_WALL  = 10, // valid catapult target ~4
+		FE_LOWER_BUTTRESS  = 11,
+		FE_LOWER_WALL      = 12, // valid catapult target ~5
+		FE_LOWER_TOWER     = 13, // valid catapult target ~6
+		FE_KEEP            = 14, // valid catapult target ~7
+		FE_KEEP_CVR        = 15,
+		FE_LOWER_TWR_CVR   = 16,
+		FE_UPPER_TWR_CVR   = 17,
 	};
 };
 
@@ -2302,88 +2318,88 @@ public:
 
 	enum eSpells
 	{
-		SUMMON_BOAT,
-		SCUTTLE_BOAT,
-		VISIONS,
-		VIEW_EARTH,
-		DISGUISE,
-		VIEW_AIR,
-		FLY,
-		WATER_WALK,
-		DIMENSION_DOOR,
-		TOWN_PORTAL,
-		QUICK_SAND,
-		LAND_MINE,
-		FORCE_FIELD,
-		FIRE_WALL,
-		EARTHQUAKE,
-		MAGIC_ARROW,
-		ICE_BOLT,
-		LIGHTNING_BOLT,
-		IMPLOSION,
-		CHAIN_LIGHTNING,
-		FROST_RING,
-		FIREBALL,
-		INFERNO,
-		METEOR_SHOWER,
-		DEATH_RIPPLE,
-		DESTROY_UNDEAD,
-		ARMAGEDDON,
-		SHIELD,
-		AIR_SHIELD,
-		FIRE_SHIELD,
-		PROTECTION_FROM_AIR,
-		PROTECTION_FROM_FIRE,
-		PROTECTION_FROM_WATER,
-		PROTECTION_FROM_EARTH,
-		ANTI_MAGIC,
-		DISPEL,
-		MAGIC_MIRROR,
-		CURE,
-		RESURRECTION,
-		ANIMATE_DEAD,
-		SACRIFICE,
-		BLESS,
-		CURSE,
-		BLOODLUST,
-		PRECISION,
-		WEAKNESS,
-		STONE_SKIN,
-		DISRUPTING_RAY,
-		PRAYER,
-		MIRTH,
-		SORROW,
-		FORTUNE,
-		MISFORTUNE,
-		HASTE,
-		SLOW,
-		SLAYER,
-		FRENZY,
-		TITANS_LIGHTNING_BOLT,
-		COUNTERSTRIKE,
-		BERSERK,
-		HYPNOTIZE,
-		FORGETFULNESS,
-		BLIND,
-		TELEPORT,
-		REMOVE_OBSTACLE,
-		CLONE,
-		FIRE_ELEMENTAL,
-		EARTH_ELEMENTAL,
-		WATER_ELEMENTAL,
-		AIR_ELEMENTAL,
+		SUMMON_BOAT           = 0,
+		SCUTTLE_BOAT          = 1,
+		VISIONS               = 2,
+		VIEW_EARTH            = 3,
+		DISGUISE              = 4,
+		VIEW_AIR              = 5,
+		FLY                   = 6,
+		WATER_WALK            = 7,
+		DIMENSION_DOOR        = 8,
+		TOWN_PORTAL           = 9,
+		QUICK_SAND            = 10,
+		LAND_MINE             = 11,
+		FORCE_FIELD           = 12,
+		FIRE_WALL             = 13,
+		EARTHQUAKE            = 14,
+		MAGIC_ARROW           = 15,
+		ICE_BOLT              = 16,
+		LIGHTNING_BOLT        = 17,
+		IMPLOSION             = 18,
+		CHAIN_LIGHTNING       = 19,
+		FROST_RING            = 20,
+		FIREBALL              = 21,
+		INFERNO               = 22,
+		METEOR_SHOWER         = 23,
+		DEATH_RIPPLE          = 24,
+		DESTROY_UNDEAD        = 25,
+		ARMAGEDDON            = 26,
+		SHIELD                = 27,
+		AIR_SHIELD            = 28,
+		FIRE_SHIELD           = 29,
+		PROTECTION_FROM_AIR   = 30,
+		PROTECTION_FROM_FIRE  = 31,
+		PROTECTION_FROM_WATER = 32,
+		PROTECTION_FROM_EARTH = 33,
+		ANTI_MAGIC            = 34,
+		DISPEL                = 35,
+		MAGIC_MIRROR          = 36,
+		CURE                  = 37,
+		RESURRECTION          = 38,
+		ANIMATE_DEAD          = 39,
+		SACRIFICE             = 40,
+		BLESS                 = 41,
+		CURSE                 = 42,
+		BLOODLUST             = 43,
+		PRECISION             = 44,
+		WEAKNESS              = 45,
+		STONE_SKIN            = 46,
+		DISRUPTING_RAY        = 47,
+		PRAYER                = 48,
+		MIRTH                 = 49,
+		SORROW                = 50,
+		FORTUNE               = 51,
+		MISFORTUNE            = 52,
+		HASTE                 = 53,
+		SLOW                  = 54,
+		SLAYER                = 55,
+		FRENZY                = 56,
+		TITANS_LIGHTNING_BOLT = 57,
+		COUNTERSTRIKE         = 58,
+		BERSERK               = 59,
+		HYPNOTIZE             = 60,
+		FORGETFULNESS         = 61,
+		BLIND                 = 62,
+		TELEPORT              = 63,
+		REMOVE_OBSTACLE       = 64,
+		CLONE                 = 65,
+		FIRE_ELEMENTAL        = 66,
+		EARTH_ELEMENTAL       = 67,
+		WATER_ELEMENTAL       = 68,
+		AIR_ELEMENTAL         = 69,
 		/* These abilities are not available to heroes */
-		STONE,
-		POISON,
-		BIND,
-		DISEASE,
-		PARALYZE,
-		AGING,
-		DEATH_CLOUD,
-		THUNDERBOLT,
-		DRAGONFLY_DISPEL,
-		DEATH_STARE,
-		ACID_BREATH
+		STONE                 = 70,
+		POISON                = 71,
+		BIND                  = 72,
+		DISEASE               = 73,
+		PARALYZE              = 74,
+		AGING                 = 75,
+		DEATH_CLOUD           = 76,
+		THUNDERBOLT           = 77,
+		DRAGONFLY_DISPEL      = 78,
+		DEATH_STARE           = 79,
+		ACID_BREATH           = 80,
 	};
 };
 
@@ -2797,16 +2813,16 @@ struct H3Quest
 {
 	enum eQuestType
 	{
-		QT_None = 0,
+		QT_None            = 0,
 		QT_ExperienceLevel = 1,
-		QT_PrimarySkill = 2,
-		QT_DefeatHero = 3,
-		QT_DefeatMonster = 4,
-		QT_BringArtifacts = 5,
-		QT_BringCreatures = 6,
-		QT_BringResources = 7,
-		QT_BeHero = 8,
-		QT_BePlayer = 9,
+		QT_PrimarySkill    = 2,
+		QT_DefeatHero      = 3,
+		QT_DefeatMonster   = 4,
+		QT_BringArtifacts  = 5,
+		QT_BringCreatures  = 6,
+		QT_BringResources  = 7,
+		QT_BeHero          = 8,
+		QT_BePlayer        = 9,
 	};
 
 	// * +0
@@ -2871,17 +2887,17 @@ struct H3SeerHut
 {
 	enum eSeerReward
 	{
-		SR_None = 0,
-		SR_Experience = 1,
-		SR_SpellPoints = 2,
-		SR_Morale = 3,
-		SR_Luck = 4,
-		SR_Resource = 5,
-		SR_PrimarySkill = 6,
+		SR_None           = 0,
+		SR_Experience     = 1,
+		SR_SpellPoints    = 2,
+		SR_Morale         = 3,
+		SR_Luck           = 4,
+		SR_Resource       = 5,
+		SR_PrimarySkill   = 6,
 		SR_SecondarySkill = 7,
-		SR_Artifact = 8,
-		SR_Spell = 9,
-		SR_Creature = 10,
+		SR_Artifact       = 8,
+		SR_Spell          = 9,
+		SR_Creature       = 10,
 	};
 	// * +0
 	H3Quest *quest;
@@ -3602,82 +3618,84 @@ protected:
 public:
 	enum H3MouseCursorType : INT32
 	{
-		Cursor_Default,
-		Cursor_Adventure,
-		Cursor_Combat,
-		Cursor_Spell,
-		Cursor_Artifact
+		Cursor_Default   = 0,
+		Cursor_Adventure = 1,
+		Cursor_Combat    = 2,
+		Cursor_Spell     = 3,
+		Cursor_Artifact  = 4,
 	};
 
 	enum H3MouseAdventureMapCursorType
 	{
-		AMC_ArrowPointer,
-		AMC_Busy_Wait,
-		AMC_Hero,
-		AMC_Town,
-		AMC_Horse,
-		AMC_Attack,
-		AMC_Boat,
-		AMC_Anchor,
-		AMC_Hero_Meeting,
-		AMC_Rearing_Horse,
-		AMC_Horse2,
-		AMC_Attack2,
-		AMC_Boat2,
-		AMC_Anchor2,
-		AMC_Hero_Meeting2,
-		AMC_Rearing_Horse2,
-		AMC_Horse3,
-		AMC_Attack3,
-		AMC_Boat3,
-		AMC_Anchor3,
-		AMC_Hero_Meeting3,
-		AMC_Rearing_Horse3,
-		AMC_Horse4,
-		AMC_Attack4,
-		AMC_Boat4,
-		AMC_Anchor4,
-		AMC_Hero_Meeting4,
-		AMC_Rearing_Horse4,
-		AMC_Boat_1,
-		AMC_Boat_2,
-		AMC_Boat_3,
-		AMC_Boat_4,
-		AMC_Map_Scroll_North,
-		AMC_Map_Scroll_Northeast,
-		AMC_Map_Scroll_East,
-		AMC_Map_Scroll_Southeast,
-		AMC_Map_Scroll_South,
-		AMC_Map_Scroll_Southwest,
-		AMC_Map_Scroll_West,
-		AMC_Map_Scroll_Northwest,
-		AMC_Arrow_Pointer,
-		AMC_Dimension_Door,
-		AMC_Scuttle_Boat
+		AMC_ArrowPointer         = 0,
+		AMC_Busy_Wait            = 1,
+		AMC_Hero                 = 2,
+		AMC_Town                 = 3,
+		AMC_Horse                = 4,
+		AMC_Attack               = 5,
+		AMC_Boat                 = 6,
+		AMC_Anchor               = 7,
+		AMC_Hero_Meeting         = 8,
+		AMC_Rearing_Horse        = 9,
+		AMC_Horse2               = 10,
+		AMC_Attack2              = 11,
+		AMC_Boat2                = 12,
+		AMC_Anchor2              = 13,
+		AMC_Hero_Meeting2        = 14,
+		AMC_Rearing_Horse2       = 15,
+		AMC_Horse3               = 16,
+		AMC_Attack3              = 17,
+		AMC_Boat3                = 18,
+		AMC_Anchor3              = 19,
+		AMC_Hero_Meeting3        = 20,
+		AMC_Rearing_Horse3       = 21,
+		AMC_Horse4               = 22,
+		AMC_Attack4              = 23,
+		AMC_Boat4                = 24,
+		AMC_Anchor4              = 25,
+		AMC_Hero_Meeting4        = 26,
+		AMC_Rearing_Horse4       = 27,
+		AMC_Boat_1               = 28,
+		AMC_Boat_2               = 29,
+		AMC_Boat_3               = 30,
+		AMC_Boat_4               = 31,
+		AMC_Map_Scroll_North     = 32,
+		AMC_Map_Scroll_Northeast = 33,
+		AMC_Map_Scroll_East      = 34,
+		AMC_Map_Scroll_Southeast = 35,
+		AMC_Map_Scroll_South     = 36,
+		AMC_Map_Scroll_Southwest = 37,
+		AMC_Map_Scroll_West      = 38,
+		AMC_Map_Scroll_Northwest = 39,
+		AMC_Arrow_Pointer        = 40,
+		AMC_Dimension_Door       = 41,
+		AMC_Scuttle_Boat         = 42,
+
 	};
 
 	enum H3MouseBattleFieldCursorType
 	{
-		BFC_Null,
-		BFC_Move,
-		BFC_Fly,
-		BFC_Shooting,
-		BFC_Hero,
-		BFC_Question_Mark,
-		BFC_Arrow_Pointer,
-		BFC_Attack_Northeast,
-		BFC_Attack_East,
-		BFC_Attack_Southeast,
-		BFC_Attack_Southwest,
-		BFC_Attack_West,
-		BFC_Attack_Northwest,
-		BFC_Attack_North,
-		BFC_Attack_South,
-		BFC_Half_Damage,
-		BFC_Attack_Wall,
-		BFC_Heal,
-		BFC_Sacrifice,
-		BFC_Teleport
+		BFC_Null             = 0,
+		BFC_Move             = 1,
+		BFC_Fly              = 2,
+		BFC_Shooting         = 3,
+		BFC_Hero             = 4,
+		BFC_Question_Mark    = 5,
+		BFC_Arrow_Pointer    = 6,
+		BFC_Attack_Northeast = 7,
+		BFC_Attack_East      = 8,
+		BFC_Attack_Southeast = 9,
+		BFC_Attack_Southwest = 10,
+		BFC_Attack_West      = 11,
+		BFC_Attack_Northwest = 12,
+		BFC_Attack_North     = 13,
+		BFC_Attack_South     = 14,
+		BFC_Half_Damage      = 15,
+		BFC_Attack_Wall      = 16,
+		BFC_Heal             = 17,
+		BFC_Sacrifice        = 18,
+		BFC_Teleport         = 19,
+
 	};
 
 	VOID TurnOn() { THISCALL_2(VOID, 0x50D7B0, this, 1); }
@@ -4048,19 +4066,20 @@ protected:
 public:
 	enum BATTLE_ACTION : INT32
 	{
-		BA_CANCEL, //0 = Cancel Action(the stack can do a different action now but it may still be impossible to force it to do most actions through ERM).
-		BA_CAST_SPELL, //1 = Hero casts a spell
-		BA_WALK,
-		BA_DEFEND,
-		BA_RETREAT,
-		BA_SURRENDER,
-		BA_WALK_ATTACK,
-		BA_SHOOT,
-		BA_WAIT,
-		BA_CATAPULT,
-		BA_MONSTER_SPELL,
-		BA_FIRST_AID_TENT,
-		BA_NOTHING //12 = No action(can be to disable stack for this round)
+		BA_CANCEL         = 0, // Cancel Action(the stack can do a different action now but it may still be impossible to force it to do most actions through ERM).
+		BA_CAST_SPELL     = 1, // Hero casts a spell
+		BA_WALK           = 2,
+		BA_DEFEND         = 3,
+		BA_RETREAT        = 4,
+		BA_SURRENDER      = 5,
+		BA_WALK_ATTACK    = 6,
+		BA_SHOOT          = 7,
+		BA_WAIT           = 8,
+		BA_CATAPULT       = 9,
+		BA_MONSTER_SPELL  = 10,
+		BA_FIRST_AID_TENT = 11,
+		BA_NOTHING        = 12, //No action(can be to disable stack for this round)
+
 	};
 
 	// * +3C
@@ -4465,75 +4484,41 @@ inline INT32 H3Army::FindExistingByIndex(INT32 index)
 
 inline VOID H3CreatureInformation::UpgradeCost(H3Resources * res, H3CreatureInformation * upg, INT32 count)
 {
-	res->wood    = (upg->cost.wood - cost.wood) * count;
-	res->mercury = (upg->cost.mercury - cost.mercury) * count;
-	res->ore     = (upg->cost.ore - cost.ore) * count;
-	res->sulfur  = (upg->cost.sulfur - cost.sulfur) * count;
-	res->crystal = (upg->cost.crystal - cost.crystal) * count;
-	res->gems    = (upg->cost.gems - cost.gems) * count;
-	res->gold    = (upg->cost.gold - cost.gold) * count;
+	for (int i = 0; i < 7; ++i)
+		res->begin()[i] = (upg->cost.begin()[i] - cost.AsArray(i)) * count;
 }
 
 inline BOOL H3Resources::EnoughResources(H3Resources * cost) const
 {
-	BOOL r = FALSE;
-	while (!r)
-	{
-		if (cost->wood > wood)
-			break;
-		if (cost->mercury > mercury)
-			break;
-		if (cost->ore > ore)
-			break;
-		if (cost->sulfur > sulfur)
-			break;
-		if (cost->crystal > crystal)
-			break;
-		if (cost->gems > gems)
-			break;
-		if (cost->gold > gold)
-			break;
-		r = TRUE;
-	}
-
-	return r;
+	for (int i = 0; i < 7; ++i)
+		if (cost->begin()[i] > cbegin()[i])
+			return FALSE;
+	return TRUE;
 }
 
 inline VOID H3Resources::RemoveResources(H3Resources * cost)
 {
-	wood    -= cost->wood;
-	mercury -= cost->mercury;
-	ore     -= cost->ore;
-	sulfur  -= cost->sulfur;
-	crystal -= cost->crystal;
-	gems    -= cost->gems;
-	gold    -= cost->gold;
+	for (int i = 0; i < 7; ++i)
+		begin()[i] -= cost->AsArray(i);
 }
 
 inline VOID H3Resources::GainResourcesOF(H3Resources * gain)
 {
-	int *This = reinterpret_cast<int*>(this);
-	int *Gain = reinterpret_cast<int*>(gain);
-	INT resMax = INT_MAX;
-	for (int i = 0; i < 7; i++, This++, Gain++)
-	{
-		if (*This > 0) // if current is positive
+	for (int i = 0; i < 7; ++i)
+		if (begin()[i] > 0) // positive
 		{
-			*This += *Gain;
-			if (*Gain > 0)
+			begin()[i] += gain->AsArray(i); // add resources
+
+			if (gain->AsArray(i) > 0) // check if there was overflow
 			{
-				if (*This < 0) // no overflow
-					*This = resMax;
+				if (begin()[i] <= 0)
+					begin()[i] = INT_MAX;
 			}
-			else
-			{
-				if (*This < 0) // can't go in negative resources
-					*This = 0;
-			}
+			else if (begin()[i] < 0) // no negative resources from subtraction
+				begin()[i] = 0;
 		}
 		else // gain normally
-			*This = *This + *Gain;
-	}
+			begin()[i] += gain->AsArray(i);
 }
 
 inline VOID H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
