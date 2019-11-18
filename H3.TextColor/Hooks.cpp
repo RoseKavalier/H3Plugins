@@ -401,6 +401,9 @@ _LHF_(MainHook)
 				// * pack if needed
 				switch (InternalTextColor.mode)
 				{
+				case H3TextColor::CM_888:
+					rgb += 0xFF000000;
+					break;
 				case H3TextColor::CM_555:
 					rgb = H3RGB555::Pack((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 					break;
