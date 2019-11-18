@@ -529,6 +529,7 @@ inline UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needleSize) const
 
 inline VOID H3DLL::GetDLLInfo(LPCSTR name)
 {
+	dllName = name;
 	HMODULE hm = GetModuleHandleA(name);
 	if (!hm)
 	{
