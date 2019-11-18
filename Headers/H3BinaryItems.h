@@ -252,21 +252,26 @@ struct H3RGB888
 
 };
 
-// * rgb pixel in HD mod
-// * it is not argb or bgra but this order
+// * argb pixel in HD mod
 struct H3ARGB888
 {
-	UINT8 a; // alpha - unused in H3
+	// * legacy order pre - HDmod 5.0RC63
+	//UINT8 a; // alpha - unused in H3
+	//UINT8 g;
+	//UINT8 r;
+	//UINT8 b;
+
 	UINT8 g;
-	UINT8 r;
 	UINT8 b;
+	UINT8 r;
+	UINT8 a;
 
 	// * darkens pixel's color through HSV by amount
 	VOID Darken(const UINT8 amount)
 	{
 		H3RGB888 rgb(*this);
 		rgb.Darken(amount);
-		r =  rgb.r;
+		r = rgb.r;
 		g = rgb.g;
 		b = rgb.b;
 	}
@@ -275,7 +280,7 @@ struct H3ARGB888
 	{
 		H3RGB888 rgb(*this);
 		rgb.Lighten(amount);
-		r =  rgb.r;
+		r = rgb.r;
 		g = rgb.g;
 		b = rgb.b;
 	}
@@ -290,7 +295,7 @@ struct H3ARGB888
 	}
 
 	H3ARGB888(UINT8 red, UINT8 blue, UINT8 green) :
-		a(0), g(green), r(red), b(blue)	{}
+		g(green), b(blue), r(red), a(0xFF)	{}
 };
 
 struct H3RGB555 // https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
