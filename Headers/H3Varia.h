@@ -541,7 +541,6 @@ inline VOID H3DLL::GetDLLInfo(LPCSTR name)
 	IMAGE_NT_HEADERS* pNTHeaders = reinterpret_cast<IMAGE_NT_HEADERS*>(reinterpret_cast<BYTE*>(pDOSHeader) + pDOSHeader->e_lfanew);
 	code = PUINT8(reinterpret_cast<DWORD>(hm) + pNTHeaders->OptionalHeader.BaseOfCode);
 	size = UINT32(pNTHeaders->OptionalHeader.SizeOfCode);
-	dllName = name;
 
 	// the following is based on https://stackoverflow.com/questions/4308996/finding-the-address-range-of-the-data-segment
 

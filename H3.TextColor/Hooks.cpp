@@ -193,6 +193,15 @@ _LHF_(TrueModeDrawCharColor)
 	return EXEC_DEFAULT;
 }
 
+// * Sets the correct color to use while using Direct Draw
+_LHF_(DirectDrawCharColor)
+{
+	const INT32 color = *CharColors[CurrentPosition];
+	if (color != NO_COLOR)
+		c->ebp = color;
+	return EXEC_DEFAULT;
+}
+
 // * Sets the correct color to use while using True Stretchable mode
 _LHF_(TrueStretchModeDrawCharColor)
 {
@@ -300,6 +309,29 @@ void TrueColorHook(PatcherInstance *pi)
 		pi->WriteLoHook(address, TrueModeDrawCharColor);
 }
 
+void DirectDrawHook(PatcherInstance *pi)
+{
+	///////////////////////////////////////////////////////////////////////////////
+	// Needle: 54 12 00 00
+	///////////////////////////////////////////////////////////////////////////////
+	UINT8 needle[] = {
+		0x54, 0x12, 0x00, 0x00							// MOV EDX,DWORD PTR DS:[EDI+1254]
+	};
+	///////////////////////////////////////////////////////////////////////////////
+	// Expected code: 8B 2C 82
+	///////////////////////////////////////////////////////////////////////////////
+	UINT8 needle_sought[] = {
+		0x8B, 0x2C, 0x82								// MOV EBP,DWORD PTR DS:[EAX*4+EDX]
+	};
+
+	H3DLL HD_TC2;
+	HD_TC2.GetDLLInfo("HD_TC2.dll");
+
+	DWORD address = HD_TC2.NeedleSearchAround(needle, 0x20, needle_sought);
+	if (address)
+		pi->WriteLoHook(address + sizeof(needle_sought), DirectDrawCharColor);
+}
+
 // * Finds where to install @TrueStretchModeDrawCharColor
 // * hook within HD_MCR.dll
 void TrueStretchModeColorHook(PatcherInstance *pi)
@@ -393,6 +425,7 @@ _LHF_(MainHook)
 	{
 		TrueColorHook(_PI);
 		TrueStretchModeColorHook(_PI);
+		DirectDrawHook(_PI);
 	}
 	else
 		_PI->WriteLoHook(0x4B4F74, DrawCharColor);

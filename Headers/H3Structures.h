@@ -483,16 +483,6 @@ struct H3Army
 	INT32 type[7];
 	INT32 count[7];
 
-	class H3ArmyIterator
-	{
-		INT32 m_type;
-		INT32 m_filler[6];
-		INT32 m_count;
-	public:
-		INT32& Type() { return m_type; }
-		INT32& Count() { return m_count; }
-	};
-
 	// * add amount creature of type to slot
 	VOID AddStack(INT32 type, INT32 amount, INT32 slot) { THISCALL_4(VOID, 0x44A9B0, this, type, amount, slot); }
 	// * Split fromStack based on fraction denominator to toStack
@@ -523,9 +513,6 @@ struct H3Army
 	INT32 NumberAlignments(INT8 towns[9]) { return THISCALL_2(INT32, 0x44A880, this, towns); }
 	// * AI value total for army
 	INT32 GetArmyValue() { return THISCALL_1(INT32, 0x44A950, this); }
-
-	H3ArmyIterator* begin() { return reinterpret_cast<H3ArmyIterator*>(this); }
-	H3ArmyIterator* end()   { return &begin()[7]; }
 };
 
 // * not the hero on the map
@@ -604,6 +591,7 @@ public:
 // * The specialty structure of heroes
 struct H3HeroSpecialty
 {
+	// * +0
 	UINT32  type;
 	enum SpecialtyType
 	{
@@ -1656,8 +1644,8 @@ struct MapScholar
 	unsigned  type : 3; // 0 Primary, 1 Secondary, 2 Spell
 	unsigned  pSkill : 3;
 	unsigned  sSkill : 7;
-	unsigned  spell : 11;
-	unsigned _u1 : 8;
+	unsigned  spell : 10;
+	unsigned _u1 : 9;
 };
 
 // * data for event on adventure map
@@ -2917,6 +2905,8 @@ struct H3SeerHut
 	WORD CreatureCount() const { return rewardValue2; }
 	INT8 Luck() const { return INT8(rewardValue); }
 	INT8 Morale() const { return INT8(rewardValue); }
+	INT32 Primary() const { return rewardValue; }
+	INT8 PrimaryCount() const { return INT8(rewardValue2); }
 };
 
 struct H3QuestText

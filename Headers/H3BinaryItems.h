@@ -136,6 +136,7 @@ public:
 	VOID Dereference() { THISCALL_1(VOID, vTable->dereference, this); }
 	VOID AddToBinaryTree(H3BinTreeList* tree = reinterpret_cast<H3BinTreeList*>(0x69E560));
 	VOID IncreaseReferences() { ++ref; }
+	LPCSTR GetName() const { return name; }
 };
 
 ///////////////////////////////////////////////////
@@ -229,7 +230,7 @@ struct H3RGB888
 	VOID AlphaDraw(UINT8 red, UINT8 green, UINT8 blue, UINT8 alpha);
 
 	static FLOAT GetHueAsNormalizedFloat(UINT8 red, UINT8 green, UINT8 blue);
-	static DWORD Pack(UINT8 red, UINT8 green, UINT8 blue) {	return blue + (green << 8) + (red << 16); }
+	static DWORD Pack(UINT8 red, UINT8 green, UINT8 blue) {	return 0xFF000000 + blue + (green << 8) + (red << 16); }
 
 	H3RGB888() {}
 	H3RGB888(DWORD color)
@@ -545,6 +546,7 @@ public:
 			m_pcx->Dereference();
 	}
 	H3LoadedPCX* GetPcx() const { return m_pcx; }
+	H3LoadedPCX* operator->() { return m_pcx; }
 };
 
 struct H3LoadedPCX16 : public H3BinaryItem // size 0x38 // vt 63B9C8
@@ -634,6 +636,7 @@ public:
 			pcx->Dereference();
 	}
 	H3LoadedPCX16* GetPcx() { return pcx; }
+	H3LoadedPCX16* operator->() { return pcx; }
 };
 
 struct H3LoadedPCX24 : public H3BinaryItem // size 0x30 // vt 63B9F4
@@ -693,6 +696,7 @@ public:
 			pcx->Dereference();
 	}
 	H3LoadedPCX24* GetPcx() { return pcx; }
+	H3LoadedPCX24* operator->() { return pcx; }
 };
 
 struct H3DefFrame : public H3BinaryItem
@@ -816,6 +820,8 @@ public:
 			def->Dereference();
 	}
 	H3LoadedDEF* GetDef() { return def; }
+
+	H3LoadedDEF* operator->() { return def; }
 };
 
 #pragma pack(pop)
@@ -1117,7 +1123,7 @@ inline BOOL H3LoadedPCX16::BackgroundRegion(INT32 x, INT32 y, INT32 w, INT32 h, 
 		int _w = w;
 		while (_w > 0)
 		{
-			back.GetPcx()->DrawToPcx16(0, 0, _w, dh, this, _x, _y, FALSE);
+			back->DrawToPcx16(0, 0, _w, dh, this, _x, _y, FALSE);
 			_x += 256;
 			_w -= 256;
 		}
@@ -1239,12 +1245,12 @@ inline BOOL H3LoadedPCX16::FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL 
 	H3Palette565 pal565, *pal;
 	if (!is_blue)
 	{
-		F_memcpy(&pal565, box.GetDef()->palette565, sizeof(pal565));
+		F_memcpy(&pal565, box->palette565, sizeof(pal565));
 		pal565.ColorToPlayer(colorIndex);
 		pal = &pal565;
 	}
 	else
-		pal = box.GetDef()->palette565;
+		pal = box->palette565;
 
 	INT f_bl, f_br, f_bm;
 	if (statusBar)
@@ -1262,8 +1268,8 @@ inline BOOL H3LoadedPCX16::FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL 
 
 	// * add horizontal bars
 	int _w = w - 64 - 64;
-	H3DefFrame *tm = box.GetDef()->GetGroupFrame(0, BoxFrames::BF_tm);
-	H3DefFrame *bm = box.GetDef()->GetGroupFrame(0, f_bm);
+	H3DefFrame *tm = box->GetGroupFrame(0, BoxFrames::BF_tm);
+	H3DefFrame *bm = box->GetGroupFrame(0, f_bm);
 	while (_w > 0)
 	{
 		tm->DrawToPcx16(0, 0, 64, 64, this, x + _w, y, pal);
@@ -1273,8 +1279,8 @@ inline BOOL H3LoadedPCX16::FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL 
 
 	// * add vertical bars
 	int _h = h - 64 - 64;
-	H3DefFrame *ml = box.GetDef()->GetGroupFrame(0, BoxFrames::BF_ml);
-	H3DefFrame *mr = box.GetDef()->GetGroupFrame(0, BoxFrames::BF_mr);
+	H3DefFrame *ml = box->GetGroupFrame(0, BoxFrames::BF_ml);
+	H3DefFrame *mr = box->GetGroupFrame(0, BoxFrames::BF_mr);
 	while (_h > 0)
 	{
 		ml->DrawToPcx16(0, 0, 64, 64, this, x, y + _h, pal);
@@ -1283,10 +1289,10 @@ inline BOOL H3LoadedPCX16::FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL 
 	}
 
 	// * add four corners
-	box.GetDef()->GetGroupFrame(0, BoxFrames::BF_tl)->DrawToPcx16(0, 0, 64, 64, this, x, y, pal);
-	box.GetDef()->GetGroupFrame(0, BoxFrames::BF_tr)->DrawToPcx16(0, 0, 64, 64, this, x + w - 64, y, pal);
-	box.GetDef()->GetGroupFrame(0, f_bl)->DrawToPcx16(0, 0, 64, 64, this, x, y + h - 64, pal);
-	box.GetDef()->GetGroupFrame(0, f_br)->DrawToPcx16(0, 0, 64, 64, this, x + w - 64, y + h - 64, pal);
+	box->GetGroupFrame(0, BoxFrames::BF_tl)->DrawToPcx16(0, 0, 64, 64, this, x, y, pal);
+	box->GetGroupFrame(0, BoxFrames::BF_tr)->DrawToPcx16(0, 0, 64, 64, this, x + w - 64, y, pal);
+	box->GetGroupFrame(0, f_bl)->DrawToPcx16(0, 0, 64, 64, this, x, y + h - 64, pal);
+	box->GetGroupFrame(0, f_br)->DrawToPcx16(0, 0, 64, 64, this, x + w - 64, y + h - 64, pal);
 
 	return TRUE;
 }
