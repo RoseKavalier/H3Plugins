@@ -452,6 +452,8 @@ struct H3Resources
 	INT32 gems;
 	INT32 gold;
 
+	H3Resources() :	wood(0), mercury(0), ore(0), sulfur(0), crystal(0), gems(0), gold(0) {}
+
 	// * compares current values against cost
 	// * returns true if every current value is greater or equal
 	BOOL EnoughResources(H3Resources *cost) const;
@@ -460,13 +462,13 @@ struct H3Resources
 	// * adds resources to current
 	VOID GainResourcesOF(H3Resources *gain);
 	// * Get resources as array
-	INT AsArray(int index) { return PINT(this)[index]; }
+	INT& AsRef(int index) { return begin()[index]; }
 	// * Number of non-zero resources
 	INT Count()
 	{
 		INT r = 0;
 		for (int i = 0; i < 7; ++i)
-			if (AsArray(i) != 0)
+			if (AsRef(i) != 0)
 				++r;
 		return r;
 	}
@@ -475,11 +477,32 @@ struct H3Resources
 	PINT end()   { return &begin()[7]; }
 	PINT cbegin() const { return PINT(this); }
 	PINT cend() const { return &cbegin()[7]; }
+
+	H3Resources& operator+=(const H3Resources& other)
+	{
+		for (int i = 0; i < 7; ++i)
+			begin()[i] += other.cbegin()[i];
+		return *this;
+	}
 };
 
 // * The arrangment of 7 creatures on various H3 structures
 struct H3Army
 {
+	class H3Iterator
+	{
+		INT32 m_type;
+
+		PINT32 AsArray() const { return PINT32(this); }
+
+	public:
+		INT32 Type() const { return m_type; }
+		INT32 Count() const { return AsArray()[7]; }
+
+		INT32& RType() { return m_type; }
+		INT32& RCount() { return AsArray()[7]; }
+	};
+
 	INT32 type[7];
 	INT32 count[7];
 
@@ -513,6 +536,9 @@ struct H3Army
 	INT32 NumberAlignments(INT8 towns[9]) { return THISCALL_2(INT32, 0x44A880, this, towns); }
 	// * AI value total for army
 	INT32 GetArmyValue() { return THISCALL_1(INT32, 0x44A950, this); }
+
+	H3Iterator* begin() { return reinterpret_cast<H3Iterator*>(&type); }
+	H3Iterator* end() { return reinterpret_cast<H3Iterator*>(&count); }
 };
 
 // * not the hero on the map
@@ -1016,6 +1042,29 @@ struct H3Date
 	UINT32 CurrentDay() const { return 28 * (month - 1) + 7 * (week - 1) + day - 1; }
 };
 
+
+struct H3TownCreatureTypes
+{
+	class H3Iterator
+	{
+		INT m_base;
+
+		PINT AsArray() const { return PINT(this); }
+
+	public:
+		INT32 Base() const     { return m_base; }
+		INT32 Upgraded() const { return AsArray()[7]; }
+		INT32& RBase()         { return m_base; }
+		INT32& RUpgraded()     { return AsArray()[7]; }
+	};
+
+	INT base[7];
+	INT upgrade[7];
+
+	H3Iterator* begin() { return reinterpret_cast<H3Iterator*>(this); }
+	H3Iterator* end()   { return reinterpret_cast<H3Iterator*>(&upgrade); }
+};
+
 // * how towns are represented in memory
 struct H3Town
 {
@@ -1083,11 +1132,12 @@ public:
 	INT32	spells[5][6];
 protected:
 	// * +BC
-	INT8	magicGuild[5];
+	// * is it built?
+	BOOL8	magicGuild[5];
 	h3unk	_f_C1[3];
 public:
 	// * +C4
-	// * the town's name, can be lenghtened
+	// * the town's name, can be lengthened
 	H3String name;
 protected:
 	h3unk	_f_D4[12];
@@ -1101,16 +1151,18 @@ protected:
 	H3Army	Guards0;
 public:
 	// * +150
+	// * for the first 32 buildings
+	// * the game checks mask against global INT64 which
+	// * explains why 2 bitfields can only fit in 32 buildings
 	H3Bitfield built[2];
 	// * +158
-	H3Bitfield bonus[2];
+	// * for the remaining buildings
+	H3Bitfield built2[2];
 	// * +160
-	H3Bitfield bMask[2];
+	// * will this structure be buildable in this town?
+	H3Bitfield buildableMask[2];
 
-	BOOL IsBuildingBuilt(INT32 id) { return THISCALL_3(BOOL, 0x4305A0, this, id, 1); }
-	BOOL CanBuildStructure(INT32 id) { return THISCALL_3(BOOL, 0x4305A0, this, id, 0); }
-	LPCSTR GetTownTypeName() { return THISCALL_1(LPCSTR, 0x5C1850, this); }
-
+	#pragma region townEnums
 	enum eTown
 	{
 		CASTLE     = 0,
@@ -1216,6 +1268,29 @@ public:
 		/* CONFLUX */
 		B_MAGIC_UNIVERSITY         = 21
 	};
+#pragma endregion
+
+	BOOL IsBuildingBuilt(INT32 id) const { return THISCALL_3(BOOL, 0x4305A0, this, id, id >= 32 ? 1 : 0); }
+	LPCSTR GetTownTypeName() const { return THISCALL_1(LPCSTR, 0x5C1850, this); }
+	H3Hero* GetGarrisonHero() const;
+	H3Hero* GetVisitingHero() const;
+	BOOL8 IsMageGuildBuilt(INT level) const { return magicGuild[level]; }
+	H3String GetNameAndType() const;
+
+	INT32 GoldIncome(BOOL count_silo = FALSE) const { return THISCALL_2(INT32, 0x5BFA00, this, count_silo ? 1 : 0); }
+	H3Resources& GetResourceSiloIncome() const { return THISCALL_1(H3Resources&, 0x5C1680, this); }
+
+	H3TownCreatureTypes& GetCreatureTypes() const;
+
+	BOOL CanBeBuilt(eBuildings id) const { return buildableMask[0].GetState(id); }
+
+	H3Resources TotalIncome() const
+	{
+		H3Resources total;
+		total.gold = GoldIncome(TRUE);
+		total += GetResourceSiloIncome();
+		return total;
+	}
 };
 
 struct H3SpecialBuildingCosts
@@ -1615,7 +1690,7 @@ struct MapMonster
 	unsigned  noRun : 1; // +17
 	unsigned  noGrowth : 1; // +18
 	unsigned  setupIndex : 8; // +19 up to 255 individual messages/prizes
-	unsigned  _u1 : 4; // +27 to my knowledge, not used anywere. Could expand the number of setups to 4095?
+	unsigned  _u1 : 4; // +27 to my knowledge, not used anywhere. Could expand the number of setups to 4095?
 	unsigned  hasSetup : 1; // +31
 };
 
@@ -1655,7 +1730,7 @@ struct MapEvent
 	unsigned  enabled : 8; // which players can activate it?
 	unsigned  aiEnabled : 1; // can AI activate it?
 	unsigned  oneVisit : 1; // Cancel after 1 visit?
-	unsigned _u1 : 12; // ?unsued?
+	unsigned _u1 : 12; // ?unused?
 };
 
 // * data for treasure chest on adventure map
@@ -1755,6 +1830,12 @@ struct MapCorpse
 	unsigned  artifactID : 10;
 	unsigned  hasArtifact : 1;
 	unsigned _u2 : 15;
+};
+
+// * creature generators type 1 and 4 (2&3 don't exist)
+struct MapGenerator
+{
+	int id;
 };
 
 // * data for magic spring on adventure map
@@ -1874,13 +1955,7 @@ struct H3ObjectDraw
 	// * 0~6 drawing layer, 6 being top and 0 bottom
 	UINT8 layer;
 
-
-	H3ObjectDraw(UINT16 sprite, UINT8 tile_id, UINT8 layer)
-		: sprite(sprite),
-		  tileID(tile_id),
-		  layer(layer)
-	{
-	}
+	H3ObjectDraw(UINT16 sprite, UINT8 tile_id, UINT8 layer) : sprite(sprite), tileID(tile_id), layer(layer) {}
 };
 
 // * data on a given tile on the adventure map
@@ -1942,9 +2017,9 @@ public:
 	H3University *GetUniversity()	{ return STDCALL_1(H3University*, 0x405DA0, this); }
 	// * get real entrance (if any) of object on this tile
 	H3MapItem* GetEntrance()		{ return THISCALL_1(H3MapItem*, 0x4FD0F0, this); }
-	BOOL IsEntrance()				{ return access & 0x10; }
-	BOOL IsBlocked()				{ return access & 1; }
-	BOOL CanDig()					{ return mirror & 0x40; }
+	BOOL IsEntrance() const			{ return access & 0x10; }
+	BOOL IsBlocked() const			{ return access & 1; }
+	BOOL CanDig() const				{ return mirror & 0x40; }
 
 	// * casts setup to relevant map item data
 	MapMonster*			CastMonster()		{ return (MapMonster*)this; }
@@ -1999,6 +2074,7 @@ public:
 	// * casts setup to relevant map item data
 	MapSeaChest*		CastSeaChest()		{ return (MapSeaChest*)this; }
 	MapArtifact*		CastArtifact()		{ return (MapArtifact*)this; }
+	MapGenerator*		CastGenerator()		{ return (MapGenerator*)this; }
 };
 
 // * information about artifacts
@@ -2741,12 +2817,25 @@ struct H3PrimarySkills
 	PINT8 end() { return &PINT8(this)[4]; }
 };
 
+struct H3SecondarySkill
+{
+	INT type;
+	INT level; // 0 ~ 3
+};
+
+struct H3SecondarySkillInfo
+{
+	LPCSTR name;
+	LPCSTR description[3];
+};
+
 struct H3PandorasBox
 {
 	// * +0
 	H3String message;
 	// * +10
-	BOOL hasGuards;
+	BOOL8 hasGuards;
+	h3unk _f_11[3];
 	// * +14
 	H3Army guardians;
 	h3unk _f_4C[4];
@@ -2764,7 +2853,7 @@ struct H3PandorasBox
 	// * +78
 	H3PrimarySkills pSkill;
 	// * +7C
-	H3Vector<INT32> skills;
+	H3Vector<H3SecondarySkill> sSkills;
 	// * +8C
 	H3Vector<INT32> artifacts;
 	// * +9C
@@ -2860,7 +2949,7 @@ struct H3Quest
 		INT32 bePlayer;					// visit as a certain player
 	} data;
 
-	INT32 GetQuestType() { return (this ? (reinterpret_cast<DWORD>(vTable) - 0x641798) / 0x3C + 1 : 0); }
+	eQuestType GetQuestType() const { return eQuestType((reinterpret_cast<DWORD>(vTable) - 0x641798) / 0x3C + 1); }
 };
 
 // * quest guard is a quest plus a byte to show who visited
@@ -2868,6 +2957,8 @@ struct H3QuestGuard
 {
 	H3Quest *quest;
 	BYTE playersVisited;
+
+	H3Quest::eQuestType QuestType() const { return quest ? quest->GetQuestType() : H3Quest::eQuestType::QT_None; }
 };
 
 // * seer hut is a quest guard plus some information about reward
@@ -2907,6 +2998,8 @@ struct H3SeerHut
 	INT8 Morale() const { return INT8(rewardValue); }
 	INT32 Primary() const { return rewardValue; }
 	INT8 PrimaryCount() const { return INT8(rewardValue2); }
+
+	H3Quest::eQuestType QuestType() const { return quest ? quest->GetQuestType() : H3Quest::eQuestType::QT_None; }
 };
 
 struct H3QuestText
@@ -2916,7 +3009,12 @@ struct H3QuestText
 	private:
 		H3String m_unused[5];
 	public:
-		H3String text[47];
+		H3String text[44];
+	private:
+		H3String m_unused2;
+	public:
+		H3String deserted;
+		H3String deadline;
 	}variants[3];
 };
 
@@ -3179,6 +3277,7 @@ struct H3Dwelling
 	// * +0
 	INT8 type;
 	// * +1
+	// * used to retrieve name
 	INT8 subtype;
 	INT8 _f2[2];
 	// * +4
@@ -3551,6 +3650,7 @@ public: // functions
 	INT32 GetRandomArtifactOfLevel(INT32 level) { return THISCALL_2(INT32, 0x4C9190, this, level); }
 	VOID SaveGame(LPCSTR save_name) { THISCALL_6(VOID, 0x4BEB60, this, save_name, 1, 1, 1, 0); }
 	VOID PlaceObjectOnMap(int x, int y, int z, int type, int subtype, int setup = -1) { THISCALL_7(VOID, 0x4C9550, this, x, y, z, type, subtype, setup); }
+	VOID RefreshMapItemAppearrance(H3MapItem* mi) { THISCALL_2(VOID, 0x4C9650, this, mi); }
 };
 
 // * size 38h
@@ -4336,6 +4436,7 @@ struct H3Pointers
 	inline static H3Hero					* DialogHero()				{ return *reinterpret_cast<H3Hero**>(0x698B70); }
 	inline static H3TurnTimer				* TurnTimer()				{ return *reinterpret_cast<H3TurnTimer**>(0x4AD194 + 1); }
 	inline static H3HeroSpecialty			* HeroSpecialty()			{ return *reinterpret_cast<H3HeroSpecialty**>(0x4B8AF1 + 1); }
+	inline static H3TownCreatureTypes		* TownCreatureTypes()		{ return *reinterpret_cast<H3TownCreatureTypes**>(0x47AB00 + 3); }
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4475,13 +4576,13 @@ inline INT32 H3Army::FindExistingByIndex(INT32 index)
 inline VOID H3CreatureInformation::UpgradeCost(H3Resources * res, H3CreatureInformation * upg, INT32 count)
 {
 	for (int i = 0; i < 7; ++i)
-		res->begin()[i] = (upg->cost.begin()[i] - cost.AsArray(i)) * count;
+		res->AsRef(i) = std::max(0, upg->cost.AsRef(i) - cost.AsRef(i)) * count;
 }
 
 inline BOOL H3Resources::EnoughResources(H3Resources * cost) const
 {
 	for (int i = 0; i < 7; ++i)
-		if (cost->begin()[i] > cbegin()[i])
+		if (cost->AsRef(i) > cbegin()[i])
 			return FALSE;
 	return TRUE;
 }
@@ -4489,26 +4590,26 @@ inline BOOL H3Resources::EnoughResources(H3Resources * cost) const
 inline VOID H3Resources::RemoveResources(H3Resources * cost)
 {
 	for (int i = 0; i < 7; ++i)
-		begin()[i] -= cost->AsArray(i);
+		AsRef(i) -= cost->AsRef(i);
 }
 
 inline VOID H3Resources::GainResourcesOF(H3Resources * gain)
 {
 	for (int i = 0; i < 7; ++i)
-		if (begin()[i] > 0) // positive
+		if (AsRef(i) > 0) // positive
 		{
-			begin()[i] += gain->AsArray(i); // add resources
+			AsRef(i) += gain->AsRef(i); // add resources
 
-			if (gain->AsArray(i) > 0) // check if there was overflow
+			if (gain->AsRef(i) > 0) // check if there was overflow
 			{
-				if (begin()[i] <= 0)
-					begin()[i] = INT_MAX;
+				if (AsRef(i) <= 0)
+					AsRef(i) = INT_MAX;
 			}
-			else if (begin()[i] < 0) // no negative resources from subtraction
-				begin()[i] = 0;
+			else if (AsRef(i) < 0) // no negative resources from subtraction
+				AsRef(i) = 0;
 		}
 		else // gain normally
-			begin()[i] += gain->AsArray(i);
+			AsRef(i) += gain->AsRef(i);
 }
 
 inline VOID H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
@@ -4620,6 +4721,28 @@ inline H3Hero * H3Player::GetActiveHero()
 inline H3MapItem * H3TileMovement::GetMapItem()
 {
 	return H3Pointers::AdventureManager()->GetMapItem(*(int*)this);
+}
+
+inline H3Hero* H3Town::GetGarrisonHero() const
+{
+	return H3Pointers::Main()->GetHero(garrisonHero);
+}
+
+inline H3Hero* H3Town::GetVisitingHero() const
+{
+	return H3Pointers::Main()->GetHero(visitingHero);
+}
+
+inline H3String H3Town::GetNameAndType() const
+{
+	H3String str(this->name);
+	str.Append(", ").Append(GetTownTypeName());
+	return str;
+}
+
+inline H3TownCreatureTypes& H3Town::GetCreatureTypes() const
+{
+	return H3Pointers::TownCreatureTypes()[type];
 }
 
 #endif /* #define _H3STRUCTURES_H_ */

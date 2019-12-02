@@ -1002,10 +1002,10 @@ namespace NH3Dlg
 	namespace Text
 	{
 		LPCSTR const TINY    = (LPCSTR(0x660CB4)); // "tiny.fnt"
-		LPCSTR const SMALL   = (LPCSTR(0x65F2F8));   // "smalfont.fnt"
-		LPCSTR const MEDIUM  = (LPCSTR(0x65F2EC));   // "MedFont.fnt"
-		LPCSTR const BIG     = (LPCSTR(0x660B24));   // "bigfont.fnt"
-		LPCSTR const VERDANA = (LPCSTR(0x6700B4));   // "Verd10B.fnt"
+		LPCSTR const SMALL   = (LPCSTR(0x65F2F8)); // "smalfont.fnt"
+		LPCSTR const MEDIUM  = (LPCSTR(0x65F2EC)); // "MedFont.fnt"
+		LPCSTR const BIG     = (LPCSTR(0x660B24)); // "bigfont.fnt"
+		LPCSTR const VERDANA = (LPCSTR(0x6700B4)); // "Verd10B.fnt"
 	}
 
 	namespace TextAlignment
@@ -1110,6 +1110,8 @@ namespace NH3Dlg
 		LPCSTR const iSAVE_DEF        = "ISAVE.DEF";         // iSave.def 64x32
 		LPCSTR const BOX_64_32_PCX    = (LPCSTR(0x68C640));  // Box64x32.pcx
 		LPCSTR const GAME_TYPE_DEF    = (LPCSTR(0x683568));  // 32x24
+		LPCSTR const ICM005_DEF       = (LPCSTR(0x66FFD4));  // 48x36
+		LPCSTR const ALTART_DEF       = (LPCSTR(0x683178));  // 64x32
 	}
 	namespace HDassets
 	{

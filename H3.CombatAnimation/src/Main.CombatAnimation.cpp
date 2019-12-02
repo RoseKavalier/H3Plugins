@@ -9,8 +9,6 @@
 
 #include "Hooks.h"
 
-static LPCSTR PluginName = "H3.CombatAnimation";
-
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	static BOOL pluginOn = 0;
@@ -22,15 +20,16 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			pluginOn = TRUE;
 
 			// * not to be used outside SoD
-			if (h3_ExeVersion != h3_VersionSOD)
+			H3Version game;
+			if (!game.sod())
 				return TRUE;
 
 			Patcher *p = _P = GetPatcher();
 
 			// * make sure this plugin only installs once
-			if (!p->GetInstance(PluginName))
+			if (!p->GetInstance(PLUGIN_NAME))
 			{
-				_PI = p->CreateInstance(PluginName);
+				_PI = p->CreateInstance(PLUGIN_NAME);
 				PatcherInstance *pi = _PI;
 
 				Hooks_init(pi);

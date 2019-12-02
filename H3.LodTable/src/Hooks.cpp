@@ -37,12 +37,11 @@ DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(LPCSTR path)
 		return 0;
 
 	int lodCount = 0;
-	H3String folderPath, lodPath;
-	folderPath = path;
+	H3String folderPath(path);
 	if (folderPath.Last() != '\\')
 		folderPath += '\\';
 	// * make a copy
-	lodPath = folderPath;
+	H3String lodPath(folderPath);
 	// * add '*'
 	folderPath += '*';
 	WIN32_FIND_DATAA data;
@@ -89,6 +88,8 @@ DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(LPCSTR path)
 // * set to occur after game path is created
 _LHF_(FindAndLoadLODs)
 {
+	constexpr CHAR HD_PACKS_FOLDER[] = "_HD3_Data\\Packs\\";
+
 	HDIni *hdini = (HDIni*)_P->VarGetValue("HD.Ini.Main", NULL); // get HD.ini stored file data
 	if (hdini)
 	{
@@ -96,9 +97,8 @@ _LHF_(FindAndLoadLODs)
 		int num;
 		if (entry && (num = (*entry)->entryCount)) // are there any Plugin folders loaded?
 		{
-			H3String packPath;
-			packPath = h3_GamePath; // set game path
-			packPath.Append("_HD3_Data\\Packs\\", sizeof("_HD3_Data\\Packs\\") - 1); // add plugins general path
+			H3String packPath(h3_GamePath); // set game path
+			packPath.Append(HD_PACKS_FOLDER); // add plugins general path
 			int len = packPath.Length(); // backup current length, for quick reset of packs directory
 
 			for (int i = 0; i < num; i++)

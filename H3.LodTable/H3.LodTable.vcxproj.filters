@@ -11,21 +11,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hooks.h">
+    <ClInclude Include="include\Hooks.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="LodBase.h">
+    <ClInclude Include="include\LodBase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.LodTable.cpp">
+    <ClCompile Include="src\Hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks.cpp">
+    <ClCompile Include="src\LodBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LodBase.cpp">
+    <ClCompile Include="src\Main.LodTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

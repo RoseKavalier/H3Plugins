@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.CombatAnimation.cpp">
+    <ClCompile Include="src\Main.CombatAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks.cpp">
+    <ClCompile Include="src\Hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hooks.h">
+    <ClInclude Include="include\Hooks.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

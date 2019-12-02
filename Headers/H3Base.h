@@ -467,21 +467,36 @@ namespace h3vargs
 
 #pragma endregion
 
+#ifndef gameWidth
 // * the game dimensions
 #define gameWidth							IntAt(0x403401)
+#endif
+#ifndef gameHeight
 // * the game dimensions
 #define gameHeight							IntAt(0x4033FC)
+#endif
+#ifndef gameEdgeHorizontal
 // * the offset in tiles from center of screen to edges
 #define gameEdgeHorizontal					CharAt(0x4A8FC0)
+#endif
+#ifndef gameEdgeVertical
 // * the offset in tiles from center of screen to edges
 #define gameEdgeVertical					CharAt(0x4A8FC5)
+#endif
+#ifndef h3_MapSize
 // * the map dimensions, in tiles
 #define h3_MapSize							IntAt(0x6783C8)
+#endif
+#ifndef h3_BitMode
 #define h3_BitMode							ByteAt(0x5FA228 + 3) // typical 2, 4 means True graphic mode is used
+#endif
+#ifndef h3_TextBuffer
 // * 512 bytes of char buffer to be used
 #define h3_TextBuffer						((PCHAR)0x697428)
-// * "" null-string
-#define h3_NullString						((LPCSTR)0x691260)
+#endif
+
+// * "" string
+LPCSTR const h3_NullString = reinterpret_cast<const LPCSTR>(0x536228);
 
 // * checks for SoD, HotA and WoG/ERA
 class H3Version
@@ -818,6 +833,43 @@ inline int H3Numbers::MakeReadable(const int num, char * out, const int decimals
 	return dst - out;
 }
 
+// * a smart pointer sometimes seen in H3
+template <typename T>
+struct H3SmartPointer : H3Allocator
+{
+protected:
+	// * +0
+	BOOL8 m_used;
+	h3unk _f_01[3];
+	T* m_data;
+public:
+	H3SmartPointer(T* _Ptr = 0) :
+		m_used(_Ptr != 0), m_data(_Ptr)	{ }
+	H3SmartPointer(H3SmartPointer<T>& other) :
+		m_used(other.m_used), m_data(other.release()) { }
+
+#if CPLUSPLUS11
+	H3SmartPointer(H3SmartPointer<T>&& other) :
+		m_used(other.m_used), m_data(other.release()) { }
+#endif
+
+	~H3SmartPointer()
+	{
+		if (m_used)
+			delete m_data;
+	}
+
+	T* get() { return m_data; }
+	T* operator->() { return get(); }
+	T* release()
+	{
+		T* _Ptr = m_data;
+		m_used = FALSE;
+		m_data = nullptr;
+		return _Ptr;
+	}
+};
+
 // * a vector following the H3 format
 template<typename _Elem>
 struct H3Vector : public H3Allocator
@@ -897,8 +949,8 @@ public:
 	// * reserves a number of elements, always greater than current
 	BOOL Reserve(INT number);
 
-	// * returns pointer to element at pos, positive only
-	_Elem* operator[](INT32 pos);
+	// * returns reference to element at pos, positive only
+	_Elem& operator[](INT32 pos);
 	// * Adds item to end of list
 	_Elem* operator+=(_Elem & item);
 	// * Adds item to end of list
@@ -1284,7 +1336,7 @@ struct H3Bitfield
 
 	// * returns whether bit at position is set or not
 	// * position can exceed the scope of bitfield, meaning greater than 32 bits
-	BOOL GetState(INT32 position)
+	BOOL GetState(INT32 position) const
 	{
 		INT32 index = position >> 5;
 		INT32 pos = position & 0x1F;
@@ -2236,9 +2288,9 @@ inline BOOL H3Vector<_Elem>::Remove(INT32 pos)
 }
 
 template<typename _Elem>
-inline _Elem * H3Vector<_Elem>::operator[](INT32 pos)
+inline _Elem& H3Vector<_Elem>::operator[](INT32 pos)
 {
-	return m_first + pos;
+	return m_first[pos];
 }
 
 template<typename _Elem>

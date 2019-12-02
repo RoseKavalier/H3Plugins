@@ -1,8 +1,9 @@
 #include "Hooks.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "../ThirdParty/stb_image.h"
+
+#include "stb_image.h"
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include "../ThirdParty/stb_image_resize.h"
+#include "stb_image_resize.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -174,8 +175,8 @@ H3LoadedPCX16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR 
 	int req_height = height > 0 ? height : image.Height();
 
 	// * no use making something too large
-	req_width = min(req_width, gameWidth);
-	req_height = min(req_height, gameHeight);
+	req_width = std::min(req_width, gameWidth);
+	req_height = std::min(req_height, gameHeight);
 
 	if (req_width <= 0 || req_height <= 0)
 	{

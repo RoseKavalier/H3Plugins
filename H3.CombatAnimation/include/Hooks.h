@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../Headers/H3API.h"
+#include "H3API.h"
 
 // * Global Patcher
 extern Patcher *_P;

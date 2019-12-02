@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Hooks.cpp">
+    <ClCompile Include="src\Main.ShiftToggle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.ShiftToggle.cpp">
+    <ClCompile Include="src\Hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hooks.h">
+    <ClInclude Include="include\Hooks.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

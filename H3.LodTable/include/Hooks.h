@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../Headers/H3API.h"
+#include "H3API.h"
 
 // * Global Patcher
 extern Patcher *_P;
@@ -11,7 +11,7 @@ extern Patcher *_P;
 extern PatcherInstance *_PI;
 
 // * the number of LODs that can be loaded
-#define LOD_COUNT 1000
+constexpr INT LOD_COUNT = 1000;
 
 // * default LoD values
 #define h3_SoDLodTable 0x69D8A8

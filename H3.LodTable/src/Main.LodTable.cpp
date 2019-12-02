@@ -24,12 +24,14 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			pluginOn = TRUE;
 
 			// * make sure this plugin only installs once, not to be used outside SoD
-			if (LodTableCheck != h3_SoDLodTable || h3_ExeVersion != h3_VersionSOD)
+			H3Version game;
+
+			if (!game.sod() || LodTableCheck != h3_SoDLodTable)
 				return TRUE;
 
 			Patcher *p = _P = GetPatcher();
 
-			_PI = p->CreateInstance("H3.LodTable");
+			_PI = p->CreateInstance(PLUGIN_NAME);
 			PatcherInstance *pi = _PI;
 
 			Hooks_init(pi);

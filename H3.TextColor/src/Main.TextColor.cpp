@@ -29,9 +29,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			Patcher *p = _P = GetPatcher();
 
 			// * make sure this plugin only installs once
-			if (!p->GetInstance("H3.TextColor"))
+			if (!p->GetInstance(PLUGIN_NAME))
 			{
-				_PI = p->CreateInstance("H3.TextColor");
+				_PI = p->CreateInstance(PLUGIN_NAME);
 				PatcherInstance *pi = _PI;
 
 				Hooks_init(pi);

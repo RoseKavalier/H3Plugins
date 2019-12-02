@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			Patcher* p = _P = GetPatcher();
 			if (!p)
 				break;
-			PatcherInstance *pi = _PI = p->CreateInstance("H3.ToggleShift");
+			PatcherInstance *pi = _PI = p->CreateInstance(PLUGIN_NAME);
 			if (!pi)
 				break;
 			Hooks_init(pi);

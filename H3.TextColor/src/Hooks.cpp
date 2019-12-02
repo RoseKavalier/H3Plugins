@@ -1,4 +1,5 @@
 #include "Hooks.h"
+#include "H3API.h"
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +176,7 @@ _LHF_(TextPositionLineMiddle)
 // * Sets the correct color to use while using GDI mode ~16bit
 _LHF_(DrawCharColor)
 {
-	const INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 	{
 		c->eax = color;
@@ -187,7 +188,7 @@ _LHF_(DrawCharColor)
 // * Sets the correct color to use while using True mode
 _LHF_(TrueModeDrawCharColor)
 {
-	const INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 		c->eax = color;
 	return EXEC_DEFAULT;
@@ -196,7 +197,7 @@ _LHF_(TrueModeDrawCharColor)
 // * Sets the correct color to use while using Direct Draw
 _LHF_(DirectDrawCharColor)
 {
-	const INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 		c->ebp = color;
 	return EXEC_DEFAULT;
@@ -205,7 +206,7 @@ _LHF_(DirectDrawCharColor)
 // * Sets the correct color to use while using True Stretchable mode
 _LHF_(TrueStretchModeDrawCharColor)
 {
-	const INT32 color = *CharColors[CurrentPosition];
+	const INT32 color = CharColors[CurrentPosition];
 	if (color != NO_COLOR)
 	{
 		c->edi = color;

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../ThirdParty/INIReader.h"
+#include "INIReader.h"
 
 // * installs all TextColor hooks
 int Read_Ini();

@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hooks.h">
+    <ClInclude Include="include\Hooks.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ini.h">
+    <ClInclude Include="include\Ini.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.Battlefields.cpp">
+    <ClCompile Include="src\Main.Battlefields.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks.cpp">
+    <ClCompile Include="src\Hooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ini.cpp">
+    <ClCompile Include="src\Ini.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

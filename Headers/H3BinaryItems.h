@@ -266,6 +266,9 @@ struct H3ARGB888
 	UINT8 r;
 	UINT8 a;
 
+	UINT Value() const { return DwordAt(this); }
+	operator DWORD () const { return Value(); }
+
 	// * darkens pixel's color through HSV by amount
 	VOID Darken(const UINT8 amount)
 	{
@@ -294,6 +297,15 @@ struct H3ARGB888
 		b = rgb.b;
 	}
 
+	// * reorders pixels based on legacy drawing, pre - HDmod 5.0RC63
+	VOID Legacy()
+	{
+		const UINT8 tmp = a;
+		a = b;
+		b = g;
+		g = tmp;
+	}
+
 	H3ARGB888(UINT8 red, UINT8 blue, UINT8 green) :
 		g(green), b(blue), r(red), a(0xFF)	{}
 };
@@ -307,6 +319,8 @@ public:
 	UINT8 GetGreen() const { return (bits & 0x3E0) >> 5; }
 	UINT8 GetBlue()	 const { return bits & 0x1F; }
 	DWORD UnPack()	 const { return GetRed() << 16 | GetGreen() << 8 | GetBlue(); }
+
+	VOID SetBits(WORD color) { bits = color; }
 
 	static WORD Pack(UINT8 r, UINT8 g, UINT8 b) { return ((r / 8) & 0x1F) << 10 | ((g / 8) & 0x1F) << 5 | ((b / 8) & 0x1F);	}
 	static DWORD Unpack(RGB555 rgb) { return (((((rgb & 0x7C00) >> 10) * 255 + 15) / 31) << 16) + (((((rgb & 0x3E0) >> 5) * 255 + 31) / 63) << 8) + (((rgb & 0x1F) * 255 + 15) / 31); }
@@ -332,6 +346,9 @@ public:
 	H3RGB565(DWORD color) { PackRGB565((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF); }
 	H3RGB565(H3RGB888 color) { PackRGB565(color.r, color.g, color.b); }
 
+	operator WORD () const { return Value(); }
+
+	WORD Value() const { return WordAt(this); }
 	VOID SetBits(WORD color) { bits = color; }
 	WORD PackRGB565(UINT8 r, UINT8 g, UINT8 b) { return bits = Pack(r, g, b); }
 	WORD Pack(H3RGB888& rgb) { return bits = Pack(rgb.r, rgb.g, rgb.b); }
@@ -461,6 +478,27 @@ struct H3Palette565 : public H3BinaryItem
 	VOID ColorToPlayer(INT id) { FASTCALL_2(VOID, 0x6003E0, color, id); }
 	VOID RotateColors(INT min_index, INT max_index, INT count = -1) { THISCALL_4(VOID, 0x522E40, this, min_index, max_index, count); }
 	H3Palette565* Initiate() { return THISCALL_1(H3Palette565*, 0x522B40, this); }
+
+	// * as of HDmod 5.0 RC 63, Palette565 now contains a buffer o ARGB888 colors[256] located at &color[254]
+	// * http://heroescommunity.com/viewthread.php3?TID=44581&PID=1503736#focus
+	H3ARGB888* Get32bitColors()
+	{
+		if (type == 0x61)
+			return reinterpret_cast<H3ARGB888*>(PtrAt(&color[254]));
+		return nullptr;
+	}
+	VOID CopyPalette(H3Palette565& source)
+	{
+		if (type == 0x61)
+		{
+			F_memcpy(color, source.color, sizeof(color) - 4);
+			PDWORD dest = reinterpret_cast<PDWORD>(PtrAt(&color[254]));
+			PDWORD src = reinterpret_cast<PDWORD>(PtrAt(&source.color[254]));
+			F_memcpy(dest, src, 256 * sizeof(DWORD));
+		}
+		else
+			F_memcpy(color, source.color, sizeof(color));
+	}
 };
 
 struct H3Font : public H3BinaryItem
@@ -601,10 +639,10 @@ struct H3LoadedPCX16 : public H3BinaryItem // size 0x38 // vt 63B9C8
 	// * hue is on the scale 0~1 and represents the color scheme
 	// * saturation is also scaled between 0 ~ 1 and represents
 	// * value is fixed
-	VOID DrawHue(INT x, INT y, INT w, INT h, FLOAT hue, FLOAT saturation) { THISCALL_7(VOID, 0x44E610, this, x, y, w, h, hue, saturation); }
+	VOID DrawHue(INT x, INT y, INT w, INT h, FLOAT hue, FLOAT saturation) { THISCALL_7(VOID, 0x44E610, this, x, y, w, h, DwordAt(&hue), DwordAt(&saturation)); }
 
 	BOOL BackgroundRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL is_blue);
-	BOOL SimpleFrameRegion(INT32 x, INT32 y, INT32 w, INT32 h);
+	BOOL SimpleFrameRegion(INT32 x, INT32 y, INT32 _width, INT32 _height);
 	BOOL FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL statusBar, INT32 colorIndex, BOOL is_blue);
 
 	// * adds a 1 pixel border around the designated area to make it look
@@ -952,6 +990,11 @@ inline H3LoadedPCX16 * H3LoadedPCX16::Create(LPCSTR name, INT width, INT height)
 
 inline VOID H3LoadedPCX16::FillRectangle(INT x, INT y, INT w, INT h, BYTE r, BYTE g, BYTE b)
 {
+	//if (h3_BitMode == 4) // RGB888 mode
+	//	THISCALL_6(VOID, 0x44E190, this, x, y, w, h, H3ARGB888(r,g,b));
+	//else
+	//	THISCALL_6(VOID, 0x44E190, this, x, y, w, h, H3RGB565(r,g,b));
+
 	if (x >= width || x < 0 || y >= height || y < 0 || !buffer)
 		return;
 	INT _w = std::min(w, width - x);
@@ -1454,7 +1497,7 @@ inline VOID H3LoadedPCX::DrawToPcx(int src_x, int src_y, const int dx, const int
 
 	if (copy_palette)
 	{
-		F_memcpy(pcx_dest->palette565.color, palette565.color, sizeof(palette565.color));
+		pcx_dest->palette565.CopyPalette(palette565);
 		F_memcpy(pcx_dest->palette888.color, palette888.color, sizeof(palette888.color));
 	}
 }

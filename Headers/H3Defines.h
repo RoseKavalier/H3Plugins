@@ -91,15 +91,19 @@
 #define h3_ResourceName(type)				StrAt(0x6A5ECC + 4 * (type))
 #define h3_RandomSignText(type)				StrAt(0x696CC4 + 4 * (type))
 #define h3_PlayerColor(type)				StrAt(0x6A7E60 + 4 * (type))
+#define h3_DwellingNames1(type)				StrAt(0x69154C + 4 * (type))
+#define h3_DwellingNames4(type)				StrAt(0x6913A4 + 4 * (type))
 #define h3_ExeVersion						PtrAt(0x588479)
 #define h3_VersionSOD						0xFFFFE403
 #define h3_SaveName							((PCHAR)0x69FC88)
-#define h3_QuestsText						((H3QuestText*)0x69F148)
-#define h3_SeersText						((H3QuestText*)0x69E788)
+#define h3_QuestsText						((H3QuestText*)0x69E788)
+#define h3_SeersText						((H3QuestText*)0x69F148)
 #define h3_NeutralBuildingCosts				(*(H3NeutralBuildingCosts*)(0x5C1509 + 3))
 #define h3_SpecialBuildingCosts				(*(H3SpecialBuildingCosts**)(0x5C1539 + 3))
 #define h3_DwellingBuildingCosts			(*(H3DwellingBuildingCosts**)(0x5C1566 + 3))
 #define h3_TownDependencies					(*(H3TownDependencies**)(0x5D6015 + 3))
+#define h3_SecondarySkillsInfo				(*(H3SecondarySkillInfo**)(0x67DCF0))
+#define h3_SecondarySkillLevel(level)		StrAt(0x6A75D4 + 4 * (level))
 
 // Pointers P_ from Heroes3.exe
 #define P_GeneralText						(*(H3ColumnTextFile**)0x6A5DC4)
