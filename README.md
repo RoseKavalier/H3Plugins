@@ -19,6 +19,10 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** headers and p
 **H3.CombatAnimation**
 >Cycles through combat creatures' standing animation frames instead of being idle. Included with SoD_SP.
 
+**H3.ImageLoader**
+>Loads image from given directory as H3LoadedPcx16*.
+*Supported formats*: JPG, PNG, TGA, BMP, PSD, GIF, HDR, PIC thanks to [stb_image](https://github.com/nothings/stb)
+
 **SoD_SP**
 >Description is currently only available [here](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#).
 
