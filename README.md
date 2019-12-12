@@ -1,6 +1,6 @@
 # H3Plugins
 
-Welcome to the home of the Heroes of Might and Magic III **H3API** headers and plugins made using them. This repository will also be used to distribute the **SoD_SP** plugin which is coded using the same headers.
+Welcome to the home of the Heroes of Might and Magic III **H3API** library and plugins made using them. This repository will also be used to distribute the **SoD_SP** plugin which is coded using the same library.
 
 ## Description
 
@@ -30,11 +30,10 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** headers and p
 
 Releases are available [here](https://github.com/RoseKavalier/H3Plugins/releases).
 
-## Obtaining and using the H3API Headers
+## Obtaining and using the H3API library
 
-A release for the headers might be updated from time to time, however your best bet is to clone them directly.
-In order to use the headers, add them to a folder of your choice and then add this line to your project:
-> #include "{_...relativepath..._}/H3API.h"
+A release for the library's contents might be updated from time to time, however your best bet is to clone the solution directly.
+See [here](https://github.com/RoseKavalier/H3Plugins/tree/master/H3API/lib) for more information on using H3API.
 
 The H3API headers were successfully tested using the 2008, 2013, 2015, 2017 and 2019 versions of MSVC.
 You may freely use and distribute the headers, however it would be nice of you to leave the disclaimers intact.
