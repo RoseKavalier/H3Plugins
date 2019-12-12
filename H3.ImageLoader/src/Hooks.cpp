@@ -5,6 +5,8 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "stb_image_resize.h"
 
+using namespace h3;
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -128,8 +130,6 @@ public:
 	// * @h3name - the name to use within the H3 assets (to recuperate the image later)
 	// * @width and @height are optional, but can be used to resize the image
 	virtual H3LoadedPCX16* LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width = -1, INT height = -1) override;
-
-
 }InternalImageLoader;
 
 H3Plugin::ImageLoader::H3ImageLoader * GetImageLoader_()
@@ -171,8 +171,8 @@ H3LoadedPCX16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR 
 	if (!image.Valid())
 		return nullptr;
 
-	int req_width = width > 0 ? width : image.Width();
-	int req_height = height > 0 ? height : image.Height();
+	INT32 req_width = width > 0 ? width : image.Width();
+	INT32 req_height = height > 0 ? height : image.Height();
 
 	// * no use making something too large
 	req_width = std::min(req_width, gameWidth);

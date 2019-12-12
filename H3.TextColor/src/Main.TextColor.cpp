@@ -23,8 +23,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			pluginOn = TRUE;
 
 			// * not to be used outside SoD
-			if (h3_ExeVersion != h3_VersionSOD)
-				return TRUE;
+			h3::H3Version version;
+			if (!version.sod())
+				break;
 
 			Patcher *p = _P = GetPatcher();
 

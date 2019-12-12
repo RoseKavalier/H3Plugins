@@ -1,9 +1,8 @@
 #ifndef _HOOKS_H_
 #define _HOOKS_H_
 
-#pragma once
-
-#include "H3API.h"
+#define _H3API_PATCHER_X86_
+#include "H3API.hpp"
 
 // * Global Patcher
 extern Patcher *_P;

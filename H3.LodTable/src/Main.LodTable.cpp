@@ -24,7 +24,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			pluginOn = TRUE;
 
 			// * make sure this plugin only installs once, not to be used outside SoD
-			H3Version game;
+			h3::H3Version game;
 
 			if (!game.sod() || LodTableCheck != h3_SoDLodTable)
 				return TRUE;

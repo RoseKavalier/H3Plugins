@@ -36,7 +36,7 @@ struct H3LodTypes
 };
 
 // * new Lod table
-extern H3Lod LodTable[LOD_COUNT];
+extern h3::H3Lod LodTable[LOD_COUNT];
 // * the number of LODs existing, 8 by default
 extern INT lastLod;
 

@@ -185,7 +185,7 @@ _LHF_(NewBattleGrounds)
 	if (INT maxValue = CustomScenes[sceneID].count)
 	{
 		// * pick a random scene (or not, depends on user choice)
-		INT randScene = H3Random::RandBetween(minScene, maxValue);
+		INT randScene = h3::H3Random::RandBetween(minScene, maxValue);
 		// * the scene is not default
 		if (randScene)
 		{
@@ -201,7 +201,7 @@ void Hooks_init(PatcherInstance *pi)
 {
 	// * not using h3's random function in order
 	// * to avoid contaminating battle rng seed
-	srand(F_GetTime());
+	srand(h3::F_GetTime());
 
 	pi->WriteLoHook(0x463833, NewBattleGrounds);
 }

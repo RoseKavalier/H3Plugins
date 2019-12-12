@@ -1,5 +1,4 @@
 #include "LodBase.h"
-#include "../Headers/H3API.h"
 
 // * existing H3LodType sequence, with room to add
 INT H3LodTypes::sequence[4][3][LOD_COUNT] =
@@ -24,10 +23,10 @@ H3LodBase * H3LodBase::Create(LPCSTR lodName, LPCSTR lodPath)
 	if (!lodName || !lodPath || lastLod >= LOD_COUNT)
 		return NULL;
 
-	F_strncpy(this->name, lodName, 31);
+	h3::F_strncpy(this->name, lodName, 31);
 	this->name[31] = 0;
 	this->index = lastLod + 1;
-	memset(&LodTable[this->index], 0, sizeof(H3Lod));
+	memset(&LodTable[this->index], 0, sizeof(h3::H3Lod));
 	LodTable[this->index].Create(this->name);
 	this->LoadItem(lodPath);
 

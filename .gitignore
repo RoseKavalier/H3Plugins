@@ -18,3 +18,12 @@
 *.ipdb
 *.exp
 *.lib
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+*.ilk
+*.cache
+*.png
+*.bmp
+H3.Plugin.Template/bin/Release/H3.Plugin.Template.vsix

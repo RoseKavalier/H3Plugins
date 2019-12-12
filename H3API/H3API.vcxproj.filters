@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lib">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="lib\h3api">
+      <UniqueIdentifier>{c281e880-be59-45a8-999f-ff092c094928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Base">
+      <UniqueIdentifier>{45d1e479-7cf1-4317-b885-3259f7ad5b09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3BinaryItems">
+      <UniqueIdentifier>{4139521c-c108-46d5-a466-bc85ef8735ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Vector">
+      <UniqueIdentifier>{1b70f2db-466a-4aec-bbc7-78f3dd8d0e54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Tree">
+      <UniqueIdentifier>{76c4d9cd-4261-467e-9e64-89d46c60cad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Plugins">
+      <UniqueIdentifier>{44ae8aa3-b66a-46ef-933f-5508bcd7b463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Structures">
+      <UniqueIdentifier>{cb25568a-c957-40db-94e6-28e27d956d6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3String">
+      <UniqueIdentifier>{d90e1daf-3d31-4bb1-8546-134f239428f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3StreamBuf">
+      <UniqueIdentifier>{667d8c20-a8d7-4ae6-8419-01d408207730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Stream">
+      <UniqueIdentifier>{3d4898dc-58b5-4c5a-8b80-4248b2b99fdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3RMG">
+      <UniqueIdentifier>{01c3952f-8f11-469f-94c9-a681a6abb05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Plugins\Interface">
+      <UniqueIdentifier>{8e8ad96d-894d-4f4a-b55e-3dd40d0a1c12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Memory">
+      <UniqueIdentifier>{e3957631-0604-4a18-b9d0-12c1182805de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3MapItems">
+      <UniqueIdentifier>{6d64687f-8c36-4ba5-b532-fc678712d7e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3LOD">
+      <UniqueIdentifier>{fedd90ff-c238-4d0d-b6fd-33baeac3b837}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Ini">
+      <UniqueIdentifier>{f2313c9a-c2b3-4ab6-b417-753f2c022670}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Functions">
+      <UniqueIdentifier>{ef28cb8d-ee89-414d-b373-9e4d4077836c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Exception">
+      <UniqueIdentifier>{22ee7ee2-6265-47cd-a44c-75434a1b244c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Dialogs">
+      <UniqueIdentifier>{ddb4dadb-2cea-4a74-9d42-45d20949873d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\h3api\H3Defines">
+      <UniqueIdentifier>{b97b296c-20bb-41ce-b169-24a44bc830f1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\H3API.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\patcher_x86.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Base.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_BinaryItems.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Constants.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Core.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Defines.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Dialogs.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Exception.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Functions.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Ini.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_LOD.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_MapItems.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Memory.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Plugins.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_RMG.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Stream.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_StreamBuf.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_String.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Structures.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Tree.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Vector.hpp">
+      <Filter>lib\h3api</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Base\H3Base.hpp">
+      <Filter>lib\h3api\H3Base</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3BinaryItems\H3BinaryItems.hpp">
+      <Filter>lib\h3api\H3BinaryItems</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Vector\H3Vector.hpp">
+      <Filter>lib\h3api\H3Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Tree\H3Tree.hpp">
+      <Filter>lib\h3api\H3Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Structures\H3Structures.hpp">
+      <Filter>lib\h3api\H3Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3String\H3String.hpp">
+      <Filter>lib\h3api\H3String</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3StreamBuf\H3StreamBuf.hpp">
+      <Filter>lib\h3api\H3StreamBuf</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Stream\H3Stream.hpp">
+      <Filter>lib\h3api\H3Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3RMG\H3RMG.hpp">
+      <Filter>lib\h3api\H3RMG</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Plugins\Interface\H3TextColor.hpp">
+      <Filter>lib\h3api\H3Plugins\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Plugins\H3Plugins.hpp">
+      <Filter>lib\h3api\H3Plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Memory\H3Memory.hpp">
+      <Filter>lib\h3api\H3Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3MapItems\H3MapItems.hpp">
+      <Filter>lib\h3api\H3MapItems</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3LOD\H3LOD.hpp">
+      <Filter>lib\h3api\H3LOD</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Ini\H3Ini.hpp">
+      <Filter>lib\h3api\H3Ini</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Plugins\Interface\H3ImageLoader.hpp">
+      <Filter>lib\h3api\H3Plugins\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Functions\H3Functions.hpp">
+      <Filter>lib\h3api\H3Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Exception\H3Exception.hpp">
+      <Filter>lib\h3api\H3Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Dialogs\H3Dialogs.hpp">
+      <Filter>lib\h3api\H3Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Defines\H3Defines.hpp">
+      <Filter>lib\h3api\H3Defines</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\h3api\H3Base\H3Base.cpp">
+      <Filter>lib\h3api\H3Base</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3BinaryItems\H3BinaryItems.cpp">
+      <Filter>lib\h3api\H3BinaryItems</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Vector\H3Vector.cpp">
+      <Filter>lib\h3api\H3Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Defines\H3Defines.cpp">
+      <Filter>lib\h3api\H3Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Dialogs\H3Dialogs.cpp">
+      <Filter>lib\h3api\H3Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Exception\H3Exception.cpp">
+      <Filter>lib\h3api\H3Exception</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Functions\H3Functions.cpp">
+      <Filter>lib\h3api\H3Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Ini\H3Ini.cpp">
+      <Filter>lib\h3api\H3Ini</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3LOD\H3LOD.cpp">
+      <Filter>lib\h3api\H3LOD</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3MapItems\H3MapItems.cpp">
+      <Filter>lib\h3api\H3MapItems</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Memory\H3Memory.cpp">
+      <Filter>lib\h3api\H3Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Plugins\H3Plugins.cpp">
+      <Filter>lib\h3api\H3Plugins</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3RMG\H3RMG.cpp">
+      <Filter>lib\h3api\H3RMG</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Stream\H3Stream.cpp">
+      <Filter>lib\h3api\H3Stream</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3StreamBuf\H3StreamBuf.cpp">
+      <Filter>lib\h3api\H3StreamBuf</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3String\H3String.cpp">
+      <Filter>lib\h3api\H3String</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Structures\H3Structures.cpp">
+      <Filter>lib\h3api\H3Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\h3api\H3Tree\H3Tree.cpp">
+      <Filter>lib\h3api\H3Tree</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\h3api\H3Base\H3Base.inl">
+      <Filter>lib\h3api\H3Base</Filter>
+    </None>
+    <None Include="lib\h3api\H3BinaryItems\H3BinaryItems.inl">
+      <Filter>lib\h3api\H3BinaryItems</Filter>
+    </None>
+    <None Include="lib\h3api\H3Vector\H3Vector.inl">
+      <Filter>lib\h3api\H3Vector</Filter>
+    </None>
+    <None Include="lib\h3api\H3Tree\H3Tree.inl">
+      <Filter>lib\h3api\H3Tree</Filter>
+    </None>
+    <None Include="lib\h3api\H3Structures\H3Structures.inl">
+      <Filter>lib\h3api\H3Structures</Filter>
+    </None>
+    <None Include="lib\h3api\H3String\H3String.inl">
+      <Filter>lib\h3api\H3String</Filter>
+    </None>
+    <None Include="lib\h3api\H3StreamBuf\H3StreamBuf.inl">
+      <Filter>lib\h3api\H3StreamBuf</Filter>
+    </None>
+    <None Include="lib\h3api\H3Stream\H3Stream.inl">
+      <Filter>lib\h3api\H3Stream</Filter>
+    </None>
+    <None Include="lib\h3api\H3RMG\H3RMG.inl">
+      <Filter>lib\h3api\H3RMG</Filter>
+    </None>
+    <None Include="lib\h3api\H3Plugins\H3Plugins.inl">
+      <Filter>lib\h3api\H3Plugins</Filter>
+    </None>
+    <None Include="lib\h3api\H3Memory\H3Memory.inl">
+      <Filter>lib\h3api\H3Memory</Filter>
+    </None>
+    <None Include="lib\h3api\H3MapItems\H3MapItems.inl">
+      <Filter>lib\h3api\H3MapItems</Filter>
+    </None>
+    <None Include="lib\h3api\H3LOD\H3LOD.inl">
+      <Filter>lib\h3api\H3LOD</Filter>
+    </None>
+    <None Include="lib\h3api\H3Ini\H3Ini.inl">
+      <Filter>lib\h3api\H3Ini</Filter>
+    </None>
+    <None Include="lib\h3api\H3Functions\H3Functions.inl">
+      <Filter>lib\h3api\H3Functions</Filter>
+    </None>
+    <None Include="lib\h3api\H3Exception\H3Exception.inl">
+      <Filter>lib\h3api\H3Exception</Filter>
+    </None>
+    <None Include="lib\h3api\H3Dialogs\H3Dialogs.inl">
+      <Filter>lib\h3api\H3Dialogs</Filter>
+    </None>
+    <None Include="lib\h3api\H3Defines\H3Defines.inl">
+      <Filter>lib\h3api\H3Defines</Filter>
+    </None>
+  </ItemGroup>
+</Project>
