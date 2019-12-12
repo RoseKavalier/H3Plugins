@@ -1,5 +1,7 @@
 #include "Hooks.h"
 
+using namespace h3;
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -22,7 +24,7 @@ PatcherInstance *_PI;
 // * milliseconds
 constexpr INT TIME_BETWEEN_ANIMATION = 95;
 
-int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
+int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 {
 	// can't use the default creature time reference
 	// it would prevent random animations
@@ -35,7 +37,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 		{
 			auto mon = &combat->stacks[side][i];
 			// under these conditions, a creature should not be animated
-			if (mon->type == NH3Creatures::ARROW_TOWER
+			if (mon->type == cst::NH3Creatures::ARROW_TOWER
 				|| mon->info.flags.CANNOTMOVE
 				|| mon->activeSpellsDuration[H3Spell::BLIND]
 				|| mon->activeSpellsDuration[H3Spell::PARALYZE]

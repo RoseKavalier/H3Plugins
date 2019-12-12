@@ -4,7 +4,8 @@
 #pragma once
 
 #define _H3API_PLUGINS_
-#include "H3API.h"
+#define _H3API_PATCHER_X86_
+#include "H3API.hpp"
 
 // * Global Patcher
 extern Patcher *_P;
@@ -14,6 +15,6 @@ extern PatcherInstance *_PI;
 // * installs all TextColor hooks
 void Hooks_init(PatcherInstance *pi);
 
-extern "C" __declspec(dllexport) H3Plugin::TextColor::H3TextColorInformation *GetTextColor_();
+extern "C" __declspec(dllexport) h3::H3Plugin::TextColor::H3TextColorInformation *GetTextColor_();
 
 #endif /* #define _HOOKS_H_ */

@@ -1,6 +1,8 @@
 #include "Hooks.h"
 #include "LodBase.h"
 
+using namespace h3;
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -93,9 +95,9 @@ _LHF_(FindAndLoadLODs)
 	HDIni *hdini = (HDIni*)_P->VarGetValue("HD.Ini.Main", NULL); // get HD.ini stored file data
 	if (hdini)
 	{
-		HDIniEntry **entry = hdini->FindEntry("Packs"); // find <Packs> entry
+		HDIniEntry *entry = hdini->FindEntry("Packs"); // find <Packs> entry
 		int num;
-		if (entry && (num = (*entry)->entryCount)) // are there any Plugin folders loaded?
+		if (entry && (num = entry->entryCount)) // are there any Plugin folders loaded?
 		{
 			H3String packPath(h3_GamePath); // set game path
 			packPath.Append(HD_PACKS_FOLDER); // add plugins general path
@@ -104,9 +106,9 @@ _LHF_(FindAndLoadLODs)
 			for (int i = 0; i < num; i++)
 			{
 				entry++; // get next entry, which is next pack
-				packPath += (*entry)->GetText(); // add pack name to ...\_HD3_Data\Packs\ path
+				packPath += entry->GetText(); // add pack name to ...\_HD3_Data\Packs\ path
 				packPath += '\\';
-				LoadLodsFromFolder(packPath.String()); // load all LODs and PACs from this folder
+				LoadLodsFromFolder(packPath); // load all LODs and PACs from this folder
 				packPath.Truncate(len); // remove current pack name
 			}
 		}

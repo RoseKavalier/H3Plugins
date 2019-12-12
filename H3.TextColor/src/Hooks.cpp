@@ -1,5 +1,6 @@
 #include "Hooks.h"
-#include "H3API.h"
+
+using namespace h3;
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -228,11 +229,19 @@ _LHF_(ParseText) // 0x4B5255
 	PCHAR current = TextParser.Begin();
 	INT32 currentColor = NO_COLOR;
 
-	// * resets vector position
-	// * I don't usually recommend this
-	// * but these are integers and so
-	// * there's nothing forgotten in limbo
-	CharColors.m_end = CharColors.m_first;
+	// * resets vector data
+	// * I wouldn't recommend this but these are
+	// * integers and so there's nothing forgotten in limbo
+	struct VectorReset
+	{
+		int _init;
+		int begin;
+		int end;
+		int capacity;
+
+		void reset() { end = begin; }
+	};
+	reinterpret_cast<VectorReset*>(&CharColors)->reset();
 
 	for (INT i = 0; i < len; i++, current++)
 	{
@@ -373,7 +382,7 @@ _LHF_(MainHook)
 			InternalTextColor.mode = InternalTextColor.CM_555;
 	}
 
-	H3Stream colors(ColorTextFile, H3Stream::SM_READ_BINARY, TRUE);
+	H3Stream colors(ColorTextFile, H3Stream::StreamMode::SM_READ_BINARY, TRUE);
 	H3Vector<H3String> ColorsList;
 
 	if (colors.IsReady())
@@ -397,7 +406,7 @@ _LHF_(MainHook)
 				color_value.Trim();
 
 				// * convert text to hexadecimal number
-				INT32 rgb = INT32(F_strtoul(color_value.String(), 16) & 0xFFFFFF);
+				INT32 rgb = INT32(F_strtoul(color_value, 16) & 0xFFFFFF);
 
 				// * pack if needed
 				switch (InternalTextColor.mode)

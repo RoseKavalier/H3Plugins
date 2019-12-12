@@ -18,3 +18,11 @@
 *.ipdb
 *.exp
 *.lib
+*.lock
+*.ide
+*.ide-shm
+*.ide-wal
+*.ilk
+*.cache
+*.png
+*.bmp

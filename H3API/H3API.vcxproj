@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\H3API.hpp" />
+    <ClInclude Include="lib\h3api\H3BinaryItems\H3BinaryItems.hpp" />
+    <ClInclude Include="lib\h3api\H3Defines\H3Defines.hpp" />
+    <ClInclude Include="lib\h3api\H3Dialogs\H3Dialogs.hpp" />
+    <ClInclude Include="lib\h3api\H3Exception\H3Exception.hpp" />
+    <ClInclude Include="lib\h3api\H3Functions\H3Functions.hpp" />
+    <ClInclude Include="lib\h3api\H3Ini\H3Ini.hpp" />
+    <ClInclude Include="lib\h3api\H3LOD\H3LOD.hpp" />
+    <ClInclude Include="lib\h3api\H3MapItems\H3MapItems.hpp" />
+    <ClInclude Include="lib\h3api\H3Memory\H3Memory.hpp" />
+    <ClInclude Include="lib\h3api\H3Plugins\H3Plugins.hpp" />
+    <ClInclude Include="lib\h3api\H3Plugins\Interface\H3ImageLoader.hpp" />
+    <ClInclude Include="lib\h3api\H3Plugins\Interface\H3TextColor.hpp" />
+    <ClInclude Include="lib\h3api\H3RMG\H3RMG.hpp" />
+    <ClInclude Include="lib\h3api\H3StreamBuf\H3StreamBuf.hpp" />
+    <ClInclude Include="lib\h3api\H3Stream\H3Stream.hpp" />
+    <ClInclude Include="lib\h3api\H3String\H3String.hpp" />
+    <ClInclude Include="lib\h3api\H3Structures\H3Structures.hpp" />
+    <ClInclude Include="lib\h3api\H3Tree\H3Tree.hpp" />
+    <ClInclude Include="lib\h3api\H3Vector\H3Vector.hpp" />
+    <ClInclude Include="lib\h3api\H3_Base.hpp" />
+    <ClInclude Include="lib\h3api\H3_BinaryItems.hpp" />
+    <ClInclude Include="lib\h3api\H3_Constants.hpp" />
+    <ClInclude Include="lib\h3api\H3_Core.hpp" />
+    <ClInclude Include="lib\h3api\H3Base\H3Base.hpp" />
+    <ClInclude Include="lib\h3api\H3_Defines.hpp" />
+    <ClInclude Include="lib\h3api\H3_Dialogs.hpp" />
+    <ClInclude Include="lib\h3api\H3_Exception.hpp" />
+    <ClInclude Include="lib\h3api\H3_Functions.hpp" />
+    <ClInclude Include="lib\h3api\H3_Ini.hpp" />
+    <ClInclude Include="lib\h3api\H3_LOD.hpp" />
+    <ClInclude Include="lib\h3api\H3_MapItems.hpp" />
+    <ClInclude Include="lib\h3api\H3_Memory.hpp" />
+    <ClInclude Include="lib\h3api\H3_Plugins.hpp" />
+    <ClInclude Include="lib\h3api\H3_RMG.hpp" />
+    <ClInclude Include="lib\h3api\H3_Stream.hpp" />
+    <ClInclude Include="lib\h3api\H3_StreamBuf.hpp" />
+    <ClInclude Include="lib\h3api\H3_String.hpp" />
+    <ClInclude Include="lib\h3api\H3_Structures.hpp" />
+    <ClInclude Include="lib\h3api\H3_Tree.hpp" />
+    <ClInclude Include="lib\h3api\H3_Vector.hpp" />
+    <ClInclude Include="lib\patcher_x86.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\h3api\H3Base\H3Base.cpp" />
+    <ClCompile Include="lib\h3api\H3BinaryItems\H3BinaryItems.cpp" />
+    <ClCompile Include="lib\h3api\H3Defines\H3Defines.cpp" />
+    <ClCompile Include="lib\h3api\H3Dialogs\H3Dialogs.cpp" />
+    <ClCompile Include="lib\h3api\H3Exception\H3Exception.cpp" />
+    <ClCompile Include="lib\h3api\H3Functions\H3Functions.cpp" />
+    <ClCompile Include="lib\h3api\H3Ini\H3Ini.cpp" />
+    <ClCompile Include="lib\h3api\H3LOD\H3LOD.cpp" />
+    <ClCompile Include="lib\h3api\H3MapItems\H3MapItems.cpp" />
+    <ClCompile Include="lib\h3api\H3Memory\H3Memory.cpp" />
+    <ClCompile Include="lib\h3api\H3Plugins\H3Plugins.cpp" />
+    <ClCompile Include="lib\h3api\H3RMG\H3RMG.cpp" />
+    <ClCompile Include="lib\h3api\H3StreamBuf\H3StreamBuf.cpp" />
+    <ClCompile Include="lib\h3api\H3Stream\H3Stream.cpp" />
+    <ClCompile Include="lib\h3api\H3String\H3String.cpp" />
+    <ClCompile Include="lib\h3api\H3Structures\H3Structures.cpp" />
+    <ClCompile Include="lib\h3api\H3Tree\H3Tree.cpp" />
+    <ClCompile Include="lib\h3api\H3Vector\H3Vector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\h3api\H3Base\H3Base.inl" />
+    <None Include="lib\h3api\H3BinaryItems\H3BinaryItems.inl" />
+    <None Include="lib\h3api\H3Defines\H3Defines.inl" />
+    <None Include="lib\h3api\H3Dialogs\H3Dialogs.inl" />
+    <None Include="lib\h3api\H3Exception\H3Exception.inl" />
+    <None Include="lib\h3api\H3Functions\H3Functions.inl" />
+    <None Include="lib\h3api\H3Ini\H3Ini.inl" />
+    <None Include="lib\h3api\H3LOD\H3LOD.inl" />
+    <None Include="lib\h3api\H3MapItems\H3MapItems.inl" />
+    <None Include="lib\h3api\H3Memory\H3Memory.inl" />
+    <None Include="lib\h3api\H3Plugins\H3Plugins.inl" />
+    <None Include="lib\h3api\H3RMG\H3RMG.inl" />
+    <None Include="lib\h3api\H3StreamBuf\H3StreamBuf.inl" />
+    <None Include="lib\h3api\H3Stream\H3Stream.inl" />
+    <None Include="lib\h3api\H3String\H3String.inl" />
+    <None Include="lib\h3api\H3Structures\H3Structures.inl" />
+    <None Include="lib\h3api\H3Tree\H3Tree.inl" />
+    <None Include="lib\h3api\H3Vector\H3Vector.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{405B8023-D064-492D-A0DF-89B070B26923}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>H3API</RootNamespace>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\msvc $(VisualStudioVersion)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\msvc $(VisualStudioVersion)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_H3API_LIBRARY_;_H3API_PLUGINS_;_H3API_EXCEPTION_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_OPERATORS_;_H3API_EXCEPTION_;_H3API_DONT_USE_MACROS_;_H3API_PLUGINS_;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)src;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_H3API_OPERATORS_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_EXCEPTION_;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)src;</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

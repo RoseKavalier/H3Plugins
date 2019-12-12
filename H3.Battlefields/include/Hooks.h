@@ -3,7 +3,8 @@
 
 #pragma once
 
-#include "../Headers/H3API.h"
+#define _H3API_PATCHER_X86_
+#include "H3API.hpp"
 
 // * 20 valid scenes
 #define SCENE_COUNT 20

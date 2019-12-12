@@ -20,7 +20,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 			pluginOn = TRUE;
 
 			// * not to be used outside SoD
-			H3Version game;
+			h3::H3Version game;
 			if (!game.sod())
 				return TRUE;
 

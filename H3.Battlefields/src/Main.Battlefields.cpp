@@ -31,7 +31,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 				Hooks_init(pi);
 			}
 			else
-				H3Error::_ShowError(L"An error occured while trying to read 'Battlefields.ini'.\n\nThe Plugin will not be loaded.");
+				h3::H3Error::_ShowError(L"An error occured while trying to read 'Battlefields.ini'.\n\nThe Plugin will not be loaded.");
 		}
 		break;
 
