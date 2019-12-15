@@ -112,6 +112,7 @@
 #ifndef _H3API_HPP_
 #define _H3API_HPP_
 
+#include "h3api/H3_Allocator.hpp"
 #include "h3api/H3_Base.hpp"
 #include "h3api/H3_BinaryItems.hpp"
 #include "h3api/H3_Constants.hpp"
@@ -143,6 +144,11 @@
 #ifdef _H3API_PATCHER_X86_
 // * include H3API's version of patcher_x86 header
 #include "patcher_x86.hpp"
+#endif
+
+#ifdef _H3API_OPERATORS_
+// * include H3API operators
+#include "h3api/H3_Operators.hpp"
 #endif
 
 #endif /* #define _H3API_HPP_ */

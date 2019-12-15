@@ -193,6 +193,18 @@
     <ClInclude Include="lib\h3api\H3Defines\H3Defines.hpp">
       <Filter>lib\h3api\H3Defines</Filter>
     </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Allocator.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3_Operators.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Allocator\H3Allocator.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\h3api\H3Operators\H3Operators.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\h3api\H3Base\H3Base.cpp">
@@ -249,6 +261,8 @@
     <ClCompile Include="lib\h3api\H3Tree\H3Tree.cpp">
       <Filter>lib\h3api\H3Tree</Filter>
     </ClCompile>
+    <ClCompile Include="lib\h3api\H3Allocator\H3Allocator.cpp" />
+    <ClCompile Include="lib\h3api\H3Operators\H3Operators.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\h3api\H3Base\H3Base.inl">
@@ -304,6 +318,12 @@
     </None>
     <None Include="lib\h3api\H3Defines\H3Defines.inl">
       <Filter>lib\h3api\H3Defines</Filter>
+    </None>
+    <None Include="lib\h3api\H3Allocator\H3Allocator.inl">
+      <Filter>lib</Filter>
+    </None>
+    <None Include="lib\h3api\H3Operators\H3Operators.inl">
+      <Filter>lib</Filter>
     </None>
   </ItemGroup>
 </Project>

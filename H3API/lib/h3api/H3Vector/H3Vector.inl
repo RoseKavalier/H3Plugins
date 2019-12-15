@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-05                       //
+//                      Last edit: 2019-12-15                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -16,106 +16,115 @@
 
 namespace h3
 {
-	template<typename _Elem>
-	inline H3Vector<_Elem>::H3Vector(const int number_elements) :
+	template<typename _Elem, class _Alloc>
+	inline _Elem * H3Vector<_Elem, _Alloc>::Allocate(UINT number)
+	{
+		return _Alloc().allocate(number);
+	}
+	template<typename _Elem, class _Alloc>
+	inline VOID H3Vector<_Elem, _Alloc>::Deallocate()
+	{
+		_Alloc().deallocate(m_first);		
+	}
+	template<typename _Elem, class _Alloc>
+	inline H3Vector<_Elem, _Alloc>::H3Vector(const int number_elements) :
 		m_first(nullptr),
 		m_end(nullptr),
 		m_capacity(nullptr)
 	{
 		Reserve(number_elements);
 	}
-	template<typename _Elem>
-	inline H3Vector<_Elem>::H3Vector() :
+	template<typename _Elem, class _Alloc>
+	inline H3Vector<_Elem, _Alloc>::H3Vector() :
 		m_first(nullptr),
 		m_end(nullptr),
 		m_capacity(nullptr)
 	{
 	}
-	template<typename _Elem>
-	inline H3Vector<_Elem>::~H3Vector()
+	template<typename _Elem, class _Alloc>
+	inline H3Vector<_Elem, _Alloc>::~H3Vector()
 	{
 		if (m_first)
-			delete[] m_first;
+			Deallocate();
 		m_first = nullptr;
 		m_end = nullptr;
 		m_capacity = nullptr;
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::begin()
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::begin()
 	{
 		return m_first;
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::end()
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::end()
 	{
 		return m_end;
 	}
-	template<typename _Elem>
-	inline VOID H3Vector<_Elem>::Init()
+	template<typename _Elem, class _Alloc>
+	inline VOID H3Vector<_Elem, _Alloc>::Init()
 	{
 		m_first = nullptr;
 		m_end = nullptr;
 		m_capacity = nullptr;
 	}
-	template<typename _Elem>
-	inline VOID H3Vector<_Elem>::Deref()
+	template<typename _Elem, class _Alloc>
+	inline VOID H3Vector<_Elem, _Alloc>::Deref()
 	{
 		if (m_first)
-			delete[] m_first;
+			Deallocate();
 		m_first = nullptr;
 		m_end = nullptr;
 		m_capacity = nullptr;
 	}
-	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::IsEmpty() const
+	template<typename _Elem, class _Alloc>
+	inline BOOL H3Vector<_Elem, _Alloc>::IsEmpty() const
 	{
 		if (!m_first || m_first == m_end)
 			return TRUE;
 		return FALSE;
 	}
-	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::IsFull() const
+	template<typename _Elem, class _Alloc>
+	inline BOOL H3Vector<_Elem, _Alloc>::IsFull() const
 	{
 		if (m_end == m_capacity)
 			return TRUE;
 		return FALSE;
 	}
-	template<typename _Elem>
-	inline INT32 H3Vector<_Elem>::Count() const
+	template<typename _Elem, class _Alloc>
+	inline INT32 H3Vector<_Elem, _Alloc>::Count() const
 	{
 		return m_end - m_first;
 	}
-	template<typename _Elem>
-	inline INT32 H3Vector<_Elem>::CountMax() const
+	template<typename _Elem, class _Alloc>
+	inline INT32 H3Vector<_Elem, _Alloc>::CountMax() const
 	{
 		return m_capacity - m_first;
 	}
-	template<typename _Elem>
-	inline UINT32 H3Vector<_Elem>::Size() const
+	template<typename _Elem, class _Alloc>
+	inline UINT32 H3Vector<_Elem, _Alloc>::Size() const
 	{
 		return UINT32(m_end) - UINT32(m_first);
 	}
-	template<typename _Elem>
-	inline UINT32 H3Vector<_Elem>::SizeAllocated() const
+	template<typename _Elem, class _Alloc>
+	inline UINT32 H3Vector<_Elem, _Alloc>::SizeAllocated() const
 	{
 		return UINT32(m_capacity) - UINT32(m_first);
 	}
-	template<typename _Elem>
-	inline VOID H3Vector<_Elem>::RemoveLast()
+	template<typename _Elem, class _Alloc>
+	inline VOID H3Vector<_Elem, _Alloc>::RemoveLast()
 	{
 		Pop();
 	}
-	template<typename _Elem>
-	inline VOID H3Vector<_Elem>::RemoveAll()
+	template<typename _Elem, class _Alloc>
+	inline VOID H3Vector<_Elem, _Alloc>::RemoveAll()
 	{
-		while (m_end > m_first)
-		{
-			--m_end;
-			m_end->~_Elem();
-		}
+		for (_Elem* i = begin(); i < end(); ++i)
+			i->~_Elem();
+
+		m_end = m_first;
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Add(_Elem& item)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::Add(_Elem& item)
 	{
 		if (!m_first || IsFull())
 		{
@@ -126,8 +135,8 @@ namespace h3
 		++m_end;
 		return m_end - 1;  // returns position where it was added
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::AddOne(_Elem& item)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::AddOne(_Elem& item)
 	{
 		if (!m_first)
 		{
@@ -143,13 +152,13 @@ namespace h3
 		++m_end;
 		return m_end - 1;  // returns position where it was added
 	}
-	template<typename _Elem>
-	inline VOID H3Vector<_Elem>::AddSize4(_Elem item)
+	template<typename _Elem, class _Alloc>
+	inline VOID H3Vector<_Elem, _Alloc>::AddSize4(_Elem item)
 	{
 		THISCALL_4(VOID, 0x5FE2D0, this, m_end, 1, &item);
 	}
-	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Expand()
+	template<typename _Elem, class _Alloc>
+	inline BOOL H3Vector<_Elem, _Alloc>::Expand()
 	{
 		constexpr INT MIN_ELEMENTS    = 10;
 		constexpr INT SIZE_MULTIPLIER = 2;
@@ -158,58 +167,58 @@ namespace h3
 			return Reserve(MIN_ELEMENTS);
 		return Reserve(CountMax()* SIZE_MULTIPLIER);
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::First()
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::First()
 	{
 		return m_first;
 	}
-	template<typename _Elem>
-	inline const _Elem* H3Vector<_Elem>::CFirst() const
+	template<typename _Elem, class _Alloc>
+	inline const _Elem* H3Vector<_Elem, _Alloc>::CFirst() const
 	{
 		return m_first;
 	}
-	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::RFirst()
+	template<typename _Elem, class _Alloc>
+	inline _Elem& H3Vector<_Elem, _Alloc>::RFirst()
 	{
 		return *m_first;
 	}
-	template<typename _Elem>
-	inline const _Elem& H3Vector<_Elem>::CRFirst() const
+	template<typename _Elem, class _Alloc>
+	inline const _Elem& H3Vector<_Elem, _Alloc>::CRFirst() const
 	{
 		return *m_first;
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Last()
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::Last()
 	{
 		return m_end - 1;
 	}
-	template<typename _Elem>
-	inline const _Elem* H3Vector<_Elem>::CLast() const
+	template<typename _Elem, class _Alloc>
+	inline const _Elem* H3Vector<_Elem, _Alloc>::CLast() const
 	{
 		return m_end - 1;
 	}
-	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::RLast()
+	template<typename _Elem, class _Alloc>
+	inline _Elem& H3Vector<_Elem, _Alloc>::RLast()
 	{
 		return *Last();
 	}
-	template<typename _Elem>
-	inline const _Elem& H3Vector<_Elem>::CRLast() const
+	template<typename _Elem, class _Alloc>
+	inline const _Elem& H3Vector<_Elem, _Alloc>::CRLast() const
 	{
 		return *CLast();
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Append(_Elem& item)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::Append(_Elem& item)
 	{
 		return Add(item);
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Push(_Elem& item)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::Push(_Elem& item)
 	{
 		return Add(item);
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Pop()
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::Pop()
 	{
 		if (m_end > m_first)
 		{
@@ -218,8 +227,8 @@ namespace h3
 		}
 		return m_end;
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::At(INT32 pos)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::At(INT32 pos)
 	{
 		INT32 n;
 		if (pos >= 0)
@@ -232,8 +241,8 @@ namespace h3
 		}
 		return m_first + n;
 	}
-	template<typename _Elem>
-	inline const _Elem* H3Vector<_Elem>::CAt(INT32 pos) const
+	template<typename _Elem, class _Alloc>
+	inline const _Elem* H3Vector<_Elem, _Alloc>::CAt(INT32 pos) const
 	{
 		INT32 n;
 		if (pos >= 0)
@@ -246,23 +255,23 @@ namespace h3
 		}
 		return m_first + n;
 	}
-	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::RAt(INT32 pos)
+	template<typename _Elem, class _Alloc>
+	inline _Elem& H3Vector<_Elem, _Alloc>::RAt(INT32 pos)
 	{
 		return *At(pos);
 	}
-	template<typename _Elem>
-	inline const _Elem& H3Vector<_Elem>::CRAt(INT32 pos) const
+	template<typename _Elem, class _Alloc>
+	inline const _Elem& H3Vector<_Elem, _Alloc>::CRAt(INT32 pos) const
 	{
 		return RAt(pos);
 	}
-	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Remove(INT32 pos)
+	template<typename _Elem, class _Alloc>
+	inline BOOL H3Vector<_Elem, _Alloc>::Remove(INT32 pos)
 	{
 		return Remove(pos, pos);
 	}
-	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
+	template<typename _Elem, class _Alloc>
+	inline BOOL H3Vector<_Elem, _Alloc>::Remove(INT32 fromPos, INT32 toPos)
 	{
 		if (fromPos < 0 || toPos < 0 || toPos < fromPos)
 			return FALSE;
@@ -286,8 +295,8 @@ namespace h3
 		m_end -= r;
 		return TRUE;
 	}
-	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Reserve(INT number)
+	template<typename _Elem, class _Alloc>
+	inline BOOL H3Vector<_Elem, _Alloc>::Reserve(INT number)
 	{
 		if (number <= 0)
 			return FALSE;
@@ -296,7 +305,7 @@ namespace h3
 		if (number <= num)
 			return FALSE;
 
-		_Elem *t = new _Elem[number];
+		_Elem *t = Allocate(number);
 		if (!t)
 			return FALSE;
 
@@ -307,51 +316,58 @@ namespace h3
 		for (int i = 0; i < num; ++i)
 			t[i] = m_first[i];
 	#endif
-
-		delete[] m_first;
-
+		Deallocate();
+		
 		m_first = t;
 		m_end = m_first + num;
 		m_capacity = m_first + number;
 
 		return TRUE;
 	}
-	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::operator[](INT32 pos)
+	template<typename _Elem, class _Alloc>
+	inline _Elem& H3Vector<_Elem, _Alloc>::operator[](INT32 pos)
 	{
 		return m_first[pos];
 	}
-	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::operator[](INT32 pos) const
+	template<typename _Elem, class _Alloc>
+	inline _Elem& H3Vector<_Elem, _Alloc>::operator[](INT32 pos) const
 	{
 		return m_first[pos];
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::operator+=(_Elem& item)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::operator+=(_Elem& item)
 	{
 		return Add(item);
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::operator<<(_Elem& item)
+	template<typename _Elem, class _Alloc>
+	inline _Elem* H3Vector<_Elem, _Alloc>::operator<<(_Elem& item)
 	{
 		return Add(item);
 	}
 #ifdef _H3_STD_CONVERSIONS_
-	template<typename _Elem>
-	inline H3Vector<_Elem>::H3Vector(std::vector<_Elem>& vec)
+	template<typename _Elem, class _Alloc>
+	inline H3Vector<_Elem, _Alloc>::H3Vector(const std::vector<_Elem>& vec)
 	{
 		Init();
 		for (_Elem* i = vec.begin(); i < vec.end(); ++i)
 			Add(i);
 	}
-	template<typename _Elem>
-	inline std::vector<_Elem> H3Vector<_Elem>::to_std_vector() const
+	template<typename _Elem, class _Alloc>
+	inline std::vector<_Elem> H3Vector<_Elem, _Alloc>::to_std_vector() const
 	{
 		std::vector<_Elem> vec;
 		for (_Elem* i = begin(); i < end(); ++i)
 			vec.push_back(*i);
 		
 		return vec;
+	}
+	template<typename _Elem, class _Alloc>
+	inline H3Vector<_Elem, _Alloc>& H3Vector<_Elem, _Alloc>::operator=(const std::vector<_Elem>& vec)
+	{
+		Reserve(vec.size());
+		for (_Elem* i = vec.begin(); i < vec.end(); ++i)
+			Add(*i);
+		return *this;
 	}
 #endif
 }

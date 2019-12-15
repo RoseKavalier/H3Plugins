@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2019-12-14                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -22,8 +22,7 @@ namespace h3
 	
 	namespace NH3Constants
 	{
-		constexpr INT COMBATSQUARE_DIMENSION = 44;
-		constexpr INT MULTIPLAYER_ICON = 0x66;
+		constexpr INT COMBATSQUARE_DIMENSION = 44;		
 	}	
 
 	namespace NH3Creatures
@@ -942,7 +941,7 @@ namespace h3
 			LPCSTR const MEDIUM  = (LPCSTR(0x65F2EC)); // "MedFont.fnt"
 			LPCSTR const BIG     = (LPCSTR(0x660B24)); // "bigfont.fnt"
 			LPCSTR const VERDANA = (LPCSTR(0x6700B4)); // "Verd10B.fnt"
-		}
+		} // namespace Text
 
 		namespace TextAlignment
 		{
@@ -964,7 +963,7 @@ namespace h3
 				TopMiddle    = HCenter | VTop,
 				TopRight     = HRight  | VTop,
 			};
-		};
+		} // namespace TextAlignment
 
 		namespace TextColor
 		{
@@ -1005,7 +1004,7 @@ namespace h3
 				CYAN4       = 0x69,
 				CYAN5       = 0x6A,
 			};
-		}
+		} // namespace TextColor
 
 		namespace Assets
 		{
@@ -1048,7 +1047,9 @@ namespace h3
 			LPCSTR const GAME_TYPE_DEF    = (LPCSTR(0x683568));  // 32x24
 			LPCSTR const ICM005_DEF       = (LPCSTR(0x66FFD4));  // 48x36
 			LPCSTR const ALTART_DEF       = (LPCSTR(0x683178));  // 64x32
-		}
+			LPCSTR const VWSYMBOL_DEF     = (LPCSTR(0x68C740));  // 32x32
+		} // namespace Assets
+
 		namespace HDassets
 		{
 			LPCSTR const DLGBLUEBOX       = "DlgBluBo.def";  // 64x64
@@ -1067,8 +1068,51 @@ namespace h3
 			LPCSTR const FRAME_D          = "hd_fr_d.bmp";   // 4x4
 			LPCSTR const FRAME_L          = "hd_fr_l.bmp";   // 4x4
 			LPCSTR const FRAME_R          = "hd_fr_r.bmp";   // 4x4
-		}
-	}	
+		} // namespace HDassets
+
+		namespace ID
+		{
+			namespace MainMenu
+			{				
+				constexpr INT VTABLE     = 0x63FF60;
+				constexpr INT NEW_GAME   = 101;
+				constexpr INT LOAD_GAME  = 102;
+				constexpr INT HIGH_SCORE = 103;
+				constexpr INT CREDITS    = 104;
+				constexpr INT QUIT       = 105;
+			} // namespace MainMenu
+
+			namespace HighScore
+			{
+				constexpr INT VTABLE   = 0x63EB98;
+				constexpr INT EXIT     = 30722;
+				constexpr INT CAMPAIGN = 1001;
+				constexpr INT STANDARD = 1002;
+				constexpr INT RESET    = 1003;
+				/* others range from 1004 to 1025 */
+			} // namespace HighScore
+
+			namespace LoadGame
+			{
+				constexpr INT VTABLE      = 0x63E6D8;
+				constexpr INT SINGLE      = 100;
+				constexpr INT MULTIPLAYER = 102;
+				constexpr INT CAMPAIGN    = 101;
+				constexpr INT TUTORIAL    = 103;
+				constexpr INT QUIT        = 104;
+			} // namespace LoadGame
+
+			namespace NewGame
+			{
+				constexpr INT VTABLE      = 0x63E6D8;
+				constexpr INT SINGLE      = 100;
+				constexpr INT MULTIPLAYER = 102;
+				constexpr INT CAMPAIGN    = 101;
+				constexpr INT TUTORIAL    = 103;
+				constexpr INT QUIT        = 104;
+			} // namespace NewGame
+		} // namespace ID
+	} // namespace NH3Dlg
 
 #pragma warning(pop)
 }

@@ -1,3 +1,14 @@
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+//                     Created by RoseKavalier:                     //
+//                     rosekavalierhc@gmail.com                     //
+//                       Created: 2019-12-05                        //
+//                      Last edit: 2019-12-15                       //
+//        ***You may use or distribute these files freely           //
+//            so long as this notice remains present.***            //
+//                                                                  //
+//////////////////////////////////////////////////////////////////////
+
 #ifndef _H3BASE_HPP_
 #define _H3BASE_HPP_
 
@@ -513,43 +524,34 @@ namespace h3
 	};
 
 	// * heap realloc using H3 assets
-	_H3API_ PVOID F_realloc(PVOID obj, UINT new_size);
+	PVOID F_realloc(PVOID obj, UINT new_size);
 	// * calloc using h3 assets
-	_H3API_ PVOID F_calloc(UINT count, UINT size = 1);
+	PVOID F_calloc(UINT count, UINT size = 1);
 	// * heapalloc using H3 assets
-	_H3API_ PVOID F_malloc(UINT size);
+	PVOID F_malloc(UINT size);
 	// * heapfree using H3 assets
-	_H3API_ VOID F_delete(PVOID obj);
+	VOID F_delete(PVOID obj);
 	// * memcpy using H3 assets
-	_H3API_ VOID F_memcpy(PVOID dest, PVOID src, const UINT len);
+	VOID F_memcpy(PVOID dest, PVOID src, const UINT len);
 	// * compares two strings, not-case-sensitive
-	_H3API_ INT F_strcmpi(LPCSTR string1, LPCSTR string2);
+	INT F_strcmpi(LPCSTR string1, LPCSTR string2);
 	// * sets dest to value
-	_H3API_ PVOID F_memset(PVOID dest, const UINT value, const UINT len);
+	PVOID F_memset(PVOID dest, const UINT value, const UINT len);
 	// * vsprintf using h3 assets
 	// * you need to handle va_list yourself to use this!
 	// * otherwise use F_sprintf which will do both
-	_H3API_ INT F_vsprintf(PCHAR buffer, LPCSTR format, va_list args);
+	INT F_vsprintf(PCHAR buffer, LPCSTR format, va_list args);
 	// * sprintf using h3 assets and buffer
-	_H3API_ INT F_sprintf(LPCSTR format, ...);
+	INT F_sprintf(LPCSTR format, ...);
 	// * sprintf using h3 assets and custom buffer
-	_H3API_ INT F_sprintfbuffer(PCHAR buffer, LPCSTR format, ...);
-
-	// * a base structure to use the game new and delete allocators
-	struct H3Allocator
-	{
-		PVOID operator new(const size_t sz);
-		VOID operator delete(const PVOID block);
-		PVOID operator new[](const size_t sz);
-		VOID operator delete[](const PVOID block);
-	};
-
+	INT F_sprintfbuffer(PCHAR buffer, LPCSTR format, ...);
+	
 	namespace H3Numbers
 	{
 		// * add thousands commas to numbers
-		_H3API_ int AddCommas(int num, char *out);
+		int AddCommas(int num, char *out);
 		// * show a number in short scale format with specified number of decimals
-		_H3API_ int MakeReadable(int num, char *out, int decimals = 1);
+		int MakeReadable(int num, char *out, int decimals = 1);
 	}
 
 	namespace H3Random
@@ -619,33 +621,6 @@ namespace h3
 #pragma pack(pop)
 } // namespace h3
 
-// * The new, new[], delete and delete[] operators are
-// * placed behind the _H3API_OPERATORS_ guards.
-// * If you want to use them in your project, you
-// * should first define the preprocessor argument
-// *           _H3API_OPERATORS_
-
-#ifdef _H3API_OPERATORS_
-
-#pragma warning(push)
-#pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
-
-//* new operator using h3 assets
-_H3API_ PVOID operator new(const size_t size);
-
-// * delete operator using h3 assets
-_H3API_ VOID operator delete(PVOID block);
-
-// * new[] operator using h3 assets
-_H3API_ PVOID operator new[](const size_t size);
-
-// * delete[] operator using h3 assets
-_H3API_ VOID operator delete[](PVOID block);
-
-#pragma warning(pop) /* #pragma warning(disable:4595) */
-
-#endif /* _H3API_OPERATORS_ */
-
 namespace h3
 {
 	// * these are internal to H3API to avoid conflicts
@@ -657,6 +632,7 @@ namespace h3
 		INT8 _gameEdgeVertical();
 		INT _h3_MapSize();
 		UINT8 _h3_BitMode();
+		PCHAR _h3_textBuffer();
 	} // namespace H3Internal
 } // namespace h3
 

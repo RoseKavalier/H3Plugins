@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-05                       //
+//                      Last edit: 2019-12-15                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -14,6 +14,7 @@
 
 #include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
+#include "../H3_Allocator.hpp"
 
 #ifdef _H3_STD_CONVERSIONS_
 #include <vector>
@@ -23,8 +24,8 @@ namespace h3
 {
 #pragma pack(push, 1)
 	// * a vector following the H3 format
-	template<typename _Elem>
-	struct H3Vector : public H3Allocator
+	template<typename _Elem, class _Alloc = H3Allocator<_Elem>>
+	struct H3Vector
 	{
 	protected:
 		BOOL _init; // useless
@@ -34,6 +35,9 @@ namespace h3
 		_Elem *m_end;
 		// * end of allocated memory
 		_Elem *m_capacity;
+
+		_Elem* Allocate(UINT number);
+		VOID Deallocate();
 	public:
 		H3Vector(const int number_elements);
 		H3Vector();
@@ -110,8 +114,9 @@ namespace h3
 		_Elem* operator<<(_Elem & item);
 
 	#ifdef _H3_STD_CONVERSIONS_
-		H3Vector(std::vector<_Elem>& vec);
+		H3Vector(const std::vector<_Elem>& vec);
 		std::vector<_Elem> to_std_vector() const;
+		H3Vector<_Elem, _Alloc>& operator=(const std::vector<_Elem>& vec);
 	#endif /* _H3_STD_CONVERSIONS_ */
 	};
 #pragma pack(pop)

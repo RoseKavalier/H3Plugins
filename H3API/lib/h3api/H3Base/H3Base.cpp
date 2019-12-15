@@ -1,3 +1,14 @@
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+//                     Created by RoseKavalier:                     //
+//                     rosekavalierhc@gmail.com                     //
+//                       Created: 2019-12-05                        //
+//                      Last edit: 2019-12-15                       //
+//        ***You may use or distribute these files freely           //
+//            so long as this notice remains present.***            //
+//                                                                  //
+//////////////////////////////////////////////////////////////////////
+
 #include "H3Base.hpp"
 
 namespace h3
@@ -108,7 +119,7 @@ namespace h3
 	{
 		va_list args;
 		va_start(args, format);
-		const INT r = F_vsprintf(PCHAR(0x697428), format, args);
+		const INT r = F_vsprintf(H3Internal::_h3_textBuffer(), format, args);
 		va_end(args);
 		return r;
 	}
@@ -120,26 +131,6 @@ namespace h3
 		const INT r = F_vsprintf(buffer, format, args);
 		va_end(args);
 		return r;
-	}
-
-	_H3API_ PVOID H3Allocator::operator new(const size_t sz)
-	{
-		return F_malloc(sz);
-	}
-
-	_H3API_ VOID H3Allocator::operator delete(const PVOID block)
-	{
-		F_delete(block);
-	}
-
-	_H3API_ PVOID H3Allocator::operator new[](const size_t sz)
-	{
-		return F_malloc(sz);
-	}
-
-	_H3API_ VOID H3Allocator::operator delete[](const PVOID block)
-	{
-		F_delete(block);
 	}
 
 	/*
@@ -340,10 +331,6 @@ namespace h3
 		return MessageBoxW(nullptr, message, title, MB_OKCANCEL | MB_ICONERROR);
 	}
 #ifdef _H3API_DONT_USE_MACROS_
-	//_H3API_ PCHAR h3_TextBuffer()
-	//{
-	//	return PCHAR(0x697428);
-	//}
 	_H3API_ INT gameWidth()
 	{
 		return IntAt(0x403401);
@@ -370,35 +357,6 @@ namespace h3
 	}
 #endif
 }
-
-#ifdef _H3API_OPERATORS_
-#pragma warning(push)
-#pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
-
-_H3API_ PVOID operator new(const size_t size)
-{
-	return h3::F_malloc(size);
-}
-
-_H3API_ VOID operator delete(PVOID block)
-{	
-	if (block)
-		h3::F_delete(block);	
-}
-
-_H3API_ PVOID operator new[](const size_t size)
-{
-	return h3::F_malloc(size);
-}
-
-_H3API_ VOID operator delete[](PVOID block)
-{
-	if (block)
-		h3::F_delete(block);
-}
-
-#pragma warning(pop) /* #pragma warning(disable:4595) */
-#endif  /* _H3API_OPERATORS_ */
 
 namespace h3
 {
@@ -427,6 +385,10 @@ namespace h3
 		_H3API_ UINT8 _h3_BitMode()
 		{
 			return ByteAt(0x5FA228 + 3);
+		}
+		PCHAR _h3_textBuffer()
+		{
+			return PCHAR(0x697428);
 		}
 	}
 }
