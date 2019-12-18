@@ -296,6 +296,11 @@ namespace h3
 		return m_bf;
 	}
 
+	_H3API_ void H3Random::SetRandomSeed(UINT seed)
+	{
+		srand(seed);
+	}
+
 	// * From https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range?answertab=active#tab-top
 	_H3API_ int H3Random::Random(int high)
 	{

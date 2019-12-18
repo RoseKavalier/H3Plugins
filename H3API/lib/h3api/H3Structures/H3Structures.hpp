@@ -2623,10 +2623,10 @@ namespace h3
 		H3Vector<UINT32> unkC0;                        // +C0
 	public:
 		H3MapItem* mapitems;                           // +D0	// +1FC40
-		INT32 mapSize;			                       // +D4		// +1FC44
-		INT8 SubterraneanLevel;	                       // + D8		// +1FC48
+		INT32 mapSize;			                       // +D4	// +1FC44
+		INT8 SubterraneanLevel;	                       // +D8	// +1FC48
 	protected:
-		h3unk _f_D9[3];			                       // +D9-B	// +1FC49~B
+		h3unk _f_D9[3];			                       // +D9	// +1FC49~B
 	public:
 		H3Vector<H3ObjectAttributes> objectLists[232];
 

@@ -13,5 +13,20 @@
 
 namespace h3
 {
-	
+	_H3API_ PVOID H3Allocator::operator new(const size_t sz)
+	{
+		return F_malloc(sz);
+	}
+	_H3API_ VOID H3Allocator::operator delete(const PVOID block)
+	{
+		F_delete(block);
+	}
+	_H3API_ PVOID H3Allocator::operator new[](const size_t sz)
+	{
+		return F_malloc(sz);
+	}
+	_H3API_ VOID H3Allocator::operator delete[](const PVOID block)
+	{
+		F_delete(block);
+	}
 }

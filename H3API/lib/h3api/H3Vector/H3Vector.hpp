@@ -24,8 +24,8 @@ namespace h3
 {
 #pragma pack(push, 1)
 	// * a vector following the H3 format
-	template<typename _Elem, class _Alloc = H3Allocator<_Elem>>
-	struct H3Vector
+	template<typename _Elem>
+	struct H3Vector : H3Allocator
 	{
 	protected:
 		BOOL _init; // useless
@@ -37,6 +37,8 @@ namespace h3
 		_Elem *m_capacity;
 
 		_Elem* Allocate(UINT number);
+		VOID Construct(_Elem* start, _Elem* finish);
+		VOID Destruct(_Elem* start, _Elem* finish);
 		VOID Deallocate();
 	public:
 		H3Vector(const int number_elements);
@@ -113,10 +115,18 @@ namespace h3
 		// * Adds item to end of list
 		_Elem* operator<<(_Elem & item);
 
+#ifdef _CPLUSPLUS11_
+		_Elem* Add(_Elem&& item);
+		_Elem* Push(_Elem&& item);
+		_Elem* AddOne(_Elem&& item);
+		_Elem* Append(_Elem&& item);
+		_Elem* operator+=(_Elem&& item);
+#endif
+
 	#ifdef _H3_STD_CONVERSIONS_
 		H3Vector(const std::vector<_Elem>& vec);
 		std::vector<_Elem> to_std_vector() const;
-		H3Vector<_Elem, _Alloc>& operator=(const std::vector<_Elem>& vec);
+		H3Vector<_Elem>& operator=(const std::vector<_Elem>& vec);
 	#endif /* _H3_STD_CONVERSIONS_ */
 	};
 #pragma pack(pop)

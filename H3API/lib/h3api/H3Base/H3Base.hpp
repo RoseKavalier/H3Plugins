@@ -65,6 +65,10 @@
 // * enum class was added with C++11
 #define _H3ENUM_ enum
 #endif
+#ifndef noexcept
+// * noexcept keyword added with C++11
+#define noexcept throw()
+#endif
 #else
 #ifndef _H3ENUM_
 // * enum class
@@ -556,6 +560,7 @@ namespace h3
 
 	namespace H3Random
 	{
+		void SetRandomSeed(UINT seed = STDCALL_0(UINT, DwordAt(0x63A354)));
 		int Random(int high);
 		int RandBetween(int low, int high);
 	}
