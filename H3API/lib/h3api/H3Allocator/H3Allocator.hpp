@@ -22,9 +22,9 @@ namespace h3
 	struct H3Allocator
 	{
 		PVOID operator new(const size_t sz);
-		VOID operator delete(const PVOID block);
+		VOID  operator delete(const PVOID block);
 		PVOID operator new[](const size_t sz);
-		VOID operator delete[](const PVOID block);
+		VOID  operator delete[](const PVOID block);
 	};
 	   	 
 	// * an allocator to simulate h3's new & delete on objects
@@ -40,13 +40,16 @@ namespace h3
 
 		H3ObjectAllocator() noexcept;		
 		// * allocates memory
-		T* allocate(size_t number) const noexcept;
+		T* allocate(size_t number = 1) const noexcept;
 		// * deallocates memory
 		VOID deallocate(T* block) const noexcept;
 		// * calls default constructor
 		VOID construct(T* block) const noexcept;
 		// * calls constructor with argument
 		VOID construct(T* block, const T& value) const noexcept;
+		// * calls constructor with 1 different argument
+		template<typename U>
+		VOID construct(T* block, const U& arg) const noexcept;
 		// * calls default destructor
 		VOID destroy(T* block) const noexcept;		
 
@@ -56,6 +59,12 @@ namespace h3
 		bool operator==(const H3ObjectAllocator<U>&) const noexcept;
 		template <typename U>
 		bool operator!=(const H3ObjectAllocator<U>&) const noexcept;
+
+#ifdef _CPLUSPLUS11_
+		// * calls constructor with arbitrary number of arguments
+		template<typename... Args>
+		VOID construct(T* block, Args&&... args);
+#endif
 	};
 
 	// * an allocator to similate use of h3's new[] & delete[] on arrays
@@ -74,13 +83,17 @@ namespace h3
 	public:
 		H3ArrayAllocator() noexcept;
 		// * allocates memory
-		T* allocate(size_t number) const noexcept;
+		T* allocate(size_t number = 1) const noexcept;
 		// * deallocates memory
 		VOID deallocate(T* block) const noexcept;
 		// * calls default constructor
 		VOID construct(T* block) const noexcept;
 		// * calls constructor with argument
 		VOID construct(T* block, const T& value) const noexcept;
+		// * calls constructor with 1 different argument
+		template<typename U>
+		VOID construct(T* block, const U& arg) const noexcept;
+
 		// * calls default destructor
 		VOID destroy(T* block) const noexcept;
 
@@ -90,6 +103,12 @@ namespace h3
 		bool operator==(const H3ArrayAllocator<U>&) const noexcept;
 		template <typename U>
 		bool operator!=(const H3ArrayAllocator<U>&) const noexcept;
+
+#ifdef _CPLUSPLUS11_
+		// * calls constructor with arbitrary number of arguments
+		template<typename... Args>
+		VOID construct(T* block, Args&&... args);
+#endif
 	};
 }
 

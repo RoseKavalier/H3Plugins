@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2019-12-22                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -71,6 +71,8 @@ namespace h3
 	PCHAR F_strncpy(LPCSTR dest, LPCSTR src, INT len);
 	// * Checks if the current game features more than 1 human
 	BOOL8 F_Multiplayer();
+	// * Checks if the current spell at given level is single-target or not
+	BOOL8 F_SingleTargetSpell(INT32 spell, INT expertise);
 	// * converts text to wide char, destination is buffer that needs to be pre-allocated
 	LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR* buffer);
 	INT F_MultiplayerRNG(INT min_value, INT max_value);
@@ -80,7 +82,7 @@ namespace h3
 	DWORD F_ftell(FILE* f);
 	INT F_fseek(FILE* f, INT offset, INT origin);
 	DWORD F_GetFileSize(FILE* f);
-	size_t F_fread(PVOID buffer, size_t size, size_t count, FILE* f);
+	BOOL F_fread(PVOID buffer, size_t size, size_t count, FILE* f);
 	size_t F_fwrite(const VOID* buffer, size_t size, size_t count, FILE* f);
 	int F_fsetpos(FILE* f, const fpos_t& pos);
 	int F_fgetpos(FILE* f, fpos_t& pos);
@@ -89,6 +91,11 @@ namespace h3
 	UINT F_strtoul(LPCSTR str, INT base, PCHAR* end = nullptr);
 	PCHAR F_strtok(LPCSTR str, LPCSTR delimiters);
 	LPCSTR F_GetTownName(int town_id);
+	
+	// * used to get coordinates of map data that is stored as an array
+	// * e.g. H3MapItems, RMG_MapItems, H3TileVision
+	template<typename T>
+	H3Point F_ReverseCoordinates(T* current_point, T* base_point, INT map_size);
 }
 
 #endif /* #define _H3FUNCTIONS_HPP_ */

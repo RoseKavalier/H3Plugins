@@ -419,8 +419,11 @@ namespace h3
 	inline H3Vector<_Elem>::H3Vector(const std::vector<_Elem>& vec)
 	{
 		Init();
-		for (_Elem* i = vec.begin(); i < vec.end(); ++i)
-			Add(i);
+		const INT n = vec.size();
+		Reserve(n);
+		for (int i = 0; i < n; ++i)
+			Add(const_cast<_Elem&>(vec[i]));
+		return *this;
 	}
 	template<typename _Elem>
 	inline std::vector<_Elem> H3Vector<_Elem>::to_std_vector() const
@@ -434,9 +437,10 @@ namespace h3
 	template<typename _Elem>
 	inline H3Vector<_Elem>& H3Vector<_Elem>::operator=(const std::vector<_Elem>& vec)
 	{
-		Reserve(vec.size());
-		for (_Elem* i = vec.begin(); i < vec.end(); ++i)
-			Add(*i);
+		const INT n = vec.size();
+		Reserve(n);
+		for (int i = 0; i < n; ++i)
+			Add(const_cast<_Elem&>(vec[i]));
 		return *this;
 	}
 #endif

@@ -49,6 +49,10 @@ namespace h3
 	{
 		return &mapItems[mapHeight * mapWidth * numberLevels];
 	}
+	_H3API_ H3Point RMG_Map::GetCoordinates(RMG_MapItem* item)
+	{
+		return F_ReverseCoordinates<RMG_MapItem>(item, mapItems, mapWidth);
+	}
 	_H3API_ VOID RMG_Parameters::Validate()
 	{
 		monster_strength += 3;

@@ -233,13 +233,22 @@ namespace h3
 	// * from breakpoint at constructor, the following items are all H3BinaryTreeNode subclasses
 	struct H3WavFile : public H3BinaryItem // size 0x34 from 0x55C67E
 	{
-		h3unk _f_1C[12];
+		DWORD _f_1C;
+		// * +20
+		PUINT8 buffer;
+		// * +24
+		DWORD bufferSize;
 		// * +28 fields of _RTL_CRITICAL_SECTION
 		HANDLE lockSemaphore;
 		// * +2C
 		ULONG_PTR spinCount;
 		// * +30
 		PRTL_CRITICAL_SECTION_DEBUG debugInfo;
+
+		static H3WavFile* Load(LPCSTR name);
+
+		_H3API_ H3WavFile(LPCSTR name);
+		_H3API_ H3WavFile(LPCSTR name, PUINT8 buffer, DWORD bufferSize);
 	};
 
 	// * text file with a single column of text
@@ -354,6 +363,8 @@ namespace h3
 		PUINT8 GetPixelIndex(int x, int y);
 		// * fills rectangle with color index from palette565
 		VOID FillRectangle(INT x, INT y, INT dx, INT dy, BYTE color_index);
+
+		_H3API_ H3LoadedPCX(LPCSTR name);
 	};
 
 	struct H3LoadedPCX16 : public H3BinaryItem // size 0x38 // vt 63B9C8

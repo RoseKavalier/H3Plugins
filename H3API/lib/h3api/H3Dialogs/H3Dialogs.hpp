@@ -22,7 +22,7 @@ namespace h3
 	// * forward declarations
 
 	struct  H3Msg;
-	struct H3MsgCustom;
+	struct  H3MsgCustom;
 	struct  H3BaseDlg;
 	struct  H3Dlg;
 	struct  H3DlgItem;
@@ -90,7 +90,7 @@ namespace h3
 
 		VOID       SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2);
 		VOID       SetCommand(INT32 cmd, INT32 param);
-		H3DlgItem* ItemAtPosition(H3Dlg* dlg);
+		H3DlgItem* ItemAtPosition(H3BaseDlg* dlg);
 		INT32      KeyPressed()   const;
 		BOOL       IsKeyPress()   const;
 		BOOL       IsKeyDown()    const;
@@ -137,6 +137,7 @@ namespace h3
 
 	struct H3BaseDlg
 	{
+	protected:
 		// * +0
 		H3DlgVTable* vtable;
 		// * +4
@@ -170,16 +171,81 @@ namespace h3
 		// * +48
 		INT32 deactivatesCount;
 		h3unk _f_4C[28]; // normal dialog size is 0x68 total	
+	public:
+
+		INT32 GetWidth() const;
+		INT32 GetHeight() const;
+		INT32 GetX() const;
+		INT32 GetY() const;
+		BOOL  IsTopDialog() const;
+
+		VOID  Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy); // redraw part of dialog
+		VOID  Redraw(); // redraw whole dialog
+		INT32 DefaultProc(H3Msg* msg);
+
+		// * this is what gets shown on the screen
+		// * it gets drawn over every time you refresh an item
+		// * or draw a new item... good for temporary things
+		H3LoadedPCX16* GetCurrentPcx();
+
+		H3DlgItem* ItemAtPosition(H3Msg* msg);
+		H3Vector<H3DlgItem*>& GetList();
+		H3DlgItem* GetH3DlgItem(UINT16 id);
+		VOID RedrawItem(UINT16 itemID);
+		VOID EnableItem(UINT16 id, BOOL enable);
+		VOID SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter);
+		VOID SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter);
+		VOID AdjustToPlayerColor(INT8 player, UINT16 itemId);
+		H3DlgItem* AddItem(H3DlgItem* item);
+
+		H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, RGB565 color);
+		H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, RGB565 color);
+		H3DlgFrame* CreateFrame(H3DlgItem* target, RGB565 color, INT id = 0, BOOL around_edge = false);
+		H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame,
+			INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
+		H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group = 0,
+			INT32 mirror = FALSE, BOOL closeDialog = FALSE);
+		H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName,
+			INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
+		H3DlgDefButton* CreateOKButton(INT32 x, INT32 y);
+		H3DlgDefButton* CreateSaveButton(INT32 x, INT32 y);
+		H3DlgDefButton* CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, INT32 frame, INT32 clickFrame = 0);
+		H3DlgDefButton* CreateOKButton(); // adjust for hintBar
+		H3DlgDefButton* CreateOK32Button(INT32 x, INT32 y); // height is 32
+		H3DlgDefButton* CreateCancelButton(); // adjust for hintBar
+		H3DlgCaptionButton* CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName,
+			LPCSTR text, LPCSTR font, INT32 frame, INT32 group = 0, BOOL closeDialog = FALSE, INT32 hotkey = NULL, INT32 color = 0);
+		H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName,
+			H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
+		H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc,
+			INT32 frame, INT32 clickFrame);
+		H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc,
+			INT32 frame, INT32 clickFrame);
+		H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
+		H3DlgPcx* CreateLineSeparator(INT32 x, INT32 y, INT32 width);
+		H3DlgPcx16* CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
+		H3DlgEdit* CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text,
+			LPCSTR fontName = NH3Dlg::Text::MEDIUM, INT32 color = NH3Dlg::TextColor::REGULAR,
+			INT32 align = NH3Dlg::TextAlignment::MiddleCenter, LPCSTR pcxName = nullptr,
+			INT32 id = 0, INT32 hasBorder = FALSE, INT32 borderX = 0, INT32 borderY = 0);
+		H3DlgText* CreateText(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName,
+			INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MiddleCenter, INT32 bkColor = 0);
+		H3DlgTextPcx* CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName,
+			LPCSTR pcxName, INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MiddleCenter);
+		H3DlgScrollableText* CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height,
+			INT32 font, INT32 color, INT32 isBlue = FALSE);
+		H3DlgScrollbar* CreateScrollbar(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount,
+			H3DlgScrollbar_proc scrollbarProc = nullptr, BOOL isBlue = FALSE, INT32 stepSize = 0, BOOL arrowsEnabled = TRUE);
 	};
 
 	// * This removes the following warning when using enum
 	// * warning C4482: nonstandard extension used: enum '...' used in qualified name
 #pragma warning(push)
 #pragma warning(disable : 4482)
-	struct H3Dlg : protected H3BaseDlg
+	struct H3Dlg : H3BaseDlg
 	{
 	protected:
-		////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 	// Custom Fields - not part of regular dialogs!
 	////////////////////////////////////////////////////////////////////////
 		H3Dlg_proc customProc;
@@ -191,7 +257,7 @@ namespace h3
 		// Constructor and destructor
 		////////////////////////////////////////////////////////////////////////
 		// * default constructor
-		H3Dlg(int width, int height, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = nullptr, 
+		_H3API_ H3Dlg(int width, int height, int x = -1, int y = -1, BOOL statusBar = FALSE, H3Dlg_proc dlgProc = nullptr, 
 			BOOL makeBackground = TRUE, INT32 colorIndex = IntAt(0x69CCF4));
 		// * default destructor
 		// * if you prefer to allocate your own dialogs, use this style:
@@ -199,7 +265,7 @@ namespace h3
 		// * ...
 		// * delete MyDlg;
 		// * this will automatically call the destructor before deallocating memory
-		~H3Dlg();
+		_H3API_ ~H3Dlg();
 		////////////////////////////////////////////////////////////////////////
 		// Functions
 		////////////////////////////////////////////////////////////////////////		
@@ -211,126 +277,38 @@ namespace h3
 		BOOL  AddBackground(H3LoadedPCX* pcx);
 		BOOL  AddBackground(H3LoadedPCX16* pcx);
 		BOOL  AddBackground(H3LoadedPCX24* pcx);
-		BOOL  AddBackground(H3LoadedDEF* def, INT group = 0, INT frame = 0);
-		VOID  Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy); // redraw part of dialog
-		VOID  Redraw(); // redraw whole dialog
-		INT32 DefaultProc(H3Msg* msg);
-		INT32 GetWidth() const;
-		INT32 GetHeight() const;
-		INT32 GetX() const;
-		INT32 GetY() const;		
-		BOOL  IsTopDialog() const;
-
-		H3DlgItem* AddItem(H3DlgItem* item);
-		H3LoadedPCX16* GetBackgroundPcx() const;
+		BOOL  AddBackground(H3LoadedDEF* def, INT group = 0, INT frame = 0);		
+				
+		H3LoadedPCX16* GetBackgroundPcx() const;		
 		// * draws the background pcx only
 		BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 w, INT32 h, BOOL is_blue = FALSE);
 		// * draws the HDmod simple frames only
 		BOOL SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPCX16* destination = nullptr);
 		// * draws the outside frames only
-		BOOL FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL statusBar, INT32 colorIndex, BOOL is_blue = FALSE);
-		// * this is what gets shown on the screen
-		// * it gets drawn over every time you refresh an item
-		// * or draw a new item... good for temporary things
-		H3LoadedPCX16* GetCurrentPcx();
+		BOOL FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL statusBar, INT32 colorIndex, BOOL is_blue = FALSE);		
 		H3Dlg_proc     GetProc();
 
-		// Item functions
-		H3DlgItem* ItemAtPosition(H3Msg* msg);
-		H3Vector<H3DlgItem*>* GetList();
-		H3DlgHintBar* GetHintBar();
-		H3DlgItem* GetH3DlgItem(UINT16 id);
-		VOID RedrawItem(UINT16 itemID);
-		VOID EnableItem(UINT16 id, BOOL enable);
-		VOID SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter);
-		VOID SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter);
-		VOID AdjustToPlayerColor(INT8 player, UINT16 itemId);
-		H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, RGB565 color);
-		H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, RGB565 color);
-		H3DlgFrame* CreateFrame(H3DlgItem* target, RGB565 color, INT id = 0, BOOL around_edge = false);
-		H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame,
-			INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
-		H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group = 0, 
-			INT32 mirror = FALSE, BOOL closeDialog = FALSE);
-		H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, 
-			INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
-		H3DlgDefButton* CreateOKButton(INT32 x, INT32 y);
-		H3DlgDefButton* CreateSaveButton(INT32 x, INT32 y);
-		H3DlgDefButton* CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, INT32 frame, INT32 clickFrame = 0);
-		H3DlgDefButton* CreateOKButton(); // adjust for hintBar
-		H3DlgDefButton* CreateOK32Button(INT32 x, INT32 y); // height is 32
-		H3DlgDefButton* CreateCancelButton(); // adjust for hintBar
-		H3DlgCaptionButton* CreateCaptionButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, 
-			LPCSTR text, LPCSTR font, INT32 frame, INT32 group = 0, BOOL closeDialog = FALSE, INT32 hotkey = NULL, INT32 color = 0);
-		H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, 
-			H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
-		H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, 
-			INT32 frame, INT32 clickFrame);
-		H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, 
-			INT32 frame, INT32 clickFrame);
-		H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
-		H3DlgPcx* CreateLineSeparator(INT32 x, INT32 y, INT32 width);
-		H3DlgPcx16* CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
-		H3DlgEdit* CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, 
-			LPCSTR fontName = NH3Dlg::Text::MEDIUM, INT32 color = NH3Dlg::TextColor::REGULAR, 
-			INT32 align = NH3Dlg::TextAlignment::MiddleCenter, LPCSTR pcxName = nullptr, 
-			INT32 id = 0, INT32 hasBorder = FALSE, INT32 borderX = 0, INT32 borderY = 0);
-		H3DlgText* CreateText(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, 
-			INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MiddleCenter, INT32 bkColor = 0);
+		// Item functions		
+		H3DlgHintBar* GetHintBar();	
 		BOOL CreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height);
 		H3DlgHintBar* CreateHint();
-		H3DlgTextPcx* CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, 
-			LPCSTR pcxName, INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MiddleCenter);
-		H3DlgScrollableText* CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, 
-			INT32 font, INT32 color, INT32 isBlue = FALSE);
-		H3DlgScrollbar* CreateScrollbar(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, 
-			H3DlgScrollbar_proc scrollbarProc = nullptr, BOOL isBlue = FALSE, INT32 stepSize = 0, BOOL arrowsEnabled = TRUE);
 	};
 #pragma warning(pop)
 
 	// * follows HDmod's dlg format
 	// * some member functions are made private to disallow their use
 	// * WARNING! this structure should only be used to hook existing dialogs
-	struct HDDlg : H3Dlg
+	struct HDDlg : H3BaseDlg
 	{
 		typedef INT32(__stdcall* HDDlg_proc)(HDDlg*, H3Msg*);
 	protected:
-		HDDlg_proc GetHDProc() const { return HDDlg_proc(DwordAt(PBYTE(this) + 0x70)); }
-	private:
-		H3LoadedPCX16* GetCurrentPcx();
-		H3Dlg_proc GetProc();
-		H3DlgHintBar* CreateHint();
-		H3DlgHintBar* GetHintBar();
-		BOOL CreateBlackBox(INT32, INT32, INT32, INT32);
-		BOOL BackgroundRegion(INT32, INT32, INT32, INT32, BOOL);
-		BOOL SimpleFrameRegion(INT32, INT32, INT32, INT32, H3LoadedPCX16*);
-		BOOL FrameRegion(INT32, INT32, INT32, INT32, BOOL, INT32, BOOL);
+		h3unk _f_6C;
+		// * +70
+		HDDlg_proc hdProc;	
 	public:
-		INT CallHDProc(H3Msg& msg) { return GetHDProc()(this, &msg); }
+		INT CallHDProc(H3Msg& msg) { return hdProc(this, &msg); }
 	};
-
-	struct H3DlgPanel
-	{
-		// * +0
-		h3func* vTable;
-		h3unk _f_04[8];
-		// * +C
-		INT32 width;
-		// * +10
-		INT32 height;
-		// * +14
-		H3Vector<H3DlgItem*> dlgItems;
-		// * +24
-		struct H3Dlg* parent;
-		// * +28
-		INT32 minId;
-		// * +2C
-		INT32 maxId;
-		h3unk _f_30[4];
-
-		// goes on ...
-	};
-
+	
 	struct H3DlgItemVTable // 0x63BA24
 	{
 		h3func deref;
@@ -363,7 +341,7 @@ namespace h3
 		// * +0
 		H3DlgItemVTable *vTable;
 		// * +4
-		H3Dlg *parent;
+		H3BaseDlg *parent;
 		// * +8
 		H3DlgItem *previousDlgItem;
 		// * +C
@@ -388,7 +366,9 @@ namespace h3
 		LPCSTR hint;
 		// * +24
 		LPCSTR rightClickHint;
-		h3unk _f_28[4];
+		// * +28
+		BOOL8 hintsAreAllocated;
+		h3unk _f_29[3];
 		// * +2C
 		INT32 deactivatesCount;
 
@@ -425,6 +405,7 @@ namespace h3
 		VOID   ParentRedraw(); // redraw through parent
 		VOID   ColorToPlayer(INT8 player);
 		VOID   SendCommand(INT32 command, INT32 parameter);
+		VOID   SetHints(LPCSTR shortTipText, LPCSTR rightClickHint, BOOL allocateMemory);
 
 		H3DlgFrame*          CastFrame();
 		H3DlgDef *           CastDef();
@@ -707,6 +688,132 @@ namespace h3
 		INT32 GetSliderX() const;
 	};
 
+	struct H3DlgPanel
+	{
+	protected:
+		h3func*              vTable;
+		// * +4
+		INT                  x;
+		// * +8
+		INT                  y;
+		// * +C
+		INT                  width;
+		// * +10
+		INT                  height;
+		// * +14
+		H3Vector<H3DlgItem*> items;
+		// * +24
+		H3BaseDlg*           parent;
+		// * +28
+		INT                  smallestId;
+		// * +2C
+		INT                  largestId;
+		h3unk                _f_30[4];
+	public:
+		H3Vector<H3DlgItem*>& GetItems();
+	};
+
+	struct H3CombatBottomPanel : H3DlgPanel
+	{
+	protected:
+		// * +34
+		H3DlgTextPcx*      commentBar;
+		// * +38
+		H3DlgCustomButton* commentUp;
+		// * +3C
+		H3DlgCustomButton* commentDown;
+	public:
+		void AddComment(LPCSTR text);
+	};
+
+	struct H3CombatHeroPanel : H3DlgPanel
+	{
+	protected:
+		// * +34
+		H3DlgPcx*  background;
+		// * +38
+		H3DlgPcx*  hero;
+		// * +3C
+		H3DlgText* attack;
+		// * +40
+		H3DlgText* defense;
+		// * +44
+		H3DlgText* power;
+		// * +48
+		H3DlgText* knowledge;
+		// * +4C
+		H3DlgDef*  morale;
+		// * +50
+		H3DlgDef*  luck;
+		// * +54
+		H3DlgText* spellPoints;
+		// * +58
+		BOOL8      needsRedraw;
+		h3align    _f_59[3];
+	public:
+	};
+
+	struct H3CombatMonsterPanel : H3DlgPanel
+	{
+	protected:
+		// * +34
+		H3DlgPcx*  background;
+		// * +38
+		H3DlgDef*  creature;
+		// * +3C
+		H3DlgText* attack;		
+		// * +40
+		H3DlgText* defense;
+		// * +44
+		H3DlgText* damage;		
+		// * +48
+		H3DlgText* health;
+		// * +4C
+		H3DlgDef*  morale;		
+		// * +50
+		H3DlgDef*  luck;
+		// * +54
+		H3DlgText* numberAlive;
+		// * +58
+		H3DlgDef*  spells[3];
+		// * +64
+		H3DlgText* noActiveSpell;
+		// * +68
+		BOOL8      needsRedraw;
+		h3align    _f_69[3];
+		// * +6C
+		// 1 or 2 ?
+		INT        type;
+	public:
+
+	};
+	
+	/////////////////////////////////////////////
+	// Specific dialogs from the game
+	/////////////////////////////////////////////
+
+	struct H3CombatDlg : H3BaseDlg
+	{
+	protected:
+		h3unk _f_68[4];
+		// * +6C
+		UINT lastAnimTime;
+	public:
+		// * +70
+		H3CombatBottomPanel*  bottomPanel;
+		// * +74
+		H3CombatHeroPanel*    leftHeroPopup;
+		// * +78
+		H3CombatHeroPanel*    rightHeroPopup;
+		// * +7C
+		H3CombatMonsterPanel* leftMonsterPopup;
+		// * +80
+		H3CombatMonsterPanel* rightMonsterPopup;
+		// * +84
+		H3CombatMonsterPanel* bottomleftMonsterPopup;
+		// * +88
+		H3CombatMonsterPanel* bottomRightMonsterPopup;
+	};
 #pragma pack(pop)
 }
 

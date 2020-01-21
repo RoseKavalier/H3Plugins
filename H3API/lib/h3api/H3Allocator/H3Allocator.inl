@@ -41,10 +41,24 @@ namespace h3
 		new(reinterpret_cast<PVOID>(block)) T(value);
 	}
 	template<typename T>
+	template<typename U>
+	inline VOID H3ObjectAllocator<T>::construct(T * block, const U & arg) const noexcept
+	{
+		new(reinterpret_cast<PVOID>(block)) T(arg);
+	}
+	template<typename T>
 	inline VOID H3ObjectAllocator<T>::destroy(T * block) const noexcept
 	{
 		block->~T();
 	}
+#ifdef _CPLUSPLUS11_
+	template<typename T>
+	template<typename ...Args>
+	inline VOID H3ObjectAllocator<T>::construct(T * block, Args && ...args)
+	{
+		new(reinterpret_cast<PVOID>(block)) T(std::forward<Args>(args)...);
+	}
+#endif
 
 	template<typename T>
 	inline size_t * H3ArrayAllocator<T>::GetArrayBase(T * block) const noexcept
@@ -94,6 +108,17 @@ namespace h3
 		}
 	}
 	template<typename T>
+	template<typename U>
+	inline VOID H3ArrayAllocator<T>::construct(T * block, const U & arg) const noexcept
+	{
+		size_t number = GetArraySize(block);
+		for (size_t i = 0; i < number; ++i)
+		{
+			new(reinterpret_cast<PVOID>(block)) T(arg);
+			++block;
+		}
+	}
+	template<typename T>
 	inline VOID H3ArrayAllocator<T>::destroy(T * block) const noexcept
 	{
 		size_t number = GetArraySize(block);
@@ -102,8 +127,7 @@ namespace h3
 			block->~T();
 			++block;
 		}
-	}
-
+	}	
 	template<typename T>
 	template<typename U>
 	inline H3ObjectAllocator<T>::H3ObjectAllocator(const H3ObjectAllocator<U>&) noexcept
@@ -121,7 +145,6 @@ namespace h3
 	{
 		return FALSE;
 	}
-
 	template<typename T>
 	template<typename U>
 	inline H3ArrayAllocator<T>::H3ArrayAllocator(const H3ArrayAllocator<U>&) noexcept
@@ -141,6 +164,19 @@ namespace h3
 	{
 		return false;
 	}
+#ifdef _CPLUSPLUS11_
+	template<typename T>
+	template<typename ...Args>
+	inline VOID H3ArrayAllocator<T>::construct(T * block, Args && ...args)
+	{
+		size_t number = GetArraySize(block);
+		for (size_t i = 0; i < number; ++i)
+		{
+			new(reinterpret_cast<PVOID>(block)) T(std::forward<Args>(args)...);
+			++block;
+		}
+	}
+#endif
 }
 
 #endif /* #define _H3ObjectAllocator_INL_ */

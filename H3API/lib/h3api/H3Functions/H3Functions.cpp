@@ -123,6 +123,10 @@ namespace h3
 	{
 		return STDCALL_0(BOOL8, 0x4CE950);
 	}
+	_H3API_ BOOL8 F_SingleTargetSpell(INT32 spell, INT expertise)
+	{
+		return FASTCALL_2(BOOL8, 0x59E360, spell, expertise);
+	}
 	_H3API_ LPCWSTR F_MultiByteToWideChar(LPCSTR text, int textLength, WCHAR* buffer)
 	{
 		return STDCALL_6(LPCWSTR, PtrAt(0x63A1CC), CP_ACP, 0, text, textLength, buffer, textLength);
@@ -160,9 +164,9 @@ namespace h3
 		F_fseek(f, 0, SEEK_SET);
 		return size;
 	}
-	_H3API_ size_t F_fread(PVOID buffer, size_t size, size_t count, FILE* f)
+	_H3API_ BOOL F_fread(PVOID buffer, size_t size, size_t count, FILE* f)
 	{
-		return CDECL_4(size_t, 0x6196A4, buffer, size, count, f);
+		return CDECL_4(BOOL, 0x6196A4, buffer, size, count, f);
 	}
 	_H3API_ size_t F_fwrite(const VOID* buffer, size_t size, size_t count, FILE* f)
 	{

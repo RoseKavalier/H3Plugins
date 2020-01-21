@@ -17,6 +17,7 @@
 #include "../H3_Vector.hpp"
 #include "../H3_String.hpp"
 #include "../H3_MapItems.hpp"
+#include "../H3_Functions.hpp"
 
 namespace h3
 {
@@ -25,6 +26,31 @@ namespace h3
 	struct H3CombatMonster;
 
 #pragma pack(push, 1)
+
+	// * a smart pointer sometimes seen in H3
+	// * used for items with virtual destructors
+	// * use std::unique_ptr || std::shared_ptr ... otherwise
+	template <typename T>
+	struct H3SmartPointer : H3Allocator
+	{
+	protected:
+		// * +0
+		BOOL8   m_used;
+		h3align m_01[3];
+		// * +4
+		T*      m_data;
+	public:
+		H3SmartPointer(T* _Ptr = 0);
+#ifdef _CPLUSPLUS11_
+		H3SmartPointer(H3SmartPointer<T>&& other);
+#else
+		H3SmartPointer(H3SmartPointer<T>& other);
+#endif
+		~H3SmartPointer();
+		T* get();
+		T* operator->();
+		T* release();
+	};
 
 	struct H3NetworkData
 	{
@@ -45,9 +71,9 @@ namespace h3
 	};
 
 	template <typename T>
-	struct H3NetorkDataExtra : H3NetworkData
+	struct H3NetworkDataExtra : H3NetworkData
 	{
-		H3NetorkDataExtra(int recipient_id, int msg_id, int data, T& extra_data);
+		H3NetworkDataExtra(int recipient_id, int msg_id, int data, T& extra_data);
 		T extra_data;
 	};
 
@@ -87,6 +113,27 @@ namespace h3
 		static UINT8 UnpackY(UINT& coord);
 		// * Can be used on the stack safely to unpack Z
 		static UINT8 UnpackZ(UINT& coord);
+	};
+
+	// * to choose a random index within a range, without repeating results
+	struct H3IndexVector
+	{
+	protected:
+		INT    m_minimum;
+		INT    m_availableCount;
+		BOOL8  m_init; // H3Vector<BOOL8>
+		h3align _f_09[3];
+		BOOL8* m_begin;
+		BOOL8* m_end;
+		BOOL8* m_capacity;
+	public:
+		_H3API_ H3IndexVector(int minNum, int maxNum);
+		_H3API_ ~H3IndexVector();
+		// * never returns the same value
+		// * returns InvalidIndex() if there are no non-selected indexes
+		INT ChooseRandom();
+		// * returns m_minimum - 1
+		INT InvalidIndex();
 	};
 
 	// * artifacts as they appear on H3Hero structure
@@ -294,7 +341,7 @@ namespace h3
 		INT32 gold;
 
 		_H3API_ H3Resources();
-		_H3API_ H3Resources(H3Resources& other);
+		_H3API_ H3Resources(H3Resources const& other);
 		// * compares current values against cost
 		// * returns true if every current value is greater or equal
 		BOOL EnoughResources(const H3Resources& cost) const;
@@ -977,6 +1024,7 @@ namespace h3
 		#pragma region townEnums
 		enum eTown
 		{
+			NEUTRAL    = -1,
 			CASTLE     = 0,
 			RAMPART    = 1,
 			TOWER      = 2,
@@ -1569,7 +1617,8 @@ namespace h3
 		// * casts setup to relevant map item data
 
 		MapMonster* CastMonster();		
-		MapScholar* CastScholar();		
+		MapScholar* CastScholar();	
+		MapScroll* CastScroll();
 		MapEvent* CastEvent();
 		MapTreasureChest* CastTreasureChest();
 		MapWarriorsTomb* CastWarriorsTomb();
@@ -2071,7 +2120,7 @@ namespace h3
 		// 0 ~ 6
 		INT32 level;
 		//  * +8
-		LPCSTR shortName;
+		LPCSTR soundName;
 		//  * +C
 		LPCSTR defName;
 		//  * +10
@@ -2180,13 +2229,13 @@ namespace h3
 			INT16 offset_y;
 		}missiles[3];
 
-		INT32 missile_frame_angles[12]; // from high to low (90 to -90)
-		INT32 troop_count_location_offset;
-		INT32 attack_climax_frame;
-		INT32 time_between_fidgets;
-		INT32 walk_animation_time;
-		INT32 attack_animation_time;
-		INT32 flight_animation_time;
+		INT32 missileFrameAngles[12]; // from high to low (90 to -90)
+		INT32 troopCountLocationOffset;
+		INT32 attackClimaxFrame;
+		INT32 timeBetweenFidgets;
+		INT32 walkAnimationTime;
+		INT32 attackAnimationTime;
+		INT32 flightAnimationTime;
 	};
 
 	// * monster information on battlefield
@@ -2325,6 +2374,8 @@ namespace h3
 		H3Hero* GetOwner();
 		// * the bonus/decreased effect on a spell from targeting a creature
 		INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID);
+		// * odds of magic resisting
+		INT32 MagicMirrorEffect();
 	};
 
 	struct H3PrimarySkills
@@ -2355,7 +2406,7 @@ namespace h3
 		// * +0
 		H3String message;
 		// * +10
-		BOOL8 hasGuards;
+		BOOL8 customizedGuards;
 		h3unk _f_11[3];
 		// * +14
 		H3Army guardians;
@@ -2424,6 +2475,22 @@ namespace h3
 
 		// * +0
 		// * 0x641798 + questType * 0x3C
+		//
+		// vt0	Constructor
+		// vt1	AI value
+		// vt2	Condition is met
+		// vt3	Remove from hero
+		// vt4	Show Message1
+		// vt5	Show Message2
+		// vt6	Print objective number
+		// vt7	Get custom text
+		// vt8
+		// vt9
+		// vt10
+		// vt11
+		// vt12
+		// vt13
+		// vt14
 		h3func* vTable;
 		// * +4
 		// * 0 = quest guard, 1 = seer hut
@@ -2633,6 +2700,7 @@ namespace h3
 		H3MapItem* GetMapItem(int x, int y, int z);
 		VOID DrawItem(H3MapItem* mitem, H3ObjectDraw* draw);
 		VOID AddObjectAttribute(H3ObjectAttributes* oa);
+		H3Point GetCoordinates(H3MapItem* item);
 	};
 
 	// from WoG sources
@@ -2890,6 +2958,23 @@ namespace h3
 		INT16 turretsLevel;
 
 		VOID DeleteCreatures();
+	};
+
+	struct H3AICombatInfo
+	{
+		// * +0
+		INT heroAttack;
+		// * +4
+		INT heroDefence;		
+		h3unk _f_08[4];
+		// * +C
+		INT damage[4];
+		// * +1C
+		INT moveType;
+		// * +20
+		INT thisSide;
+		// * +24
+		INT enemySide;		
 	};
 
 	// * access data about objects on the adventure map
@@ -3161,6 +3246,7 @@ namespace h3
 		VOID SaveGame(LPCSTR save_name);
 		VOID PlaceObjectOnMap(int x, int y, int z, int type, int subtype, int setup = -1);
 		VOID RefreshMapItemAppearrance(H3MapItem* mi);
+		H3Point GetCoordinates(H3MapItem* item);
 	};
 
 	// * size 38h
@@ -3344,6 +3430,8 @@ namespace h3
 		h3unk _f_88[8];
 		_RTL_CRITICAL_SECTION rtlSection[3];
 		VOID ClickSound(); // modeled after sub_00456540
+		VOID PlaySound(struct H3WavFile* wav);
+		VOID PlaySound(LPCSTR wavName);
 	};
 
 	// * in charge of the adventure map
@@ -3485,6 +3573,7 @@ namespace h3
 		INT SimulateMouseOver(INT x, INT y);
 		INT SimulateMouseOver(POINT& p);
 		CHAR UpdateHintMessage();
+		H3Point GetCoordinates(H3MapItem* item);
 	};
 
 	// * trading between two armies
@@ -3823,7 +3912,7 @@ namespace h3
 		// * +132F8
 		BOOL finished;
 		// * +132FC
-		struct H3Dlg* dlg;
+		struct H3CombatDlg* dlg;
 	protected:
 		h3unk _f_13300[356];
 		// * +13464

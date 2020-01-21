@@ -391,7 +391,7 @@ namespace h3
 		{
 			return ByteAt(0x5FA228 + 3);
 		}
-		PCHAR _h3_textBuffer()
+		_H3API_ PCHAR _h3_textBuffer()
 		{
 			return PCHAR(0x697428);
 		}

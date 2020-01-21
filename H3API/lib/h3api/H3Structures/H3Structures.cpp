@@ -102,7 +102,7 @@ namespace h3
 		gold(0)
 	{
 	}
-	_H3API_ H3Resources::H3Resources(H3Resources& other) :
+	_H3API_ H3Resources::H3Resources(H3Resources const& other) :
 		wood(other.wood),
 		mercury(other.mercury),
 		ore(other.ore),
@@ -590,6 +590,10 @@ namespace h3
 	{
 		return (MapScholar*)this;
 	}
+	_H3API_ MapScroll * H3MapItem::CastScroll()
+	{
+		return (MapScroll*)this;
+	}
 	_H3API_ MapEvent* H3MapItem::CastEvent()
 	{
 		return (MapEvent*)this;
@@ -857,6 +861,11 @@ namespace h3
 		return STDCALL_3(INT32, 0x5A7EC0, damage, spellID, this);
 	}
 
+	_H3API_ INT32 H3CombatMonster::MagicMirrorEffect()
+	{
+		return THISCALL_1(INT32, 0x448510, this);
+	}
+
 	_H3API_ PINT8 H3PrimarySkills::begin()
 	{
 		return PINT8(this);
@@ -943,6 +952,11 @@ namespace h3
 		THISCALL_4(VOID, 0x4D15F0, list, list->end(), 1, oa);
 	}
 
+	_H3API_ H3Point H3MainSetup::GetCoordinates(H3MapItem* item)
+	{
+		return F_ReverseCoordinates<H3MapItem>(item, mapitems, mapSize);
+	}
+
 	_H3API_ VOID H3AIQuickBattle::DeleteCreatures()
 	{
 		THISCALL_2(VOID, 0x424880, this, 1);
@@ -1013,6 +1027,11 @@ namespace h3
 	_H3API_ VOID H3Main::RefreshMapItemAppearrance(H3MapItem* mi)
 	{
 		{ THISCALL_2(VOID, 0x4C9650, this, mi); }
+	}
+
+	_H3API_ H3Point H3Main::GetCoordinates(H3MapItem* item)
+	{
+		return mainSetup.GetCoordinates(item);
 	}
 
 	_H3API_ VOID H3Manager::SetPreviousManager(H3Manager* prev)
@@ -1106,6 +1125,17 @@ namespace h3
 		clickSoundVar = backup;
 	}
 
+	_H3API_ VOID H3SoundManager::PlaySound(H3WavFile * wav)
+	{
+		THISCALL_2(VOID, 0x59A510, this, wav);
+	}
+
+	_H3API_ VOID H3SoundManager::PlaySound(LPCSTR wavName)
+	{
+		H3WavFile *wav = H3WavFile::Load(wavName);
+		PlaySound(H3WavFile::Load(wavName));		
+		wav->Dereference();
+	}
 
 	_H3API_ H3MapItem* H3AdventureManager::GetMapItem()
 	{
@@ -1190,6 +1220,11 @@ namespace h3
 	_H3API_ CHAR H3AdventureManager::UpdateHintMessage()
 	{
 		return THISCALL_5(CHAR, 0x40B0B0, this, GetMapItem(), GetX(), GetY(), GetZ());
+	}
+
+	_H3API_ H3Point H3AdventureManager::GetCoordinates(H3MapItem* item)
+	{
+		return map->GetCoordinates(item);
 	}
 
 	_H3API_ VOID H3TownManager::Draw()
@@ -1401,6 +1436,22 @@ namespace h3
 		{
 			return *reinterpret_cast<H3TownCreatureTypes**>(0x47AB00 + 3);
 		}
+	}
+	_H3API_ H3IndexVector::H3IndexVector(int minNum, int maxNum)
+	{
+		THISCALL_3(H3IndexVector*, 0x50C8D0, this, minNum, maxNum);
+	}
+	_H3API_ H3IndexVector::~H3IndexVector()
+	{
+		F_delete(PVOID(m_begin));
+	}
+	_H3API_ INT H3IndexVector::ChooseRandom()
+	{
+		return THISCALL_1(INT, 0x50C930, this);
+	}
+	_H3API_ INT H3IndexVector::InvalidIndex()
+	{
+		return m_minimum - 1;
 	}
 }
 

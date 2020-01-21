@@ -26,7 +26,8 @@ namespace h3
 	struct H3String
 	{
 	protected:
-		BOOL _init; // useless
+		BOOL8 _init; // useless
+		h3align _f_01[3];
 		PCHAR str;
 		INT32 length;
 		INT32 capacity;

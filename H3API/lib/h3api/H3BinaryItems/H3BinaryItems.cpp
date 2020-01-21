@@ -505,6 +505,32 @@ namespace h3
 	{
 		return text.Count();
 	}
+	_H3API_ H3WavFile* H3WavFile::Load(LPCSTR name)
+	{
+		return THISCALL_1(H3WavFile*, 0x55C930, name);
+	}
+	_H3API_ H3WavFile::H3WavFile(LPCSTR name) :
+		_f_1C(0),
+		buffer(),
+		bufferSize(),
+		lockSemaphore(HANDLE(0)),
+		spinCount(127),
+		debugInfo(PRTL_CRITICAL_SECTION_DEBUG(RTL_RESOURCE_TYPE))
+	{
+		InitiateBinary(name, 32);
+		vTable = (BinaryVTable*)0x6416E0;		
+	}
+	_H3API_ H3WavFile::H3WavFile(LPCSTR name, PUINT8 buffer, DWORD bufferSize) :
+		_f_1C(0),
+		buffer(buffer),
+		bufferSize(bufferSize),
+		lockSemaphore(HANDLE(0)),
+		spinCount(127),
+		debugInfo(PRTL_CRITICAL_SECTION_DEBUG(RTL_RESOURCE_TYPE))		
+	{
+		InitiateBinary(name, 32);
+		vTable = (BinaryVTable*)0x6416E0;
+	}
 	_H3API_ H3TextFile* H3TextFile::Load(LPCSTR name)
 	{
 		return THISCALL_1(H3TextFile*, 0x55C2B0, name);
@@ -667,6 +693,19 @@ namespace h3
 				*pixel = color_index;
 			start += scanlineSize;
 		}
+	}
+	_H3API_ H3LoadedPCX::H3LoadedPCX(LPCSTR name) :
+		bufSize(),
+		bufSizeUnk(),
+		width(),
+		height(),
+		scanlineSize(),
+		buffer()
+	{
+		InitiateBinary(name, 16);
+		palette565.Initiate();
+		palette888.Initiate();
+		vTable = (BinaryVTable*)0x63BA14;
 	}
 	_H3API_ H3LoadedPCX16* H3LoadedPCX16::Construct(LPCSTR name, INT width, INT height)
 	{

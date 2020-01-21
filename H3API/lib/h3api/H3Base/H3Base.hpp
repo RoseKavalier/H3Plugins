@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-15                       //
+//                      Last edit: 2019-12-22                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -25,12 +25,14 @@
 #include <Windows.h>
 #undef NOMINMAX
 
+// * H3API uses std::min
 #ifdef min
 #undef min
 #endif
 
+// * H3API uses std::max
 #ifdef max
-#undex max
+#undef max
 #endif
 
 // * use STL functions instead of C-style
@@ -580,31 +582,6 @@ namespace h3
 	}
 
 #pragma pack(push, 1)
-	// * a smart pointer sometimes seen in H3
-	// * used for items with virtual destructors
-	// * use std::unique_ptr || std::shared_ptr ... otherwise
-	template <typename T>
-	struct H3SmartPointer : H3Allocator
-	{
-	protected:
-		// * +0
-		BOOL8   m_used;
-		h3align m_01[3];
-		// * +4
-		T*      m_data;
-	public:
-		H3SmartPointer(T* _Ptr = 0);
-	#ifdef _CPLUSPLUS11_
-		H3SmartPointer(H3SmartPointer<T>&& other);
-	#else
-		H3SmartPointer(H3SmartPointer<T>& other);
-	#endif
-		~H3SmartPointer();
-		T* get();
-		T* operator->();
-		T* release();
-	};
-
 	// * dword used as bitfield
 	// * can be used as an array of bitfields
 	struct H3Bitfield
@@ -622,6 +599,14 @@ namespace h3
 		VOID Set(UINT32 value);
 		// * Gets bitfield value as 32bits
 		UINT Get() const;
+	};
+
+	// * represents a point on the map
+	struct H3Point
+	{
+		INT x;
+		INT y;
+		INT z;
 	};
 #pragma pack(pop)
 } // namespace h3
