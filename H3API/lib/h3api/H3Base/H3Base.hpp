@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-22                       //
+//                      Last edit: 2020-01-22                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -104,6 +104,11 @@ typedef void VOID;
 typedef void VOID;
 #endif
 
+// * may be missing from some configurations, used for critical sections of H3WavFile
+#ifndef RTL_RESOURCE_TYPE
+#define RTL_RESOURCE_TYPE 1
+#endif
+
 // * typedef safety declarations
 // * no checks are needed here based on C++03 Standard 7.1.3 typedef specifier
 // * https://stackoverflow.com/questions/8594954/repeated-typedefs-invalid-in-c-but-valid-in-c?answertab=votes#tab-top
@@ -186,7 +191,7 @@ typedef void                     *PVOID;
 // * can also be used to return destination of JMP
 #define FuncAt(address) (DwordAt((address) + 1) + (address) + 5)
 #endif
-#pragma endregion
+#pragma endregion Access Macros
 
 // * model function definitions
 // * used to interact with game functions
@@ -470,7 +475,7 @@ namespace h3vargs
 #endif
 #pragma endregion
 
-#pragma endregion
+#pragma endregion Model Functions
 
 namespace h3
 {
@@ -495,8 +500,7 @@ namespace h3
 	// * 2 means 16-bit
 	// * 4 means 32-bit
 	#define h3_BitMode         ByteAt(0x5FA228 + 3)	
-#else	
-	//PCHAR h3_TextBuffer();
+#else		
 	INT gameWidth();
 	INT gameHeight();
 	INT8 gameEdgeHorizontal();
