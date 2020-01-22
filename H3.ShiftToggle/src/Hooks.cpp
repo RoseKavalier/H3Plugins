@@ -2,7 +2,7 @@
 
 using namespace h3;
 
-using cst::NH3VKey::H3VK_SHIFT;
+using NH3VKey::H3VK_SHIFT;
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -94,10 +94,23 @@ _LHF_(ShiftOff)
 	return EXEC_DEFAULT;
 }
 
+/*
+ *
+ * If holding shift when triggering a dialog
+ * then reset to avoid getting stuck.
+ *
+ */
+_LHF_(DialogsTurnOffShift)
+{
+	shiftPressed = FALSE;
+	return EXEC_DEFAULT;
+}
+
 void Hooks_init(PatcherInstance *pi)
 {
 	pi->WriteLoHook(0x40A7C7, checkShift);
 	pi->WriteLoHook(0x40E495, changeCursor);
 	pi->WriteHiHook(0x408BA0, SPLICE_, THISCALL_, _HH_CheckShift);
 	pi->WriteLoHook(0x408928, ShiftOff);
+	pi->WriteLoHook(0x5FFA20, DialogsTurnOffShift);
 }
