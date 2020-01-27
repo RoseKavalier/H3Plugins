@@ -24,6 +24,7 @@
     <ClInclude Include="lib\h3api\H3Memory\H3Memory.hpp" />
     <ClInclude Include="lib\h3api\H3Operators\H3Operators.hpp" />
     <ClInclude Include="lib\h3api\H3Plugins\H3Plugins.hpp" />
+    <ClInclude Include="lib\h3api\H3Plugins\Interface\H3AssetLoader.hpp" />
     <ClInclude Include="lib\h3api\H3Plugins\Interface\H3ImageLoader.hpp" />
     <ClInclude Include="lib\h3api\H3Plugins\Interface\H3TextColor.hpp" />
     <ClInclude Include="lib\h3api\H3RMG\H3RMG.hpp" />

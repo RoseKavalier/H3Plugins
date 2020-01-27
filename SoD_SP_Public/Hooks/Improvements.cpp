@@ -1,13 +1,16 @@
-#include "Improvements.h"
+#include "improvements.h"
 #include "hotkeys.h"
+#include "Global.h"
+#include "SODSP_Files/Log.h"
+
+using namespace h3;
+using SODSP::GENERAL::_SODSP;
 
 using SODSP::TEXT::TSpells;
 using SODSP::TEXT::TCombat;
 using SODSP::FEATURES::FOptions;
 using SODSP::COLOR::ColorsStrings;
-
-// for overflow at start
-static INT gameStart_flag;
+using SODSP::GENERAL::GGameFlags;
 
 /*
  *
@@ -16,14 +19,13 @@ static INT gameStart_flag;
  */
 int __stdcall _HH_MonthOfTheRng(HiHook *h, int Min, int Max)
 {
-
 	LOG_HIHOOK;
 	int r = FASTCALL_2(int, h->GetDefaultFunc(), Min, Max);
 	// 10 - PLAGUE
 	// 6-7-8-9 Population doubles
 	// 1-2-3-4-5 regular month
 	// does not skip month of the Imp check @ 0x4C8C2E
-	if (not F_Multiplayer())
+	if (!F_Multiplayer())
 	{
 		if ((FOptions.double_growth && FOptions.plague) // both options
 			|| (FOptions.double_growth && r > 5 && r <= 9) // not plague, but set to double population
@@ -31,7 +33,6 @@ int __stdcall _HH_MonthOfTheRng(HiHook *h, int Min, int Max)
 			)
 			r = 0;
 	}
-	LOG_HIHOOK;
 	return r;
 }
 
@@ -48,7 +49,6 @@ int __stdcall _HH_WeekOfTheRNG(HiHook *h, int Min, int Max)
 	// else regular week
 	if (!F_Multiplayer() && FOptions.weekly_growth)
 		r = 0;
-	LOG_HIHOOK;
 	return r;
 }
 
@@ -76,7 +76,6 @@ _LHF_(CombatObstacles) // actually RNG
 		return EXEC_DEFAULT;
 
 	c->return_address = orig_combat_address;
-	LOG_LOHOOK;
 	return NO_EXEC_DEFAULT;
 }
 
@@ -104,15 +103,23 @@ _LHF_(MapHintCoordinates)
 	LOG_LOHOOK;
 	if (!F_Multiplayer() && FOptions.adventure_coordinates)
 	{
-		H3Position coord = P_AdventureMgr->mousePosition;
+		H3AdventureManager* adv = P_AdventureMgr;
+		H3Position coord = adv->mousePosition;
+
+		int size = adv->map->mapSize;
+
+		int x, y, z;
+		coord.GetXYZ(x, y, z);
+		if (x >= size || y >= size)
+			return EXEC_DEFAULT;
+
 		////////////////////////
 		// from v1_15
 		///////////////////////
-		ShowMovementCost(coord);
+		ShowMovementCost(coord.Mixed(), x, y, z);
 
-		sprintf(h3_TextBuffer, "%s {~%s}(%d, %d, %d)}", h3_TextBuffer, ColorsStrings.adventure_coordinates.String(), coord.GetX(), coord.GetY(), coord.GetZ());
+		F_sprintf("%s {~%s}(%d, %d, %d)}", h3_TextBuffer, ColorsStrings.adventure_coordinates.String(), x, y, z);
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -143,7 +150,6 @@ _LHF_(OriginalRng)
 			return EXEC_DEFAULT;
 
 		c->return_address = default_rng_address;
-		LOG_LOHOOK;
 		return NO_EXEC_DEFAULT;
 	}
 	return EXEC_DEFAULT;
@@ -186,7 +192,6 @@ _LHF_(ShowPortalsGates)
 		return EXEC_DEFAULT;
 	}
 	c->return_address = 0x5F85FA;
-	LOG_LOHOOK;
 	return NO_EXEC_DEFAULT;
 }
 
@@ -207,10 +212,8 @@ _LHF_(TextboxNumbersFormat)
 		H3String *text = (H3String*)IntAt(c->esp);
 		text->Dereference();
 		text->FormattedNumber(number);
-		LOG_LOHOOK;
 		return NO_EXEC_DEFAULT;
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -232,7 +235,6 @@ _LHF_(QuestNumbersFormat)
 		text->Append(' ');
 		LPCSTR resource = StrAt(c->esp + 0xC);
 		text->Append(resource, strlen(resource));
-		LOG_LOHOOK;
 		return NO_EXEC_DEFAULT;
 	}
 	return EXEC_DEFAULT;
@@ -254,7 +256,6 @@ void __stdcall _HH_CombatRmbTextbox(HiHook *h, H3CombatManager *This, H3CombatMo
 			newValue = 0;
 	}
 	THISCALL_3(void, h->GetDefaultFunc(), This, mon, newValue);
-	LOG_HIHOOK;
 }
 
 /*
@@ -293,9 +294,7 @@ _LHF_(SpellbookTextCalculations)
 			break;
 		default:
 			c->return_address = 0x59BFCA;
-			LOG_LOHOOK;
 			return NO_EXEC_DEFAULT;
-			break;
 		}
 	}
 	return EXEC_DEFAULT;
@@ -307,17 +306,16 @@ _LHF_(SpellbookTextCalculations)
  * to compute actual spell effects when inspecting the spellbook.
  *
  */
-static DWORD spellDetails;
+static DWORD SPELL_DETAILS;
 int __stdcall _HH_spellDetails_flag3(HiHook *h, H3Hero* This, int a1, int a2, int a3)
 {
 	LOG_HIHOOK;
 	if (!F_Multiplayer())
-		spellDetails |= 1;
+		SPELL_DETAILS |= 1;
 
 	int r = THISCALL_4(int, h->GetDefaultFunc(), This, a1, a2, a3);
 
-	spellDetails &= ~1;
-	LOG_HIHOOK;
+	SPELL_DETAILS &= ~1;
 	return r;
 }
 
@@ -330,7 +328,7 @@ int __stdcall _HH_spellDetails_flag3(HiHook *h, H3Hero* This, int a1, int a2, in
 _LHF_(SpellbookTextOrbs)
 {
 	LOG_LOHOOK;
-	if (!F_Multiplayer() && (spellDetails & 1) && FOptions.spell_details)
+	if (!F_Multiplayer() && (SPELL_DETAILS & 1) && FOptions.spell_details)
 	{
 		switch (c->arg_n(1))
 		{
@@ -353,7 +351,6 @@ _LHF_(SpellbookTextOrbs)
 			break;
 		default:
 			c->return_address = 0x4E5B1E;
-			LOG_LOHOOK;
 			return NO_EXEC_DEFAULT;
 		}
 	}
@@ -369,7 +366,7 @@ _LHF_(SpellbookTextOrbs)
 _LHF_(SpellbookTextSorcery)
 {
 	LOG_LOHOOK;
-	if (!F_Multiplayer() && (spellDetails & 1) && FOptions.spell_details)
+	if (!F_Multiplayer() && (SPELL_DETAILS & 1) && FOptions.spell_details)
 	{
 		switch (c->arg_n(1))
 		{
@@ -395,7 +392,6 @@ _LHF_(SpellbookTextSorcery)
 			break;
 		}
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -409,12 +405,11 @@ int __stdcall _HH_spellDetails_flag4(HiHook *h, int This, int a1, int a2, int a3
 {
 	LOG_HIHOOK;
 	if (!F_Multiplayer())
-		spellDetails |= 2;
+		SPELL_DETAILS |= 2;
 
 	int r = THISCALL_5(int, h->GetDefaultFunc(), This, a1, a2, a3, a4);
 
-	spellDetails &= ~2;
-	LOG_HIHOOK;
+	SPELL_DETAILS &= ~2;
 	return r;
 }
 
@@ -427,7 +422,7 @@ int __stdcall _HH_spellDetails_flag4(HiHook *h, int This, int a1, int a2, int a3
 _LHF_(SpellbookTextValues)
 {
 	LOG_LOHOOK;
-	if (!F_Multiplayer() && (spellDetails & 2) && FOptions.spell_details)
+	if (!F_Multiplayer() && (SPELL_DETAILS & 2) && FOptions.spell_details)
 	{
 		H3Hero *hero = (H3Hero*)(c->arg_n(3));
 		UINT spell_id = c->arg_n(2);
@@ -479,7 +474,6 @@ _LHF_(SpellbookTextValues)
 			break;
 		}
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -492,7 +486,7 @@ _LHF_(SpellbookTextValues)
 _LHF_(SpellbookTextCases)
 {
 	LOG_LOHOOK;
-	if (!F_Multiplayer() && (spellDetails & 2) && FOptions.spell_details)
+	if (!F_Multiplayer() && (SPELL_DETAILS & 2) && FOptions.spell_details)
 	{
 		UINT spell_value = PtrAt(c->esp + 8);
 		switch (c->arg_n(2))
@@ -501,24 +495,24 @@ _LHF_(SpellbookTextCases)
 		case H3Spell::EARTH_ELEMENTAL:
 		case H3Spell::FIRE_ELEMENTAL:
 		case H3Spell::WATER_ELEMENTAL:
-			sprintf(h3_TextBuffer, TSpells()->Elementals(), spell_value);
+			F_sprintf(TSpells()->Elementals(), spell_value);
 			break;
 		case H3Spell::CURE:
-			sprintf(h3_TextBuffer, TSpells()->Cure(), spell_value);
+			F_sprintf(TSpells()->Cure(), spell_value);
 			break;
 		case H3Spell::HYPNOTIZE:
-			sprintf(h3_TextBuffer, TSpells()->Hypnotize(), spell_value);
+			F_sprintf(TSpells()->Hypnotize(), spell_value);
 			break;
 		case H3Spell::RESURRECTION:
 		case H3Spell::ANIMATE_DEAD:
-			sprintf(h3_TextBuffer, TSpells()->Resurrection(), spell_value);
+			F_sprintf(TSpells()->Resurrection(), spell_value);
 			break;
 		case H3Spell::VISIONS:
-			sprintf(h3_TextBuffer, TSpells()->Visions(), spell_value);
+			F_sprintf(TSpells()->Visions(), spell_value);
 			break;
 		case H3Spell::FLY:
 		case H3Spell::WATER_WALK:
-			sprintf(h3_TextBuffer, TSpells()->FlyWW(), spell_value);
+			F_sprintf(TSpells()->FlyWW(), spell_value);
 			break;
 		case H3Spell::BLOODLUST:
 		case H3Spell::PRECISION:
@@ -528,13 +522,13 @@ _LHF_(SpellbookTextCases)
 		case H3Spell::FORTUNE:
 		case H3Spell::HASTE:
 		case H3Spell::SLAYER:
-			sprintf(h3_TextBuffer, TSpells()->Increase(), spell_value);
+			F_sprintf(TSpells()->Increase(), spell_value);
 			break;
 		case H3Spell::WEAKNESS:
 		case H3Spell::DISRUPTING_RAY:
 		case H3Spell::SORROW:
 		case H3Spell::MISFORTUNE:
-			sprintf(h3_TextBuffer, TSpells()->Reduce(), spell_value);
+			F_sprintf(TSpells()->Reduce(), spell_value);
 			break;
 		case H3Spell::SLOW:
 		case H3Spell::SHIELD:
@@ -543,23 +537,22 @@ _LHF_(SpellbookTextCases)
 		case H3Spell::PROTECTION_FROM_FIRE:
 		case H3Spell::PROTECTION_FROM_WATER:
 		case H3Spell::PROTECTION_FROM_EARTH:
-			sprintf(h3_TextBuffer, TSpells()->ReducePerc(), spell_value);
+			F_sprintf(TSpells()->ReducePerc(), spell_value);
 			break;
 		case H3Spell::DIMENSION_DOOR:
 		case H3Spell::TOWN_PORTAL:
-			sprintf(h3_TextBuffer, TSpells()->DDTP(), spell_value);
+			F_sprintf(TSpells()->DDTP(), spell_value);
 			break;
 		case H3Spell::SACRIFICE:
-			sprintf(h3_TextBuffer, TSpells()->Sacrifice(), spell_value);
+			F_sprintf(TSpells()->Sacrifice(), spell_value);
 			break;
 		case H3Spell::FIRE_SHIELD:
-			sprintf(h3_TextBuffer, TSpells()->FireShield(), spell_value);
+			F_sprintf(TSpells()->FireShield(), spell_value);
 			break;
 		default:
 			break;
 		}
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -573,7 +566,6 @@ _LHF_(ForcefieldShadow)
 	LOG_LOHOOK;
 	if (!F_Multiplayer() && P_CombatMgr->actionParameter == H3Spell::FORCE_FIELD)
 		c->ebx = 0; // forcefield middle hex is always on the right
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -591,14 +583,13 @@ _LHF_(ShowPlayerResources)
 	if (!F_Multiplayer() && FOptions.number_format && resource >= 1000)
 	{
 		if (resource < 1000000)  // greater/equal one thousand
-			sprintf(h3_TextBuffer, "%d,%03d", (resource / 1000) % 1000, resource % 1000);
+			F_sprintf("%d,%03d", (resource / 1000) % 1000, resource % 1000);
 		else if (resource < 100000000)  // greater/equal one million
-			sprintf(h3_TextBuffer, "%d,%03d{k}", (resource / 1000000) % 1000, (resource / 1000) % 1000);
+			F_sprintf("%d,%03d{k}", (resource / 1000000) % 1000, (resource / 1000) % 1000);
 		else if (resource < 1000000000)  // greater/equal 100 million
-			sprintf(h3_TextBuffer, "%d{M}", (resource / 1000000) % 1000);
+			F_sprintf("%d{M}", (resource / 1000000) % 1000);
 		else // greater/equal one billion
-			sprintf(h3_TextBuffer, "%d,%03d{M}", (resource / 1000000000) % 1000, (resource / 1000000) % 1000);
-		LOG_LOHOOK;
+			F_sprintf("%d,%03d{M}", (resource / 1000000000) % 1000, (resource / 1000000) % 1000);
 		return NO_EXEC_DEFAULT;
 	}
 	return EXEC_DEFAULT;
@@ -618,7 +609,6 @@ _LHF_(HideCloneSummonDeaths)
 		if (mon->IsClone() || mon->IsSummon())
 		{
 			c->return_address = 0x470958;
-			LOG_LOHOOK;
 			return NO_EXEC_DEFAULT;
 		}
 	}
@@ -640,8 +630,50 @@ _LHF_(AbbreviateKilledCount)
 		IntAt(c->esp + 8) = count / 1000;
 		IntAt(c->esp + 4) = (int)"%dk";
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
+}
+
+/*
+ *
+ * This hook makes AI offensive spells reflectable if Magic Mirror is active on target.
+ *
+ */
+VOID __stdcall _HH_CastSpell_AI_MagicMirror(HiHook* h, H3CombatManager* This, int spellID, int hex, int a3, int newHex, int expertise, int a6)
+{
+	LOG_HIHOOK;
+
+	if (!F_Multiplayer() &&
+		SODSP::FEATURES::FOptions.AI_magic_mirror &&
+		!This->IsHumanTurn() &&
+		F_SingleTargetSpell(spellID, expertise) &&
+		spellID != H3Spell::DISPEL)
+	{
+		const int side = This->currentActiveSide;
+		H3CombatMonster* mon = This->squares[hex].GetMonster();
+		if (mon->side != side) // offensive spells only
+		{
+			INT32 mirror = mon->MagicMirrorEffect();
+			if (mirror > 0 && mirror > H3Random::RandBetween(1, 100))
+			{
+				const int num = This->heroMonCount[side];
+				int index{ 0 };
+				H3IndexVector indexSelector(0, num - 1);
+				while (index >= 0)
+				{
+					index = indexSelector.ChooseRandom();
+					if (index < 0)
+						break;
+					H3CombatMonster* newMon = &This->stacks[side][index];
+					if (!newMon->info.flags.CANNOTMOVE && newMon->type != NH3Creatures::ARROW_TOWER)
+					{
+						newHex = newMon->position;
+						break;
+					}
+				}
+			}
+		}
+	}
+	THISCALL_7(VOID, h->GetDefaultFunc(), This, spellID, hex, a3, newHex, expertise, a6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -661,7 +693,6 @@ _LHF_(GetDamage)
 	H3CombatMonster *ourMon = (H3CombatMonster *)c->esi;
 	if (ourMon->info.flags.DOUBLEATTACK)
 	{
-
 		if ((P_CombatMgr->move_type == H3MouseManager::BFC_Shooting || P_CombatMgr->move_type == H3MouseManager::BFC_Half_Damage)) // if ranged, double min damage
 			c->edi += c->edi;
 		c->eax += c->eax; // always double max damage, it's technically possible
@@ -727,7 +758,6 @@ void calculate_queue(UINT32 battle_sequence[42], H3CombatManager *combat)
 {
 	CrQueue queue[42]; // 2 * 21
 	H3CombatMonster *active_creature = combat->activeStack;
-	INT32 active_position;
 
 	///////////////////////////////////////////////////////
 	// populate queue
@@ -764,7 +794,7 @@ void calculate_queue(UINT32 battle_sequence[42], H3CombatManager *combat)
 
 			q->category = 3; // default category
 			if (q->creature->info.speed > 0 && q->cannot_move == 0) // the wait flag vanishes after the normal phase is over! But we can get it from combat phase
-				q->category = max(2 - q->morale + 2 * (q->waiting + combat->waitPhase), 2);
+				q->category = std::max(2 - q->morale + 2 * (q->waiting + combat->waitPhase), 2u);
 			if (q->creature->IsDone())
 				q->category = 5;
 			if (q->speed == 0 || q->cannot_move)
@@ -772,10 +802,7 @@ void calculate_queue(UINT32 battle_sequence[42], H3CombatManager *combat)
 			if (!q->creature->numberAlive)
 				q->category = 7;
 			if (q->creature == active_creature)
-			{
-				active_position = q->struct_position;
 				q->category = 1;
-			}
 		}
 	}
 
@@ -784,21 +811,14 @@ void calculate_queue(UINT32 battle_sequence[42], H3CombatManager *combat)
 	///////////////////////////////////////////////////////
 	qsort(queue, 42, sizeof(CrQueue), compare_queue);
 
-	//////////////////////////////////////////////////////////////////
-	// second sort of creatures: alternate sides for same speed
-	//////////////////////////////////////////////////////////////////
-	CrQueue tempInfo;
-	CrQueue *fastestInfo;
-	CrQueue *current;
-	INT32 fastest_position;
 	for (INT32 i = 1; i < 42; i++)
 	{
-		fastestInfo = &queue[i];
-		fastest_position = i;
+		CrQueue* fastestInfo = &queue[i];
+		INT32 fastest_position = i;
 
 		for (INT32 j = i + 1; j < 42; j++)
 		{
-			current = &queue[j];
+			CrQueue* current = &queue[j];
 			// same category, same side, take the lower position
 			if (fastestInfo->category == current->category
 				&& fastestInfo->side == current->side
@@ -821,7 +841,7 @@ void calculate_queue(UINT32 battle_sequence[42], H3CombatManager *combat)
 			}
 		}
 		// swap the creature in the queue with the fastest found
-		tempInfo = queue[i];
+		CrQueue tempInfo = queue[i];
 		queue[i] = *fastestInfo;
 		queue[fastest_position] = tempInfo;
 		battle_sequence[fastestInfo->struct_position] = i;
@@ -840,18 +860,18 @@ void __stdcall _HH_CombatStatus_ShowKills(HiHook *h, H3Dlg *This, PCHAR buffer, 
 	LOG_HIHOOK;
 
 	H3CombatManager *combat = P_CombatMgr;
-	H3CombatMonster *ourMon, *oppMon;
-	INT32 mouseCoord = combat->mouse_coord;
-	INT32 column = mouseCoord % 17;
-	INT32 row = mouseCoord / 17 + 'A';
+	H3CombatMonster *our_mon;
+	const INT32 mouse_coord = combat->mouse_coord;
+	const INT32 column = mouse_coord % 17;
+	const INT32 row = mouse_coord / 17 + 'A';
 	CHAR new_text[128];
 	new_text[0] = 0;
 	if (!min_damage && !max_damage) // hovering over one of your own creatures or can't reach enemy
 	{
-		if ((ourMon = combat->squares[mouseCoord].GetMonster()) && column > 0 && column < 16 && row < (12 + 'A'))
+		if ((our_mon = combat->squares[mouse_coord].GetMonster()) && column > 0 && column < 16 && row < (12 + 'A'))
 		{
-			INT32 maxHP = ourMon->info.hitPoints;
-			INT32 lostHP = ourMon->healthLost;
+			INT32 maxHP = our_mon->info.hitPoints;
+			INT32 lostHP = our_mon->healthLost;
 			INT32 currentHP = maxHP - lostHP;
 
 			if (FOptions.creature_hp)
@@ -861,7 +881,7 @@ void __stdcall _HH_CombatStatus_ShowKills(HiHook *h, H3Dlg *This, PCHAR buffer, 
 			{
 				UINT32 battle_sequence[42] = { 0 }; // for 42 creatures, which position will move next
 				calculate_queue(battle_sequence, combat);
-				_snprintf(new_text, 128, "%s [{~%s}%d}]", new_text, ColorsStrings.move_sequence.String(), battle_sequence[ourMon->Index()]);
+				_snprintf(new_text, 128, "%s [{~%s}%d}]", new_text, ColorsStrings.move_sequence.String(), battle_sequence[our_mon->Index()]);
 			}
 		}
 		strcat(buffer, new_text);
@@ -869,7 +889,7 @@ void __stdcall _HH_CombatStatus_ShowKills(HiHook *h, H3Dlg *This, PCHAR buffer, 
 
 	if (max_damage || min_damage)
 	{
-		oppMon = combat->squares[mouseCoord].GetMonster();
+		H3CombatMonster* oppMon = combat->squares[mouse_coord].GetMonster();
 		if (oppMon && column > 0 && column < 16 && row < (12 + 'A'))
 		{
 			INT32 maxHP = oppMon->info.hitPoints;
@@ -941,30 +961,27 @@ void __stdcall _HH_CombatStatus_ShowKills(HiHook *h, H3Dlg *This, PCHAR buffer, 
 	/////////////////////////////////////////////////////////////////////////////
 	if (FOptions.comb_coordinates)
 	{
-		CHAR coordText[64];
+		CHAR coord_text[64];
 		if (column > 0 && column < 16 && row < (12 + 'A'))  // we don't care about off-grid coordinates
 		{
-			INT32 attackingCoordinates = combat->attacker_coord;
-			INT32 attackerColumn, attackerRow;
+			INT32 attacking_coordinates = combat->attacker_coord;
 			if (combat->move_type == 7)  // melee attack, show destination of attacker as well as defender's location
 			{
 				if (combat->activeStack->info.flags.DOUBLE_WIDE)
-					attackingCoordinates += (combat->currentActiveSide == 0) ? 1 : -1;
-				attackerColumn = attackingCoordinates % 17;
-				attackerRow = attackingCoordinates / 17 + 'A';
-				_snprintf(coordText, 64, " {~%s}(%c%d—%c%d)}", ColorsStrings.battle_coordinates.String(), (CHAR)attackerRow, attackerColumn, (CHAR)row, column);
+					attacking_coordinates += (combat->currentActiveSide == 0) ? 1 : -1;
+				const INT32 attacker_column = attacking_coordinates % 17;
+				const INT32 attacker_row = attacking_coordinates / 17 + 'A';
+				_snprintf(coord_text, 64, " {~%s}(%c%d—%c%d)}", ColorsStrings.battle_coordinates.String(), (CHAR)attacker_row, attacker_column, (CHAR)row, column);
 			}
 			else
-				_snprintf(coordText, 64, " {~%s}(%c%d)}", ColorsStrings.battle_coordinates.String(), (CHAR)row, column);
+				_snprintf(coord_text, 64, " {~%s}(%c%d)}", ColorsStrings.battle_coordinates.String(), (CHAR)row, column);
 
-			strcat(buffer, coordText);
+			strcat(buffer, coord_text);
 		}
 	}
 
 	min_damage = 0;
 	max_damage = 0;
-
-	LOG_HIHOOK;
 	THISCALL_4(void, h->GetDefaultFunc(), This, buffer, a2, a3);
 }
 
@@ -979,8 +996,8 @@ _LHF_(BattleSpellText)
 	LOG_LOHOOK;
 	if (!F_Multiplayer())
 	{
-		int spell_id = c->arg_n(1);
-		int coordinates = c->arg_n(2);
+		const int spell_id = c->arg_n(1);
+		const int coordinates = c->arg_n(2);
 		H3CombatManager *combat = P_CombatMgr;
 		H3CombatMonster *targetMon;
 		if (spell_id == H3Spell::RESURRECTION)
@@ -991,23 +1008,19 @@ _LHF_(BattleSpellText)
 			targetMon = ((H3CombatSquare*)c->edi)->GetMonster();
 		if (targetMon)
 		{
-			H3Hero *ourHero, *enemyHero;
-			INT32 spellPower;
+			const int side = combat->currentActiveSide;
+			H3Hero* our_hero = combat->hero[side];
+			H3Hero* enemy_hero = combat->hero[1 - side];
+			const INT32 spell_power = combat->heroSpellPower[side];
 
-			int side = combat->currentActiveSide;
-			ourHero = combat->hero[side];
-			enemyHero = combat->hero[1 - side];
-			spellPower = combat->heroSpellPower[side];
-
-			INT32 spellExpertise = ourHero->GetSpellExpertise(spell_id, combat->specialTerrain);
-			INT32 baseDamage = P_Spell[spell_id].GetBaseEffect(spellExpertise, spellPower);
-			INT32 numberCreatures = 0;
-			INT32 deadCreatures;
-			INT32 maxHP, lostHP, currentHP;
-			INT32 damage, realDamage;
-			maxHP = targetMon->info.hitPoints;
-			lostHP = targetMon->healthLost;
-			currentHP = maxHP - lostHP;
+			const INT32 spell_expertise = our_hero->GetSpellExpertise(spell_id, combat->specialTerrain);
+			const INT32 base_damage = P_Spell(spell_id).GetBaseEffect(spell_expertise, spell_power);
+			INT32 number_creatures = 0;
+			INT32 dead_creatures;
+			INT32 damage, real_damage;
+			const INT32 max_hp = targetMon->info.hitPoints;
+			const INT32 lost_hp = targetMon->healthLost;
+			const INT32 current_hp = max_hp - lost_hp;
 
 			switch (spell_id)
 			{
@@ -1016,38 +1029,38 @@ _LHF_(BattleSpellText)
 			case H3Spell::MAGIC_ARROW:
 			case H3Spell::LIGHTNING_BOLT:
 			case H3Spell::TITANS_LIGHTNING_BOLT:
-				damage = realDamage = ourHero->GetRealSpellDamage(baseDamage, targetMon, spell_id, enemyHero);
-				if (damage >= currentHP)
+				damage = real_damage = our_hero->GetRealSpellDamage(base_damage, targetMon, spell_id, enemy_hero);
+				if (damage >= current_hp)
 				{
-					numberCreatures++;
-					damage -= currentHP;
+					number_creatures++;
+					damage -= current_hp;
 				}
 				if (damage > 0)
-					numberCreatures += damage / maxHP;
+					number_creatures += damage / max_hp;
 
-				if (numberCreatures < targetMon->numberAlive)
-					_snprintf(h3_TextBuffer, 200, "%s (%d %s, {%s:} {~%s}%d})", h3_TextBuffer, realDamage, TCombat()->Damage(), TCombat()->Kills(), ColorsStrings.kill_some.String(), numberCreatures);
+				if (number_creatures < targetMon->numberAlive)
+					F_sprintf("%s (%d %s, {%s:} {~%s}%d})", h3_TextBuffer, real_damage, TCombat()->Damage(), TCombat()->Kills(), ColorsStrings.kill_some.String(), number_creatures);
 				else
-					_snprintf(h3_TextBuffer, 200, "%s (%d %s, {~%s}%s: %d})", h3_TextBuffer, realDamage, TCombat()->Damage(), ColorsStrings.kill_all.String(), TCombat()->Kills(), targetMon->numberAlive);
+					F_sprintf("%s (%d %s, {~%s}%s: %d})", h3_TextBuffer, real_damage, TCombat()->Damage(), ColorsStrings.kill_all.String(), TCombat()->Kills(), targetMon->numberAlive);
 				break;
 			case H3Spell::RESURRECTION:
 			case H3Spell::ANIMATE_DEAD:
-				damage = ourHero->GetSpellSpecialtyEffect(spell_id, targetMon->info.level, baseDamage);
-				realDamage = damage + baseDamage;
-				numberCreatures = 1 + (realDamage - lostHP) / maxHP;
-				deadCreatures = targetMon->numberAtStart - targetMon->numberAlive;
-				if (numberCreatures < deadCreatures)
-					sprintf(h3_TextBuffer, "%s (%d %s, {%s:} {~%s}%d})", h3_TextBuffer, realDamage, TCombat()->ResurrectHP(), TCombat()->Raises(), ColorsStrings.kill_some.String(), numberCreatures);
+				damage = our_hero->GetSpellSpecialtyEffect(spell_id, targetMon->info.level, base_damage);
+				real_damage = damage + base_damage;
+				number_creatures = 1 + (real_damage - lost_hp) / max_hp;
+				dead_creatures = targetMon->numberAtStart - targetMon->numberAlive;
+				if (number_creatures < dead_creatures)
+					F_sprintf("%s (%d %s, {%s:} {~%s}%d})", h3_TextBuffer, real_damage, TCombat()->ResurrectHP(), TCombat()->Raises(), ColorsStrings.kill_some.String(), number_creatures);
 				else
-					sprintf(h3_TextBuffer, "%s (%d %s, {~%s}%s: %d})", h3_TextBuffer, realDamage, TCombat()->ResurrectHP(), ColorsStrings.kill_all.String(), TCombat()->Raises(), deadCreatures);
+					F_sprintf("%s (%d %s, {~%s}%s: %d})", h3_TextBuffer, real_damage, TCombat()->ResurrectHP(), ColorsStrings.kill_all.String(), TCombat()->Raises(), dead_creatures);
 				break;
 			case H3Spell::CURE:
-				damage = ourHero->GetSpellSpecialtyEffect(spell_id, targetMon->info.level, baseDamage);
-				realDamage = damage + baseDamage;
-				if (realDamage > lostHP)
-					sprintf(h3_TextBuffer, "%s ({~%s}%d %s})", h3_TextBuffer, ColorsStrings.kill_all.String(), lostHP, TCombat()->ResurrectHP());
+				damage = our_hero->GetSpellSpecialtyEffect(spell_id, targetMon->info.level, base_damage);
+				real_damage = damage + base_damage;
+				if (real_damage > lost_hp)
+					F_sprintf("%s ({~%s}%d %s})", h3_TextBuffer, ColorsStrings.kill_all.String(), lost_hp, TCombat()->ResurrectHP());
 				else
-					sprintf(h3_TextBuffer, "%s ({~%s}%d %s})", h3_TextBuffer, ColorsStrings.kill_some.String(), realDamage, TCombat()->ResurrectHP());
+					F_sprintf("%s ({~%s}%d %s})", h3_TextBuffer, ColorsStrings.kill_some.String(), real_damage, TCombat()->ResurrectHP());
 				break;
 			default:
 				break;
@@ -1058,15 +1071,14 @@ _LHF_(BattleSpellText)
 			///////////////////////////////////////////////
 			if (FOptions.comb_coordinates)
 			{
-				INT32 column = coordinates % 17;
-				INT32 row = coordinates / 17 + 'A';
+				const INT32 column = coordinates % 17;
+				const INT32 row = coordinates / 17 + 'A';
 				if (column && column < 16 && row < (12 + 'A'))
-					sprintf(h3_TextBuffer, "%s {~%s}(%c%d)}", h3_TextBuffer, ColorsStrings.battle_coordinates.String(), row, column);
+					F_sprintf("%s {~%s}(%c%d)}", h3_TextBuffer, ColorsStrings.battle_coordinates.String(), row, column);
 			}
 
 		}
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -1080,13 +1092,12 @@ _LHF_(TeleportText)
 	LOG_LOHOOK;
 	if (!F_Multiplayer() && FOptions.comb_coordinates)
 	{
-		DWORD coordinate = c->arg_n(2);
-		char battle_row = (char)(coordinate / 17 + 'A');
-		int battle_column = coordinate % 17;
-		sprintf(h3_TextBuffer, "%s {~%s}(%c%d)}", (PCHAR)c->ecx, ColorsStrings.battle_coordinates.String(), battle_row, battle_column);
+		const DWORD coordinate = c->arg_n(2);
+		const char battle_row = (char)(coordinate / 17 + 'A');
+		const int battle_column = coordinate % 17;
+		F_sprintf("%s {~%s}(%c%d)}", (PCHAR)c->ecx, ColorsStrings.battle_coordinates.String(), battle_row, battle_column);
 		c->ecx = (int)h3_TextBuffer;
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -1096,112 +1107,51 @@ _LHF_(TeleportText)
 
 /*
  *
- * This hook sets a flag to trigger turbo spell animation.
- * Used for @FastSpells and @FastSpells2
+ * For spells that are targeted at creatures
  *
  */
-static BOOL fastSpells;
-void __stdcall _HH_fastSpells_flag(HiHook *h, int This, int a1, int a2, int a3, int a4, int a5, int a6)
+char __stdcall _HH_FastSpellAnimation(HiHook* h, H3CombatManager* This, int a2, int a3, int delay, int a5)
 {
-	if (!F_Multiplayer())
-		fastSpells = TRUE;
-	THISCALL_7(void, h->GetDefaultFunc(), This, a1, a2, a3, a4, a5, a6);
-	fastSpells = FALSE;
-}
-
-/*
- *
- * This hook speeds up spell animations in GDI mode.
- *
- */
-_LHF_(FastSpells)
-{
-	LOG_LOHOOK;
-	if (!F_Multiplayer() && FOptions.turbo_animation && fastSpells)
+	if (FOptions.turbo_animation)
 	{
 		switch (h3_CurrentAnimationSpeed)
 		{
 		case 1: // reduce duration by half
-			if (c->eax == 4)
-			{
-				LOG_LOHOOK;
-				return NO_EXEC_DEFAULT;
-			}
+			delay = delay >> 1;
 			break;
-		case 2: // instantaneous
-			LOG_LOHOOK;
-			return NO_EXEC_DEFAULT;
+		case 2: // almost instantaneous
+			delay = delay >> 4;
+			break;
 		default: // normal duration
-			LOG_LOHOOK;
-			return EXEC_DEFAULT;
+			break;
 		}
-		LOG_LOHOOK;
-		return NO_EXEC_DEFAULT;
 	}
-	LOG_LOHOOK;
-	return EXEC_DEFAULT;
+
+	return THISCALL_5(char, h->GetDefaultFunc(), This, a2, a3, delay, a5);
 }
 
-/*
- *
- * This hook speeds up spell animations in True mode.
- *
- */
-_LHF_(FastSpells2)
+int __stdcall _HH_FastSummonAnimation(HiHook* h, H3WindowManager* This, int x, int y, int width, int height, int delay)
 {
-	LOG_LOHOOK;
-	if (!F_Multiplayer() && FOptions.turbo_animation && P_CombatMgr->action == H3CombatManager::BA_CAST_SPELL)
+	if (FOptions.turbo_animation)
 	{
 		switch (h3_CurrentAnimationSpeed)
 		{
-		case 1: // cut by half
-			if (c->esi == 3)
-			{
-				LOG_LOHOOK;
-				return NO_EXEC_DEFAULT;
-			}
+		case 1: // reduce duration by half
+			delay = delay >> 1;
 			break;
-		case 2: // instantaneous
-			LOG_LOHOOK;
-			return NO_EXEC_DEFAULT;
-		default: // normal
-			LOG_LOHOOK;
-			return EXEC_DEFAULT;
+		case 2: // almost instantaneous
+			delay = delay >> 4;
+			break;
+		default: // normal duration
+			break;
 		}
 	}
-	LOG_LOHOOK;
-	return EXEC_DEFAULT;
-}
 
-/*
- *
- * This function searches through HD_MCR.dll to place @FastSpells2 hook.
- *
- */
-void place_fast_spells2_hook(PatcherInstance *pi)
-{
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	// fast_spells_2: 8B 5D 0C 89 44 .. 24 54
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	UINT8 needle_fast_spells_2[] = {
-		0x8B, 0x5D, 0x0C,						// MOV EBX, DWORD PTR SS: [EBP + 0C]
-		0x89, 0x44/*, 0x24, 0x54*/				// MOV DWOD PTR SS [ESP+54], EAX
-	};
-
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	// Expected opcode: 0F 8F .. 7C FE FF FF
-	///////////////////////////////////////////////////////////////////////////////////////////////
-	UINT8 expected_code[] = {
-		0x0F, 0x8F /* 0x7C, 0xFE, 0xFF, 0xFF */	// JG [some address prior]
-	};
-	INT32 radius = 0x50;
-	DWORD address = SODSP::DLL::HD_MCR.NeedleSearchAround(needle_fast_spells_2, sizeof(needle_fast_spells_2), radius, expected_code, sizeof(expected_code));
-	if (address)
-		pi->WriteLoHook(address, FastSpells2);
+	return THISCALL_6(int, h->GetDefaultFunc(), This, x, y, width, height, delay);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Fix high level experience for cheats && Tree of Knowledge
+// Fix high level experience for cheats and Tree of Knowledge
 ////////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -1211,13 +1161,10 @@ void place_fast_spells2_hook(PatcherInstance *pi)
  */
 int __stdcall _HH_Cheat_flag(HiHook *h, int _this, int a1, int a2, int a3) // 0x004025F5
 {
-	gameStart_flag = 2;
+	GGameFlags.levelup_cheats = TRUE;
 	LOG_HIHOOK;
-
 	int r = THISCALL_4(int, h->GetDefaultFunc(), _this, a1, a2, a3);
-
-	gameStart_flag = 0;
-	LOG_HIHOOK;
+	GGameFlags.levelup_cheats = FALSE;
 	return r;
 }
 
@@ -1228,12 +1175,10 @@ int __stdcall _HH_Cheat_flag(HiHook *h, int _this, int a1, int a2, int a3) // 0x
  */
 int __stdcall _HH_TreeKnowledge_flag(HiHook *h, int _this, int a1, int a2, int a3) // 0x4A65FF
 {
-	gameStart_flag = 3;
+	GGameFlags.levelup_treeknowledge = TRUE;
 	LOG_HIHOOK;
 	int r = THISCALL_4(int, h->GetDefaultFunc(), _this, a1, a2, a3);
-
-	gameStart_flag = 0;
-	LOG_HIHOOK;
+	GGameFlags.levelup_treeknowledge = FALSE;
 	return r;
 }
 
@@ -1249,28 +1194,22 @@ int __stdcall _HH_TreeKnowledge_flag(HiHook *h, int _this, int a1, int a2, int a
 _LHF_(FixExperience)
 {
 	LOG_LOHOOK;
-	INT32 experience, hero_level;
-	experience = c->ecx; // the hero's total experience after the gained ~ not yet applied to hero
+	const INT32 experience = c->ecx; // the hero's total experience after the gained ~ not yet applied to hero
 
-	if (gameStart_flag == 1) // game start
-	{
-		LOG_LOHOOK;
+	if (GGameFlags.game_start)
 		return EXEC_DEFAULT;
-	}
 
-	H3Hero *hero = (H3Hero*)c->edi;
-	hero_level = hero->level;
+	auto hero = reinterpret_cast<H3Hero*>(c->edi);
+	const INT32 hero_level = hero->level;
 
 	// logic for gaining experience normally
-	if (gameStart_flag != 3 && gameStart_flag != 2)
+	if (!GGameFlags.levelup_cheats && !GGameFlags.levelup_treeknowledge)
 	{
 		// don't change logic if we're not going to level 868.
 		if (experience < NH3Levels::LEVEL_868)
-		{
-			LOG_LOHOOK;
 			return EXEC_DEFAULT;
-		}
-		int skills_left_to_learn = hero->SSkillsLeftToLearn();
+
+		const int skills_left_to_learn = hero->SSkillsLeftToLearn();
 
 		if (hero_level < 868 && experience >= NH3Levels::LEVEL_868 && experience < NH3Levels::LEVEL_3732)
 		{
@@ -1304,7 +1243,7 @@ _LHF_(FixExperience)
 			hero->primarySkill[2] = 127;
 			hero->primarySkill[3] = 127;
 		}
-		else if (experience >= NH3Levels::LEVEL_MAX && experience <= 0) // infinite level-ups -> send hero to level 0
+		else if (experience >= NH3Levels::LEVEL_MAX) // infinite level-ups -> send hero to level 0
 		{
 			hero->level = -1 - skills_left_to_learn; // one level before 0 ...
 			hero->primarySkill[0] = 127; // all stats should be maxed up ~ can be revised if you don't have primary overflow fix
@@ -1319,9 +1258,8 @@ _LHF_(FixExperience)
 	// normally experience overflows out of bounds
 	// so let's control it instead
 	// will not level you up after level 100
-	else if (gameStart_flag == 3)
+	else if (GGameFlags.levelup_treeknowledge)
 	{
-		int skills_left_to_learn = hero->SSkillsLeftToLearn();
 		switch (hero_level)
 		{
 		case 0:
@@ -1350,7 +1288,7 @@ _LHF_(FixExperience)
 	// no limits
 	else
 	{
-		int skills_left_to_learn = hero->SSkillsLeftToLearn();
+		const int skills_left_to_learn = hero->SSkillsLeftToLearn();
 		switch (hero_level)
 		{
 		case 0:
@@ -1407,8 +1345,7 @@ _LHF_(FixExperience)
 			break;
 		}
 	}
-	LOG_LOHOOK
-		return EXEC_DEFAULT;
+	return EXEC_DEFAULT;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1438,14 +1375,13 @@ _LHF_(AIberserk1)
 		return EXEC_DEFAULT;
 
 	c->return_address = 0x4B3537;
-	LOG_LOHOOK;
 	return NO_EXEC_DEFAULT;
 }
 
-naked_function AIberserk2(void)
+_NAKED_FUNCTION_ AIberserk2(void)
 {
-	static naked_t return_berserk2a = (naked_t)0x4B37AA;
-	static naked_t return_berserk2b = (naked_t)0x4B37BF;
+	static naked_t return_berserk2a = reinterpret_cast<naked_t>(0x4B37AA);
+	static naked_t return_berserk2b = reinterpret_cast<naked_t>(0x4B37BF);
 
 	__asm PUSHFD
 	__asm PUSHAD
@@ -1456,9 +1392,9 @@ naked_function AIberserk2(void)
 		__asm MOV ECX, DWORD PTR SS : [EBP + 0x14]
 			__asm MOV EAX, DWORD PTR SS : [EBP - 0x0C]
 			__asm MOV EDX, DWORD PTR DS : [ECX + 4]
-			__asm && EAX, 0x0F
+			__asm AND EAX, 0x0F
 		__asm SHL EAX, 0x0C
-		__asm && DH, 0x0F
+		__asm AND DH, 0x0F
 		__asm OR EAX, EDX
 		__asm LEA EDX, [EBP + 0x14]
 			__asm MOV DWORD PTR DS : [ECX + 0x0E], EAX
@@ -1471,9 +1407,11 @@ naked_function AIberserk2(void)
 }
 
 static naked_t bridge_berserk3;
-static naked_t return_berserk3 = (naked_t)0x422447;
-naked_function AIberserk3(void)
+
+_NAKED_FUNCTION_ AIberserk3(void)
 {
+	static naked_t return_berserk3 = reinterpret_cast<naked_t>(0x422447);
+
 	__asm PUSHFD
 	__asm PUSHAD
 	if (!F_Multiplayer() && FOptions.berserk)
@@ -1499,13 +1437,13 @@ naked_function AIberserk3(void)
  */
 void RestoreBerserk(PatcherInstance *pi)
 {
-	if (ByteAt(0x4B352F) == mnemonics::jmp)
+	if (ByteAt(0x4B352F) == H3Patcher::mnemonics::jmp)
 		pi->WriteLoHook(0x4B352F, AIberserk1);
 	if (PtrAt(0x4B37A5) == 0x90909090)
 		H3Patcher::NakedHook5(0x4B37A5, AIberserk2);
-	if (ByteAt(0x422440) == mnemonics::jmp)
+	if (ByteAt(0x422440) == H3Patcher::mnemonics::jmp)
 	{
-		bridge_berserk3 = (naked_t)FuncAt(0x422440);
+		bridge_berserk3 = reinterpret_cast<naked_t>(FuncAt(0x422440));
 		H3Patcher::NakedHook5(0x422440, AIberserk3);
 	}
 }
@@ -1535,7 +1473,7 @@ void MoreObjectsPatch_by_AlexSpl(PatcherInstance *pi)
 	pi->WriteByte(0x4FD163 + 1, 0xB7);	// movsx		to		movzx
 
 	pi->WriteWord(0x505C75, 0xBF0F);	// mov			to		movsx
-	pi->WriteWord(0x505C79, 0x74FFFE83);// TEST SI,SI	to		CMP ESI, -1
+	pi->WriteDword(0x505C79, 0x74FFFE83);// TEST SI,SI	to		CMP ESI, -1
 										// JL			to		JE
 	pi->WriteByte(0x505C9E + 1, 0xB7);	// movsx		to		movzx
 
@@ -1553,31 +1491,29 @@ void MoreObjectsPatch_by_AlexSpl(PatcherInstance *pi)
  */
 void TurboPatch()
 {
-	union Flint
+	union floint
 	{
 		float f;
 		UINT32 i;
-	};
-
-	Flint t;
+	}t;
 
 	if (FOptions.turbo_animation) // turbo values
 	{
 		t.f = 0.20f;
-		DwordPatch(0x63CF7C, t.i);
+		H3Patcher::DwordPatch(0x63CF7C, t.i);
 		t.f = 0.10f;
-		DwordPatch(0x63CF80, t.i);
+		H3Patcher::DwordPatch(0x63CF80, t.i);
 		t.f = 0.05f;
-		DwordPatch(0x63CF84, t.i);
+		H3Patcher::DwordPatch(0x63CF84, t.i);
 	}
 	else // normal values
 	{
 		t.f = 1.00f;
-		DwordPatch(0x63CF7C, t.i);
+		H3Patcher::DwordPatch(0x63CF7C, t.i);
 		t.f = 0.63f;
-		DwordPatch(0x63CF80, t.i);
+		H3Patcher::DwordPatch(0x63CF80, t.i);
 		t.f = 0.40f;
-		DwordPatch(0x63CF84, t.i);
+		H3Patcher::DwordPatch(0x63CF84, t.i);
 	}
 }
 
@@ -1597,21 +1533,20 @@ _LHF_(MoreSeerHuts)
 {
 	LOG_LOHOOK;
 	H3Main *main = P_Main;
-	int currentCount = main->mainSetup.seerHuts.Count();
-	if (currentCount >= 48)
+	const int current_count = main->mainSetup.seerHuts.Count();
+	if (current_count >= 48)
 	{
-		int newCount = currentCount % 48;
+		const int new_count = current_count % 48;
 		BYTE *availNames = (BYTE*)c->esi;
-		H3SeerHut *seer = &main->mainSetup.seerHuts.first[currentCount - newCount - 1];
-		for (int i = 0; i < newCount; i++)
+		H3SeerHut *seer = &main->mainSetup.seerHuts[current_count - new_count - 1];
+		for (int i = 0; i < new_count; i++)
 		{
 			availNames[seer->seerNameId] = 0;
 			seer++;
 		}
-		c->edi = (int)main;
-		c->edx = newCount;
+		c->edi = int(main);
+		c->edx = new_count;
 		c->return_address = 0x574DB3;
-		LOG_LOHOOK;
 	}
 	return EXEC_DEFAULT;
 }
@@ -1626,7 +1561,45 @@ _LHF_(MoreSeerHuts2)
 	LOG_LOHOOK;
 	if (c->edi >= 48)
 		c->edi %= 48;
+	return EXEC_DEFAULT;
+}
+
+///////////
+// More custom wandering monsters
+////////////
+
+/*
+ *
+ * These patches allow 4096 customized wandering monsters on the adventure map
+ * instead of 256; this takes 4 extra bits that were not used by anything
+ * in the original code.
+ * You can therefore have more custom messages and custom rewards before
+ * the game starts to give you duplicated versions due to modulo operation.
+ *
+ */
+void MoreCustomWanderingMonsters()
+{
+	H3Patcher::DwordPatch(0x4A67BC + 1, 0xFFF);      // grab individual id
+	H3Patcher::DwordPatch(0x4A73F0 + 1, 0xFFF);      // grab individual id
+	H3Patcher::DwordPatch(0x501C73 + 1, 0xFFF);      // setup from load map
+	H3Patcher::DwordPatch(0x501D2D + 1, 0xFFFBFFFF); // setup from load map
+}
+
+
+_LHF_(ViewSelfArmyCatapult)
+{
 	LOG_LOHOOK;
+
+	H3CombatSquare* sq = (H3CombatSquare*)c->ebx;
+	H3CombatMonster* mon = sq->GetMonster();
+	if (!mon)
+		return EXEC_DEFAULT;
+	H3CombatManager* combat = (H3CombatManager*)c->esi;
+	if (mon->side == combat->currentActiveSide)
+	{
+		c->return_address = 0x47600C;
+		return NO_EXEC_DEFAULT;
+	}
 	return EXEC_DEFAULT;
 }
 
@@ -1661,13 +1634,16 @@ void improvements_init(PatcherInstance * pi)
 	pi->WriteLoHook(0x5591B9, ShowPlayerResources);
 	pi->WriteLoHook(0x4708F7, HideCloneSummonDeaths);
 	pi->WriteLoHook(0x470D82, AbbreviateKilledCount);
+	// [1.18.0]
+	pi->WriteHiHook(0x478986, CALL_, THISCALL_, _HH_CastSpell_AI_MagicMirror);
+	// [1.18.0]
+	pi->WriteLoHook(0x47617B, ViewSelfArmyCatapult); // when you have the catapult active, you can view your own army information
 
 	//////////////////////////////
 	// Faster spell animations
 	//////////////////////////////
-	pi->WriteHiHook(0x5A0140, SPLICE_, THISCALL_, _HH_fastSpells_flag); // all cases
-	pi->WriteLoHook(0x6035E3, FastSpells); // fast spells when using GDI format
-	place_fast_spells2_hook(pi);
+	pi->WriteHiHook(0x496590, SPLICE_, THISCALL_, _HH_FastSpellAnimation); // targeted spells
+	pi->WriteHiHook(0x479BED, CALL_, THISCALL_, _HH_FastSummonAnimation); // summon spells
 
 	//////////////////////////////////////////////////
 	// Faster leveling and no overflow
@@ -1711,9 +1687,21 @@ void improvements_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////
 	RestoreBerserk(pi);
 
-	///////////////////////////////////////////
+	//////////////////////////////////////////////////
 	// More Seer Huts with repeated names
-	///////////////////////////////////////////
+	//////////////////////////////////////////////////
 	pi->WriteLoHook(0x574D5C, MoreSeerHuts); // pick random name
 	pi->WriteLoHook(0x574DF2, MoreSeerHuts2); // don't divide by non-positive number
+
+	//////////////////////////////////////////////////////////////////////////
+	// Allows 4096 customized wandering monsters (was 256, then duplicates)
+	//////////////////////////////////////////////////////////////////////////
+	// [1.18.0]
+	MoreCustomWanderingMonsters();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Allows 256 signposts/ocean bottles to be loaded
+	//////////////////////////////////////////////////////////////////////////
+	// [1.18.1]
+	H3Patcher::BytePatch(0x4B8DDD + 1, 0xB6); // movsx to movzx, signed->unsigned
 }

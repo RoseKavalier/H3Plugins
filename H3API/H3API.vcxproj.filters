@@ -205,6 +205,9 @@
     <ClInclude Include="lib\h3api\H3Operators\H3Operators.hpp">
       <Filter>lib</Filter>
     </ClInclude>
+    <ClInclude Include="lib\h3api\H3Plugins\Interface\H3AssetLoader.hpp">
+      <Filter>lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\h3api\H3Base\H3Base.cpp">

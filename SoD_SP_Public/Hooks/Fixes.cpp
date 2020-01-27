@@ -1,6 +1,11 @@
+#include "Global.h"
+#include "SODSP_Files/Log.h"
 #include "Fixes.h"
 #include "AnchorBug.h"
 #include "HorizontalScrollbar.h"
+
+using namespace h3;
+using SODSP::FEATURES::FOptions;
 
 //////////////////////////////////////////////////////////////////////////
 // AI bugs
@@ -11,16 +16,15 @@
  * This hook prevents AI from casting Town Portal on Cursed Ground
  *
  */
-_LHF_(AI_TP_cursed_check)
+_LHF_(AiTpCursedCheck)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && SODSP_OPTIONS.ai_cheats)
+	if (!F_Multiplayer() && FOptions.ai_cheats)
 	{
 		H3Hero *hero = (H3Hero*)c->esi;
 		if (hero->GetSpecialTerrain() == NH3Objects::CURSED_GROUND)
 		{
 			c->return_address = 0x56B6F4;
-			LOG_LOHOOK;
 			return NO_EXEC_DEFAULT;
 		}
 	}
@@ -33,12 +37,12 @@ _LHF_(AI_TP_cursed_check)
  * When AI has tactics or attacks you, they split their shooters...
  *
  */
-_LHF_(AI_split_div0)
+_LHF_(AiSplitDiv0)
 {
 	LOG_LOHOOK;
 	if (c->ebx == 0) // ... if the other hero has no army, it will divide by 0
 		c->ebx = 1; // make it 1 to avoid changing much and prevent crash
-	LOG_LOHOOK;
+
 	return EXEC_DEFAULT;
 }
 
@@ -47,21 +51,21 @@ _LHF_(AI_split_div0)
  * This hook prevents AI from casting Fly if they don't have it.
  *
  */
-_LHF_(AI_waterwalk_fly)
+_LHF_(AiWaterwalkFly)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && c->eax == 0 && SODSP_OPTIONS.ai_cheats)
+	if (!F_Multiplayer() && c->eax == 0 && FOptions.ai_cheats)
 	{
 		H3Hero *hero = (H3Hero *)(c->esi);
-		if (!hero->HasSpell(H3Spell::FLY)) // this AI hero does not have the means to cast fly
+		if (!hero->HasSpell(int(H3Spell::eSpells::FLY))) // this AI hero does not have the means to cast fly
 		{
-			if (hero->HasSpell(H3Spell::WATER_WALK)) // this AI hero has access to waterwalk
+			if (hero->HasSpell(int(H3Spell::eSpells::WATER_WALK))) // this AI hero has access to waterwalk
 			{
 				if (hero->waterwalkPower == -1) // waterwalk is not cast
 					c->return_address = 0x430231;
 				else
 					c->return_address = 0x430540;
-				LOG_LOHOOK;
+
 				return NO_EXEC_DEFAULT;
 			} // waterwalk available
 		} // fly available
@@ -79,7 +83,7 @@ _LHF_(AI_combat_div0)
 	LOG_LOHOOK;
 	if (c->edi == 0)
 		c->edi = 1;
-	LOG_LOHOOK;
+
 	return EXEC_DEFAULT;
 }
 
@@ -92,13 +96,12 @@ _LHF_(AI_combat_div0)
 _LHF_(AI_NecromancyFix)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && SODSP_OPTIONS.AI_necromancy)
+	if (!F_Multiplayer() && FOptions.AI_necromancy)
 	{
 		c->return_address = 0x426FED;
-		LOG_LOHOOK;
 		return NO_EXEC_DEFAULT;
 	}
-	LOG_LOHOOK;
+
 	return EXEC_DEFAULT;
 }
 
@@ -112,9 +115,8 @@ void _HH_AI_NecromancyFix(HiHook *h, H3AIQuickBattle *winner, H3AIQuickBattle *l
 {
 	LOG_HIHOOK;
 	THISCALL_3(void, h->GetDefaultFunc(), winner, loser, town);
-	if (!multiplayer_game && SODSP_OPTIONS.AI_necromancy)
+	if (!F_Multiplayer() && FOptions.AI_necromancy)
 		loser->DeleteCreatures();
-	LOG_HIHOOK;
 }
 
 /*
@@ -128,9 +130,8 @@ int __stdcall _HH_AI_QB_GetDamage(HiHook *h, H3AIQuickBattle *This, int a1, int 
 	LOG_HIHOOK;
 	int r = THISCALL_3(int, h->GetDefaultFunc(), This, a1, a2);
 
-	if (SODSP_OPTIONS.quickbattle_overflow && This->armyStrength > 0 && r < 0)
+	if (FOptions.quickbattle_overflow && This->armyStrength > 0 && r < 0)
 		r = INT_MAX;
-	LOG_HIHOOK;
 	return r;
 }
 
@@ -143,9 +144,8 @@ int __stdcall _HH_AI_QB_GetDamage(HiHook *h, H3AIQuickBattle *This, int a1, int 
 void __stdcall _HH_AI_QB_hugeArmy(HiHook *h, H3AIQuickBattle *This, int a1, int a2, int a3)
 {
 	LOG_HIHOOK;
-	if (SODSP_OPTIONS.quickbattle_overflow && This->armyStrength < 0)
+	if (FOptions.quickbattle_overflow && This->armyStrength < 0)
 		This->armyStrength = INT_MAX;
-	LOG_HIHOOK;
 	THISCALL_4(void, h->GetDefaultFunc(), This, a1, a2, a3);
 }
 
@@ -159,7 +159,7 @@ void __stdcall _HH_AI_QB_hugeArmy(HiHook *h, H3AIQuickBattle *This, int a1, int 
 void __stdcall _HH_AI_PreventCreatureSpawning(HiHook *h, H3AIQuickBattle *This, int a2)
 {
 	LOG_HIHOOK;
-	BOOL valid = (!multiplayer_game && SODSP_OPTIONS.quickbattle_overflow);
+	const BOOL valid = (!F_Multiplayer() && FOptions.quickbattle_overflow);
 	H3Army backup;
 	if (valid)
 		backup = *This->army;
@@ -173,7 +173,6 @@ void __stdcall _HH_AI_PreventCreatureSpawning(HiHook *h, H3AIQuickBattle *This, 
 				army->count[i] = backup.count[i];
 		}
 	}
-	LOG_HIHOOK;
 }
 
 /*
@@ -186,9 +185,8 @@ int __stdcall _HH_AI_GetArmyValue(HiHook *h, H3Army *This)
 {
 	LOG_HIHOOK;
 	int r = THISCALL_1(int, h->GetDefaultFunc(), This);
-	if (SODSP_OPTIONS.quickbattle_overflow && r < 0)
+	if (FOptions.quickbattle_overflow && r < 0)
 		r = INT_MAX - 500; // - 500 is needed as sometimes this is used to calculate experience and if a town/hero is present it will overflow.
-	LOG_HIHOOK;
 	return r;
 }
 
@@ -202,12 +200,13 @@ int __stdcall _HH_AI_GetArmyValue(HiHook *h, H3Army *This)
  * A much simpler fix exists but this was simplest for SoD_SP's scope.
  *
  */
-static naked_t return_turret1 = (naked_t)0x41E3A6;
-naked_function turret_bug1(void)
+_NAKED_FUNCTION_ TurretBug1(void)
 {
+	static naked_t return_turret1 = (naked_t)0x41E3A6;
+
 	__asm PUSHFD
 	__asm PUSHAD
-	if (!multiplayer_game && SODSP_OPTIONS.turrets)
+	if (!F_Multiplayer() && FOptions.turrets)
 	{
 		__asm POPAD
 		__asm POPFD
@@ -227,12 +226,12 @@ naked_function turret_bug1(void)
 	__asm JMP return_turret1
 }
 
-static naked_t return_turret2 = (naked_t)0x41E4E2;
-naked_function turret_bug2(void)
+_NAKED_FUNCTION_ TurretBug2(void)
 {
+	static naked_t return_turret2 = (naked_t)0x41E4E2;
 	__asm PUSHFD
 	__asm PUSHAD
-	if (!multiplayer_game && SODSP_OPTIONS.turrets)
+	if (!F_Multiplayer() && FOptions.turrets)
 	{
 		__asm POPAD
 		__asm POPFD
@@ -251,12 +250,13 @@ naked_function turret_bug2(void)
 	__asm JMP return_turret2
 }
 
-static naked_t return_turret3 = (naked_t)0x465946;
-naked_function turret_bug3(void)
+_NAKED_FUNCTION_ turret_bug3(void)
 {
+	static naked_t return_turret3 = (naked_t)0x465946;
+
 	__asm PUSHFD
 	__asm PUSHAD
-	if (!multiplayer_game && SODSP_OPTIONS.turrets)
+	if (!F_Multiplayer() && FOptions.turrets)
 	{
 		__asm POPAD
 		__asm POPFD
@@ -285,16 +285,14 @@ naked_function turret_bug3(void)
  * spell icon hint.
  *
  */
-_LHF_(faerie_dialog_hover)
+_LHF_(FaerieDialogHover)
 {
 	LOG_LOHOOK;
 	if (c->eax == 0x0F)
 	{
 		c->edi = IntAt(0x6A6A00); // "Cast Spell" text ~ taken from 0x46B4FE
-		LOG_LOHOOK;
 		return NO_EXEC_DEFAULT;
 	}
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -304,15 +302,14 @@ _LHF_(faerie_dialog_hover)
  * spell icon right-click message.
  *
  */
-_LHF_(faerie_dialog_RMB)
+_LHF_(FaerieDialogRmb)
 {
-	LOG_LOHOOK
-		if (c->esi == 0x0F)
-		{
-			c->esi = IntAt(0x6A6A00); // "Cast Spell" text ~ taken from 0x46B4FE
-			LOG_LOHOOK;
-			return NO_EXEC_DEFAULT;
-		}
+	LOG_LOHOOK;
+	if (c->esi == 0x0F)
+	{
+		c->esi = IntAt(0x6A6A00); // "Cast Spell" text ~ taken from 0x46B4FE
+		return NO_EXEC_DEFAULT;
+	}
 	return EXEC_DEFAULT;
 }
 
@@ -322,7 +319,7 @@ _LHF_(faerie_dialog_RMB)
  * Patch by igrik.
  *
  */
-void GUI_fixes_by_igrik(PatcherInstance *pi)
+void GuiFixesByIgrik(PatcherInstance *pi)
 {
 	// cancel button in tavern
 	// iCancel.def to iCN6432.def
@@ -368,7 +365,6 @@ _LHF_(WaitPhaseBug)
 	LOG_LOHOOK;
 	if (P_CombatMgr->waitPhase) // we need to prevent regen abilities or elixir of life to trigger
 		c->flags.ZF = TRUE;     // because it was not supposed to act in this phase
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -377,7 +373,7 @@ _LHF_(WaitPhaseBug)
  * The nwczion cheat flag is not always reset.
  *
  */
-void NWCzionBug()
+void NwcZionBug()
 {
 	ByteAt(0x6AAAC4) = 0;
 }
@@ -398,7 +394,7 @@ void NWCzionBug()
  */
 BOOL RevisitEventBug(H3Hero *hero)
 {
-	if (SODSP_OPTIONS.event_repeat_bug && (hero->isVisible) && (hero->objectTypeUnder == NH3Objects::EVENT)
+	if (FOptions.event_repeat_bug && (hero->isVisible) && (hero->objectTypeUnder == NH3Objects::EVENT)
 		&& ((MapEvent*)& hero->objectBelowSetup)->oneVisit)
 	{
 		hero->objectTypeUnder = 0; // equivalent to line 0x4A0C30
@@ -421,8 +417,7 @@ _LHF_(ViewHeroScreenRapidly)
 {
 	LOG_LOHOOK;
 	if (!c->eax)
-		c->eax = (int)((H3TownManager*)c->esi)->bottom;
-	LOG_LOHOOK;
+		c->eax = reinterpret_cast<int>(reinterpret_cast<H3TownManager*>(c->esi)->bottom);
 	return EXEC_DEFAULT;
 }
 
@@ -435,10 +430,9 @@ _LHF_(ViewHeroScreenRapidly)
 _LHF_(VisitBankBug)
 {
 	LOG_LOHOOK;
-	H3MapItem *mip = (H3MapItem*)c->eax;
+	const auto mip = reinterpret_cast<H3MapItem*>(c->eax);
 	if (mip->objectType == NH3Objects::HERO)
 		P_AdventureMgr->MobilizeHero();
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -452,14 +446,11 @@ _LHF_(VisitBankBug)
 _LHF_(EarthquakeBug)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && SODSP_OPTIONS.earthquake_bug)
+	if (!F_Multiplayer() && FOptions.earthquake_bug)
 	{
-		H3CombatMonster *mon = (H3CombatMonster *)(c->eax - 0x84); // offset is to creature flags
+		const auto mon = reinterpret_cast<H3CombatMonster *>(c->eax - 0x84); // offset is to creature flags
 		if (mon->sideIndex == 0)
-		{
-			LOG_LOHOOK;
 			return NO_EXEC_DEFAULT;
-		}
 	}
 	return EXEC_DEFAULT;
 }
@@ -477,17 +468,15 @@ _LHF_(EarthquakeBug)
 _LHF_(PreserveMonsterNumber)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && c->arg_n(6) == -1 && c->arg_n(9) == -1 && SODSP_OPTIONS.vanish)
+	if (!F_Multiplayer() && c->arg_n(6) == -1 && c->arg_n(9) == -1 && FOptions.vanish)
 	{
 		c->esp += 4; // pop edi
-		H3Army* monsters = (H3Army*)c->ecx;;
-		int monNumber = 0;
+		auto monsters = reinterpret_cast<H3Army*>(c->ecx);;
+		int mon_number = 0;
 
 		for (int i = 0; i < 7; i++)
-			monNumber += monsters->count[i]; // restore count no matter if it is an upgraded creature or not
-		c->eax = monNumber;
-
-		LOG_LOHOOK;
+			mon_number += monsters->count[i]; // restore count no matter if it is an upgraded creature or not
+		c->eax = mon_number;
 		return NO_EXEC_DEFAULT;
 	}
 	return EXEC_DEFAULT;
@@ -503,7 +492,7 @@ _LHF_(PreserveMonsterNumber)
 _LHF_(FixHireables)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game || SODSP_OPTIONS.tavern_heroes)
+	if (!F_Multiplayer() || FOptions.tavern_heroes)
 		return NO_EXEC_DEFAULT;
 	return EXEC_DEFAULT;
 }
@@ -520,9 +509,8 @@ _LHF_(FixHireables)
 _LHF_(UpdateMaxLandMovement)
 {
 	LOG_LOHOOK;
-	H3Hero* hero = (H3Hero*)c->esi;
+	H3Hero* hero = reinterpret_cast<H3Hero*>(c->esi);
 	hero->maxMovement = hero->MaxLandMovement();
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -535,9 +523,8 @@ _LHF_(UpdateMaxLandMovement)
 _LHF_(RecalculateMovementAfterVisitObject)
 {
 	LOG_LOHOOK;
-	H3Hero* hero = (H3Hero*)c->edi;
+	H3Hero* hero = reinterpret_cast<H3Hero*>(c->edi);
 	hero->maxMovement = hero->CalcMaxMovement();
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -552,7 +539,6 @@ _LHF_(RecaculateMovementAfterExitingTown)
 	LOG_LOHOOK;
 	H3Hero* hero = (H3Hero*)c->eax;
 	hero->maxMovement = hero->CalcMaxMovement();
-	LOG_LOHOOK;
 	return EXEC_DEFAULT;
 }
 
@@ -565,7 +551,7 @@ _LHF_(RecaculateMovementAfterExitingTown)
 void __stdcall _HH_HeroesMeeting(HiHook *h, H3AdventureManager *This, H3Hero *hero, H3MapItem *dest, H3Position position, BOOL8 human)
 {
 	LOG_HIHOOK;
-	H3Hero* second_hero = P_Main->GetHero(dest->setup);
+	auto second_hero = P_Main->GetHero(dest->setup);
 	BOOL same_owner = FALSE;
 	if (second_hero)
 		same_owner = hero->owner == second_hero->owner;
@@ -574,7 +560,6 @@ void __stdcall _HH_HeroesMeeting(HiHook *h, H3AdventureManager *This, H3Hero *he
 
 	if (human && same_owner)
 		second_hero->maxMovement = second_hero->CalcMaxMovement();
-	LOG_HIHOOK;
 }
 
 /*
@@ -583,14 +568,14 @@ void __stdcall _HH_HeroesMeeting(HiHook *h, H3AdventureManager *This, H3Hero *he
  * maximum water movement.
  *
  */
-void update_heroes_max_mvmt_in_water()
+void UpdateHeroesMaxMvmtInWater()
 {
 	H3Hero *hero;
 	H3Player *me = h3_ActivePlayer;
 	H3Main *main = P_Main;
-	for (int i = 0; i < 8; i++)
+	for (auto hero_id : me->heroIDs)
 	{
-		if ((hero = main->GetHero(me->heroIDs[i])) && hero->flags.in_boat)
+		if (((hero = main->GetHero(hero_id))) && hero->flags.in_boat)
 			hero->maxMovement = hero->MaxWaterMovement();
 	}
 }
@@ -604,9 +589,8 @@ void update_heroes_max_mvmt_in_water()
 _LHF_(UpdateSeaMvmtLighthouse)
 {
 	LOG_LOHOOK;
-	if ((BYTE)c->arg_n(4)) // only if human
-		update_heroes_max_mvmt_in_water();
-	LOG_LOHOOK;
+	if (static_cast<BYTE>(c->arg_n(4))) // only if human
+		UpdateHeroesMaxMvmtInWater();
 	return EXEC_DEFAULT;
 }
 
@@ -615,20 +599,19 @@ _LHF_(UpdateSeaMvmtLighthouse)
  * Similar to @UpdateSeaMvmtLighthouse but in the case of building a Castle's Lighthouse.
  *
  */
-int __stdcall _HH_AfterBuildingLighthouse(HiHook *h, H3Town *This, int building_id)
+int __stdcall _HH_AfterBuildingLighthouse(HiHook *h, const H3Town *This, const int building_id)
 {
 	LOG_HIHOOK;
 	int r = THISCALL_2(int, h->GetDefaultFunc(), This, building_id);
 
 	if (h->GetReturnAddress() == 0x5BF262) // only care about when I build it
 	{
-		if (This->type == H3Town::CASTLE && building_id == H3Town::B_LIGHTHOUSE) // if castle and building a lighthouse
+		if (This->type == int(H3Town::eTown::CASTLE) && building_id == int(H3Town::eBuildings::B_LIGHTHOUSE)) // if castle and building a lighthouse
 		{
 			if (This->owner == h3_CurrentPlayerID) // only care about human
-				update_heroes_max_mvmt_in_water();
+				UpdateHeroesMaxMvmtInWater();
 		}
 	}
-	LOG_HIHOOK;
 	return r;
 }
 
@@ -641,18 +624,46 @@ int __stdcall _HH_AfterBuildingLighthouse(HiHook *h, H3Town *This, int building_
 _LHF_(CastleLighthouseOwnerCheck)
 {
 	LOG_LOHOOK;
-	if (SODSP_OPTIONS.movement_bugs)
+	if (FOptions.movement_bugs)
 	{
-		H3Town *town = (H3Town*)(c->ecx);
-		H3Hero *hero = (H3Hero*)(c->local_n(1)); // H3Hero is stored in temp variable [LOCAL.1]
+		const auto town = reinterpret_cast<H3Town*>(c->ecx);
+		const auto hero = reinterpret_cast<H3Hero*>(c->local_n(1)); // H3Hero is stored in temp variable [LOCAL.1]
 
 		if (hero->owner == town->owner) // normal
 			return EXEC_DEFAULT;
 
 		c->return_address = 0x4E4D6C; // skip procedure
-		LOG_LOHOOK;
 		return NO_EXEC_DEFAULT;
 	}
+	return EXEC_DEFAULT;
+}
+
+/*
+ *
+ * This hook modifies the cursor type when targetting an enemy with the First Aid Tent.
+ * In this subroutine, the code checks if the First Aid Tent can target an enemy (which it can't)
+ *
+ */
+BOOL8 __stdcall _HH_FirstAidTentTargetEnemy(HiHook* h, H3CombatMonster* This, int a2, int a3)
+{
+	LOG_HIHOOK;
+	if (This->type == NH3Creatures::FIRST_AID_TENT)
+		return false;
+	return THISCALL_3(BOOL8, h->GetDefaultFunc(), This, a2, a3);
+}
+
+/*
+ *
+ * This hook properly updates the enchanters' targeting loop to a new creature.
+ * Otherwise, only the first stack is considered, possibly resulting in lack of casts
+ * even though valid spell targets are still available.
+ *
+ */
+_LHF_(EnchantersTargetting)
+{
+	LOG_LOHOOK;
+	if (FOptions.Enchanters_cast_fix)
+		c->ref_local_n(3) += sizeof(H3CombatMonster);
 	return EXEC_DEFAULT;
 }
 
@@ -665,33 +676,33 @@ void fixes_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////
 	// AI bugs
 	//////////////////////////////////////////////////
-	pi->WriteLoHook(0x56B344, AI_TP_cursed_check);		// disallow casting Town Portal on cursed ground for AI
-	pi->WriteLoHook(0x43020E, AI_waterwalk_fly);		// disallow AI from casting Fly if they don't have it (v1)
-	pi->WriteLoHook(0x42DDA6, AI_split_div0);			// if AI has tactics and shooters, but you have 0 creatures -> crash
+	pi->WriteLoHook(0x56B344, AiTpCursedCheck);		// disallow casting Town Portal on cursed ground for AI
+	pi->WriteLoHook(0x43020E, AiWaterwalkFly);		// disallow AI from casting Fly if they don't have it (v1)
+	pi->WriteLoHook(0x42DDA6, AiSplitDiv0);			// if AI has tactics and shooters, but you have 0 creatures -> crash
 	pi->WriteLoHook(0x42437D, AI_combat_div0);			// divides by speed which shouldn't be 0
 	pi->WriteLoHook(0x426FE4, AI_NecromancyFix);		// Army is deleted before Necromancy action, so skip army deletion and execute it in HH below
 	pi->WriteHiHook(0x426EE0, SPLICE_, THISCALL_, _HH_AI_NecromancyFix);			// this HiHook runs the skipped over code from @AI_NecromancyFix
 	pi->WriteHiHook(0x426390, SPLICE_, THISCALL_, _HH_AI_QB_GetDamage);			// don't allow negative damage in QB
-	pi->WriteHiHook(0x42443B, CALL_, THISCALL_, _HH_AI_QB_hugeArmy);				// prevent loss to small army
-	pi->WriteHiHook(0x4274D4, CALL_, THISCALL_, _HH_AI_PreventCreatureSpawning);	// flag for below hook
+	pi->WriteHiHook(0x42443B, CALL_,   THISCALL_, _HH_AI_QB_hugeArmy);				// prevent loss to small army
+	pi->WriteHiHook(0x4274D4, CALL_,   THISCALL_, _HH_AI_PreventCreatureSpawning);	// flag for below hook
 	pi->WriteHiHook(0x44A950, SPLICE_, THISCALL_, _HH_AI_GetArmyValue);			// prevent endless turns for negative ai value
 
 	//////////////////////////////////////////////////
 	// turret armorer bug
 	//////////////////////////////////////////////////
-	H3Patcher::NakedHook5(0x41E39E, turret_bug1);
-	H3Patcher::NakedHook5(0x41E4DA, turret_bug2);
+	H3Patcher::NakedHook5(0x41E39E, TurretBug1);
+	H3Patcher::NakedHook5(0x41E4DA, TurretBug2);
 	H3Patcher::NakedHook5(0x46593E, turret_bug3);
 
 	//////////////////////////////////////////////////
 	// GUI errors
 	//////////////////////////////////////////////////
-	pi->WriteLoHook(0x5F4C99, faerie_dialog_RMB);	// right click on cast-spell icon didn't give correct text
-	pi->WriteLoHook(0x5F5320, faerie_dialog_hover); // same as above, but for mouse hover
-	pi->WriteByte(0x41DBE8 + 1, 0x5C);				// if AI is teleporting and you had "Don't show enemy moves" on, it would still check if area is visible and show them
-	GUI_fixes_by_igrik(pi);							// various DEFs and positions
-	pi->WriteByte(0x49E4ED, 0x63);					// Repair Arena Cancel button
-	horizontalScrollbar_init(pi);					// horizontal scrollbar using arrows not correctly drawn
+	pi->WriteLoHook(0x5F4C99, FaerieDialogRmb);   // right click on cast-spell icon didn't give correct text
+	pi->WriteLoHook(0x5F5320, FaerieDialogHover); // same as above, but for mouse hover
+	pi->WriteByte(0x41DBE8 + 1, 0x5C);            // if AI is teleporting and you had "Don't show enemy moves" on, it would still check if area is visible and show them
+	GuiFixesByIgrik(pi);                          // various DEFs and positions
+	pi->WriteByte(0x49E4ED, 0x63);                // Repair Arena Cancel button
+	horizontalScrollbar_init(pi);                 // horizontal scrollbar using arrows not correctly drawn
 
 	//////////////////////////////////////////////////
 	// Misc errors
@@ -703,9 +714,10 @@ void fixes_init(PatcherInstance * pi)
 	pi->WriteLoHook(0x446BCD, WaitPhaseBug);			// do not use restore hit points ability a second time in wait phase bug function
 	pi->WriteJmp(0x464DF1, 0x464DFB);					// Wait Phase Bug part 1
 	pi->WriteWord(0x4F8758, 0x63EB);					// disable F1 HELP button effects ~ glitched in modern OS
-	static const PCHAR rogueSound = "rogu";
-	pi->WriteDword(0x67448C, rogueSound);				// Rogue Sound instead of gremlin sound
+	static LPCSTR rogue_sound = "rogu";
+	pi->WriteDword(0x67448C, rogue_sound);				// Rogue Sound instead of gremlin sound
 	pi->WriteByte(0x4FD495 + 1, 0xA);					// error check didn't correctly redirect Hero structure calculation
+	pi->WriteLoHook(0x447DA5, EnchantersTargetting);	// Targetting of Enchanters spells was strictly done on first stack of each side
 
 	///////////////////////////////////////////
 	// Hero hireability
@@ -728,4 +740,6 @@ void fixes_init(PatcherInstance * pi)
 	// Other
 	//////////////////////////////////////////////////
 	anchorbug_init(pi); // corrects anchor bug in combat
+	// [1.18.0]
+	pi->WriteHiHook(0x476143, CALL_, THISCALL_, _HH_FirstAidTentTargetEnemy);
 }

@@ -15,27 +15,32 @@
  */
 
 #include "AnchorBug.h"
+#include "Global.h"
+#include "SODSP_Files/Log.h"
 
- /*
-  *
-  * This hook moves the anchor of problematic obstacles within the obstacles themselves.
-  * The hook is applied after obstacle placement algorithm has completed to ensure
-  * original obstacle arrangement is maintained.
-  *
-  */
+using namespace h3;
+using NH3Constants::COMBATSQUARE_DIMENSION;
+
+using SODSP::FEATURES::FOptions;
+
+/*
+ *
+ * This hook moves the anchor of problematic obstacles within the obstacles themselves.
+ * The hook is applied after obstacle placement algorithm has completed to ensure
+ * original obstacle arrangement is maintained.
+ *
+ */
 void __stdcall _HH_FixObstacleAnchorBug(HiHook *h, H3CombatManager *combat)
 {
 	LOG_HIHOOK;
 	THISCALL_1(void, h->GetDefaultFunc(), combat);
 
-	if (!multiplayer_game && SODSP_OPTIONS.anchor)
+	if (!F_Multiplayer() && FOptions.anchor)
 	{
-		int obstacle_count = combat->obstacleInfo.Count();
-		for (int i = 0; i < obstacle_count; i++)
+		for (auto& obstacle : combat->obstacleInfo)
 		{
-			H3Obstacle *obstacle = &combat->obstacleInfo.first[i];
-			int obstacle_id = obstacle->info - P_DefObstacleInfo;
-			UINT8 anchor_hex = obstacle->AnchorHex;
+			int obstacle_id = obstacle.info - &P_DefObstacleInfo(0);
+			UINT8 anchor_hex = obstacle.AnchorHex;
 			int row_parity; // is the row odd or even?
 			switch (obstacle_id)
 			{
@@ -113,7 +118,6 @@ void __stdcall _HH_FixObstacleAnchorBug(HiHook *h, H3CombatManager *combat)
 			}
 		}
 	}
-	LOG_HIHOOK;
 }
 
 /*
@@ -125,7 +129,7 @@ void __stdcall _HH_FixObstacleAnchorBug(HiHook *h, H3CombatManager *combat)
 _LHF_(RepositionAnchorDef)
 {
 	LOG_LOHOOK;
-	if (!multiplayer_game && SODSP_OPTIONS.anchor)
+	if (!F_Multiplayer() && FOptions.anchor)
 	{
 		H3CombatSquare *hex;
 		if (h->GetAddress() == 0x494523) // previously missing
@@ -136,8 +140,8 @@ _LHF_(RepositionAnchorDef)
 		if (hex->obstacleBits == 3) // anchor & local obstacle
 		{
 			int obstacle_number = hex->obstacleIndex;
-			H3Obstacle *obstacle = &combat->obstacleInfo.first[obstacle_number];
-			int obstacle_id = obstacle->info - P_DefObstacleInfo;
+			H3Obstacle *obstacle = &combat->obstacleInfo[obstacle_number];
+			int obstacle_id = obstacle->info - &P_DefObstacleInfo(0);
 			switch (obstacle_id)
 			{
 			case LocalObstacles::obbdt01: // offset at 1 exists
@@ -206,7 +210,7 @@ _LHF_(RepositionAnchorDef)
 			}
 		}
 	}
-	LOG_LOHOOK;
+
 	return EXEC_DEFAULT;
 }
 

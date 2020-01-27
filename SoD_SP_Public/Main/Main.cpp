@@ -9,14 +9,13 @@
  *     ▄████████▀   ▀██████▀  ████████▀   ▄████████▀   ▄████▀
  */
 
-#include "Main.h"
+#include "Global.h"
 #include "Hooks.h"
 #include "Ini/IniParser.h"
+#include "SODSP_Files/Log.h"
 
- // * Global Patcher
-Patcher *_SODSP;
-// * Global Patcher Instance
-PatcherInstance *_SODSPI;
+using namespace h3;
+using namespace SODSP::GENERAL;
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
@@ -36,9 +35,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 				H3Error::_ShowError(L"Plugin instance could not be created.", SODSP::TEXT::TErrorTitle);
 				break;
 			}
-
 			if (!IniParser_init(pi)) // reads options and sets up hook to read text files
+			{
 				break;
+			}
 			hooks_init(pi);		// installs all plugin hooks
 			SoD_SP_log(pi);		// installs SoD_SP log hooks
 
@@ -48,6 +48,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
 	case DLL_PROCESS_DETACH:
+	default:
 		break;
 	}
 	return TRUE;

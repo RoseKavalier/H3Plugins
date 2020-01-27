@@ -8,6 +8,10 @@
  */
 
 #include "HorizontalScrollbar.h"
+#include "H3API.hpp"
+#include "SODSP_Files/Log.h"
+
+using namespace h3;
 
 static H3DlgScrollbar *hSlider; // static variable to correct horizontal scrollbar drawing with hotkeys
 
@@ -25,8 +29,7 @@ void __stdcall _HH_HrztlScrollbarHotkey(HiHook *h, H3DlgScrollbar* slider, int a
 
 	THISCALL_6(void, h->GetDefaultFunc(), slider, a1, a2, a3, a4, a5);
 
-	hSlider = NULL; // always reset
-	LOG_HIHOOK;
+	hSlider = nullptr; // always reset
 }
 
 /*
@@ -37,17 +40,14 @@ void __stdcall _HH_HrztlScrollbarHotkey(HiHook *h, H3DlgScrollbar* slider, int a
 void __stdcall _HH_HScrollbarRight(HiHook *h, H3LoadedDEF *This, int a1, int a2, int a3, int a4, int a5, int a6, int dest_x, int dest_y, int a9, int a10, int a11, int a12)
 {
 	LOG_HIHOOK;
-	int new_dest_x = dest_x;
-	int new_dest_y = dest_y;
 
 	if (H3DlgScrollbar *scroll = hSlider) // pressed right arrow key on horizontal slider
 	{
-		new_dest_x = scroll->GetRightButtonX();
-		new_dest_y = scroll->GetHorizontalY();
+		dest_x = scroll->GetRightButtonX();
+		dest_y = scroll->GetHorizontalY();
 	}
 
-	THISCALL_13(void, h->GetDefaultFunc(), This, a1, a2, a3, a4, a5, a6, new_dest_x, new_dest_y, a9, a10, a11, a12);
-	LOG_HIHOOK;
+	THISCALL_13(void, h->GetDefaultFunc(), This, a1, a2, a3, a4, a5, a6, dest_x, dest_y, a9, a10, a11, a12);
 }
 
 /*
@@ -59,20 +59,16 @@ void __stdcall _HH_HScrollbarRight(HiHook *h, H3LoadedDEF *This, int a1, int a2,
 void __stdcall _HH_HScrollBarBackground(HiHook *h, H3LoadedPCX *This, int a1, int a2, int width, int height, int a5, int x_pos, int y_pos, int a8)
 {
 	LOG_HIHOOK;
-	int new_height = height;
-	int new_width = width;
-	int new_dest_x = x_pos;
-	int new_dest_y = y_pos;
+
 	if (H3DlgScrollbar *scroll = hSlider)
 	{
-		new_height = scroll->GetHeight();
-		new_width = scroll->GetBackgroundWidth();
-		new_dest_x = scroll->GetBackgroundX();
-		new_dest_y = scroll->GetHorizontalY();
+		height = scroll->GetHeight();
+		width = scroll->GetBackgroundWidth();
+		x_pos = scroll->GetBackgroundX();
+		y_pos = scroll->GetHorizontalY();
 	}
 
-	THISCALL_9(void, h->GetDefaultFunc(), This, a1, a2, new_width, new_height, a5, new_dest_x, new_dest_y, a8);
-	LOG_HIHOOK;
+	THISCALL_9(void, h->GetDefaultFunc(), This, a1, a2, width, height, a5, x_pos, y_pos, a8);
 }
 
 /*
@@ -83,23 +79,20 @@ void __stdcall _HH_HScrollBarBackground(HiHook *h, H3LoadedPCX *This, int a1, in
 void __stdcall _HH_HScrollbarThumb(HiHook *h, H3LoadedDEF *This, int a1, int a2, int a3, int a4, int a5, int a6, int dest_x, int dest_y, int a9, int a10, int a11, int a12)
 {
 	LOG_HIHOOK;
-	int new_dest_x = dest_x;
-	int new_dest_y = dest_y;
 
 	if (H3DlgScrollbar *scroll = hSlider)
 	{
-		new_dest_x = scroll->GetSliderX();
-		new_dest_y = scroll->GetHorizontalY();
+		dest_x = scroll->GetSliderX();
+		dest_y = scroll->GetHorizontalY();
 	}
 
-	THISCALL_13(void, h->GetDefaultFunc(), This, a1, a2, a3, a4, a5, a6, new_dest_x, new_dest_y, a9, a10, a11, a12);
-	LOG_HIHOOK;
+	THISCALL_13(void, h->GetDefaultFunc(), This, a1, a2, a3, a4, a5, a6, dest_x, dest_y, a9, a10, a11, a12);
 }
 
 void horizontalScrollbar_init(PatcherInstance * pi)
 {
-	pi->WriteHiHook(0x596520, SPLICE_, THISCALL_, _HH_HrztlScrollbarHotkey);	// if horizontal, store scrollbar item
-	pi->WriteHiHook(0x5965C3, CALL_, THISCALL_, _HH_HScrollbarRight);		// correctly draw right button
-	pi->WriteHiHook(0x596606, CALL_, THISCALL_, _HH_HScrollBarBackground);	// correctly draw black background
-	pi->WriteHiHook(0x596655, CALL_, THISCALL_, _HH_HScrollbarThumb);		// correctly draw slider thumb
+	pi->WriteHiHook(0x596520, SPLICE_, THISCALL_, _HH_HrztlScrollbarHotkey); // if horizontal, store scrollbar item
+	pi->WriteHiHook(0x5965C3, CALL_, THISCALL_, _HH_HScrollbarRight);		 // correctly draw right button
+	pi->WriteHiHook(0x596606, CALL_, THISCALL_, _HH_HScrollBarBackground); // correctly draw black background
+	pi->WriteHiHook(0x596655, CALL_, THISCALL_, _HH_HScrollbarThumb);		 // correctly draw slider thumb
 }

@@ -26,8 +26,16 @@ struct TextColorNode
 	char name_end;
 	INT32 color;
 
-	TextColorNode() : name(), name_end(), color() {}
-	TextColorNode(H3String& col, INT32 val) : TextColorNode(col.String(), val) {}
+	TextColorNode() :
+		name(),
+		name_end(),
+		color()
+	{
+	}
+	TextColorNode(H3String& col, INT32 val) :
+		TextColorNode(col.String(), val)
+	{
+	}
 	TextColorNode(LPCSTR col, INT32 val) :
 		name(),
 		name_end(),

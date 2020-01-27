@@ -17,6 +17,7 @@
 
 #include "Interface/H3ImageLoader.hpp"
 #include "Interface/H3TextColor.hpp"
+#include "Interface/H3AssetLoader.hpp"
 
 namespace h3
 {

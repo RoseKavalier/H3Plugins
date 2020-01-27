@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "H3API", "H3API\H3API.vcxpro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "H3.Plugin.Template", "H3.Plugin.Template\H3.Plugin.Template.csproj", "{77266006-7574-422B-9CA6-B2CD5C30E736}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "H3.AssetLoader", "H3.AssetLoader\H3.AssetLoader.vcxproj", "{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,16 @@ Global
 		{77266006-7574-422B-9CA6-B2CD5C30E736}.Release|Win32.Build.0 = Release|Any CPU
 		{77266006-7574-422B-9CA6-B2CD5C30E736}.Release|x64.ActiveCfg = Release|Any CPU
 		{77266006-7574-422B-9CA6-B2CD5C30E736}.Release|x64.Build.0 = Release|Any CPU
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Debug|Win32.Build.0 = Debug|Win32
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Debug|x64.ActiveCfg = Debug|x64
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Debug|x64.Build.0 = Debug|x64
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Release|Any CPU.ActiveCfg = Release|Win32
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Release|Win32.ActiveCfg = Release|Win32
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Release|Win32.Build.0 = Release|Win32
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Release|x64.ActiveCfg = Release|x64
+		{F66148B3-06A1-4BFC-B8DF-2B8933AC6464}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

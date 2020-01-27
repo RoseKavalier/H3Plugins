@@ -1,5 +1,10 @@
 #include "AdvancedCombatInfo.h"
+#include "Global.h"
 
+using namespace h3;
+
+using SODSP::TEXT::TCombat;
+using namespace NH3Dlg;
 /*
  *
  * Simple structure to store active spell information.
@@ -10,7 +15,8 @@ struct SpellDuration
 	INT32 spell;
 	INT32 length;
 
-	BOOL IsShorter(SpellDuration *fastest) { return fastest->length > length; }
+	BOOL IsShorter(SpellDuration *fastest) const { return fastest->length > length; }
+	bool operator<(SpellDuration& fastest) const { return length < fastest.length; }
 };
 
 /*
@@ -19,66 +25,62 @@ struct SpellDuration
  * based on a single hex number.
  *
  */
-void AdvancedCombatInfo(INT32 hex)
+void AdvancedCombatInfo(const int hex)
 {
 	H3CombatMonster *mon = P_CombatMgr->squares[hex].GetMonster();
 	if (!mon)
 		return;
 	int spellCount = 0;
-	SpellDuration spellsInfo[81]; // where to store spell information
+	SpellDuration spells_info[81]; // where to store spell information
 	for (int i = 0; i < 81; i++)
 	{
-		if (int duration = mon->activeSpellsDuration[i])
+		if (const int duration = mon->activeSpellsDuration[i])
 		{
-			spellsInfo[spellCount].spell = i;
-			if (i != H3Spell::DISRUPTING_RAY && i != H3Spell::BIND && i != H3Spell::ACID_BREATH) // infinite duration
-				spellsInfo[spellCount].length = duration;
+			spells_info[spellCount].spell = i;
+			if (i != int(H3Spell::eSpells::DISRUPTING_RAY) && i != int(H3Spell::eSpells::BIND) && i != int(H3Spell::eSpells::ACID_BREATH)) // infinite duration
+				spells_info[spellCount].length = duration;
 			else
-				spellsInfo[spellCount].length = 300; // store last
+				spells_info[spellCount].length = 300; // store last
 			spellCount++;
 		}
 	}
 
 	// sort spells by shortest duration
-	SpellDuration *fastest, *cur, temp;
-	int fastestIndex;
+	//SpellDuration temp;
 
-	for (int i = 0; i < spellCount; i++)
+	for (auto i = 0; i < spellCount; i++)
 	{
-		fastest = &spellsInfo[i];
-		fastestIndex = i;
-		cur = &spellsInfo[i + 1];
+		auto fastest = &spells_info[i];
+		auto fastest_index = i;
+		auto cur = &spells_info[i + 1];
 
-		for (int j = i + 1; j < spellCount; j++)
+		for (auto j = i + 1; j < spellCount; j++)
 		{
-			if (cur->IsShorter(fastest)) // only swap if current has shorter duration than fastest
+			if (*cur < *fastest) // only swap if current has shorter duration than fastest
 			{
 				fastest = cur;
-				fastestIndex = j;
+				fastest_index = j;
 			}
 			cur++;
 		}
-		if (fastestIndex != i)
-		{
-			temp = *fastest;
-			fastest->length = spellsInfo[i].length;
-			fastest->spell = spellsInfo[i].spell;
-			spellsInfo[i].length = temp.length;
-			spellsInfo[i].spell = temp.spell;
-		}
+		if (fastest_index != i)
+			std::swap(spells_info[i], *fastest);
 	}
 
 	// dialog dimensions and position
-#define xSpacing 50
-#define nColumns 8
-#define hEdge 20
-#define yEdge 20
+	enum
+	{
+		x_spacing = 50,
+		n_columns = 8,
+		h_edge = 20,
+		y_edge = 20,
+		width = 2 * h_edge + n_columns * x_spacing,
+	};
 
-	int width = 2 * hEdge + nColumns * xSpacing;
-	int height = 110 + ((spellCount - 1) / nColumns) * xSpacing;
 
-	int x = (gameWidth - width) / 2; // center X
-	int y = (gameHeight - 600) / 2 - 14; // place at top of battlefield
+	const auto height = 110 + ((spellCount - 1) / n_columns) * x_spacing;
+	const auto x = (gameWidth - width) / 2; // center X
+	const auto y = (gameHeight - 600) / 2 - 14; // place at top of battlefield
 
 	/////////////////////////////
 	//
@@ -92,20 +94,20 @@ void AdvancedCombatInfo(INT32 hex)
 	//	Create DEFs and text
 	//
 	/////////////////////////////
-	int _x, _y;
-	SpellDuration *sd = spellsInfo;
-	for (int i = 0; i < spellCount; i++)
+	auto _x = 0, _y = 0;
+	auto sd = spells_info;
+	for (auto i = 0; i < spellCount; i++, sd++)
 	{
-		_x = hEdge + xSpacing * (i % nColumns); // columns, 8 items per row
-		_y = yEdge + xSpacing * (i / nColumns); // rows
+		_x = h_edge + x_spacing * (i % n_columns); // columns, 8 items per row
+		_y = y_edge + x_spacing * (i / n_columns); // rows
 
-		dlg.CreateDef(_x, _y, 0, SPELL_SMALL, sd->spell + 1); // + 1 because first frame of spellint.def is blank
-		if (sd->spell != H3Spell::DISRUPTING_RAY && sd->spell != H3Spell::BIND && sd->spell != H3Spell::ACID_BREATH) // infinite duration
+		dlg.CreateDef(_x, _y, 0, Assets::SPELL_SMALL, sd->spell + 1); // + 1 because first frame of spellint.def is blank
+		if (sd->spell != int(H3Spell::eSpells::DISRUPTING_RAY) && sd->spell != int(H3Spell::eSpells::BIND) && sd->spell != int(H3Spell::eSpells::ACID_BREATH)) // infinite duration
 		{
-			sprintf(h3_TextBuffer, "{x}%d", sd->length);
+			F_sprintf("{x}%d", sd->length);
 			// _y + 36 means below the spell DEF
 			// 20 is for the height of text
-			dlg.CreateText(_x, _y + 36, xSpacing, 20, h3_TextBuffer, SMALL_TEXT, TEXT_REGULAR, 0, TextAlignment::TA_HCenter);
+			dlg.CreateText(_x, _y + 36, x_spacing, 20, h3_TextBuffer, Text::SMALL, TextColor::REGULAR, 0, TextAlignment::HCenter);
 		}
 	}
 
@@ -114,19 +116,19 @@ void AdvancedCombatInfo(INT32 hex)
 	//	Fill in line blanks
 	//
 	/////////////////////////////
-	int remainder = (nColumns - 1) - ((spellCount - 1) % nColumns);
+	auto remainder = (n_columns - 1) - ((spellCount - 1) % n_columns);
 
 	if (spellCount == 0) // add a blank line if there are no spells
 	{
-		remainder = nColumns;
-		_x = hEdge - xSpacing;
-		_y = yEdge;
+		remainder = n_columns;
+		_x = h_edge - x_spacing;
+		_y = y_edge;
 	}
 
 	while (remainder > 0)
 	{
-		_x += xSpacing;
-		dlg.CreateDef(_x, _y, 0, SPELL_SMALL, 0); // frame 0 is blank
+		_x += x_spacing;
+		dlg.CreateDef(_x, _y, 0, Assets::SPELL_SMALL, 0); // frame 0 is blank
 		remainder--;
 	}
 
@@ -137,17 +139,17 @@ void AdvancedCombatInfo(INT32 hex)
 	/////////////////////////////
 	if (dlg.GetHintBar())
 	{
-		PCHAR status = SP_CombatText->Active();
+		LPCSTR status = TCombat()->Active();
 		H3CreatureFlags *flags = &mon->info.flags;
 		if (flags->WAITING)
-			status = SP_CombatText->Waiting();
+			status = TCombat()->Waiting();
 		if (flags->DONE)
-			status = SP_CombatText->Moved();
+			status = TCombat()->Moved();
 		if (flags->DEFENDING)
-			status = SP_CombatText->Defending();
+			status = TCombat()->Defending();
 
-		sprintf(h3_TextBuffer, "{%s:} %s      {%s:} %d      {%s:} %d", SP_CombatText->Status(), status,
-			SP_CombatText->Retaliations(), mon->retaliations, SP_CombatText->CastsLeft(), mon->info.spellCharges);
+		F_sprintf("{%s:} %s      {%s:} %d      {%s:} %d", TCombat()->Status(), status,
+			TCombat()->Retaliations(), mon->retaliations, TCombat()->CastsLeft(), mon->info.spellCharges);
 		dlg.GetHintBar()->SetText(h3_TextBuffer);
 	}
 
