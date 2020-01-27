@@ -19,11 +19,14 @@
 
 // * Exclude rarely-used stuff from Windows headers
 #define WIN32_LEAN_AND_MEAN
-
 // * use std::min and std::max instead
 #define NOMINMAX
 #include <Windows.h>
 #undef NOMINMAX
+
+#ifndef _WINDOWS_
+
+#endif
 
 // * H3API uses std::min
 #ifdef min
@@ -501,12 +504,12 @@ namespace h3
 	// * 4 means 32-bit
 	#define h3_BitMode         ByteAt(0x5FA228 + 3)	
 #else		
-	INT gameWidth();
-	INT gameHeight();
-	INT8 gameEdgeHorizontal();
-	INT8 gameEdgeVertical();
-	INT h3_MapSize();
-	UINT8 h3_BitMode();
+	_H3API_ INT gameWidth();
+	_H3API_ INT gameHeight();
+	_H3API_ INT8 gameEdgeHorizontal();
+	_H3API_ INT8 gameEdgeVertical();
+	_H3API_ INT h3_MapSize();
+	_H3API_ UINT8 h3_BitMode();
 #endif
 
 	// * checks for SoD, HotA and WoG/ERA
@@ -534,55 +537,55 @@ namespace h3
 	};
 
 	// * heap realloc using H3 assets
-	PVOID F_realloc(PVOID obj, UINT new_size);
+	_H3API_ PVOID F_realloc(PVOID obj, UINT new_size);
 	// * calloc using h3 assets
-	PVOID F_calloc(UINT count, UINT size = 1);
+	_H3API_ PVOID F_calloc(UINT count, UINT size = 1);
 	// * heapalloc using H3 assets
-	PVOID F_malloc(UINT size);
+	_H3API_ PVOID F_malloc(UINT size);
 	// * heapfree using H3 assets
-	VOID F_delete(PVOID obj);
+	_H3API_ VOID F_delete(PVOID obj);
 	// * memcpy using H3 assets
-	VOID F_memcpy(PVOID dest, PVOID src, const UINT len);
+	_H3API_ VOID F_memcpy(PVOID dest, PVOID src, const UINT len);
 	// * compares two strings, not-case-sensitive
-	INT F_strcmpi(LPCSTR string1, LPCSTR string2);
+	_H3API_ INT F_strcmpi(LPCSTR string1, LPCSTR string2);
 	// * sets dest to value
-	PVOID F_memset(PVOID dest, const UINT value, const UINT len);
+	_H3API_ PVOID F_memset(PVOID dest, const UINT value, const UINT len);
 	// * vsprintf using h3 assets
 	// * you need to handle va_list yourself to use this!
 	// * otherwise use F_sprintf which will do both
-	INT F_vsprintf(PCHAR buffer, LPCSTR format, va_list args);
+	_H3API_ INT F_vsprintf(PCHAR buffer, LPCSTR format, va_list args);
 	// * sprintf using h3 assets and buffer
-	INT F_sprintf(LPCSTR format, ...);
+	_H3API_ INT F_sprintf(LPCSTR format, ...);
 	// * sprintf using h3 assets and custom buffer
-	INT F_sprintfbuffer(PCHAR buffer, LPCSTR format, ...);
+	_H3API_ INT F_sprintfbuffer(PCHAR buffer, LPCSTR format, ...);
 	
 	namespace H3Numbers
 	{
 		// * add thousands commas to numbers
-		int AddCommas(int num, char *out);
+		_H3API_ int AddCommas(int num, char *out);
 		// * show a number in short scale format with specified number of decimals
-		int MakeReadable(int num, char *out, int decimals = 1);
+		_H3API_ int MakeReadable(int num, char *out, int decimals = 1);
 	}
 
 	namespace H3Random
 	{
-		void SetRandomSeed(UINT seed = STDCALL_0(UINT, DwordAt(0x63A354)));
-		int Random(int high);
-		int RandBetween(int low, int high);
+		_H3API_ void SetRandomSeed(UINT seed = STDCALL_0(UINT, DwordAt(0x63A354)));
+		_H3API_ int Random(int high);
+		_H3API_ int RandBetween(int low, int high);
 	}
 
 	namespace H3Error
 	{
 		// * external messagebox showing message
-		VOID ShowError(LPCSTR message, LPCSTR title = "H3Error!");
+		_H3API_ VOID ShowError(LPCSTR message, LPCSTR title = "H3Error!");
 		// * external messagebox showing message and offering OK / Cancel choice
-		BOOL ShowErrorChoice(LPCSTR message, LPCSTR title = "H3Error!");
+		_H3API_ BOOL ShowErrorChoice(LPCSTR message, LPCSTR title = "H3Error!");
 		// * external messagebox showing message
 		// * wide char format
-		VOID _ShowError(LPCWSTR message, LPCWSTR title = L"H3Error!");
+		_H3API_ VOID _ShowError(LPCWSTR message, LPCWSTR title = L"H3Error!");
 		// * external messagebox showing message and offering OK / Cancel choice
 		// * wide char format
-		BOOL _ShowErrorChoice(LPCWSTR message, LPCWSTR title = L"H3Error!");
+		_H3API_ BOOL _ShowErrorChoice(LPCWSTR message, LPCWSTR title = L"H3Error!");
 	}
 
 #pragma pack(push, 1)
@@ -595,14 +598,14 @@ namespace h3
 	public:
 		// * returns whether bit at position is set or not
 		// * position can exceed the scope of bitfield, meaning greater than 32 bits
-		BOOL GetState(INT32 position) const;
+		_H3API_ BOOL GetState(INT32 position) const;
 		// * sets bit at position to on or off
 		// * position can exceed the scope of bitfield, meaning greater than 32 bits
-		VOID SetState(INT32 position, BOOL state);
+		_H3API_ VOID SetState(INT32 position, BOOL state);
 		// * Sets bitfield to specified value
-		VOID Set(UINT32 value);
+		_H3API_ VOID Set(UINT32 value);
 		// * Gets bitfield value as 32bits
-		UINT Get() const;
+		_H3API_ UINT Get() const;
 	};
 
 	// * represents a point on the map
@@ -620,13 +623,13 @@ namespace h3
 	// * these are internal to H3API to avoid conflicts
 	namespace H3Internal
 	{
-		INT _gameWidth();
-		INT _gameHeight();
-		INT8 _gameEdgeHorizontal();
-		INT8 _gameEdgeVertical();
-		INT _h3_MapSize();
-		UINT8 _h3_BitMode();
-		PCHAR _h3_textBuffer();
+		_H3API_ INT _gameWidth();
+		_H3API_ INT _gameHeight();
+		_H3API_ INT8 _gameEdgeHorizontal();
+		_H3API_ INT8 _gameEdgeVertical();
+		_H3API_ INT _h3_MapSize();
+		_H3API_ UINT8 _h3_BitMode();
+		_H3API_ PCHAR _h3_textBuffer();
 	} // namespace H3Internal
 } // namespace h3
 

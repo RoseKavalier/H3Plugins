@@ -36,7 +36,7 @@ namespace h3
 		DWORD entryCount;
 		LPCSTR uselessText; // like " = ", end of line, ...
 
-		LPCSTR GetText();
+		_H3API_ LPCSTR GetText();
 	};
 	
 	// * HDmod's format for ini files
@@ -47,7 +47,7 @@ namespace h3
 		h3unk _f_08[4];
 		CHAR name[8]; // unknown length
 
-		HDIniEntry* FindEntry(LPCSTR key);
+		_H3API_ HDIniEntry* FindEntry(LPCSTR key);
 	};
 #pragma pack(pop)
 }

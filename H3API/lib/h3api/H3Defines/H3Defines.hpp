@@ -22,28 +22,28 @@
 namespace h3
 {
 	
-	LPCSTR h3_SecondarySkillLevel(INT level);
-	LPCSTR h3_ObjectName(INT id);
-	LPCSTR h3_MineNames(INT type);
-	LPCSTR h3_TentColors(INT type);
-	LPCSTR h3_TerrainName(INT type);
-	LPCSTR h3_ResourceName(INT type);
-	LPCSTR h3_RandomSignText(INT type);
-	LPCSTR h3_PlayerColor(INT type);
-	LPCSTR h3_DwellingNames1(INT type);
-	LPCSTR h3_DwellingNames4(INT type);
-	H3SpecialBuildingCosts& h3_SpecialBuildingCosts(int town);
-	H3DwellingBuildingCosts& h3_DwellingBuildingCosts(int town);
-	H3SecondarySkillInfo& h3_SecondarySkillsInfo(int skill);
-	H3GlobalObjectSettings& P_ObjectSettings(int id);
-	H3Spell& P_Spell(int id);
-	H3CreatureBankSetup& P_CreatureBankTable(int id);
-	H3ValidCatapultTargets& P_ValidCatapultTargets(int id);
-	H3ArtifactSetup& P_Artifacts(int id);
-	H3CreatureInformation& P_Creatures(int id);
-	H3ObstacleInfo& P_DefObstacleInfo(int id);
-	H3HeroInfo& P_HeroInfo(int id);
-	H3HeroSpecialty& P_HeroSpecialty(int id);
+	_H3API_ LPCSTR h3_SecondarySkillLevel(INT level);
+	_H3API_ LPCSTR h3_ObjectName(INT id);
+	_H3API_ LPCSTR h3_MineNames(INT type);
+	_H3API_ LPCSTR h3_TentColors(INT type);
+	_H3API_ LPCSTR h3_TerrainName(INT type);
+	_H3API_ LPCSTR h3_ResourceName(INT type);
+	_H3API_ LPCSTR h3_RandomSignText(INT type);
+	_H3API_ LPCSTR h3_PlayerColor(INT type);
+	_H3API_ LPCSTR h3_DwellingNames1(INT type);
+	_H3API_ LPCSTR h3_DwellingNames4(INT type);
+	_H3API_ H3SpecialBuildingCosts& h3_SpecialBuildingCosts(int town);
+	_H3API_ H3DwellingBuildingCosts& h3_DwellingBuildingCosts(int town);
+	_H3API_ H3SecondarySkillInfo& h3_SecondarySkillsInfo(int skill);
+	_H3API_ H3GlobalObjectSettings& P_ObjectSettings(int id);
+	_H3API_ H3Spell& P_Spell(int id);
+	_H3API_ H3CreatureBankSetup& P_CreatureBankTable(int id);
+	_H3API_ H3ValidCatapultTargets& P_ValidCatapultTargets(int id);
+	_H3API_ H3ArtifactSetup& P_Artifacts(int id);
+	_H3API_ H3CreatureInformation& P_Creatures(int id);
+	_H3API_ H3ObstacleInfo& P_DefObstacleInfo(int id);
+	_H3API_ H3HeroInfo& P_HeroInfo(int id);
+	_H3API_ H3HeroSpecialty& P_HeroSpecialty(int id);
 
 	LPCSTR const h3_GamePath = LPCSTR(0x698614);
 

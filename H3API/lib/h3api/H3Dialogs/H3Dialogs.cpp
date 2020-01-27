@@ -792,6 +792,10 @@ namespace h3
 	{
 		defFrameOnClick = clickFrame;
 	}
+	H3LoadedDEF * H3DlgDef::GetDef()
+	{
+		return loadedDef;
+	}
 	_H3API_ H3DlgDefButton* H3DlgDefButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
 	{
 		H3DlgDefButton* b = (H3DlgDefButton*)F_malloc(sizeof(H3DlgDefButton));
@@ -1089,6 +1093,10 @@ namespace h3
 	{
 		return parent->GetX() + xPos + btnPosition;
 	}
+	H3LoadedPCX * H3DlgScrollbar::GetPcx()
+	{
+		return loadedPcx;
+	}
 	_H3API_ INT32 __fastcall H3DlgCustomProc(H3Dlg* dlg, int, H3Msg* msg)
 	{
 		if (H3DlgHintBar* hint = dlg->GetHintBar())
@@ -1104,5 +1112,9 @@ namespace h3
 	_H3API_ H3Vector<H3DlgItem*>& H3DlgPanel::GetItems()
 	{
 		return items;
+	}
+	_H3API_ INT HDDlg::CallHDProc(H3Msg & msg)
+	{
+		return hdProc(this, &msg);
 	}
 }

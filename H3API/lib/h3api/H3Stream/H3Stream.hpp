@@ -72,26 +72,26 @@ namespace h3
 		_H3API_ ~H3Stream();
 
 		// * set integer write mode to hexadecimal display
-		H3Stream& hex();
+		_H3API_ H3Stream& hex();
 		// * set integer write mode to decimal display
 		// * [default]
-		H3Stream& decimal();
+		_H3API_ H3Stream& decimal();
 		// * the stream will write a new line after each output operation
-		H3Stream& new_lines();
+		_H3API_ H3Stream& new_lines();
 		// * the stream will not write a new line after each output operation
 		// * [default]
-		H3Stream& no_new_lines();
+		_H3API_ H3Stream& no_new_lines();
 		// * writes a new line
-		H3Stream& endl();
+		_H3API_ H3Stream& endl();
 
-		BOOL IsReady() const;
-		StreamStatus GetStatus() const;
-		StreamMode GetMode() const;
+		_H3API_ BOOL IsReady() const;
+		_H3API_ StreamStatus GetStatus() const;
+		_H3API_ StreamMode GetMode() const;
 
 		// * makes a copy of the file to provided destination
 
-		BOOL Copy(LPCSTR destination);
-		BOOL Copy(const H3String& destination);
+		_H3API_ BOOL Copy(LPCSTR destination);
+		_H3API_ BOOL Copy(const H3String& destination);
 
 #ifdef _CPLUSPLUS11_
 		// * write varying arguments
@@ -99,23 +99,23 @@ namespace h3
 		H3Stream& Write(LPCSTR format, Args ... args);
 #else
 		// * write varying arguments
-		H3Stream& Write(LPCSTR format, ...);
+		_H3API_ H3Stream& Write(LPCSTR format, ...);
 #endif
 
 		// * writes integer
-		H3Stream& operator<<(const int number);
+		_H3API_ H3Stream& operator<<(const int number);
 		// * writes unsigned integer
-		H3Stream& operator<<(const unsigned int number);
+		_H3API_ H3Stream& operator<<(const unsigned int number);
 		// * writes float
-		H3Stream& operator<<(const FLOAT number);
+		_H3API_ H3Stream& operator<<(const FLOAT number);
 		// * writes double
-		H3Stream& operator<<(const DOUBLE number);
+		_H3API_ H3Stream& operator<<(const DOUBLE number);
 		// * writes char
-		H3Stream& operator<<(const CHAR character);
+		_H3API_ H3Stream& operator<<(const CHAR character);
 		// * writes text string
-		H3Stream& operator<<(LPCSTR text);
+		_H3API_ H3Stream& operator<<(LPCSTR text);
 		// * writes H3string
-		H3Stream& operator<<(const H3String& str);
+		_H3API_ H3Stream& operator<<(const H3String& str);
 		// * writes pre-defined string of known length
 		// * WARNING!!! passing a char buffer[512]
 		// * will print **all** of the buffer
@@ -124,29 +124,29 @@ namespace h3
 		H3Stream& operator<<(const CHAR(&expression)[sz]);
 		// * reads a line
 		// * and moves m_buffer_position along
-		H3Stream& operator>>(H3String& line);
+		_H3API_ H3Stream& operator>>(H3String& line);
 		// * reads all lines
-		H3Stream& operator>>(H3Vector<H3String>& lines);
+		_H3API_ H3Stream& operator>>(H3Vector<H3String>& lines);
 
-		BOOL ReadFile(DWORD size_to_read);
+		_H3API_ BOOL ReadFile(DWORD size_to_read);
 
 	protected:
-		FILE* m_file;
+		FILE*        m_file;
 		DWORD        m_size;
 		StreamMode   m_mode;
 		BOOL         m_write_hex;
 		BOOL         m_write_new_lines;
 		StreamStatus m_status;
-		BYTE* m_buffer;
+		BYTE*        m_buffer;
 		DWORD        m_buffer_size;
 		DWORD        m_buffer_position;
 
-		LPCSTR GetModeFormat();
+		_H3API_ LPCSTR GetModeFormat();
 		template<typename T>
 		inline VOID Printf(LPCSTR format, T value);
-		VOID WriteNewLine();
-		BOOL CanWrite();
-		BOOL CanRead();
+		_H3API_ VOID WriteNewLine();
+		_H3API_ BOOL CanWrite();
+		_H3API_ BOOL CanRead();
 	};
 
 }

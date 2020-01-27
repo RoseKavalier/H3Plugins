@@ -33,8 +33,8 @@ namespace h3
 			// goes on ...
 
 		public:
-			BOOL Save(PVOID data, UINT data_size);
-			BOOL Load(PVOID data, UINT data_size);
+			_H3API_ BOOL Save(PVOID data, UINT data_size);
+			_H3API_ BOOL Load(PVOID data, UINT data_size);
 		};
 }
 

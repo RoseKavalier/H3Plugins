@@ -1453,6 +1453,18 @@ namespace h3
 	{
 		return m_minimum - 1;
 	}
+	_H3API_ VOID H3TownDependencies::Set(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend)
+	{
+		m_dependency[int(town)][int(building)] = UINT64(depend);
+	}
+	_H3API_ VOID H3TownDependencies::Add(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend)
+	{
+		m_dependency[int(town)][int(building)] |= UINT64(depend);
+	}
+	_H3API_ VOID H3TownDependencies::Remove(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend)
+	{
+		m_dependency[int(town)][int(building)] &= ~UINT64(depend);
+	}
 }
 
 

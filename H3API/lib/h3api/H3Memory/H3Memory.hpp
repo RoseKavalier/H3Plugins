@@ -27,7 +27,7 @@ namespace h3
 	public:
 		_H3API_ H3Protect(UINT32 address, UINT32 size);
 		_H3API_ ~H3Protect();
-		BOOL CanWrite();
+		_H3API_ BOOL CanWrite();
 	};
 
 	// * perform operations on loaded memory
@@ -163,24 +163,24 @@ namespace h3
 		_H3API_ H3DLL(LPCSTR dll_name);
 
 		// for debug purposes
-		VOID NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode = TRUE) const;
-		VOID NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize) const;
-		VOID DLLNotFound() const;
+		_H3API_ VOID NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode = TRUE) const;
+		_H3API_ VOID NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize) const;
+		_H3API_ VOID DLLNotFound() const;
 
 		// get DLL code start and DLL size
-		VOID GetDLLInfo(LPCSTR name);
+		_H3API_ VOID GetDLLInfo(LPCSTR name);
 		// find the first instance of needle
-		UINT32 NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset);
+		_H3API_ UINT32 NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset);
 		// searches around the needle for a piece of code, needle2
-		UINT32 NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 radius, PUINT8 needle2, INT32 needleSize2);
+		_H3API_ UINT32 NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 radius, PUINT8 needle2, INT32 needleSize2);
 		// to find subsequent instances of a needle, based on NeedleSearch result
-		UINT32 NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset) const;
+		_H3API_ UINT32 NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset) const;
 		// performs NeedleSearch and checks checks location for expectedCode
-		UINT32 NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 offset, PUINT8 expectedCode, INT32 expectedSize);
+		_H3API_ UINT32 NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 offset, PUINT8 expectedCode, INT32 expectedSize);
 		// needleSearch in rdata
-		UINT32 NeedleSearchRData(PUINT8 needle, INT32 needleSize) const;
+		_H3API_ UINT32 NeedleSearchRData(PUINT8 needle, INT32 needleSize) const;
 		// needleSearch in data
-		UINT32 NeedleSearchData(PUINT8 needle, INT32 needleSize) const;
+		_H3API_ UINT32 NeedleSearchData(PUINT8 needle, INT32 needleSize) const;
 
 		// find the first instance of needle
 		template <INT32 sz> UINT32 NeedleSearch(UINT8(&needle)[sz], INT32 offset);

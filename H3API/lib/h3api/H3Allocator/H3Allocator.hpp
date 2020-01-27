@@ -21,10 +21,10 @@ namespace h3
 	// * h3 operators new, delete, new[], delete[]	
 	struct H3Allocator
 	{
-		PVOID operator new(const size_t sz);
-		VOID  operator delete(const PVOID block);
-		PVOID operator new[](const size_t sz);
-		VOID  operator delete[](const PVOID block);
+		_H3API_ PVOID operator new(const size_t sz);
+		_H3API_ VOID  operator delete(const PVOID block);
+		_H3API_ PVOID operator new[](const size_t sz);
+		_H3API_ VOID  operator delete[](const PVOID block);
 	};
 	   	 
 	// * an allocator to simulate h3's new & delete on objects

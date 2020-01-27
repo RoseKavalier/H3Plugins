@@ -27,11 +27,11 @@ namespace h3
 	// * you should use /EHa compiler flag when using this file	
 	namespace NH3Error
 	{
-		void h3_trans_func(UINT code, EXCEPTION_POINTERS* ep);
 		CHAR const OfferToLog[] = "\nWould you like to save this error to file ?";
-		LPCSTR opDescription(const ULONG opcode);
-		LPCSTR seDescription(const UINT& code);
-		VOID information(H3String& error, _EXCEPTION_POINTERS* ep, UINT code = 0, bool log_error = true);
+		_H3API_ void   h3_trans_func(UINT code, EXCEPTION_POINTERS* ep);		
+		_H3API_ LPCSTR opDescription(const ULONG opcode);
+		_H3API_ LPCSTR seDescription(const UINT& code);
+		_H3API_ VOID   information(H3String& error, _EXCEPTION_POINTERS* ep, UINT code = 0, bool log_error = true);
 	}
 
 	// * Catches std::exception and SEH errors
@@ -39,17 +39,17 @@ namespace h3
 	class H3Exception : public std::exception
 	{
 	public:
-		H3Exception(LPCSTR message);
+		_H3API_ H3Exception(LPCSTR message);
 		// * creates an in-game dialog showing the error
-		VOID ShowInGame();
+		_H3API_ VOID ShowInGame();
 		// * creates an in-game dialog showing the error
-		BOOL ShowInGameLog();
+		_H3API_ BOOL ShowInGameLog();
 		// * creates a out-of-game messagebox showing the error
-		VOID ShowMessagebox();
+		_H3API_ VOID ShowMessagebox();
 		// * creates a out-of-game messagebox showing the error
-		BOOL ShowMessageboxLog();
+		_H3API_ BOOL ShowMessageboxLog();
 		// * logs error to specified path
-		VOID LogError(LPCSTR path);
+		_H3API_ VOID LogError(LPCSTR path);
 	};
 
 	// * create a H3SEHandler object on the stack where you want to use try{} catch{}

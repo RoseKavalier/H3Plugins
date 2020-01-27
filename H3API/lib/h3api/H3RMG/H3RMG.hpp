@@ -103,12 +103,12 @@ namespace h3
 		RMG_GroundTileData tileData;
 		h3unk _f_2C[4];
 
-		int GetLand() const;
-		int GetLandSprite() const;
-		int GetRiver() const;
-		int GetRiverSprite() const;
-		int GetRoad() const;
-		int GetRoadSprite() const;
+		_H3API_ int GetLand() const;
+		_H3API_ int GetLandSprite() const;
+		_H3API_ int GetRiver() const;
+		_H3API_ int GetRiverSprite() const;
+		_H3API_ int GetRoad() const;
+		_H3API_ int GetRoadSprite() const;
 	};
 
 	// * similar to H3ObjectAttributes but not same order
@@ -372,11 +372,11 @@ namespace h3
 		// * 1 + underground
 		INT32 numberLevels;
 
-		RMG_MapItem* GetMapItem(INT x, INT y, INT z);
+		_H3API_ RMG_MapItem* GetMapItem(INT x, INT y, INT z);
 
-		RMG_MapItem* begin();
-		RMG_MapItem* end();
-		H3Point GetCoordinates(RMG_MapItem* item);
+		_H3API_ RMG_MapItem* begin();
+		_H3API_ RMG_MapItem* end();
+		_H3API_ H3Point GetCoordinates(RMG_MapItem* item);
 	};
 
 	struct RMG_Parameters
@@ -406,7 +406,7 @@ namespace h3
 		// * +4C
 		INT32 game_version;
 
-		VOID Validate();
+		_H3API_ VOID Validate();
 	};
 
 	struct RMG_MapInfo
@@ -497,8 +497,8 @@ namespace h3
 
 		_H3API_ RMG_Main(RMG_Parameters& p, PVOID progress);
 		_H3API_ ~RMG_Main();
-		BOOL8 GenerateMap();
-		BOOL8 WriteMap(H3Streambuf& stream);
+		_H3API_ BOOL8 GenerateMap();
+		_H3API_ BOOL8 WriteMap(H3Streambuf& stream);
 	};
 #pragma pack(pop)
 }

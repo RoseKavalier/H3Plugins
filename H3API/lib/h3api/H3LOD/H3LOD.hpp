@@ -49,13 +49,13 @@ namespace h3
 		PUINT8 fileHeaders;
 		h3unk _f_184[12];
 
-		H3Lod* Create(LPCSTR fileName);
-		VOID Destroy();
+		_H3API_ H3Lod* Create(LPCSTR fileName);
+		_H3API_ VOID Destroy();
 
 		// * 1 means READ_ONLY
-		BOOL Load(LPCSTR fileName);
-		BOOL8 FindFileInLod(LPCSTR file);
-		H3LodItem* LoadFileFromLod(LPCSTR file);
+		_H3API_ BOOL Load(LPCSTR fileName);
+		_H3API_ BOOL8 FindFileInLod(LPCSTR file);
+		_H3API_ H3LodItem* LoadFileFromLod(LPCSTR file);
 	};
 #pragma pack(pop)
 }
