@@ -19,7 +19,8 @@
 #include "SODSP_Files/Log.h"
 
 using namespace h3;
-using NH3Constants::COMBATSQUARE_DIMENSION;
+using NH3Constants::COMBATSQUARE_WIDTH;
+using NH3Constants::COMBATSQUARE_HEIGHT;
 
 using SODSP::FEATURES::FOptions;
 
@@ -166,44 +167,44 @@ _LHF_(RepositionAnchorDef)
 			case LocalObstacles::obffs03:
 			case LocalObstacles::obrls03:
 			case LocalObstacles::obmcs01:
-				c->eax -= COMBATSQUARE_DIMENSION; // move X left
+				c->eax -= COMBATSQUARE_WIDTH; // move X left
 				break;
 			case LocalObstacles::obdts14: // 2, -15, -16
 			case LocalObstacles::obsns09: // 2;3;4;5;-13;-14;-15;-16
-				c->eax -= 2 * COMBATSQUARE_DIMENSION;
+				c->eax -= 2 * COMBATSQUARE_WIDTH;
 				break;
 			case LocalObstacles::obsns10: // 3;-13;-14;-15;-33;-49;-66
-				c->eax -= 3 * COMBATSQUARE_DIMENSION;
+				c->eax -= 3 * COMBATSQUARE_WIDTH;
 				break;
 			case LocalObstacles::obsws02: // -10;-11;-12;-13;-14;-15;-16
-				c->eax -= (int)(6.5 * COMBATSQUARE_DIMENSION); // move by 6.5 hex left  (-16 - -10 - 0.5)
-				c->edx += COMBATSQUARE_DIMENSION; // lower row by 1
+				c->eax -= (int)(6.5 * COMBATSQUARE_WIDTH); // move by 6.5 hex left  (-16 - -10 - 0.5)
+				c->edx += COMBATSQUARE_HEIGHT; // lower row by 1
 				break;
 			case LocalObstacles::obsws11b: // -13;-14;-15;-16;-30;-31;-32;-33
 			case LocalObstacles::oblvs03: // -13;-14;-15;-30;-31;-32;-33
 			case LocalObstacles::oblvs17: // -13;-14;-15;-16;-30;-31
 			case LocalObstacles::oblvs22: // -13;-14;-15;-16;-31;-32;-33
-				c->eax -= (int)(3.5 * COMBATSQUARE_DIMENSION); // move by 3.5 hex left (-16 - -13 - 0.5)
-				c->edx += COMBATSQUARE_DIMENSION; // lower row by 1
+				c->eax -= (int)(3.5 * COMBATSQUARE_WIDTH); // move by 3.5 hex left (-16 - -13 - 0.5)
+				c->edx += COMBATSQUARE_HEIGHT; // lower row by 1
 				break;
 			case LocalObstacles::obrgs02: // -14;-15;-16;-32;-33
 			case LocalObstacles::oblvs01: // -14;-32;-33
 			case LocalObstacles::oblvs09: // -14;-15;-32;-33;-49;-50
-				c->eax -= (int)(2.5 * COMBATSQUARE_DIMENSION); // move by 2.5 hex left (-16 - -14 - 0.5)
-				c->edx += COMBATSQUARE_DIMENSION; // lower row by 1
+				c->eax -= (int)(2.5 * COMBATSQUARE_WIDTH); // move by 2.5 hex left (-16 - -14 - 0.5)
+				c->edx += COMBATSQUARE_HEIGHT; // lower row by 1
 				break;
 			case LocalObstacles::obdrk01: // -15, -16
 			case LocalObstacles::obdsm01: // -15;-16;-32;-33;-48;-49
 			case LocalObstacles::obrgs05: // -15;-16;-32
 			case LocalObstacles::obbts04: // -15;-16;-33
-				c->eax -= (int)(1.5 * COMBATSQUARE_DIMENSION); // move by 1.5 hex left (-16 - -15 - 0.5)
-				c->edx += COMBATSQUARE_DIMENSION; // lower row by 1
+				c->eax -= (int)(1.5 * COMBATSQUARE_WIDTH); // move by 1.5 hex left (-16 - -15 - 0.5)
+				c->edx += COMBATSQUARE_HEIGHT; // lower row by 1
 				break;
 			case LocalObstacles::obsws13a: // -16;-17;-31;-32;-33;-34
 			case LocalObstacles::obdrk03: // -16
 			case LocalObstacles::obrgs04: // -16;-32;-33
-				c->eax -= (int)(0.5 * COMBATSQUARE_DIMENSION); // move by 0.5 hex left (-16 - -16 - 0.5)
-				c->edx += COMBATSQUARE_DIMENSION; // lower row by 1
+				c->eax -= (int)(0.5 * COMBATSQUARE_WIDTH); // move by 0.5 hex left (-16 - -16 - 0.5)
+				c->edx += COMBATSQUARE_HEIGHT; // lower row by 1
 				break;
 			default:
 				break;

@@ -680,7 +680,7 @@ namespace h3
 		// * 0 ~ 7 Red ~ Pink
 		INT8	owner;
 		// * +23
-		// * the hero's name
+		// * the hero's name, null-terminated
 		CHAR	name[13];
 		// * +30
 		// * 0 ~ 0x11 Knight ~ Elementalist
@@ -823,11 +823,11 @@ namespace h3
 		// * male or female
 		INT32	gender;
 		// * +3D9
-		// * has custom bibliography?
-		BOOL8	customBiblio;
+		// * has custom biography?
+		BOOL8	customBio;
 		// * +3DA
-		// * custom bibliography
-		H3String bibliography;
+		// * custom biography
+		H3String biography;
 		// * +3EA
 		// * Spells the hero has learned
 		INT8   learned_spell[70];

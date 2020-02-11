@@ -22,7 +22,8 @@ namespace h3
 	
 	namespace NH3Constants
 	{
-		constexpr INT COMBATSQUARE_DIMENSION = 44;		
+		constexpr INT COMBATSQUARE_WIDTH = 44;		
+		constexpr INT COMBATSQUARE_HEIGHT = 42;
 	}	
 
 	namespace NH3Creatures

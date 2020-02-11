@@ -44,6 +44,7 @@ namespace h3
 	_H3API_ H3ObstacleInfo& P_DefObstacleInfo(int id);
 	_H3API_ H3HeroInfo& P_HeroInfo(int id);
 	_H3API_ H3HeroSpecialty& P_HeroSpecialty(int id);
+	_H3API_ LPCSTR P_HeroDefaultBiography(int id);
 
 	LPCSTR const h3_GamePath = LPCSTR(0x698614);
 

@@ -31,7 +31,7 @@ namespace h3
 		PCHAR str;
 		INT32 length;
 		INT32 capacity;
-
+				
 		_H3API_ VOID Deref();
 		_H3API_ VOID NullTerminate();
 		_H3API_ BOOL Realloc(int new_size);
@@ -55,6 +55,8 @@ namespace h3
 		_H3API_ VOID Init();
 		// * H3 destructor
 		_H3API_ VOID Dereference();
+
+		_H3API_ BOOL Empty() const;
 
 		// * current length of string
 		_H3API_ INT32 Length() const;
@@ -173,6 +175,9 @@ namespace h3
 
 		// * Ends string at position
 		_H3API_ BOOL Truncate(INT32 position);
+
+		// * counts number of times a character shows up
+		_H3API_ INT Occurrences(CHAR ch) const;
 
 		// * Assigns string to current
 

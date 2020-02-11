@@ -103,6 +103,11 @@ namespace h3
 		return (*(H3HeroSpecialty**)(0x4B8AF1 + 1))[id];
 	}
 
+	_H3API_ LPCSTR P_HeroDefaultBiography(int id)
+	{
+		return StrAt(PtrAt(0x4D92B7 + 3) + 4 * id);
+	}
+
 #ifdef _H3API_DONT_USE_MACROS_
 	_H3API_ H3String & h3_DataPath()
 	{

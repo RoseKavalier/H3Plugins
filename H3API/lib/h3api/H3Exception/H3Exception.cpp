@@ -170,7 +170,7 @@ namespace h3
 			return;
 		F_fwrite(what(), 1, strlen(what()) - sizeof(NH3Error::OfferToLog), f);
 		F_fclose(f);
-	}	
+	}
 
 	_H3API_ H3SEHandler::H3SEHandler() : 
 		old_SE_translator(_set_se_translator(NH3Error::h3_trans_func))

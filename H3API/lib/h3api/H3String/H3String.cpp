@@ -125,6 +125,13 @@ namespace h3
 		THISCALL_1(VOID, 0x4040F0, this);
 	}
 
+	_H3API_ BOOL H3String::Empty() const
+	{
+		if (str == nullptr || length == 0)
+			return TRUE;
+		return FALSE;
+	}
+
 	_H3API_ INT32 H3String::Length() const
 	{
 		return length;
@@ -587,6 +594,16 @@ namespace h3
 			str[length] = 0;
 		}
 		return FALSE;
+	}
+	_H3API_ INT H3String::Occurrences(CHAR ch) const
+	{
+		if (Empty())
+			return 0;
+		INT n = 0;
+		for (int i = 0; i < length; ++i)
+			if (str[i] == ch)
+				++n;
+		return n;
 	}
 
 	_H3API_ H3String& H3String::operator=(const H3String& other)

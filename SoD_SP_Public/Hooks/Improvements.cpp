@@ -646,11 +646,11 @@ VOID __stdcall _HH_CastSpell_AI_MagicMirror(HiHook* h, H3CombatManager* This, in
 		SODSP::FEATURES::FOptions.AI_magic_mirror &&
 		!This->IsHumanTurn() &&
 		F_SingleTargetSpell(spellID, expertise) &&
-		spellID != H3Spell::DISPEL)
+		spellID != H3Spell::DISPEL && spellID != H3Spell::SACRIFICE)
 	{
 		const int side = This->currentActiveSide;
 		H3CombatMonster* mon = This->squares[hex].GetMonster();
-		if (mon->side != side) // offensive spells only
+		if (mon && mon->side != side) // offensive spells only
 		{
 			INT32 mirror = mon->MagicMirrorEffect();
 			if (mirror > 0 && mirror > H3Random::RandBetween(1, 100))
@@ -1585,7 +1585,12 @@ void MoreCustomWanderingMonsters()
 	H3Patcher::DwordPatch(0x501D2D + 1, 0xFFFBFFFF); // setup from load map
 }
 
-
+/*
+ *
+ * This hook lets you view your own army's details
+ * when you have the Catapult selected.
+ *
+ */
 _LHF_(ViewSelfArmyCatapult)
 {
 	LOG_LOHOOK;
@@ -1601,6 +1606,37 @@ _LHF_(ViewSelfArmyCatapult)
 		return NO_EXEC_DEFAULT;
 	}
 	return EXEC_DEFAULT;
+}
+
+/*
+ *
+ * This hook lets you view any hero's biography
+ * when holding CTRL while RMB is pressed.
+ *
+ */
+void __stdcall _HH_HeroRmbBiography(HiHook*h, H3AdventureManager* This, int id, int x, int y, bool a5)
+{
+	if (SODSP::GENERAL::GMessageFlags & H3Msg::MF_Ctrl)
+	{
+		H3Hero* hero = P_Main->GetHero(id);
+		if (hero == nullptr)
+			return;
+		H3String bio;
+		bio.Printf("{%s}\n\n", hero->name);
+
+		if (hero->customBio)
+			bio += hero->biography;
+		else
+			bio += P_HeroDefaultBiography(id);
+
+		// if text is rather long, or too many lines, make it a regular messagebox
+		if (bio.Length() >= 600 || bio.Occurrences('\n') > 13)
+			F_MessageBox(bio);
+		else // rmb messagebox otherwise
+			F_MessageBoxRMB(bio);
+	}
+	else
+		THISCALL_5(void, h->GetDefaultFunc(), This, id, x, y, a5);
 }
 
 void improvements_init(PatcherInstance * pi)
@@ -1704,4 +1740,10 @@ void improvements_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////////////////////////////
 	// [1.18.1]
 	H3Patcher::BytePatch(0x4B8DDD + 1, 0xB6); // movsx to movzx, signed->unsigned
+
+	//////////////////////////////////////////////////////////////////////////
+	// Show hero biography on CTRL+RMB on the adventure map
+	//////////////////////////////////////////////////////////////////////////
+	// [1.18.2]
+	pi->WriteHiHook(0x40A716, CALL_, THISCALL_, _HH_HeroRmbBiography);
 }

@@ -31,13 +31,14 @@ namespace h3
 	inline H3String&  H3String::Printf(LPCSTR format, Args ...args)
 	{
 		// * snprintf with null buffer returns print length
+		// * does not count null-pointer in return value
 		int len = _snprintf(nullptr, 0, format, args ...);
-		if (len > 0 && Reserve(len + 1))
+		if (len > 0 && Reserve(len + 2))
 		{
-			len = _snprintf(Begin(), len, format, args ...);
+			len = _snprintf(Begin(), len + 1, format, args ...);
 			if (len)
 			{
-				length = len - 1;
+				length = len;
 				str[len] = 0;
 			}
 		}
