@@ -98,7 +98,7 @@ namespace h3
 
 		_H3API_ H3String& Append(LPCSTR mes, INT32 len);
 		template<INT32 Sz>
-		H3String& Append(const CHAR (&buffer)[Sz]);
+		inline H3String& Append(const CHAR (&buffer)[Sz]);
 		_H3API_ H3String& Append(const H3String & other);
 		_H3API_ H3String& Append(int number);
 		_H3API_ H3String& Append(unsigned int number);
@@ -193,7 +193,7 @@ namespace h3
 
 		_H3API_ H3String& operator+=(const H3String& other);
 		template<INT32 Sz>
-		H3String& operator+=(const CHAR(&buffer)[Sz]);
+		inline H3String& operator+=(const CHAR(&buffer)[Sz]);
 		_H3API_ H3String& operator+=(LPCSTR msg);
 		_H3API_ H3String& operator+=(CHAR ch);
 		_H3API_ H3String& operator+=(const int number);
@@ -235,11 +235,11 @@ namespace h3
 	#ifdef _CPLUSPLUS11_
 		// * use sprintf on a H3String directly
 		template<typename ... Args>
-		H3String& Printf(LPCSTR format, Args ... args);
+		inline H3String& Printf(LPCSTR format, Args ... args);
 
 		// * use sprintf on a H3String, appending the result to the end
 		template<typename ... Args>
-		H3String& PrintfAppend(LPCSTR format, Args ... args);
+		inline H3String& PrintfAppend(LPCSTR format, Args ... args);
 	#else // non c++11 versions
 		// * use sprintf on a H3String directly
 		_H3API_ H3String& Printf(LPCSTR format, ...);

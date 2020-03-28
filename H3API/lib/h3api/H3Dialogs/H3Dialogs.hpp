@@ -20,28 +20,29 @@
 namespace h3
 {
 	// * forward declarations
-
-	struct  H3Msg;
-	struct  H3MsgCustom;
-	struct  H3BaseDlg;
-	struct  H3Dlg;
-	struct  H3DlgItem;
-	struct  H3DlgFrame;
-	struct  H3DlgDef;
-	struct  H3DlgDefButton;
-	struct  H3DlgScrollbar;
-	struct  H3DlgCaptionButton;
-	struct  H3DlgPcx;
-	struct  H3DlgPcx16;
-	struct  H3DlgEdit;
-	struct  H3DlgText;
-	struct  H3DlgTextPcx;
-	struct  H3DlgScrollableText;
-	struct  H3DlgCustomButton;
-	struct  H3DlgHintBar;
-	typedef INT32(__stdcall* H3Dlg_proc)(H3Dlg* dlg, H3Msg* msg);
-	typedef INT32(__fastcall* H3DlgButton_proc)(H3MsgCustom* msg);
-	typedef VOID(__fastcall* H3DlgScrollbar_proc)(INT32 click_id, H3Dlg* dlg);
+	_H3_DECLARE_(H3Msg);
+	_H3_DECLARE_(H3Msg);
+	_H3_DECLARE_(H3MsgCustom);
+	_H3_DECLARE_(H3BaseDlg);
+	_H3_DECLARE_(H3TownAlignmentDlg);
+	_H3_DECLARE_(H3Dlg);
+	_H3_DECLARE_(H3DlgItem);
+	_H3_DECLARE_(H3DlgFrame);
+	_H3_DECLARE_(H3DlgDef);
+	_H3_DECLARE_(H3DlgDefButton);
+	_H3_DECLARE_(H3DlgScrollbar);
+	_H3_DECLARE_(H3DlgCaptionButton);
+	_H3_DECLARE_(H3DlgPcx);
+	_H3_DECLARE_(H3DlgPcx16);
+	_H3_DECLARE_(H3DlgEdit);
+	_H3_DECLARE_(H3DlgText);
+	_H3_DECLARE_(H3DlgTextPcx);
+	_H3_DECLARE_(H3DlgScrollableText);
+	_H3_DECLARE_(H3DlgCustomButton);
+	_H3_DECLARE_(H3DlgHintBar);
+	typedef INT32(__stdcall*  H3Dlg_proc)(H3Dlg*, H3Msg*);
+	typedef INT32(__fastcall* H3DlgButton_proc)(H3MsgCustom*);
+	typedef VOID (__fastcall* H3DlgScrollbar_proc)(INT32, H3Dlg*);
 
 #pragma pack(push, 1)
 	struct H3Msg
@@ -70,6 +71,7 @@ namespace h3
 			MC_MouseOver     = 4,
 			MC_KeyDown       = 1,
 			MC_KeyUp         = 2,
+			MC_KeyHeld       = 0x100,
 			MC_WheelButton   = 0x309,
 			MC_MouseWheel    = 0x20A,
 		};
@@ -94,7 +96,9 @@ namespace h3
 		_H3API_ INT32      KeyPressed()   const;
 		_H3API_ BOOL       IsKeyPress()   const;
 		_H3API_ BOOL       IsKeyDown()    const;
+		_H3API_ BOOL       IsKeyHeld()    const;
 		_H3API_ BOOL       IsMouseOver()  const;
+		_H3API_ BOOL       IsWheelButton()  const;		
 		_H3API_ BOOL       IsLeftClick()  const;
 		_H3API_ BOOL       IsLeftDown()   const;
 		_H3API_ BOOL       IsRightClick() const;
@@ -198,8 +202,11 @@ namespace h3
 		_H3API_ VOID AdjustToPlayerColor(INT8 player, UINT16 itemId);
 		_H3API_ H3DlgItem* AddItem(H3DlgItem* item);
 
-		_H3API_ H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, RGB565 color);
-		_H3API_ H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, RGB565 color);
+		// * dlgitem that is not visible but responds to commands
+		_H3API_ H3DlgItem* CreateHidden(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id);
+
+		_H3API_ H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, RGB565 color);		
+		_H3API_ H3DlgFrame* CreateFrame(INT32 x, INT32 y, INT32 width, INT32 height, RGB565 color);		
 		_H3API_ H3DlgFrame* CreateFrame(H3DlgItem* target, RGB565 color, INT id = 0, BOOL around_edge = false);
 		_H3API_ H3DlgDef* CreateDef(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame,
 			INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
@@ -207,6 +214,8 @@ namespace h3
 			INT32 mirror = FALSE, BOOL closeDialog = FALSE);
 		_H3API_ H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName,
 			INT32 frame, INT32 clickFrame, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
+		_H3API_ H3DlgDefButton* CreateButton(INT32 x, INT32 y, INT32 id, LPCSTR defName,
+			INT32 frame = 0, INT32 clickFrame = 1, BOOL closeDialog = FALSE, INT32 hotkey = NULL);
 		_H3API_ H3DlgDefButton* CreateOKButton(INT32 x, INT32 y);
 		_H3API_ H3DlgDefButton* CreateSaveButton(INT32 x, INT32 y);
 		_H3API_ H3DlgDefButton* CreateOnOffCheckbox(INT32 x, INT32 y, INT32 id, INT32 frame, INT32 clickFrame = 0);
@@ -222,6 +231,7 @@ namespace h3
 		_H3API_ H3DlgCustomButton* CreateCustomButton(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc,
 			INT32 frame, INT32 clickFrame);
 		_H3API_ H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
+		_H3API_ H3DlgPcx* CreatePcx(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
 		_H3API_ H3DlgPcx* CreateLineSeparator(INT32 x, INT32 y, INT32 width);
 		_H3API_ H3DlgPcx16* CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
 		_H3API_ H3DlgEdit* CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text,
@@ -238,6 +248,14 @@ namespace h3
 			H3DlgScrollbar_proc scrollbarProc = nullptr, BOOL isBlue = FALSE, INT32 stepSize = 0, BOOL arrowsEnabled = TRUE);
 	};
 
+	// * Shows creature associated to current town
+	struct H3TownAlignmentDlg : protected H3BaseDlg
+	{
+	public:
+		_H3API_ H3TownAlignmentDlg(int town);		
+		_H3API_ ~H3TownAlignmentDlg();
+	};
+
 	// * This removes the following warning when using enum
 	// * warning C4482: nonstandard extension used: enum '...' used in qualified name
 #pragma warning(push)
@@ -251,7 +269,6 @@ namespace h3
 		H3Dlg_proc customProc;
 		H3DlgHintBar* hintBar;
 		H3LoadedPCX16* background;
-
 	public:
 		////////////////////////////////////////////////////////////////////////
 		// Constructor and destructor
@@ -278,7 +295,7 @@ namespace h3
 		_H3API_ BOOL  AddBackground(H3LoadedPCX16* pcx);
 		_H3API_ BOOL  AddBackground(H3LoadedPCX24* pcx);
 		_H3API_ BOOL  AddBackground(H3LoadedDEF* def, INT group = 0, INT frame = 0);
-				
+		
 		_H3API_ H3LoadedPCX16* GetBackgroundPcx() const;
 		// * draws the background pcx only
 		_H3API_ BOOL BackgroundRegion(INT32 xStart, INT32 yStart, INT32 w, INT32 h, BOOL is_blue = FALSE);
@@ -292,11 +309,11 @@ namespace h3
 		_H3API_ H3DlgHintBar* GetHintBar();
 		_H3API_ BOOL CreateBlackBox(INT32 x, INT32 y, INT32 width, INT32 height);
 		_H3API_ H3DlgHintBar* CreateHint();
+		_H3API_ H3DlgHintBar* CreateHint(INT32 x, INT32 y, INT32 width, INT32 height);
 	};
 #pragma warning(pop)
 
-	// * follows HDmod's dlg format
-	// * some member functions are made private to disallow their use
+	// * follows HDmod's dlg format	
 	// * WARNING! this structure should only be used to hook existing dialogs
 	struct HDDlg : H3BaseDlg
 	{
@@ -352,7 +369,7 @@ namespace h3
 			VT_DLGDEF           = 0x63EC48,
 			VT_DLGSCROLLBAR     = 0x641D60,
 			
-			VT_DEFScrollsmt     = 0x642CD8,
+			//VT_DEFScrollsmt     = 0x642CD8,
 
 			VT_DLGSCROLLTEXT    = 0x642D1C,
 			VT_DLGEDIT          = 0x642D50,
@@ -607,13 +624,16 @@ namespace h3
 		BOOL8 autoRedraw;
 		h3unk _f_6F;
 	public:
-		static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
-		LPCSTR   GetText() const;
-		H3String* GetString();
-		VOID     SetText(LPCSTR text);
-		VOID     DecreaseCaret();
-		VOID     SetAutoredraw(BOOL on);
-		VOID     SetFocus(BOOL on = TRUE);
+		_H3API_ static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
+		_H3API_ LPCSTR    GetText() const;
+		_H3API_ H3String* GetString();
+		_H3API_ VOID      SetText(LPCSTR text);
+		_H3API_ VOID      DecreaseCaret();
+		_H3API_ VOID      IncreaseCaret();
+		_H3API_ INT       GetCaret() const;
+		_H3API_ BOOL      SetCaret(INT pos);
+		_H3API_ VOID      SetAutoredraw(BOOL on);
+		_H3API_ VOID      SetFocus(BOOL on = TRUE);
 	};
 
 	struct H3DlgText : public H3DlgItem
@@ -647,9 +667,10 @@ namespace h3
 
 	struct H3DlgHintBar : public H3DlgTextPcx
 	{
-		VOID   ShowHint(H3Msg* msg);
-		VOID   ShowMessage(LPCSTR msg);
-		static H3DlgHintBar* Create(H3Dlg* dlg);
+		_H3API_ VOID   ShowHint(H3Msg* msg);
+		_H3API_ VOID   ShowMessage(LPCSTR msg);
+		_H3API_ static H3DlgHintBar* Create(H3Dlg* dlg);
+		_H3API_ static H3DlgHintBar* Create(H3Dlg* dlg, INT32 x, INT32 y, INT32 w, INT32 h);
 	};
 
 	struct H3DlgScrollableText : public H3DlgItem

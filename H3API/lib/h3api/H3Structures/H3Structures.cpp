@@ -194,6 +194,10 @@ namespace h3
 		return *this;
 
 	}
+	_H3API_ INT & H3Resources::operator[](int index)
+	{
+		return begin()[index];
+	}
 	_H3API_ PINT32 H3Army::H3Iterator::AsArray() const
 	{
 		return PINT32(this);
@@ -308,6 +312,12 @@ namespace h3
 		}
 		return *this;
 	}
+
+	_H3API_ H3Army::H3Iterator& H3Army::operator[](int index)
+	{
+		return begin()[index];
+	}
+
 	_H3API_ INT32 H3Hero::MaxLandMovement()
 	{
 		return THISCALL_2(INT32, 0x4E4C00, this, 0);
@@ -324,9 +334,17 @@ namespace h3
 	{
 		THISCALL_3(VOID, 0x4E2C70, this, &art, slot);
 	}
+	_H3API_ VOID H3Hero::GiveArtifact(H3Artifact & art)
+	{
+		THISCALL_4(void, 0x4E32E0, this, &art, 0, 0);
+	}
+	_H3API_ VOID H3Hero::GiveBackpackArtifact(H3Artifact & art, INT32 index)
+	{
+		THISCALL_3(void, 0x4E3200, this, &art, index);
+	}
 	_H3API_ VOID H3Hero::LearnSecondarySkill(INT32 id, INT32 increase)
 	{
-		return THISCALL_3(VOID, 0x4E5240, this, id, increase);
+		return THISCALL_3(VOID, 0x4E2540, this, id, increase);
 	}
 	_H3API_ INT32 H3Hero::GetSpellExpertise(INT32 spell_id, INT32 special_terrain)
 	{
@@ -353,6 +371,10 @@ namespace h3
 	_H3API_ INT32 H3Hero::GetSpecialTerrain()
 	{
 		return THISCALL_1(INT32, 0x4E5130, this);
+	}
+	_H3API_ INT32 H3Hero::GetSpecialSpellTerrain()
+	{
+		return THISCALL_1(INT32, 0x4E5210, this);
 	}
 	_H3API_ BOOL H3Hero::HasSpell(INT32 spell)
 	{
@@ -461,6 +483,101 @@ namespace h3
 	_H3API_ INT H3Hero::GetPower() const
 	{
 		return THISCALL_1(INT32, 0x427650, this);
+	}
+	_H3API_ BOOL8 H3Hero::CanReplaceArtifact(int id, int slot) const
+	{
+		return THISCALL_3(BOOL8, 0x4E2AB0, this, id, slot);
+	}
+	_H3API_ BOOL8 H3Hero::CanPlaceArtifact(int id, int slot) const
+	{
+		return THISCALL_3(BOOL8, 0x4E27C0, this, id, slot);
+	}
+	_H3API_ VOID H3Hero::RemoveArtifact(int slot)
+	{
+		THISCALL_2(VOID, 0x4E2E40, this, slot);
+	}
+	_H3API_ VOID H3Hero::RemoveBackpackArtifact(int slot)
+	{
+		THISCALL_2(VOID, 0x4E2FC0, this, slot);
+	}
+	_H3API_ VOID H3Hero::ShowCreatureDialog(int slot, BOOL rightClick)
+	{		
+		THISCALL_9(VOID, 0x4C6910, H3Internal::Main(), &army, slot, this, 0, 119, 20, 0, rightClick);
+	}
+	_H3API_ VOID H3Hero::ShowSpellInfo(int spell, BOOL RMB)
+	{
+		int expertise = GetSpellExpertise(spell, GetSpecialSpellTerrain());
+		FASTCALL_12(VOID, 0x4F6C00, H3Internal::Spell()[spell].description[expertise], 
+					RMB ? 4 : 1, -1, -1, 9, spell, -1, 0, - 1, 0, - 1, 0);
+	}
+	_H3API_ VOID H3Hero::ShowSSkillInfo(int skill, BOOL RMB)
+	{
+		int lvl = secSkill[skill];
+		if (lvl == 0)
+			lvl = 1;
+		int frame = 3 * skill + 1 + lvl;
+		FASTCALL_12(VOID, 0x4F6C00, H3Internal::SecondarySkillsInfo(skill).description[lvl],
+			RMB ? 4 : 1, -1, -1, 20, frame, -1, 0, -1, 0, -1, 0);
+	}
+	_H3API_ VOID H3Hero::ShowPSkillInfo(int skill, BOOL RMB)
+	{
+		int value = GetHeroPrimary(skill) | 0x100000; // removes the '+' in front of number
+		FASTCALL_12(VOID, 0x4F6C00, StrAt(0x6A75A8 + 4 * skill),
+			RMB ? 4 : 1, -1, -1, 34, value, -1, 0, -1, 0, -1, 0);
+	}
+	_H3API_ BOOL H3Hero::HasAllCombinationParts(INT slot)
+	{
+		// game code uses bitfields to determine this
+		// this code is flexible in the sense that it doesn't
+		// rely on unknown-at-compile-time bitfield length
+		// the downside is that it is less efficient
+
+		int artId = bodyArtifacts[slot].id;
+		if (id == -1)
+			return FALSE;
+
+		int comboId = H3Internal::ArtifactSetup()[artId].comboID;
+		if (comboId != -1) // it's already a combination artifact
+			return FALSE;
+		comboId = H3Internal::ArtifactSetup()[artId].partOfCombo;
+		if (comboId == -1) // not part of a combination
+			return FALSE;
+
+		int numArts = H3Internal::ArtifactCount();
+		
+		for (int i = 0; i < numArts; ++i)
+		{
+			if (H3Internal::ArtifactSetup()[i].partOfCombo == comboId)
+			{
+				if (!WearsArtifact(i))
+					return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+	_H3API_ VOID H3Hero::DisassembleCombinationArtifact(INT slot)
+	{
+		int artId = bodyArtifacts[slot].id;
+		if (artId == -1)
+			return;
+		int comboId = H3Internal::ArtifactSetup()[artId].comboID;
+		if (comboId == -1) // not a combo artifact
+			return;
+		RemoveArtifact(slot);
+		int numArts = H3Internal::ArtifactCount();
+		for (int i = 0; i < numArts; ++i)
+		{
+			if (H3Internal::ArtifactSetup()[i].partOfCombo == comboId)
+			{
+				H3Artifact art;
+				art.id = i;
+				art.subtype = -1;
+				GiveArtifact(art);
+			}
+		}
+
+		return _H3API_ VOID();
 	}
 	_H3API_ UINT32 H3Date::CurrentDay() const
 	{
@@ -1074,7 +1191,7 @@ namespace h3
 		return cursorFrame;
 	}
 
-	_H3API_ VOID H3MouseManager::SetCursor(INT32 type, INT32 frame)
+	_H3API_ VOID H3MouseManager::SetCursor(INT32 frame, INT32 type)
 	{
 		THISCALL_3(VOID, 0x50CEA0, this, frame, type);
 	}
@@ -1407,6 +1524,11 @@ namespace h3
 			return *reinterpret_cast<H3ArtifactSetup**>(0x660B68);
 		}
 
+		_H3API_ INT ArtifactCount()
+		{
+			return IntAt(0x44D1A8 + 2);
+		}
+
 		_H3API_ H3CreatureInformation* CreatureInformation()
 		{
 			return *reinterpret_cast<H3CreatureInformation**>(0x6747B0);
@@ -1435,6 +1557,14 @@ namespace h3
 		_H3API_ H3TownCreatureTypes* TownCreatureTypes()
 		{
 			return *reinterpret_cast<H3TownCreatureTypes**>(0x47AB00 + 3);
+		}
+		_H3API_ H3SecondarySkillInfo& SecondarySkillsInfo(int skill)
+		{
+			return (*reinterpret_cast<H3SecondarySkillInfo**>(0x67DCF0))[skill];
+		}
+		_H3API_ H3ComboArtifactSetup * CombinationArtifacts()
+		{
+			return **(H3ComboArtifactSetup***)(0x4DDFF2 + 2);
 		}
 	}
 	_H3API_ H3IndexVector::H3IndexVector(int minNum, int maxNum)

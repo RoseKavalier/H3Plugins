@@ -2,6 +2,9 @@
 
 using namespace h3;
 
+// HDMOD version as of latest update
+constexpr DWORD HDMOD_VERSION = 5000281;
+
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -82,6 +85,7 @@ public:
 
 H3Plugin::TextColor::H3TextColorInformation * GetTextColor_()
 {
+#pragma _H3_EXPORT_
 	return &InternalTextColor;
 }
 
@@ -212,6 +216,16 @@ _LHF_(DirectDrawCharColor)
 	return EXEC_DEFAULT;
 }
 
+// * Sets the correct color to use while using Direct Draw
+_LHF_(DirectDrawCharColor_5000281)
+{
+	const INT32 color = CharColors[CurrentPosition];
+	if (color != NO_COLOR)
+		c->ebx = color;
+	return EXEC_DEFAULT;
+}
+
+
 // * Sets the correct color to use while using True Stretchable mode
 _LHF_(TrueStretchModeDrawCharColor)
 {
@@ -237,19 +251,7 @@ _LHF_(ParseText) // 0x4B5255
 	PCHAR current = TextParser.Begin();
 	INT32 currentColor = NO_COLOR;
 
-	// * resets vector data
-	// * I wouldn't recommend this but these are
-	// * integers and so there's nothing forgotten in limbo
-	struct VectorReset
-	{
-		int _init;
-		int begin;
-		int end;
-		int capacity;
-
-		void reset() { end = begin; }
-	};
-	reinterpret_cast<VectorReset*>(&CharColors)->reset();
+	CharColors.RemoveAll();
 
 	for (INT i = 0; i < len; i++, current++)
 	{
@@ -301,12 +303,34 @@ _LHF_(ParseText) // 0x4B5255
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
+// * handles all 32-bit color drawing as of HD 5.0 RC81
+void DirectDrawHook_5000281(PatcherInstance *pi)
+{
+	///////////////////////////////////////////////////////////////////////////////
+	// Needle: 54 12 00 00
+	///////////////////////////////////////////////////////////////////////////////
+	UINT8 needle[] = {
+		0x54, 0x12, 0x00, 0x00							// MOV EDX,DWORD PTR DS:[EDI+1254]
+	};
+	///////////////////////////////////////////////////////////////////////////////
+	// Expected code: 8B 2C 82
+	///////////////////////////////////////////////////////////////////////////////
+	UINT8 needle_sought[] = {
+		0x8B, 0x1C, 0x82								// MOV EBX,DWORD PTR DS:[EAX*4+EDX]
+	};
+
+	H3DLL HD_TC2("HD_TC2.dll");
+
+	DWORD address = HD_TC2.NeedleSearchAround(needle, 0x20, needle_sought);
+	if (address)
+		pi->WriteLoHook(address + sizeof(needle_sought), DirectDrawCharColor_5000281);
+}
+
 // * Finds where to install @TrueModeDrawCharColor
 // * hook within _hd3_.dll
-void TrueColorHook(PatcherInstance *pi)
+void TrueColorHook_legacy(PatcherInstance *pi)
 {
-	H3DLL _HD3_DLL;
-	_HD3_DLL.GetDLLInfo("_hd3_.dll");
+	H3DLL _HD3_DLL("_hd3_.dll");
 
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 68 00 04 00 00 B8 92 74 61 00
@@ -327,7 +351,7 @@ void TrueColorHook(PatcherInstance *pi)
 		pi->WriteLoHook(address, TrueModeDrawCharColor);
 }
 
-void DirectDrawHook(PatcherInstance *pi)
+void DirectDrawHook_legacy(PatcherInstance *pi)
 {
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 54 12 00 00
@@ -342,8 +366,7 @@ void DirectDrawHook(PatcherInstance *pi)
 		0x8B, 0x2C, 0x82								// MOV EBP,DWORD PTR DS:[EAX*4+EDX]
 	};
 
-	H3DLL HD_TC2;
-	HD_TC2.GetDLLInfo("HD_TC2.dll");
+	H3DLL HD_TC2("HD_TC2.dll");
 
 	DWORD address = HD_TC2.NeedleSearchAround(needle, 0x20, needle_sought);
 	if (address)
@@ -352,10 +375,9 @@ void DirectDrawHook(PatcherInstance *pi)
 
 // * Finds where to install @TrueStretchModeDrawCharColor
 // * hook within HD_MCR.dll
-void TrueStretchModeColorHook(PatcherInstance *pi)
+void TrueStretchModeColorHook_legacy(PatcherInstance *pi)
 {
-	H3DLL HD_MCR_DLL;
-	HD_MCR_DLL.GetDLLInfo("HD_MCR.dll");
+	H3DLL HD_MCR_DLL("HD_MCR.dll");
 
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 68 00 04 00 00 B8 92 74 61 00
@@ -444,9 +466,17 @@ _LHF_(MainHook)
 
 	if (InternalTextColor.mode == InternalTextColor.CM_888)
 	{
-		TrueColorHook(_PI);
-		TrueStretchModeColorHook(_PI);
-		DirectDrawHook(_PI);
+		DWORD hdmodVersion = _P->VarGetValue("HD.Version.Dword", 0u);
+		if (hdmodVersion >= HDMOD_VERSION)
+		{
+			DirectDrawHook_5000281(_PI); // covers all 32-bit drawing modes
+		}
+		else
+		{
+			TrueColorHook_legacy(_PI);
+			TrueStretchModeColorHook_legacy(_PI);
+			DirectDrawHook_legacy(_PI);
+		}
 	}
 	else
 		_PI->WriteLoHook(0x4B4F74, DrawCharColor);

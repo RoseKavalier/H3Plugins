@@ -23,9 +23,12 @@ namespace h3
 {
 	
 	_H3API_ LPCSTR h3_SecondarySkillLevel(INT level);
+	_H3API_ LPCSTR h3_PrimarySkillName(INT id);
+	_H3API_ LPCSTR h3_MagicSchoolName(INT school);
 	_H3API_ LPCSTR h3_ObjectName(INT id);
 	_H3API_ LPCSTR h3_MineNames(INT type);
 	_H3API_ LPCSTR h3_TentColors(INT type);
+	_H3API_ LPCSTR h3_CastleName(INT type);
 	_H3API_ LPCSTR h3_TerrainName(INT type);
 	_H3API_ LPCSTR h3_ResourceName(INT type);
 	_H3API_ LPCSTR h3_RandomSignText(INT type);
@@ -45,6 +48,7 @@ namespace h3
 	_H3API_ H3HeroInfo& P_HeroInfo(int id);
 	_H3API_ H3HeroSpecialty& P_HeroSpecialty(int id);
 	_H3API_ LPCSTR P_HeroDefaultBiography(int id);
+	_H3API_ H3TownCreatureTypes& P_TownCreatureTypes(int town);	
 
 	LPCSTR const h3_GamePath = LPCSTR(0x698614);
 
@@ -123,8 +127,8 @@ namespace h3
 
 	H3WavFile& C_ButtonWav();
 #else
-#define h3_DataPath							((H3String*)0x69E528)
-#define h3_ActivePlayer						(*(H3Player**)0x69CCFC)
+#define h3_DataPath							((h3::H3String*)0x69E528)
+#define h3_ActivePlayer						(*(h3::H3Player**)0x69CCFC)
 #define h3_HWND								(*(HWND*)0x699650)
 
 		// * various integer constants
@@ -141,8 +145,8 @@ namespace h3
 #define h3_CurrentPlayerID					IntAt(0x69CCF4)
 #define h3_CurrentAnimationSpeed			IntAt(0x69883C)
 #define h3_IsCampaignGame					(IntAt(0x69779C) != 0)
-#define h3_AnimationSpeed					((H3AnimationSpeed*)0x63CF7C)
-#define h3_BattleShadowHexes				((H3Vector<INT>*)0x696A08)
+#define h3_AnimationSpeed					((h3::H3AnimationSpeed*)0x63CF7C)
+#define h3_BattleShadowHexes				((h3::H3Vector<INT>*)0x696A08)
 #define h3_Instance							(*(HMODULE*)0x699604)
 
 // * movement bonuses
@@ -161,37 +165,37 @@ namespace h3
 #define h3_ActivePlayerBitset				(ByteAt(0x69CD10))
 #define h3_ColorMode						PtrAt(0x694DB0)
 #define h3_SaveName							((PCHAR)0x69FC88)
-#define h3_QuestsText						((H3QuestText*)0x69E788)
-#define h3_SeersText						((H3QuestText*)0x69F148)
-#define h3_TownDependencies					(*(H3TownDependencies**)(0x5D6015 + 3))
+#define h3_QuestsText						((h3::H3QuestText*)0x69E788)
+#define h3_SeersText						((h3::H3QuestText*)0x69F148)
+#define h3_TownDependencies					(*(h3::H3TownDependencies**)(0x5D6015 + 3))
 
 // Pointers P_ from Heroes3.exe
-#define P_GeneralText						(*(H3ColumnTextFile**)0x6A5DC4)
-#define P_MouseMgr							(*(H3MouseManager**)0x6992B0)
-#define P_WindowMgr							(*(H3WindowManager**)0x6992D0)
-#define P_Executive							(*(H3Executive**)0x699550)
-#define P_Main								(*(H3Main**)0x699538)
-#define P_CombatMgr							(*(H3CombatManager**)0x699420)
-#define P_TownMgr							(*(H3TownManager**)0x69954C)
-#define P_SoundMgr							(*(H3SoundManager**)0x699414)
-#define P_InputMgr							(*(H3InputManager**)0x699530)
-#define P_AdventureMgr						(*(H3AdventureManager**)0x6992B8)
-#define P_MovementMgr						(*(H3MovementManager**)0x6992D4)
-#define P_DialogHero						(*(H3Hero**)0x698B70)
-#define P_TurnTimer							(*(H3TurnTimer**)(0x4AD194 + 1))
-#define P_NewGameDlg						(*(H3Dlg**)0x69FC44)
-#define P_GamePalette						(*(H3Palette565**)0x6AAD18)
-#define P_PlayersPalette					(*(H3Palette565**)0x6AAD10)
-#define P_TinyFont							(*(H3Font**)0x698A54)
-#define P_SmallFont							(*(H3Font**)0x698A58)
-#define P_MediumFont						(*(H3Font**)0x698A5C)
-#define P_BigFont							(*(H3Font**)0x698A60)
-#define P_CalliFont							(*(H3Font**)0x698A64)
-#define P_BinaryTree						((H3BinTreeList*)0x69E560)
+#define P_GeneralText						(*(h3::H3ColumnTextFile**)0x6A5DC4)
+#define P_MouseMgr							(*(h3::H3MouseManager**)0x6992B0)
+#define P_WindowMgr							(*(h3::H3WindowManager**)0x6992D0)
+#define P_Executive							(*(h3::H3Executive**)0x699550)
+#define P_Main								(*(h3::H3Main**)0x699538)
+#define P_CombatMgr							(*(h3::H3CombatManager**)0x699420)
+#define P_TownMgr							(*(h3::H3TownManager**)0x69954C)
+#define P_SoundMgr							(*(h3::H3SoundManager**)0x699414)
+#define P_InputMgr							(*(h3::H3InputManager**)0x699530)
+#define P_AdventureMgr						(*(h3::H3AdventureManager**)0x6992B8)
+#define P_MovementMgr						(*(h3::H3MovementManager**)0x6992D4)
+#define P_DialogHero						(*(h3::H3Hero**)0x698B70)
+#define P_TurnTimer							(*(h3::H3TurnTimer**)(0x4AD194 + 1))
+#define P_NewGameDlg						(*(h3::H3Dlg**)0x69FC44)
+#define P_GamePalette						(*(h3::H3Palette565**)0x6AAD18)
+#define P_PlayersPalette					(*(h3::H3Palette565**)0x6AAD10)
+#define P_TinyFont							(*(h3::H3Font**)0x698A54)
+#define P_SmallFont							(*(h3::H3Font**)0x698A58)
+#define P_MediumFont						(*(h3::H3Font**)0x698A5C)
+#define P_BigFont							(*(h3::H3Font**)0x698A60)
+#define P_CalliFont							(*(h3::H3Font**)0x698A64)
+#define P_BinaryTree						((h3::H3BinTreeList*)0x69E560)
 
 // Constants C_ from Heroes3.exe
 
-#define C_ButtonWav							(*(H3WavFile**)0x694DF4)
+#define C_ButtonWav							(*(h3::H3WavFile**)0x694DF4)
 #endif
 	
 }

@@ -202,7 +202,11 @@ namespace h3
 		char buffer[64];
 
 		// * work with positives
-		int m = Abs(num);
+		INT64 m;
+		if (num != INT_MIN)
+			m = Abs(num);
+		else
+			m = INT64(INT_MAX) + 1;
 
 		// * if smaller than specified value, print regular number
 		if (m < RN_MIN_VALUE)
@@ -223,7 +227,7 @@ namespace h3
 		int d = power = 0;
 		while (m >= 1000)
 		{
-			d = m;
+			d = int(m);
 			m /= 1000;
 			power++;
 		}

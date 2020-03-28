@@ -20,29 +20,29 @@
 namespace h3
 {
 	// * forward declarations
+	_H3_DECLARE_(H3ARGB888);
+	_H3_DECLARE_(H3RGB888);
+	_H3_DECLARE_(H3RGB555);
+	_H3_DECLARE_(H3RGB565);
+	_H3_DECLARE_(H3HSV);
+	_H3_DECLARE_(H3BinTreeList);
+	_H3_DECLARE_(H3BinaryTreeNode);
+	_H3_DECLARE_(H3BinaryItem);
+	_H3_DECLARE_(H3WavFile);
+	_H3_DECLARE_(H3ColumnTextFile);
+	_H3_DECLARE_(H3TextFile);	
+	_H3_DECLARE_(H3Palette565);
+	_H3_DECLARE_(H3Palette888);
+	_H3_DECLARE_(H3Font);
+	_H3_DECLARE_(H3LoadedPCX);
+	_H3_DECLARE_(H3LoadedPCX16);
+	_H3_DECLARE_(H3LoadedPCX24);
+	_H3_DECLARE_(H3DefFrame);
+	_H3_DECLARE_(H3DefGroup);
+	_H3_DECLARE_(H3LoadedDEF);	
 
-	struct H3ARGB888;
 	typedef UINT16 RGB555;
 	typedef UINT16 RGB565;
-	struct H3BinaryItem;
-	struct H3BinaryTreeNode;
-	struct H3BinTreeList;
-	struct H3WavFile;
-	struct H3ColumnTextFile;
-	struct H3TextFile;
-	struct H3RGB888;
-	struct H3RGB555;
-	struct H3RGB565;
-	struct H3Palette565;
-	struct H3Font;
-	struct H3Palette888;
-	struct H3LoadedPCX;
-	struct H3LoadedPCX16;
-	struct H3LoadedPCX24;
-	struct H3DefFrame;
-	struct H3DefGroup;
-	struct H3LoadedDEF;
-	struct H3HSV;
 
 #pragma pack(push, 1)
 
@@ -141,6 +141,11 @@ namespace h3
 		_H3API_ VOID Darken(UINT8 amount);
 		_H3API_ VOID Lighten(UINT8 amount);
 		_H3API_ VOID GrayScale();
+
+		enum eColors : RGB565
+		{
+			H3Highlight = 0xF6EF
+		};
 	};
 
 	struct H3HSV

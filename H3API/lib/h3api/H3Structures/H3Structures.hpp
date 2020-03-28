@@ -21,9 +21,92 @@
 
 namespace h3
 {
-	// * forward declarations
-
-	struct H3CombatMonster;
+	// * forward declarations	
+	_H3_DECLARE_(H3NetworkData);
+	_H3_DECLARE_(H3Position);
+	_H3_DECLARE_(H3IndexVector);
+	_H3_DECLARE_(H3Artifact);
+	_H3_DECLARE_(H3AnimationSpeed);
+	_H3_DECLARE_(H3Resources);
+	_H3_DECLARE_(H3Army);
+	_H3_DECLARE_(H3SetupHero);
+	_H3_DECLARE_(H3HeroInfo);
+	_H3_DECLARE_(H3HeroSpecialty);
+	_H3_DECLARE_(H3HeroFlags);
+	_H3_DECLARE_(H3Hero);
+	_H3_DECLARE_(H3Date);
+	_H3_DECLARE_(H3Player);
+	_H3_DECLARE_(H3TownCreatureTypes);
+	_H3_DECLARE_(H3Town);
+	_H3_DECLARE_(H3SpecialBuildingCosts);
+	_H3_DECLARE_(H3NeutralBuildingCosts);
+	_H3_DECLARE_(H3DwellingBuildingCosts);
+	_H3_DECLARE_(H3TownDependencies);
+	_H3_DECLARE_(H3ComboArtifactSetup);
+	_H3_DECLARE_(H3CreatureBank);
+	_H3_DECLARE_(H3CreatureBankState);
+	_H3_DECLARE_(H3CreatureBankSetup);
+	_H3_DECLARE_(H3ValidCatapultTargets);
+	_H3_DECLARE_(H3WallSection);
+	_H3_DECLARE_(H3Spell);
+	_H3_DECLARE_(H3ObstacleInfo);
+	_H3_DECLARE_(H3Obstacle);
+	_H3_DECLARE_(H3CreatureFlags);
+	_H3_DECLARE_(H3CreatureInformation);
+	_H3_DECLARE_(H3CombatMonsterSpellsData);
+	_H3_DECLARE_(H3MonsterAnimation);
+	_H3_DECLARE_(H3CombatMonster);
+	_H3_DECLARE_(H3PrimarySkills);
+	_H3_DECLARE_(H3SecondarySkill);
+	_H3_DECLARE_(H3SecondarySkillInfo);
+	_H3_DECLARE_(H3PandorasBox);
+	_H3_DECLARE_(H3Event);
+	_H3_DECLARE_(H3QuestVector);
+	_H3_DECLARE_(H3Quest);
+	_H3_DECLARE_(H3QuestGuard);
+	_H3_DECLARE_(H3SeerHut);
+	_H3_DECLARE_(H3QuestText);
+	_H3_DECLARE_(H3MapArtifact);
+	_H3_DECLARE_(H3MapResource);
+	_H3_DECLARE_(H3Monster);
+	_H3_DECLARE_(H3GlobalEvent);
+	_H3_DECLARE_(H3CastleEvent);
+	_H3_DECLARE_(H3MainSetup);
+	_H3_DECLARE_(H3CampaignInfo);
+	_H3_DECLARE_(H3ArtifactMerchant);
+	_H3_DECLARE_(H3BlackMarket);
+	_H3_DECLARE_(H3Grail);
+	_H3_DECLARE_(H3TileVision);
+	_H3_DECLARE_(H3PlayersInfo);
+	_H3_DECLARE_(_PlayerUnk_);
+	_H3_DECLARE_(H3MapInfo);
+	_H3_DECLARE_(H3Mine);
+	_H3_DECLARE_(H3Signpost);
+	_H3_DECLARE_(H3Dwelling);
+	_H3_DECLARE_(H3Garrison);
+	_H3_DECLARE_(H3Boat);
+	_H3_DECLARE_(H3QuickBattleCreatures);
+	_H3_DECLARE_(H3AIQuickBattle);
+	_H3_DECLARE_(H3AICombatInfo);
+	_H3_DECLARE_(H3GlobalObjectSettings);
+	_H3_DECLARE_(H3TileMovement);
+	_H3_DECLARE_(H3TurnTimer);
+	_H3_DECLARE_(H3CreatureExchange);
+	_H3_DECLARE_(H3MovementManager);
+	_H3_DECLARE_(H3Main);
+	_H3_DECLARE_(H3Manager);
+	_H3_DECLARE_(H3Executive);
+	_H3_DECLARE_(H3MouseManager);
+	_H3_DECLARE_(H3WindowManager);
+	_H3_DECLARE_(H3SoundManager);
+	_H3_DECLARE_(H3AdventureManager);
+	_H3_DECLARE_(H3SwapManager);
+	_H3_DECLARE_(H3TownManager);
+	_H3_DECLARE_(H3InputManager);
+	_H3_DECLARE_(H3CombatSquare);
+	_H3_DECLARE_(TownTowerLoaded);
+	_H3_DECLARE_(H3AdjacentSquares);
+	_H3_DECLARE_(H3CombatManager);
 
 #pragma pack(push, 1)
 
@@ -365,6 +448,7 @@ namespace h3
 		_H3API_ H3Resources& operator-=(const H3Resources& other);
 		// * does not check for overflow
 		_H3API_ H3Resources& operator=(const H3Resources& other);
+		_H3API_ INT& operator[](int index);
 	};
 	
 	// * The arrangment of 7 creatures on various H3 structures
@@ -419,6 +503,7 @@ namespace h3
 		_H3API_ H3Iterator* begin();
 		_H3API_ H3Iterator* end();
 		_H3API_ H3Army& operator=(const H3Army& other);
+		_H3API_ H3Iterator& operator[](int index);
 	};
 
 	// * not the hero on the map
@@ -795,9 +880,11 @@ namespace h3
 		// * +116
 		// * the spell expertise of waterwalk that was cast
 		INT32	waterwalkPower; // +116
+		// * +11A
+		INT8	moraleBonus;
+		// * +11B
+		INT8	luckBonus;
 	protected:
-		INT8	_DMorale1; // +11A ???
-		INT8	_DLuck;    // +11B
 		INT8	isSleeping;	// +11C
 		UINT8  _u7[12]; // 11D
 		INT32	visionPower; // +129
@@ -818,7 +905,7 @@ namespace h3
 		H3Artifact backpackArtifacts[64];
 		// * +3D1
 		// * the number of artifacts in the backpack
-		UINT8	backpackCount;
+		INT8	backpackCount;
 		// * +3D5
 		// * male or female
 		INT32	gender;
@@ -850,6 +937,11 @@ namespace h3
 		_H3API_ INT32 CalcMaxMovement();
 		// * give an artifact by reference
 		_H3API_ VOID GiveArtifact(H3Artifact& art, INT32 slot);
+		// * give an artifact to hero		
+		_H3API_ VOID GiveArtifact(H3Artifact& art);
+		// * give an artifact to hero's backpack
+		// * index = -1 means first free slot
+		_H3API_ VOID GiveBackpackArtifact(H3Artifact& art, INT32 index = -1);
 		// * learn secondary skill by given increase
 		_H3API_ VOID LearnSecondarySkill(INT32 id, INT32 increase);
 		// * returns effect (none, basic, ... expert) of a spell on a given terrain
@@ -864,6 +956,8 @@ namespace h3
 		_H3API_ INT32 GetRealSpellDamage(INT32 baseDamage, H3CombatMonster* mon, INT32 spellID, H3Hero* enemy);
 		// * checks under the hero for special terrain
 		_H3API_ INT32 GetSpecialTerrain();
+		// * checks under the hero for terrain modifying spells
+		_H3API_ INT32 GetSpecialSpellTerrain();
 		// * checks if hero has access to a spell
 		_H3API_ BOOL HasSpell(INT32 spell);
 		// * attempts to combine body artifacts into combo
@@ -890,6 +984,27 @@ namespace h3
 		_H3API_ VOID ShowDialog() const;
 		// * army value * (attack & defense power coefficient)
 		_H3API_ INT GetPower() const;
+		// * whether a specified artifact can replace or be placed in specified slot
+		_H3API_ BOOL8 CanReplaceArtifact(int id, int slot) const;
+		// * whether a specified artifact can be placed in specified slot
+		_H3API_ BOOL8 CanPlaceArtifact(int id, int slot) const;
+		// * removes an artifact from player
+		_H3API_ VOID RemoveArtifact(int slot);
+		// * removes an artifact from player's backpack
+		_H3API_ VOID RemoveBackpackArtifact(int slot);
+		// * shows animated creature dialog
+		_H3API_ VOID ShowCreatureDialog(int slot, BOOL rightClick);
+		// * Show info about hero's proficiency at spell
+		_H3API_ VOID ShowSpellInfo(int spell, BOOL RMB);
+		// * Show info about hero's seconday skill
+		_H3API_ VOID ShowSSkillInfo(int skill, BOOL RMB);
+		// * Show info about hero's primary skill
+		_H3API_ VOID ShowPSkillInfo(int skill, BOOL RMB);
+		// * Checks if the hero is wearing all pieces of a combination artifact
+		_H3API_ BOOL HasAllCombinationParts(INT slot);
+		// * disassembles a combination artifact and
+		// * gives a hero all pieces of a combination artifact
+		_H3API_ VOID DisassembleCombinationArtifact(INT slot);		
 	};
 
 	// * how date is represented
@@ -1665,7 +1780,7 @@ namespace h3
 		// * +14
 		INT32 comboID;
 		// * +18
-		BOOL partOfCombo;
+		INT32 partOfCombo; // -1 indicates it's not part of a combination
 		// * +1C
 		BOOL8 disabled;
 		// * +1D
@@ -1711,6 +1826,7 @@ namespace h3
 	struct H3ComboArtifactSetup
 	{
 		INT32 index;
+		// this might be larger if you have more than default artifacts
 		H3Bitfield artifacts[5];
 	};
 
@@ -2185,21 +2301,21 @@ namespace h3
 		INT32 slayer_type;             // 0x48C - called KING_1/2/3
 		INT32 unknown14;               // 0x490 - Max traversed cells before hitting?
 		INT32 counterstrike_effect;    // 0x494
-		float frenzyMultiplier;        // 0x498
+		FLOAT frenzyMultiplier;        // 0x498
 		INT32 blind_effect;            // 0x49C - for calculating damage retaliation damage?
-		float fire_shield_effect;      // 0x4A0
+		FLOAT fire_shield_effect;      // 0x4A0
 		INT32 unknown16;               // 0x4A4
-		float protection_air_effect;   // 0x4A8 - in % as below
-		float protection_fire_effect;  // 0x4AC
-		float protection_water_effect; // 0x4B0
-		float protection_earth_effect; // 0x4B4
+		FLOAT protection_air_effect;   // 0x4A8 - in % as below
+		FLOAT protection_fire_effect;  // 0x4AC
+		FLOAT protection_water_effect; // 0x4B0
+		FLOAT protection_earth_effect; // 0x4B4
 		INT32 shield_effect;           // 0x4B8
 		INT32 air_shield_effect;       // 0x4BC
 		INT8 blinded;                  // 0x4C0 - to reduce damage?
 		INT8 paralyzed;                // 0x4C1 - to reduce damage?
 		INT8 unknown17[2];             // 0x4C2-0x4C3
 		INT32 forgetfulness_level;     // 0x4C4
-		float slow_effect;             // 0x4C8 - float
+		FLOAT slow_effect;             // 0x4C8
 		INT32 haste_effect;            // 0x4CC - value added/removed
 		INT32 disease_attack_effect;   // 0x4D0
 		INT32 disease_defense_effect;  // 0x4D4
@@ -2207,7 +2323,10 @@ namespace h3
 		INT32 magic_mirror_effect;     // 0x4E4
 		INT32 morale;                  // +4E8
 		INT32 luck;                    // +4EC
-		h3unk _f_4F0[56];
+		h3unk _f_4F0[4];
+		H3Vector<H3CombatMonster*> dendroidBinder;  // +4F4 which dendroids have binded the current target (used for animation requirement)
+		H3Vector<H3CombatMonster*> dendroidBinds;   // +504 a list of H3CombatMonsters binded by this dendroid
+		h3unk _f_514[20];
 		INT32 Hypnotize_528;
 		INT32 Hypnotize_52C;
 		h3unk _f_530[24];
@@ -2289,7 +2408,13 @@ namespace h3
 		// * a copy of H3CreatureInformation using combat values in some places
 		H3CreatureInformation info;
 	protected:
-		h3unk _f_0E8[12];
+		h3unk _f_0E8[4];
+	public:
+		// * +EC
+		// * set in After-Hit spell subroutine 0x440220
+		INT32 spellToApply;
+	protected:
+		h3unk _f_0F0[4];
 	public:
 		// * +F4
 		// * left or right
@@ -3791,8 +3916,10 @@ namespace h3
 		// * +5394
 		INT32 landType;
 	protected:
-		h3unk _f_5398[12];
+		h3unk _f_5398[8];
 	public:
+		// * +53A0
+		INT32 absoluteObstacleId;
 		// * +53A4
 		INT32 siegeKind;
 		// * +53A8
@@ -4020,12 +4147,15 @@ namespace h3
 		_H3API_ H3CreatureBankSetup*    CreatureBankSetup();
 		_H3API_ H3ValidCatapultTargets* ValidCatapultTargets();
 		_H3API_ H3ArtifactSetup*        ArtifactSetup();
+		_H3API_ INT                     ArtifactCount();
 		_H3API_ H3CreatureInformation*  CreatureInformation();
 		_H3API_ H3ObstacleInfo*         ObstacleInfo();
 		_H3API_ H3Hero*                 DialogHero();
 		_H3API_ H3TurnTimer*            TurnTimer();
 		_H3API_ H3HeroSpecialty*        HeroSpecialty();
 		_H3API_ H3TownCreatureTypes*    TownCreatureTypes();
+		_H3API_ H3SecondarySkillInfo&   SecondarySkillsInfo(int skill);
+		_H3API_ H3ComboArtifactSetup*   CombinationArtifacts();
 	}
 
 #pragma pack(pop)

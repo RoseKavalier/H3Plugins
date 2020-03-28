@@ -1032,8 +1032,7 @@ namespace h3
 			LPCSTR const CREST58          = (LPCSTR(0x6601FC));  // CREST58.def 58x64
 			LPCSTR const TOWN_SMALL       = (LPCSTR(0x65F318));  // itpa.def 48x32
 			LPCSTR const NO_VISION        = (LPCSTR(0x6885A0));  // SYSOPB8.def 46x32
-			LPCSTR const ADVENTURE_CURSOR = (LPCSTR(0x68164C));  // cradvntr.def 40x40
-			LPCSTR const ALT_ART          = (LPCSTR(0x683178));  // AltArt.def 64x32
+			LPCSTR const ADVENTURE_CURSOR = (LPCSTR(0x68164C));  // cradvntr.def 40x40			
 			LPCSTR const ON_OFF_CHECKBOX  = (LPCSTR(0x6700F0));  // sysopchk.def 32x24
 			LPCSTR const OKAY_DEF         = (LPCSTR(0x670160));  // iOkay.def 64x30
 			LPCSTR const OKAY32_DEF       = (LPCSTR(0x682374));  // iOkay32.def 66x32

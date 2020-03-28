@@ -20,13 +20,13 @@ namespace h3
 	// * data for wandering monsters on adventure map
 	struct MapMonster
 	{
-		unsigned  count      : 12; // +00 max 4095
-		unsigned  aggression : 5; // for diplomacy
-		unsigned  noRun      : 1; // +17
-		unsigned  noGrowth   : 1; // +18
-		unsigned  setupIndex : 8; // +19 up to 256 individual messages/prizes
-		unsigned  _u1        : 4; // +27 to my knowledge, not used anywhere. Could expand the number of setups to 4095?
-		unsigned  hasSetup   : 1; // +31
+		unsigned  count           : 12;// +00 max 4095
+		unsigned  aggression      : 5; // for diplomacy
+		unsigned  noRun           : 1; // +17
+		unsigned  noGrowth        : 1; // +18
+		unsigned  setupIndex      : 8; // +19 up to 256 individual messages/prizes
+		unsigned  growthRemainder : 4; // +27 remainder of the division by 10 for growth
+		unsigned  hasSetup        : 1; // +31
 	};
 
 	// * data for wandering monsters on adventure map, as of SoD_SP 1.18
@@ -36,7 +36,7 @@ namespace h3
 		unsigned  aggression : 5;  // for diplomacy
 		unsigned  noRun      : 1;  // +17
 		unsigned  noGrowth   : 1;  // +18
-		unsigned  setupIndex : 12; // +19 up to 4096 individual messages/prizes
+		unsigned  setupIndex : 12; // +19 up to 4096 individual messages/prizes. Extra growth is handled using the same game logic, just not stored
 		unsigned  hasSetup   : 1;  // +31
 	};
 
@@ -78,13 +78,14 @@ namespace h3
 	};
 
 	// * data for event on adventure map
+	// * Pandora's box is the same but only has 'id' entry
 	struct MapEvent
 	{
 		unsigned  id        : 10; // Up to 1024
 		unsigned  enabled   : 8; // which players can activate it?
 		unsigned  aiEnabled : 1; // can AI activate it?
 		unsigned  oneVisit  : 1; // Cancel after 1 visit?
-		unsigned _u1        : 12; // ?unused?
+		unsigned _u1        : 12; // ?unused? ==> could be used to expand number of uniques
 	};
 
 	// * data for treasure chest on adventure map

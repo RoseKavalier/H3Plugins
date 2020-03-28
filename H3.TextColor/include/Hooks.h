@@ -15,6 +15,4 @@ extern PatcherInstance *_PI;
 // * installs all TextColor hooks
 void Hooks_init(PatcherInstance *pi);
 
-extern "C" __declspec(dllexport) h3::H3Plugin::TextColor::H3TextColorInformation *GetTextColor_();
-
 #endif /* #define _HOOKS_H_ */

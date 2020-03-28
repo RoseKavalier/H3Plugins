@@ -18,6 +18,14 @@ namespace h3
 	{
 		return StrAt(0x6A75D4 + 4 * level);
 	}
+	_H3API_ LPCSTR h3_PrimarySkillName(INT id)
+	{
+		return StrAt(0x6A53F8 + 4 * id);
+	}
+	_H3API_ LPCSTR h3_MagicSchoolName(INT school)
+	{
+		return StrAt(0x6A5338 + 8 * (4 + school));
+	}
 	_H3API_ LPCSTR h3_ObjectName(INT id)
 	{
 		return StrAt(0x6A7A54 + 4 * id);
@@ -29,6 +37,10 @@ namespace h3
 	_H3API_ LPCSTR h3_TentColors(INT type)
 	{
 		return StrAt(0x6A7588 + 4 * type);
+	}
+	_H3API_ LPCSTR h3_CastleName(INT type)
+	{
+		return StrAt(0x6A755C + 4 * type);
 	}
 	_H3API_ LPCSTR h3_TerrainName(INT type)
 	{
@@ -64,7 +76,7 @@ namespace h3
 	}
 	_H3API_ H3SecondarySkillInfo& h3_SecondarySkillsInfo(int skill)
 	{
-		return (*(H3SecondarySkillInfo**)(0x67DCF0))[skill];
+		return (*(H3SecondarySkillInfo**)0x67DCF0)[skill];
 	}
 	_H3API_ H3GlobalObjectSettings& P_ObjectSettings(int id)
 	{
@@ -106,6 +118,11 @@ namespace h3
 	_H3API_ LPCSTR P_HeroDefaultBiography(int id)
 	{
 		return StrAt(PtrAt(0x4D92B7 + 3) + 4 * id);
+	}
+
+	_H3API_ H3TownCreatureTypes& P_TownCreatureTypes(int town)
+	{		
+		return (*(H3TownCreatureTypes**)(0x47AB00 + 3))[town];		
 	}
 
 #ifdef _H3API_DONT_USE_MACROS_

@@ -142,6 +142,18 @@ typedef DWORD                    *PDWORD;
 typedef const char               *LPCSTR;
 typedef void                     *PVOID;
 
+#ifndef _H3_DECLARE_
+// * forward-defines a struct, pointer to struct and reference to struct
+#define _H3_DECLARE_(NAME) struct NAME; typedef struct NAME *P ## NAME; typedef struct NAME &R ## NAME;
+#endif
+
+#ifndef _H3_EXPORT_
+// * exports a function without name mangling
+// * to use, type the following within a function's definition:
+// * #pragma _H3_EXPORT_
+#define _H3_EXPORT_ comment(linker, "/EXPORT:" __FUNCTION__ "=" __FUNCDNAME__)
+#endif
+
 #ifndef ArraySize
 // * returns number of elements in an array
 #define ArraySize(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -528,12 +540,12 @@ namespace h3
 		GameVersion m_version;
 	public:
 		_H3API_ H3Version();
-		GameVersion version() const;
-		BOOL roe()  const;
-		BOOL sod()  const;
-		BOOL hota() const;
-		BOOL era()  const;
-		BOOL wog()  const;
+		_H3API_ GameVersion version() const;
+		_H3API_ BOOL roe()  const;
+		_H3API_ BOOL sod()  const;
+		_H3API_ BOOL hota() const;
+		_H3API_ BOOL era()  const;
+		_H3API_ BOOL wog()  const;
 	};
 
 	// * heap realloc using H3 assets

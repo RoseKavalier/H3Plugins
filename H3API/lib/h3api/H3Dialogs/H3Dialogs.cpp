@@ -46,9 +46,17 @@ namespace h3
 	{
 		return command == int(MessageCommand::MC_KeyDown);
 	}
+	_H3API_ BOOL H3Msg::IsKeyHeld() const
+	{
+		return command == int(MessageCommand::MC_KeyHeld);
+	}
 	_H3API_ BOOL H3Msg::IsMouseOver() const
 	{
 		return command == int(MessageCommand::MC_MouseOver);
+	}
+	_H3API_ BOOL H3Msg::IsWheelButton() const
+	{
+		return command == int(MessageCommand::MC_WheelButton) && subtype == int(MessageSubtype::MS_MouseWheelButtonDown);
 	}
 	_H3API_ BOOL H3Msg::IsLeftClick() const
 	{
@@ -185,6 +193,16 @@ namespace h3
 
 		pcx->DrawToPcx16(0, 0, pcx->width, pcx->height, background, 0, 0, FALSE);
 
+		H3DlgPcx16* bg = H3DlgPcx16::Create(0, 0, pcx->width, pcx->height, 0, nullptr);
+		if (!bg)
+		{
+			background->Destroy();
+			background = nullptr;
+			return FALSE;
+		}
+		bg->SetPcx(background);
+		AddItem(bg);
+
 		return TRUE;
 	}
 	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPCX16* pcx)
@@ -196,6 +214,16 @@ namespace h3
 			return FALSE;
 
 		pcx->DrawToPcx16(0, 0, FALSE, background);
+
+		H3DlgPcx16* bg = H3DlgPcx16::Create(0, 0, pcx->width, pcx->height, 0, nullptr);
+		if (!bg)
+		{
+			background->Destroy();
+			background = nullptr;
+			return FALSE;
+		}
+		bg->SetPcx(background);
+		AddItem(bg);
 
 		return TRUE;
 	}
@@ -209,6 +237,16 @@ namespace h3
 			return FALSE;
 
 		pcx->DrawToPcx16(0, 0, background);
+
+		H3DlgPcx16* bg = H3DlgPcx16::Create(0, 0, pcx->width, pcx->height, 0, nullptr);
+		if (!bg)
+		{
+			background->Destroy();
+			background = nullptr;
+			return FALSE;
+		}
+		bg->SetPcx(background);
+		AddItem(bg);
 
 		return TRUE;
 	}
@@ -228,8 +266,19 @@ namespace h3
 
 		fr->DrawToPcx16(0, 0, fr->frameWidth, fr->frameHeight, background, 0, 0, def->palette565);
 
+		H3DlgPcx16* bg = H3DlgPcx16::Create(0, 0, fr->frameWidth, fr->frameHeight, 0, nullptr);
+		if (!bg)
+		{
+			background->Destroy();
+			background = nullptr;
+			return FALSE;
+		}
+		bg->SetPcx(background);
+		AddItem(bg);
+
 		return TRUE;
 	}
+	
 	_H3API_ VOID H3BaseDlg::Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
 	{
 		H3Internal::WindowManager()->H3Redraw(xDlg + x, yDlg + y, dx, dy);
@@ -266,6 +315,13 @@ namespace h3
 	{
 		dlgItems += item;
 		return THISCALL_3(H3DlgItem*, 0x5FF270, this, item, -1); // LoadItem
+	}
+	_H3API_ H3DlgItem * H3BaseDlg::CreateHidden(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id)
+	{
+		H3DlgItem* it = H3DlgItem::Create(x, y, width, height, id, 0);
+		if (it)
+			AddItem(it);
+		return it;
 	}
 	_H3API_ H3LoadedPCX16* H3Dlg::GetBackgroundPcx() const
 	{
@@ -384,6 +440,20 @@ namespace h3
 			AddItem(but);
 		return but;
 	}
+	_H3API_ H3DlgDefButton * H3BaseDlg::CreateButton(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
+	{
+		H3DlgDefButton* but = CreateButton(x, y, 0, 0, id, defName, frame, clickFrame, closeDialog, hotkey);
+		if (but)
+		{
+			H3LoadedDEF* def = but->GetDef();
+			if (def)
+			{
+				but->SetWidth(def->widthDEF);
+				but->SetHeight(def->heightDEF);
+			}			
+		}
+		return but;
+	}
 	_H3API_ H3DlgDefButton* H3BaseDlg::CreateOKButton(INT32 x, INT32 y)
 	{
 		H3DlgDefButton* button = H3DlgDefButton::Create(x, y, int(H3Msg::ItemIDs::ID_OK), NH3Dlg::Assets::OKAY_DEF, 0, 1, TRUE, NH3VKey::H3VK_ENTER);
@@ -473,6 +543,17 @@ namespace h3
 			AddItem(pcx);
 		return pcx;
 	}
+	_H3API_ H3DlgPcx * H3BaseDlg::CreatePcx(INT32 x, INT32 y, INT32 id, LPCSTR pcxName)
+	{
+		H3DlgPcx* pcx = CreatePcx(x, y, 0, 0, id, pcxName);
+		if (pcx && pcx->GetPcx())
+		{
+			H3LoadedPCX* p = pcx->GetPcx();
+			pcx->SetWidth(p->width);
+			pcx->SetHeight(p->height);
+		}
+		return pcx;
+	}
 	_H3API_ H3DlgPcx* H3BaseDlg::CreateLineSeparator(INT32 x, INT32 y, INT32 width)
 	{
 		return CreatePcx(x, y, width, 2, 0, NH3Dlg::HDassets::LINE_SEPARATOR);
@@ -509,6 +590,13 @@ namespace h3
 	_H3API_ H3DlgHintBar* H3Dlg::CreateHint()
 	{
 		H3DlgHintBar* h = H3DlgHintBar::Create(this);
+		if (h)
+			AddItem(h);
+		return h;
+	}
+	_H3API_ H3DlgHintBar * H3Dlg::CreateHint(INT32 x, INT32 y, INT32 width, INT32 height)
+	{
+		H3DlgHintBar* h = H3DlgHintBar::Create(this, x, y, width, height);
 		if (h)
 			AddItem(h);
 		return h;
@@ -792,7 +880,7 @@ namespace h3
 	{
 		defFrameOnClick = clickFrame;
 	}
-	H3LoadedDEF * H3DlgDef::GetDef()
+	_H3API_ H3LoadedDEF * H3DlgDef::GetDef()
 	{
 		return loadedDef;
 	}
@@ -970,7 +1058,24 @@ namespace h3
 	}
 	_H3API_ VOID H3DlgEdit::DecreaseCaret()
 	{
-		--caretPos;
+		if (caretPos > 0)
+			--caretPos;
+	}
+	_H3API_ VOID H3DlgEdit::IncreaseCaret()
+	{
+		if (caretPos < text.Length())
+			++caretPos;
+	}
+	_H3API_ INT H3DlgEdit::GetCaret() const
+	{
+		return caretPos;
+	}
+	_H3API_ BOOL H3DlgEdit::SetCaret(INT pos)
+	{
+		if (pos < 0 || pos == caretPos || pos > text.Length())
+			return FALSE;
+		caretPos = pos;
+		return TRUE;
 	}
 	_H3API_ VOID H3DlgEdit::SetAutoredraw(BOOL on)
 	{
@@ -1013,11 +1118,10 @@ namespace h3
 		return t;
 	}
 	_H3API_ VOID H3DlgHintBar::ShowHint(H3Msg* msg)
-	{
-		H3DlgItem* di;
+	{		
 		if (msg->command == int(H3Msg::MessageCommand::MC_MouseOver))
 		{
-			di = msg->ItemAtPosition(parent);
+			H3DlgItem* di = msg->ItemAtPosition(parent);
 			if (di)
 			{
 				if (di->GetHint())
@@ -1038,6 +1142,10 @@ namespace h3
 	_H3API_ H3DlgHintBar* H3DlgHintBar::Create(H3Dlg* dlg)
 	{
 		return (H3DlgHintBar*)H3DlgTextPcx::Create(8, dlg->GetHeight() - 26, dlg->GetWidth() - 16, 19, h3_NullString, NH3Dlg::Text::SMALL, NH3Dlg::HDassets::HD_STATUSBAR_PCX, NH3Dlg::TextColor::REGULAR);
+	}
+	_H3API_ H3DlgHintBar * H3DlgHintBar::Create(H3Dlg * dlg, INT32 x, INT32 y, INT32 w, INT32 h)
+	{
+		return (H3DlgHintBar*)H3DlgTextPcx::Create(x, y, w, h, h3_NullString, NH3Dlg::Text::SMALL, NH3Dlg::HDassets::HD_STATUSBAR_PCX, NH3Dlg::TextColor::REGULAR);
 	}
 	_H3API_ H3DlgScrollableText* H3DlgScrollableText::Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
 	{
@@ -1093,7 +1201,7 @@ namespace h3
 	{
 		return parent->GetX() + xPos + btnPosition;
 	}
-	H3LoadedPCX * H3DlgScrollbar::GetPcx()
+	_H3API_ H3LoadedPCX * H3DlgScrollbar::GetPcx()
 	{
 		return loadedPcx;
 	}
@@ -1116,5 +1224,17 @@ namespace h3
 	_H3API_ INT HDDlg::CallHDProc(H3Msg & msg)
 	{
 		return hdProc(this, &msg);
+	}
+	_H3API_ H3TownAlignmentDlg::H3TownAlignmentDlg(int town)
+	{
+		THISCALL_2(H3TownAlignmentDlg&, 0x5761A0, this, 1);
+		int frame = 2 * town + 2;
+		DefLoader def(NH3Dlg::Assets::TOWN_SMALL);
+		THISCALL_4(BOOL8, 0x5761C0, this, def.Get(), frame, town);
+		THISCALL_2(VOID, vtable->runDlg, this, 0);
+	}	
+	_H3API_ H3TownAlignmentDlg::~H3TownAlignmentDlg()
+	{
+		THISCALL_1(VOID, 0x48FA10, this);
 	}
 }
