@@ -169,21 +169,18 @@ VOID H3TextColor::AddColor(LPCSTR name, UINT8 red, UINT8 green, UINT8 blue)
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-// * Calculates the current position in TextParser
+// * Gets the offset from start of text
 // * works at the start of a new line
 _LHF_(TextPositionNewLine)
 {
-	CurrentPosition = c->ref_local_n(8 / 4); //   IntAt(c->esp) - reinterpret_cast<int>(TextParser.String());
+	CurrentPosition = c->ref_local_n(8 / 4);
 	return EXEC_DEFAULT;
 }
 
-// * Calculates the current position in TextParser
+// * Increment the current position
 // * works in the middle of a line
 _LHF_(TextPositionLineMiddle)
 {
-	// * c->edx points to an offset of string
-	// * calculate the offset to know the matching color
-	//CurrentPosition = c->edx - reinterpret_cast<int>(TextParser.String());
 	++CurrentPosition;
 	return EXEC_DEFAULT;
 }
@@ -510,6 +507,11 @@ _LHF_(MainHook)
 	}
 	else
 		_PI->WriteLoHook(0x4B4F74, DrawCharColor);
+
+	// remove hook as it is no longer needed
+	// and would be triggered when switching
+	// between windowed and fullscreen modes
+	h->Undo();
 
 	return EXEC_DEFAULT;
 }
