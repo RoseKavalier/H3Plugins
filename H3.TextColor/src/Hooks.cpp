@@ -4,6 +4,7 @@ using namespace h3;
 
 // HDMOD version as of latest update
 constexpr DWORD HDMOD_VERSION = 5000281;
+constexpr DWORD HDMOD_ERA = 4208204;
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +173,7 @@ VOID H3TextColor::AddColor(LPCSTR name, UINT8 red, UINT8 green, UINT8 blue)
 // * works at the start of a new line
 _LHF_(TextPositionNewLine)
 {
-	CurrentPosition = IntAt(c->esp) - reinterpret_cast<int>(TextParser.String());
+	CurrentPosition = c->ref_local_n(8 / 4); //   IntAt(c->esp) - reinterpret_cast<int>(TextParser.String());
 	return EXEC_DEFAULT;
 }
 
@@ -182,7 +183,8 @@ _LHF_(TextPositionLineMiddle)
 {
 	// * c->edx points to an offset of string
 	// * calculate the offset to know the matching color
-	CurrentPosition = c->edx - reinterpret_cast<int>(TextParser.String());
+	//CurrentPosition = c->edx - reinterpret_cast<int>(TextParser.String());
+	++CurrentPosition;
 	return EXEC_DEFAULT;
 }
 
@@ -398,6 +400,30 @@ void TrueStretchModeColorHook_legacy(PatcherInstance *pi)
 		pi->WriteLoHook(address, TrueStretchModeDrawCharColor);
 }
 
+// * Finds where to install @TrueModeDrawCharColor for ERA version
+// * hook within _hd3_.dll && HD_MCR.dll
+void TrueColorHook_ERA(PatcherInstance *pi)
+{
+	H3DLL _HD3_DLL("_hd3_.dll");
+	H3DLL HD_MCR_DLL("HD_MCR.dll");
+
+	///////////////////////////////////////////////////////////////////////////////
+	// Needle: 89 45 E0 83 3D
+	///////////////////////////////////////////////////////////////////////////////
+	UINT8 needle[] = {
+		0x89, 0x45, 0xE0, 					// MOV DWORD PTR SS:[EBP-20],EAX
+		0x83, 0x3D							// CMP DWORD PTR DS:[.....],0
+	};
+
+	DWORD address = _HD3_DLL.NeedleSearch(needle, 0);
+	if (address)
+		pi->WriteLoHook(address, TrueModeDrawCharColor);
+
+	address = HD_MCR_DLL.NeedleSearch(needle, 0);
+	if (address)
+		pi->WriteLoHook(address, TrueModeDrawCharColor);
+}
+
 _LHF_(MainHook)
 {
 	constexpr INT GREENMASK565 = 0x7E0;
@@ -471,6 +497,10 @@ _LHF_(MainHook)
 		{
 			DirectDrawHook_5000281(_PI); // covers all 32-bit drawing modes
 		}
+		else if (hdmodVersion == HDMOD_ERA)
+		{
+			TrueColorHook_ERA(_PI);
+		}
 		else
 		{
 			TrueColorHook_legacy(_PI);
@@ -484,7 +514,7 @@ _LHF_(MainHook)
 	return EXEC_DEFAULT;
 }
 
-void Hooks_init(PatcherInstance *pi)
+void Hooks_init(PatcherInstance *pi, h3::H3Version& version)
 {
 	F_GetCurrentDirectory(ColorTextFile, false);
 	ColorTextFile.Append(ColorFileName);

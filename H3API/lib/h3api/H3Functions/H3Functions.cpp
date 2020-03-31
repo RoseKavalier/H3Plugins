@@ -45,13 +45,9 @@ namespace h3
 	}
 	_H3API_ BOOL F_GetCurrentDirectory(H3String& path, BOOL add_backslash)
 	{
-		if (int len = STDCALL_2(INT, IntAt(0x63A1A4), MAX_PATH, h3_TextBuffer))
+		if (STDCALL_2(INT, IntAt(0x63A1A4), MAX_PATH, h3_TextBuffer))
 		{
-#ifdef _H3API_ERA_
-			// * ERA hooks GetCurrentDirectory and adds +1 length
-			--len;
-#endif
-			path.Assign(h3_TextBuffer, len);
+			path.Assign(h3_TextBuffer);
 			if (add_backslash)
 				path += '\\';
 			return TRUE;

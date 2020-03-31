@@ -22,9 +22,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 		{
 			pluginOn = TRUE;
 
-			// * not to be used outside SoD
+			// * not to be used outside SoD or ERA
 			h3::H3Version version;
-			if (!version.sod())
+			if (!(version.sod() || version.era()))
 				break;
 
 			Patcher *p = _P = GetPatcher();
@@ -35,7 +35,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 				_PI = p->CreateInstance(PLUGIN_NAME);
 				PatcherInstance *pi = _PI;
 
-				Hooks_init(pi);
+				Hooks_init(pi, version);
 			}
 		}
 		break;

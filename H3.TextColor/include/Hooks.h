@@ -13,6 +13,6 @@ extern Patcher *_P;
 extern PatcherInstance *_PI;
 
 // * installs all TextColor hooks
-void Hooks_init(PatcherInstance *pi);
+void Hooks_init(PatcherInstance *pi, h3::H3Version& version);
 
 #endif /* #define _HOOKS_H_ */
