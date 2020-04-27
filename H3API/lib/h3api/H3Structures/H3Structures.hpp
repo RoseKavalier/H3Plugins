@@ -4107,8 +4107,15 @@ namespace h3
 		// * +14000
 		// * oddly there are only 20, not 21, slots for each side
 		BOOL8 RedrawCreatureFrame[2][20];
+		// * +14028
+		BOOL8 heroAnimation[2];
+		// * +1402A
+		BOOL8 heroFlagAnimation[2];
+		// * +1402C
+		BOOL8 turretAnimation[3];
 	protected:
-		h3unk _f_14028[228];
+		h3align _f_1402F;
+		h3unk _f_14030[220];
 	public:
 		// functions
 		_H3API_ VOID SimulateMouseAtHex(int hex_id);

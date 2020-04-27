@@ -4,27 +4,30 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** library and p
 
 ## Description
 
-**H3.LodTable**
->Modifies the LOD tables to provide room for additional LOD or PAC archives. By default, all folders of active HDmod plugins are browsed to add **.pac** or **.lod** game archives. You may also add archives from your own folders by using the HDmod variables created by the plugin. Included with SoD_SP.
-
-**H3.TextColor**
->Adds over 100 colors to game text using a simple tag **{~color}**_your text here_**}**. Included with SoD_SP.
+**H3.AssetLoader**
+>Loads WAV, PCX, DEF from specified path directly into h3's asset manager.
 
 **H3.Battlefields**
 >Adds custom battlefield backgrounds when fighting on the adventure map. Requires **H3.LodTable** plugin.
 
-**H3.ShiftToggle**
->When the Shift key is held on the adventure map, the active hero ignores any left mouse clicks.
-
 **H3.CombatAnimation**
 >Cycles through combat creatures' standing animation frames instead of being idle. Included with SoD_SP.
+
+**H3.DataLoader**
+>Loads any .def or .msk file from \Data\ folder, the same way as PCX, WAV or TXT files are normally read from there.
 
 **H3.ImageLoader**
 >Loads image from given directory as H3LoadedPcx16*.
 *Supported formats*: JPG, PNG, TGA, BMP, PSD, GIF, HDR, PIC thanks to [stb_image](https://github.com/nothings/stb)
 
-**H3.AssetLoader**
->Loads WAV, PCX, DEF from specified path directly into h3's asset manager.
+**H3.LodTable**
+>Modifies the LOD tables to provide room for additional LOD or PAC archives. By default, all folders of active HDmod plugins are browsed to add **.pac** or **.lod** game archives. You may also add archives from your own folders by using the HDmod variables created by the plugin. Included with SoD_SP.
+
+**H3.ShiftToggle**
+>When the Shift key is held on the adventure map, the active hero ignores any left mouse clicks.
+
+**H3.TextColor**
+>Adds over 100 colors to game text using a simple tag **{~color}**_your text here_**}**. Included with SoD_SP.
 
 **SoD_SP**
 >Description is currently only available [here](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#).

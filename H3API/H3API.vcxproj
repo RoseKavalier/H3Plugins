@@ -152,7 +152,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_H3API_LIBRARY_;_H3API_PLUGINS_;_H3API_EXCEPTION_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_OPERATORS_;_H3API_EXCEPTION_;_H3API_DONT_USE_MACROS_;_H3API_PLUGINS_;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_H3API_DONT_USE_MACROS_;_H3API_LIBRARY_;_H3API_PLUGINS_;_H3API_EXCEPTION_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_OPERATORS_;_H3API_EXCEPTION_;_H3API_DONT_USE_MACROS_;_H3API_PLUGINS_;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)src;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -172,7 +172,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_H3API_OPERATORS_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_EXCEPTION_;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_H3API_DONT_USE_MACROS_;_H3API_OPERATORS_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_EXCEPTION_;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>

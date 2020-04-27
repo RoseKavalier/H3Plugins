@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -11,6 +11,7 @@
 
 #include "H3Stream.hpp"
 #include "../H3_Functions.hpp"
+#include "../H3_Allocator.hpp"
 
 namespace h3
 {
@@ -124,7 +125,7 @@ namespace h3
 			if (read_to_buffer && m_size && CanRead())
 				ReadFile(m_size);
 		}
-	}	
+	}
 	_H3API_ H3Stream::~H3Stream()
 	{
 		if (m_file)
@@ -161,7 +162,7 @@ namespace h3
 	_H3API_ H3Stream& H3Stream::endl()
 	{
 		if (IsReady() && CanWrite())
-			CDECL_3(int, 0x61A031, m_file, "%s", "\r\n");			
+			CDECL_3(int, 0x61A031, m_file, "%s", "\r\n");
 		return *this;
 	}
 	_H3API_ BOOL H3Stream::IsReady() const
@@ -215,7 +216,7 @@ namespace h3
 			}
 			va_end(args);
 			WriteNewLine();
-	}
+		}
 		return *this;
 	}
 #endif
@@ -225,9 +226,9 @@ namespace h3
 		if (IsReady() && CanWrite())
 		{
 			if (m_write_hex)
-				CDECL_3(int, 0x61A031, m_file, "0x%X", number);				
+				CDECL_3(int, 0x61A031, m_file, "0x%X", number);
 			else
-				CDECL_3(int, 0x61A031, m_file, "%d", number);				
+				CDECL_3(int, 0x61A031, m_file, "%d", number);
 			WriteNewLine();
 		}
 		return *this;
@@ -248,7 +249,7 @@ namespace h3
 	{
 		if (IsReady())
 		{
-			CDECL_3(int, 0x61A031, m_file, "%f", number);			
+			CDECL_3(int, 0x61A031, m_file, "%f", number);
 			WriteNewLine();
 		}
 
@@ -278,7 +279,7 @@ namespace h3
 	{
 		if (IsReady())
 		{
-			CDECL_3(int, 0x61A031, m_file, "%s", text);			
+			CDECL_3(int, 0x61A031, m_file, "%s", text);
 			WriteNewLine();
 		}
 
@@ -401,5 +402,173 @@ namespace h3
 	_H3API_	BOOL H3Stream::CanRead()
 	{
 		return int(m_mode) & (MV_READ | MV_UPDATE);
+	}
+	_H3API_ void H3File::getSize()
+	{
+		m_fileSize = F_GetFileSize(m_handle);
+	}
+	_H3API_ void H3File::clear()
+	{
+		if (m_buffer)
+		{
+			ByteAllocator().deallocate(m_buffer);
+			m_buffer = nullptr;
+		}
+	}
+	_H3API_ void H3File::close()
+	{
+		if (m_handle)
+		{
+			F_CloseHandle(m_handle);
+			m_handle = NULL;
+		}
+		if (m_save)
+		{
+			F_CloseHandle(m_save);
+			m_save = NULL;
+		}
+	}
+	_H3API_ BOOL H3File::read(const PVOID buffer, DWORD sizeToRead)
+	{
+		if (m_pointer + sizeToRead > m_fileSize)
+			return FALSE;
+
+		if (!F_ReadFile(m_handle, buffer, sizeToRead))
+			return FALSE;
+		m_pointer += sizeToRead;
+		return TRUE;
+	}
+	_H3API_ BOOL H3File::write(const PVOID buffer, DWORD sizeToWrite)
+	{
+		return F_WriteFile(m_save, buffer, sizeToWrite);
+	}
+	_H3API_ H3File::H3File() :
+		m_handle(),
+		m_fileSize(),
+		m_buffer(),
+		m_pointer(),
+		m_save()
+	{
+	}
+	_H3API_ H3File::~H3File()
+	{
+		close();
+		clear();
+	}
+	_H3API_ BOOL H3File::Open(LPCSTR const file)
+	{
+		if (!Exists(file))
+			return FALSE;
+		getSize();
+		return TRUE;
+	}
+	_H3API_ BOOL H3File::Read(const PVOID buffer, DWORD sizeToRead)
+	{
+		return read(buffer, sizeToRead);
+	}
+	_H3API_ BOOL H3File::ReadToBuffer()
+	{
+		if (m_buffer)
+			return TRUE;
+
+		m_buffer = ByteAllocator().allocate(m_fileSize);
+		return read(m_buffer, m_fileSize);
+	}
+	_H3API_ BOOL H3File::Save(LPCSTR const file)
+	{
+		m_save = F_CreateFile(file, FALSE);
+		return m_save != INVALID_HANDLE_VALUE;
+	}
+	_H3API_ UINT H3File::Size() const
+	{
+		return m_fileSize;
+	}
+	_H3API_ const PBYTE H3File::Buffer() const
+	{
+		return m_buffer;
+	}
+	_H3API_ PBYTE H3File::ReleaseBuffer()
+	{
+		PBYTE buffer = m_buffer;
+		m_buffer = nullptr;
+		return buffer;
+	}
+	_H3API_ BOOL H3File::SetPointer(UINT pos)
+	{
+		if (pos >= m_fileSize)
+			return FALSE;
+		m_pointer = pos;
+		F_SetFilePointer(m_handle, m_pointer, FILE_BEGIN);
+		return TRUE;
+	}
+	_H3API_ UINT H3File::Pointer() const
+	{
+		return m_pointer;
+	}
+	_H3API_ BOOL H3File::Skip(UINT numBytes)
+	{
+		if (m_pointer + numBytes >= m_fileSize)
+			return FALSE;
+		m_pointer += numBytes;
+		F_SetFilePointer(m_handle, m_pointer, FILE_CURRENT);
+		return TRUE;
+	}
+	_H3API_ PBYTE H3File::begin()
+	{
+		return m_buffer;
+	}
+	_H3API_ PBYTE H3File::end()
+	{
+		return m_buffer + m_fileSize;
+	}
+	_H3API_ H3String H3File::GetLine()
+	{
+		H3String line;
+		if (m_pointer < m_fileSize)
+		{
+			int len = 0;
+			PCHAR start = reinterpret_cast<PCHAR>(m_buffer + m_pointer);
+			PCHAR current = start;
+			while (m_pointer < m_fileSize && *current)
+			{
+				if (*current == '\n')
+				{
+					// * if at least 1 character was parsed, check if previous is carriage return
+					if (len && *(current - 1) == '\r')
+						len--;
+					// * skip this character for next time
+					++m_pointer;
+					break;
+				}
+				++len;
+				++current;
+				++m_pointer;
+			}
+			// * blank lines ("\n" or "\r\n") are not assigned
+			if (len)
+				line.Assign(start, len);
+		}
+		return line;
+	}
+	_H3API_ H3Vector<H3String> H3File::GetLines()
+	{
+		H3Vector<H3String> result;
+
+		m_pointer = 0;
+		while (m_pointer < m_fileSize)
+		{
+			H3String line = GetLine();
+			if (!line.Empty())
+				result += line;
+		}
+
+		return result;
+	}
+	_H3API_ BOOL H3File::Exists(LPCSTR filepath)
+	{
+		m_handle = F_CreateFile(filepath, TRUE);
+		if (m_handle == INVALID_HANDLE_VALUE)
+			return FALSE;
+		return TRUE;
 	}
 }

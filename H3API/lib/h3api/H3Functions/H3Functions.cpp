@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -195,5 +195,43 @@ namespace h3
 	_H3API_ LPCSTR F_GetTownName(int town_id)
 	{
 		return reinterpret_cast<LPCSTR*>(PtrAt(0x5C1857))[town_id];
+	}
+	_H3API_ BOOL F_CloseHandle(HANDLE handle)
+	{
+		return STDCALL_1(BOOL, PtrAt(0x63A0C8), handle);
+	}
+	_H3API_ HANDLE F_CreateFile(LPCSTR file, BOOL openExisting)
+	{
+		return STDCALL_7(HANDLE, PtrAt(0x63A108), file, openExisting ? GENERIC_READ : GENERIC_WRITE, 0, LPSECURITY_ATTRIBUTES(NULL),
+			openExisting ? OPEN_EXISTING : CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, HANDLE(NULL));
+	}
+	_H3API_ DWORD F_GetFileSize(HANDLE handle)
+	{
+		DWORD fileSize = 0;
+		if (handle)
+		{
+			DWORD pos = F_SetFilePointer(handle, 0, FILE_CURRENT);
+			fileSize = F_SetFilePointer(handle, 0, FILE_END);
+			F_SetFilePointer(handle, pos, FILE_BEGIN);
+		}
+		return fileSize;
+	}
+	_H3API_ BOOL F_ReadFile(HANDLE handle, PVOID data, DWORD bytesToRead)
+	{
+		DWORD szRead;
+		if (!STDCALL_5(BOOL, PtrAt(0x63A0F4), handle, data, bytesToRead, &szRead, NULL))
+			return FALSE;
+		return szRead == bytesToRead;
+	}
+	_H3API_ DWORD F_SetFilePointer(HANDLE handle, LONG position, DWORD source)
+	{
+		return STDCALL_4(DWORD, PtrAt(0x63A1A0), handle, position, NULL, source);
+	}
+	_H3API_ BOOL F_WriteFile(HANDLE handle, PVOID buffer, DWORD bytesToWrite)
+	{
+		DWORD szWritten;
+		if (!STDCALL_5(BOOL, PtrAt(0x63A114), handle, buffer, bytesToWrite, &szWritten, NULL))
+			return FALSE;
+		return szWritten == bytesToWrite;
 	}
 }

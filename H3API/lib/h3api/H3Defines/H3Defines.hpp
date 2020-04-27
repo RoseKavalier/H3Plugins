@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -16,12 +16,11 @@
 #include "../H3_Base.hpp"
 #include "../H3_BinaryItems.hpp"
 #include "../H3_Dialogs.hpp"
-#include "../H3_String.hpp"
+//#include "../H3_String.hpp"
 #include "../H3_Structures.hpp"
 
 namespace h3
-{
-	
+{	
 	_H3API_ LPCSTR h3_SecondarySkillLevel(INT level);
 	_H3API_ LPCSTR h3_PrimarySkillName(INT id);
 	_H3API_ LPCSTR h3_MagicSchoolName(INT school);
@@ -54,78 +53,78 @@ namespace h3
 
 #ifdef _H3API_DONT_USE_MACROS_
 	// * game information
-	H3String& h3_DataPath();
-	HWND h3_HWND();
-	HMODULE h3_Instance();
-	UINT h3_ColorMode();
-	PCHAR h3_SaveName();
+	_H3API_ H3String& h3_DataPath();
+	_H3API_ HWND      h3_HWND();
+	_H3API_ HMODULE   h3_Instance();
+	_H3API_ UINT      h3_ColorMode();
+	_H3API_ PCHAR     h3_SaveName();
 
 	// * various integer constants
-	INT h3_ArtifactCount();
-	INT h3_CreatureCount();
-	INT h3_HeroCount();
-	UINT8 h3_TownCount();
-	UINT8 h3_SpellCount();
+	_H3API_ INT   h3_ArtifactCount();
+	_H3API_ INT   h3_CreatureCount();
+	_H3API_ INT   h3_HeroCount();
+	_H3API_ UINT8 h3_TownCount();
+	_H3API_ UINT8 h3_SpellCount();
 
 	// * game limits for text dialog
-	INT gameMaxWidth();
-	INT gameMaxHeight();
+	_H3API_ INT gameMaxWidth();
+	_H3API_ INT gameMaxHeight();
 
 	// * gameplay values
-	INT h3_CurrentPlayerID();
-	INT h3_CurrentAnimationSpeed();
-	BOOL h3_IsCampaignGame();
-	BYTE h3_HeroRetreated();
-	BYTE h3_HeroSurrendered();
-	BYTE h3_AutoSolo();
-	INT h3_HumanID();
-	BYTE h3_ActivePlayerBitset();
+	_H3API_ INT  h3_CurrentPlayerID();
+	_H3API_ INT  h3_CurrentAnimationSpeed();
+	_H3API_ BOOL h3_IsCampaignGame();
+	_H3API_ BYTE h3_HeroRetreated();
+	_H3API_ BYTE h3_HeroSurrendered();
+	_H3API_ BYTE h3_AutoSolo();
+	_H3API_ INT  h3_HumanID();
+	_H3API_ BYTE h3_ActivePlayerBitset();
 
 	// * gameplay structures
-	H3Player& h3_ActivePlayer();
-	H3QuestText& h3_QuestsText();
-	H3QuestText& h3_SeersText();
-	H3AnimationSpeed& h3_AnimationSpeed();
-	H3Vector<INT>& h3_BattleShadowHexes();
-	H3TownDependencies& h3_TownDependencies();
-	H3NeutralBuildingCosts& h3_NeutralBuildingCosts();
+	_H3API_ H3Player&               h3_ActivePlayer();
+	_H3API_ H3QuestText&            h3_QuestsText();
+	_H3API_ H3QuestText&            h3_SeersText();
+	_H3API_ H3AnimationSpeed&       h3_AnimationSpeed();
+	_H3API_ H3Vector<INT>&          h3_BattleShadowHexes();
+	_H3API_ H3TownDependencies&     h3_TownDependencies();
+	_H3API_ H3NeutralBuildingCosts& h3_NeutralBuildingCosts();
 
 	// * movement bonuses
-	INT SPEED_BONUS_BOOTS();
-	INT SPEED_BONUS_GLOVES();
-	INT WATER_BONUS_NECKLACE();
-	INT WATER_BONUS_SEA_CAPTAIN();
-	INT SPEED_BONUS_STABLES();
-	INT WATER_BONUS_LIGHTHOUSE();
+	_H3API_ INT SPEED_BONUS_BOOTS();
+	_H3API_ INT SPEED_BONUS_GLOVES();
+	_H3API_ INT WATER_BONUS_NECKLACE();
+	_H3API_ INT WATER_BONUS_SEA_CAPTAIN();
+	_H3API_ INT SPEED_BONUS_STABLES();
+	_H3API_ INT WATER_BONUS_LIGHTHOUSE();
 
 	// Pointers P_ from Heroes3.exe
 
-	H3ColumnTextFile& P_GeneralText();
-	H3MouseManager& P_MouseMgr();
-	H3WindowManager& P_WindowMgr();
-	H3Executive& P_Executive();
-	H3Main& P_Main();
-	H3CombatManager& P_CombatMgr();
-	H3TownManager& P_TownMgr();
-	H3SoundManager& P_SoundMgr();
-	H3InputManager& P_InputMgr();
-	H3AdventureManager& P_AdventureMgr();
-	H3MovementManager& P_MovementMgr();
-	H3Hero& P_DialogHero();
-	H3TurnTimer& P_TurnTimer();		
-	H3Dlg* P_NewGameDlg();
-	H3Palette565& P_GamePalette();
-	H3Palette565& P_PlayersPalette();
-	H3Font& P_TinyFont();
-	H3Font& P_SmallFont();
-	H3Font& P_MediumFont();
-	H3Font& P_BigFont();
-	H3Font& P_CalliFont();
-	H3BinTreeList& P_BinaryTree();
+	_H3API_ H3ColumnTextFile&   P_GeneralText();
+	_H3API_ H3MouseManager&     P_MouseMgr();
+	_H3API_ H3WindowManager&    P_WindowMgr();
+	_H3API_ H3Executive&        P_Executive();
+	_H3API_ H3Main&             P_Main();
+	_H3API_ H3CombatManager&    P_CombatMgr();
+	_H3API_ H3TownManager&      P_TownMgr();
+	_H3API_ H3SoundManager&     P_SoundMgr();
+	_H3API_ H3InputManager&     P_InputMgr();
+	_H3API_ H3AdventureManager& P_AdventureMgr();
+	_H3API_ H3MovementManager&  P_MovementMgr();
+	_H3API_ H3Hero&             P_DialogHero();
+	_H3API_ H3TurnTimer&        P_TurnTimer();		
+	_H3API_ H3Dlg*              P_NewGameDlg();
+	_H3API_ H3Palette565&       P_GamePalette();
+	_H3API_ H3Palette565&       P_PlayersPalette();
+	_H3API_ H3Font&             P_TinyFont();
+	_H3API_ H3Font&             P_SmallFont();
+	_H3API_ H3Font&             P_MediumFont();
+	_H3API_ H3Font&             P_BigFont();
+	_H3API_ H3Font&             P_CalliFont();
+	_H3API_ H3BinTreeList&      P_BinaryTree();
 
 	// Constants C_ from Heroes3.exe
 
-	H3WavFile& C_ButtonWav();
+	_H3API_ H3WavFile& C_ButtonWav();
 #else
 #define h3_DataPath							((h3::H3String*)0x69E528)
 #define h3_ActivePlayer						(*(h3::H3Player**)0x69CCFC)

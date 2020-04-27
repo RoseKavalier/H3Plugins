@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-15                        //
-//                      Last edit: 2019-12-15                       //
+//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -26,11 +26,11 @@ namespace h3
 		_H3API_ PVOID operator new[](const size_t sz);
 		_H3API_ VOID  operator delete[](const PVOID block);
 	};
-	   	 
+
 	// * an allocator to simulate h3's new & delete on objects
 	template <typename T>
 	struct H3ObjectAllocator
-	{	
+	{
 		typedef T value_type;
 		typedef T* pointer;
 		typedef const T* const_pointer;
@@ -38,7 +38,7 @@ namespace h3
 		typedef const T& const_reference;
 		typedef size_t size_type;
 
-		H3ObjectAllocator() noexcept;		
+		H3ObjectAllocator() noexcept;
 		// * allocates memory
 		T* allocate(size_t number = 1) const noexcept;
 		// * deallocates memory
@@ -51,7 +51,7 @@ namespace h3
 		template<typename U>
 		VOID construct(T* block, const U& arg) const noexcept;
 		// * calls default destructor
-		VOID destroy(T* block) const noexcept;		
+		VOID destroy(T* block) const noexcept;
 
 		template <typename U>
 		H3ObjectAllocator(const H3ObjectAllocator<U>&) noexcept;
@@ -77,7 +77,7 @@ namespace h3
 		typedef T& reference;
 		typedef const T& const_reference;
 		typedef size_t size_type;
-	private:		
+	private:
 		size_t* GetArrayBase(T* block) const noexcept;
 		size_t GetArraySize(T* block) const noexcept;
 	public:
@@ -110,6 +110,9 @@ namespace h3
 		VOID construct(T* block, Args&&... args);
 #endif
 	};
+
+	typedef H3ObjectAllocator<BYTE> ByteAllocator;
+	typedef H3ObjectAllocator<CHAR> CharAllocator;
 }
 
 #endif /* #define _H3ObjectAllocator_HPP_ */

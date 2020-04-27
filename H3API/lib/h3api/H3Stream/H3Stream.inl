@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -38,6 +38,17 @@ namespace h3
 			CDECL_3(int, 0x61A031, m_file, format, value);
 	}
 #endif
+
+	template<typename T>
+	inline BOOL h3::H3File::Read(const T & data, size_t sz)
+	{
+		return read(PVOID(&data), sz);
+	}
+	template<typename T>
+	inline BOOL H3File::Write(const T & data, size_t sz)
+	{
+		return write(PVOID(&data), sz);
+	}
 }
 
 #endif /* #define _H3STREAM_INL_ */
