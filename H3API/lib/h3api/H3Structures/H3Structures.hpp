@@ -4062,7 +4062,10 @@ namespace h3
 		// * information about obstacles on battlefield
 		H3Vector<H3Obstacle> obstacleInfo;
 		// * +13D68
-		BOOL tacticsPhase;
+		BOOL8 tacticsPhase;
+	protected:
+		h3align _f_13D69[3];
+	public:
 		// * +13D6C
 		INT32 turn;
 		// * +13D70

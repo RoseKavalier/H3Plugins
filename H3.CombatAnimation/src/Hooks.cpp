@@ -37,7 +37,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 		{
 			auto mon = &combat->stacks[side][i];
 			// under these conditions, a creature should not be animated
-			if (mon->type == cst::NH3Creatures::ARROW_TOWER
+			if (mon->type == NH3Creatures::ARROW_TOWER
 				|| mon->info.flags.CANNOTMOVE
 				|| mon->activeSpellsDuration[H3Spell::BLIND]
 				|| mon->activeSpellsDuration[H3Spell::PARALYZE]
@@ -88,7 +88,8 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 
 _LHF_(ResetDrawingRequest)
 {
-	F_memset(P_CombatMgr->RedrawCreatureFrame, 0, sizeof(P_CombatMgr->RedrawCreatureFrame));
+	auto cmb = P_CombatMgr;
+	F_memset(cmb->RedrawCreatureFrame, 0, sizeof(cmb->RedrawCreatureFrame) + sizeof(cmb->heroAnimation) + sizeof(cmb->heroFlagAnimation));
 	return EXEC_DEFAULT;
 }
 
