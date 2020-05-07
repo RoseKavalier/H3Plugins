@@ -29,8 +29,12 @@ namespace h3
 	_H3_DECLARE_(H3BinaryTreeNode);
 	_H3_DECLARE_(H3BinaryItem);
 	_H3_DECLARE_(H3WavFile);
-	_H3_DECLARE_(H3ColumnTextFile);
-	_H3_DECLARE_(H3TextFile);	
+
+	// this structure will be renamed H3TextFile
+	_H3API_DEPRECATED_ _H3_DECLARE_(H3ColumnTextFile);
+	// this structure will be renamed H3TextTable
+	_H3API_DEPRECATED_ _H3_DECLARE_(H3TextFile);
+
 	_H3_DECLARE_(H3Palette565);
 	_H3_DECLARE_(H3Palette888);
 	_H3_DECLARE_(H3Font);
