@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2020-01-22                       //
+//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -80,14 +80,14 @@
 #define _H3ENUM_ enum class
 #endif
 #endif
-	
+
 // * indicates this content will be deprecated
 // * and replaced by equivalent expressions
 #define _H3API_DEPRECATED_
 
 // * Slaps top of car
 // * This bad boy can hold just about anything
-typedef void          (*naked_t)();
+typedef void(*naked_t)();
 // * generic typedef to indicate this is a h3 function
 typedef unsigned long h3func;
 // * 1-byte sized boolean
@@ -115,13 +115,13 @@ typedef void VOID;
 // * typedef safety declarations
 // * no checks are needed here based on C++03 Standard 7.1.3 typedef specifier
 // * https://stackoverflow.com/questions/8594954/repeated-typedefs-invalid-in-c-but-valid-in-c?answertab=votes#tab-top
-typedef int              INT,    *PINT;
-typedef unsigned int     UINT,   *PUINT;
-typedef signed char      INT8,   *PINT8;
-typedef signed short     INT16,  *PINT16;
-typedef signed int       INT32,  *PINT32;
-typedef signed __int64   INT64,  *PINT64;
-typedef unsigned char    UINT8,  *PUINT8;
+typedef int              INT, *PINT;
+typedef unsigned int     UINT, *PUINT;
+typedef signed char      INT8, *PINT8;
+typedef signed short     INT16, *PINT16;
+typedef signed int       INT32, *PINT32;
+typedef signed __int64   INT64, *PINT64;
+typedef unsigned char    UINT8, *PUINT8;
 typedef unsigned short   UINT16, *PUINT16;
 typedef unsigned int     UINT32, *PUINT32;
 typedef unsigned __int64 UINT64, *PUINT64;
@@ -502,19 +502,19 @@ namespace h3
 	// * 512 bytes of char buffer to be used for printing text
 	//#define h3_TextBuffer      PCHAR(0x697428)
 	// * the game dimensions
-	#define gameWidth          IntAt(0x403401)
-	// * the game dimensions
-	#define gameHeight         IntAt(0x4033FC)
-	// * the offset in tiles from center of screen to edges
-	#define gameEdgeHorizontal CharAt(0x4A8FC0)
-	// * the offset in tiles from center of screen to edges
-	#define gameEdgeVertical   CharAt(0x4A8FC5)
-	// * the map dimensions, in tiles
-	#define h3_MapSize         IntAt(0x6783C8)
-	// * the size of a pixel
-	// * 2 means 16-bit
-	// * 4 means 32-bit
-	#define h3_BitMode         ByteAt(0x5FA228 + 3)	
+#define gameWidth          IntAt(0x403401)
+// * the game dimensions
+#define gameHeight         IntAt(0x4033FC)
+// * the offset in tiles from center of screen to edges
+#define gameEdgeHorizontal CharAt(0x4A8FC0)
+// * the offset in tiles from center of screen to edges
+#define gameEdgeVertical   CharAt(0x4A8FC5)
+// * the map dimensions, in tiles
+#define h3_MapSize         IntAt(0x6783C8)
+// * the size of a pixel
+// * 2 means 16-bit
+// * 4 means 32-bit
+#define h3_BitMode         ByteAt(0x5FA228 + 3)	
 #else		
 	_H3API_ INT gameWidth();
 	_H3API_ INT gameHeight();
@@ -570,7 +570,7 @@ namespace h3
 	_H3API_ INT F_sprintf(LPCSTR format, ...);
 	// * sprintf using h3 assets and custom buffer
 	_H3API_ INT F_sprintfbuffer(PCHAR buffer, LPCSTR format, ...);
-	
+
 	namespace H3Numbers
 	{
 		// * add thousands commas to numbers
@@ -618,6 +618,14 @@ namespace h3
 		_H3API_ VOID Set(UINT32 value);
 		// * Gets bitfield value as 32bits
 		_H3API_ UINT Get() const;
+	};
+
+	// * a 8x6 mask for objects within h3
+	struct H3ObjectMask
+	{
+		H3Bitfield m_bits[2];
+
+		_H3API_ VOID operator=(const H3ObjectMask& other);
 	};
 
 	// * represents a point on the map

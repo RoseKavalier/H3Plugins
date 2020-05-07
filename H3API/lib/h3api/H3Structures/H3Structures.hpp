@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -394,7 +394,7 @@ namespace h3
 			sMISC5          = 18,
 		};
 	};
-	
+
 	// * a reference to the 3 animation speeds of H3
 	struct H3AnimationSpeed
 	{
@@ -450,7 +450,7 @@ namespace h3
 		_H3API_ H3Resources& operator=(const H3Resources& other);
 		_H3API_ INT& operator[](int index);
 	};
-	
+
 	// * The arrangment of 7 creatures on various H3 structures
 	struct H3Army
 	{
@@ -497,7 +497,7 @@ namespace h3
 		_H3API_ BOOL8 IsUndeadArmy();
 		// * the number of different creature alignments in an army
 		// * the creature array can be empty
-		_H3API_ INT32 NumberAlignments(INT8 (&towns)[9]);
+		_H3API_ INT32 NumberAlignments(INT8(&towns)[9]);
 		// * AI value total for army
 		_H3API_ INT32 GetArmyValue();
 		_H3API_ H3Iterator* begin();
@@ -549,7 +549,7 @@ namespace h3
 		INT8    pSkill[4];          //  +32D db*4 = ADPK
 		UINT8   _u12[3];
 	};
-	
+
 	// * Starting Hero default data
 	struct H3HeroInfo
 	{
@@ -586,14 +586,14 @@ namespace h3
 		UINT32  type;
 		enum SpecialtyType
 		{
-			ST_skill = 0,
-			ST_creatureLevel = 1,
-			ST_resource = 2,
-			ST_spell = 3,
+			ST_skill          = 0,
+			ST_creatureLevel  = 1,
+			ST_resource       = 2,
+			ST_spell          = 3,
 			ST_staticCreature = 4,
-			ST_speed = 5,
-			ST_conversion = 6,
-			ST_dragon = 7,
+			ST_speed          = 5,
+			ST_conversion     = 6,
+			ST_dragon         = 7,
 		};
 		// * +4
 		// * the ID of skill, creature, resource, spell, creature to upgrade (Dracon/Gelu)
@@ -623,7 +623,7 @@ namespace h3
 		// * specialty description
 		LPCSTR	spDescr;
 	};
-	
+
 	// * the bitfield flags for heroes
 	struct H3HeroFlags
 	{
@@ -1004,7 +1004,7 @@ namespace h3
 		_H3API_ BOOL HasAllCombinationParts(INT slot);
 		// * disassembles a combination artifact and
 		// * gives a hero all pieces of a combination artifact
-		_H3API_ VOID DisassembleCombinationArtifact(INT slot);		
+		_H3API_ VOID DisassembleCombinationArtifact(INT slot);
 	};
 
 	// * how date is represented
@@ -1136,7 +1136,7 @@ namespace h3
 		// * will this structure be buildable in this town?
 		H3Bitfield buildableMask[2];
 
-		#pragma region townEnums
+#pragma region townEnums
 		enum eTown
 		{
 			NEUTRAL    = -1,
@@ -1153,50 +1153,50 @@ namespace h3
 
 		enum eBuildings // from ERM help
 		{
-			B_MAGE_GUILD1   = 0,
-			B_MAGE_GUILD2   = 1,
-			B_MAGE_GUILD3   = 2,
-			B_MAGE_GUILD4   = 3,
-			B_MAGE_GUILD5   = 4,
-			B_TAVERN        = 5,
-			B_WHARF         = 6,
-			B_FORT          = 7,
-			B_CITADEL       = 8,
-			B_CASTLE        = 9,
-			B_VILAGE_HALL   = 10,
-			B_TOWN_HALL     = 11,
-			B_CITY_HALL     = 12,
-			B_CAPITOL       = 13,
-			B_MARKET        = 14,
-			B_RESOURCE_SILO = 15,
-			B_BLACKSMITH    = 16,
-			B_SPEC17        = 17,
-			B_HORDE1        = 18,
-			B_HORDE1U       = 19,
-			B_WHARF2        = 20,
-			B_SPEC21        = 21,
-			B_SPEC22        = 22,
-			B_SPEC23        = 23,
-			B_HORDE2        = 24,
-			B_HORDE2U       = 25,
-			B_GRAIL         = 26,
-			B_DECOR27       = 27,
-			B_DECOR28       = 28,
-			B_DECOR29       = 29,
-			B_DWELL1        = 30,
-			B_DWELL2        = 31,
-			B_DWELL3        = 32,
-			B_DWELL4        = 33,
-			B_DWELL5        = 34,
-			B_DWELL6        = 35,
-			B_DWELL7        = 36,
-			B_DWELL1U       = 37,
-			B_DWELL2U       = 38,
-			B_DWELL3U       = 39,
-			B_DWELL4U       = 40,
-			B_DWELL5U       = 41,
-			B_DWELL6U       = 42,
-			B_DWELL7U       = 43,
+			B_MAGE_GUILD1              = 0,
+			B_MAGE_GUILD2              = 1,
+			B_MAGE_GUILD3              = 2,
+			B_MAGE_GUILD4              = 3,
+			B_MAGE_GUILD5              = 4,
+			B_TAVERN                   = 5,
+			B_WHARF                    = 6,
+			B_FORT                     = 7,
+			B_CITADEL                  = 8,
+			B_CASTLE                   = 9,
+			B_VILAGE_HALL              = 10,
+			B_TOWN_HALL                = 11,
+			B_CITY_HALL                = 12,
+			B_CAPITOL                  = 13,
+			B_MARKET                   = 14,
+			B_RESOURCE_SILO            = 15,
+			B_BLACKSMITH               = 16,
+			B_SPEC17                   = 17,
+			B_HORDE1                   = 18,
+			B_HORDE1U                  = 19,
+			B_WHARF2                   = 20,
+			B_SPEC21                   = 21,
+			B_SPEC22                   = 22,
+			B_SPEC23                   = 23,
+			B_HORDE2                   = 24,
+			B_HORDE2U                  = 25,
+			B_GRAIL                    = 26,
+			B_DECOR27                  = 27,
+			B_DECOR28                  = 28,
+			B_DECOR29                  = 29,
+			B_DWELL1                   = 30,
+			B_DWELL2                   = 31,
+			B_DWELL3                   = 32,
+			B_DWELL4                   = 33,
+			B_DWELL5                   = 34,
+			B_DWELL6                   = 35,
+			B_DWELL7                   = 36,
+			B_DWELL1U                  = 37,
+			B_DWELL2U                  = 38,
+			B_DWELL3U                  = 39,
+			B_DWELL4U                  = 40,
+			B_DWELL5U                  = 41,
+			B_DWELL6U                  = 42,
+			B_DWELL7U                  = 43,
 
 			/* CASTLE */
 			B_LIGHTHOUSE               = 17,
@@ -1243,7 +1243,7 @@ namespace h3
 			/* CONFLUX */
 			B_MAGIC_UNIVERSITY         = 21
 		};
-	#pragma endregion
+#pragma endregion
 
 		_H3API_ BOOL IsBuildingBuilt(INT32 id) const;
 		_H3API_ LPCSTR GetTownTypeName() const;
@@ -1257,7 +1257,7 @@ namespace h3
 		_H3API_ BOOL CanBeBuilt(eBuildings id) const;
 		_H3API_ H3Resources TotalIncome() const;
 	};
-	
+
 	struct H3SpecialBuildingCosts
 	{
 		enum eSpecialBuildings
@@ -1575,21 +1575,21 @@ namespace h3
 		// * +11
 		// * the height of object, read from LoD @ 0x503EE2
 		UINT8 height;
-	protected:		
+	protected:
 		h3align _f_12[2];
 	public:
 		// * +14
-		// * a 8x6 bitfield of the object's shadow
-		H3Bitfield maskShadow[2];
-		// * +1C
 		// * a 8x6 bitfield of the object's presence
-		H3Bitfield maskObject[2];
-		// * +24
+		H3ObjectMask colors;
+		// * +1C
 		// * a 8x6 bitfield of the object's passability
-		H3Bitfield maskEmpty[2];
+		H3ObjectMask passability;
+		// * +24
+		// * a 8x6 bitfield of the object's shadow
+		H3ObjectMask shadows;
 		// * +2C
 		// * a 8x6 bitfield of the object's yellow tiles
-		H3Bitfield maskEnter[2];
+		H3ObjectMask entrances;
 		// * +34
 		// * a bitfield of vaild terrains for this object
 		H3Bitfield maskTerrain;
@@ -1602,7 +1602,7 @@ namespace h3
 		// * +40
 		// * is the object flat on the adventure map? e.g. cursed ground
 		BOOL8 flat;
-	protected:		
+	protected:
 		h3align _f_41;
 		// * referenced a few places, e.g. 0x50663A
 		h3unk _f_42[2];
@@ -1813,12 +1813,12 @@ namespace h3
 
 		enum ArtifactType
 		{
-			ART_SPECIAL          = 1,
-			ART_TREASURE         = 2,
-			ART_MINOR            = 4,
-			ART_MAJOR            = 8,
-			ART_RELIC            = 16,
-			ART_ALL              = 30 // never special!
+			ART_SPECIAL  = 1,
+			ART_TREASURE = 2,
+			ART_MINOR    = 4,
+			ART_MAJOR    = 8,
+			ART_RELIC    = 16,
+			ART_ALL      = 30 // never special!
 		};
 	};
 
@@ -2063,7 +2063,7 @@ namespace h3
 		// * 78
 		// * description of spell based on secondary skill level
 		LPCSTR description[4];
-		
+
 		enum eSpells
 		{
 			SUMMON_BOAT           = 0,
@@ -2149,7 +2149,7 @@ namespace h3
 			DEATH_STARE           = 79,
 			ACID_BREATH           = 80,
 		};
-		
+
 		_H3API_ INT32 GetBaseEffect(INT32 level, INT32 spellPower);
 	};
 
@@ -2313,13 +2313,14 @@ namespace h3
 		INT32 air_shield_effect;       // 0x4BC
 		INT8 blinded;                  // 0x4C0 - to reduce damage?
 		INT8 paralyzed;                // 0x4C1 - to reduce damage?
-		INT8 unknown17[2];             // 0x4C2-0x4C3
+		h3unk _f_4C2[2];               // 0x4C2-0x4C3
 		INT32 forgetfulness_level;     // 0x4C4
 		FLOAT slow_effect;             // 0x4C8
 		INT32 haste_effect;            // 0x4CC - value added/removed
 		INT32 disease_attack_effect;   // 0x4D0
 		INT32 disease_defense_effect;  // 0x4D4
-		INT32 unknown18[3];            // 0x4D8-0x4E0
+		h3unk _f_4D8[8];               // 0x4D8-0x4DC
+		INT32 faerie_dragon_spell;     // +4E0
 		INT32 magic_mirror_effect;     // 0x4E4
 		INT32 morale;                  // +4E8
 		INT32 luck;                    // +4EC
@@ -2572,7 +2573,7 @@ namespace h3
 	struct H3QuestVector
 	{
 	protected:
-		BOOL _init;	
+		BOOL _init;
 		INT32* first;
 		INT32* last;
 		INT32* capacity;
@@ -3092,7 +3093,7 @@ namespace h3
 		// * +0
 		INT heroAttack;
 		// * +4
-		INT heroDefence;		
+		INT heroDefence;
 		h3unk _f_08[4];
 		// * +C
 		INT damage[4];
@@ -3101,7 +3102,7 @@ namespace h3
 		// * +20
 		INT thisSide;
 		// * +24
-		INT enemySide;		
+		INT enemySide;
 	};
 
 	// * access data about objects on the adventure map
@@ -3275,9 +3276,9 @@ namespace h3
 	protected:
 		h3unk _f_1F69E[2];
 	public:
-		// * +1F86C
+		// * +1F6A0
 		H3PlayersInfo playersInfo;
-		// * +1FA38
+		// * +1F86C
 		H3MapInfo mapInfo;
 		// * +1FB3C
 		H3String mapName;
@@ -3527,10 +3528,11 @@ namespace h3
 	protected:
 		UINT32 resultItemID; // 0x38
 		h3unk _f_3C[4];
-		UINT32 drawBuffer; // 0x40
-		struct H3LoadedPCX16* screenPcx16;
-		struct H3Dlg* firstDlg;
-		struct H3Dlg* lastDlg;
+		struct H3LoadedPCX16* screenPcx16; // +40
+		h3unk _f_44[4];
+		struct H3LoadedPCX16* backupScreen; // +4C
+		struct H3Dlg* firstDlg; // +50
+		struct H3Dlg* lastDlg; // +54
 		h3unk _f_58[8];
 	public:
 
@@ -3706,8 +3708,11 @@ namespace h3
 	// * trading between two armies
 	struct H3SwapManager : public H3Manager // size 0x68
 	{
+	public:
+		// * +38
+		struct H3BaseDlg* dlg;
 	protected:
-		h3unk _f_38[8];
+		h3unk _f_3C[4];
 	public:
 		H3Hero* hero[2]; // similar to https://github.com/potmdehex/homm3tools/blob/master/hd_edition/hde_mod/hde/structures/swapmgr.h
 		INT32 heroSelected;
@@ -3768,14 +3773,14 @@ namespace h3
 		// * modifies equivalent WM_ messages into H3 messages
 		enum MessageType
 		{
-			MT_KEYDOWN = 1,        // 0x100
-			MT_KEYUP = 2,          // 0x101
-			MT_MOUSEMOVE = 4,      // 0x200
-			MT_LBUTTONDOWN = 8,    // 0x201
-			MT_LBUTTONUP = 16,     // 0x202
+			MT_KEYDOWN       = 1,  // 0x100
+			MT_KEYUP         = 2,  // 0x101
+			MT_MOUSEMOVE     = 4,  // 0x200
+			MT_LBUTTONDOWN   = 8,  // 0x201
+			MT_LBUTTONUP     = 16, // 0x202
 			MT_LBUTTONDBLCLK = 8,  // 0x203
-			MT_RBUTTONDOWN = 32,   // 0x204
-			MT_RBUTTONUP = 64,     // 0x205
+			MT_RBUTTONDOWN   = 32, // 0x204
+			MT_RBUTTONUP     = 64, // 0x205
 			MT_RBUTTONDBLCLK = 32, // 0x206
 		};
 
@@ -3961,9 +3966,10 @@ namespace h3
 	protected:
 		h3unk _f_53DC[8];
 		// * +53E4
+		// * current group
 		UINT32 HeroAnimation[2];
 		// * +53EC
-		UINT32 HeroAnimationCadre[2];
+		UINT32 HeroAnimationFrame[2];
 		h3unk _f_53F4[16];
 		// * +5404
 		H3LoadedDEF* heroDefLoaded[2];
@@ -4046,9 +4052,8 @@ namespace h3
 		h3unk _f_13300[356];
 		// * +13464
 		LPCSTR backgroundPcxName;
-		// * +13468
-		//INT16 AdjascentSquares[1122];
 	public:
+		// * +13468
 		H3AdjacentSquares adjacentSquares[187];
 	protected:
 		h3unk _f_13D2C[12];
@@ -4095,7 +4100,7 @@ namespace h3
 		// * +13FA8
 		INT32 fort_walls_alive[18];
 	protected:
-		UINT8 f13FF0[4];
+		h3unk f13FF0[4];
 	public:
 		// * +13FF4
 		// * pcx of grids

@@ -277,9 +277,10 @@ namespace h3
 
 		enum eH3String
 		{
+			npos        = -1,
 			HS_NOTFOUND = -1,
-			HS_FAILED = 0,
-			HS_SUCCESS = 1
+			HS_FAILED   = 0,
+			HS_SUCCESS  = 1
 		};
 	};
 #pragma pack(pop)

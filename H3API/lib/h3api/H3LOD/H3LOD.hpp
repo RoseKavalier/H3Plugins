@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -30,6 +30,31 @@ namespace h3
 		// * +18
 		INT32 type;
 		UINT32 size_compressed;
+	};
+
+	struct H3Msk
+	{
+		UINT8 width;
+		UINT8 height;
+		struct Msk
+		{
+			DWORD dbits;
+			WORD  wbits;
+
+			_H3API_ VOID operator>>(H3ObjectMask& mask) const;
+		};
+		Msk colorMask;
+		Msk shadowMask;
+	};
+
+	struct H3LoadedMsk
+	{
+		UINT width;
+		UINT height;
+		H3ObjectMask colors;
+		H3ObjectMask shadow;
+
+		_H3API_ VOID operator=(const H3Msk& msk);
 	};
 
 	// * size 190h

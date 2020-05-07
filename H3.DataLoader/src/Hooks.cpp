@@ -9,47 +9,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
 
-#pragma pack(push, 1)
-// used for H3Vector<MskData> at 0x6ABAF0
-struct MskData
-{
-	UINT width;
-	UINT height;
-	BYTE msk1[8];
-	BYTE msk2[8];
-};
-
-struct H3Msk
-{
-	UINT8 width;
-	UINT8 height;
-	BYTE msk1[6];
-	BYTE msk2[6];
-
-	void CopyMsk1(PBYTE dst)
-	{
-		DwordAt(dst)    = DwordAt(msk1);
-		WordAt(dst + 4) = WordAt(msk1 + 4);
-	}
-	void CopyMsk2(PBYTE dst)
-	{
-		DwordAt(dst)    = DwordAt(msk2);
-		WordAt(dst + 4) = WordAt(msk2 + 4);
-	}
-};
-#pragma pack(pop)
-
-constexpr size_t MSK_SIZE = sizeof(H3Msk);
-
-BOOL GetFileContentsFromDataDir(LPCSTR name, h3::H3File& file)
+BOOL OpenFileFromDataDir(LPCSTR name, h3::H3File& file)
 {
 	if (!name)
 		return FALSE;
 	h3::H3String path(h3::h3_DataPath());
 	path += name;
 	if (!file.Open(path))
-		return FALSE;
-	if (!file.ReadToBuffer())
 		return FALSE;
 	return TRUE;
 }
@@ -76,8 +42,9 @@ PatcherInstance *_PI;
 _LHF_(DefFromDataFolder)
 {
 	h3::H3File file;
-	if (!GetFileContentsFromDataDir(LPCSTR(c->ebx), file))
+	if (!OpenFileFromDataDir(LPCSTR(c->ebx), file) || !file.ReadToBuffer())
 		return EXEC_DEFAULT;
+
 	PBYTE buffer = file.ReleaseBuffer();
 	c->ref_local_n(8) = int(buffer);
 	c->edi = int(buffer);
@@ -85,39 +52,44 @@ _LHF_(DefFromDataFolder)
 	return NO_EXEC_DEFAULT;
 }
 
-_LHF_(MskFromDataFolder_LoadGame) // 55D160
+_LHF_(MskFromDataFolder_NewGame) // 55D160
 {
 	h3::H3File file;
-	if (!GetFileContentsFromDataDir(LPCSTR(c->ecx), file) || file.Size() < MSK_SIZE)
+	h3::H3Msk msk;
+	if (!OpenFileFromDataDir(LPCSTR(c->ecx), file) || !file.Read(msk))
 		return EXEC_DEFAULT;
 
-	h3::H3ObjectAttributes* oa = (h3::H3ObjectAttributes*)c->edi;
-	H3Msk* contents            = (H3Msk*)file.begin();
-	oa->width                  = contents->width;
-	oa->height                 = contents->height;
-	PBYTE mask                 = PBYTE(c->local_stack(0x10 / 4));
+	h3::H3Msk::Msk passability, entrances;
+	h3::H3Streambuf& strm = *(h3::H3Streambuf*)c->arg_n(1);
+	if (!strm.Read(passability) || !strm.Read(entrances))
+	{
+		c->return_address = 0x5040A6; // failed to read
+		return NO_EXEC_DEFAULT;
+	}
 
-	contents->CopyMsk1(mask);
-	c->return_address = 0x503EEF;
+	h3::H3ObjectAttributes& oa = *(h3::H3ObjectAttributes*)c->edi;
+	oa.width        = msk.width;
+	oa.height       = msk.height;
+	msk.colorMask  >> oa.colors;
+	passability    >> oa.passability;
+	msk.shadowMask >> oa.shadows;
+	entrances      >> oa.entrances;
+
+	c->return_address = 0x504131;
 	return NO_EXEC_DEFAULT;
 }
 
 _LHF_(MskFromDataFolder_LoadTxt)
 {
 	h3::H3File file;
-	if (!GetFileContentsFromDataDir(LPCSTR(c->ecx), file) || file.Size() < MSK_SIZE)
+	h3::H3Msk msk;
+	if (!OpenFileFromDataDir(LPCSTR(c->ecx), file) || !file.Read(msk))
 		return EXEC_DEFAULT;
 
-	H3Msk* contents = (H3Msk*)file.begin();
-	MskData* msk    = (MskData*)c->ebx;
-	msk->width      = contents->width;
-	msk->height     = contents->height;
-	PBYTE mask1     = PBYTE(c->local_stack(0x2C / 4));
-	PBYTE mask2     = PBYTE(c->local_stack(0x34 / 4));
-
-	contents->CopyMsk1(mask1);
-	contents->CopyMsk2(mask2);
-	c->return_address = 0x514A71;
+	h3::H3LoadedMsk& mask = *(h3::H3LoadedMsk*)c->ebx;
+	mask = msk;
+	// skip whole bitfield setting, doing it manually
+	c->return_address = 0x514AC1;
 	return NO_EXEC_DEFAULT;
 }
 
@@ -125,7 +97,8 @@ void hooks_init(PatcherInstance* pi)
 {
 	LoHook* h = pi->CreateLoHook(0x55CA26, DefFromDataFolder);
 	// apply last, allowing HDmod hooks to be executed first
-	h->ApplyInsert(-1);
-	pi->WriteLoHook(0x503E8D, MskFromDataFolder_LoadGame);
+	if (h)
+		h->ApplyInsert(-1);
+	pi->WriteLoHook(0x503E8D, MskFromDataFolder_NewGame);
 	pi->WriteLoHook(0x514A15, MskFromDataFolder_LoadTxt);
 }

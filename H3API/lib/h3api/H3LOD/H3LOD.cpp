@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
+//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -32,5 +32,17 @@ namespace h3
 	_H3API_ H3LodItem* H3Lod::LoadFileFromLod(LPCSTR file)
 	{
 		return THISCALL_2(H3LodItem*, 0x4FACA0, &filePosition, file);
+	}
+	_H3API_ VOID H3LoadedMsk::operator=(const H3Msk & msk)
+	{
+		width  = msk.width;
+		height = msk.height;
+		msk.colorMask  >> colors;
+		msk.shadowMask >> shadow;
+	}
+	_H3API_ VOID H3Msk::Msk::operator>>(H3ObjectMask & mask) const
+	{
+		mask.m_bits[0].Set(dbits);
+		mask.m_bits[1].Set(wbits);
 	}
 }

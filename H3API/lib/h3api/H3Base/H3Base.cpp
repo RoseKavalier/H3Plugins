@@ -3,7 +3,7 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-15                       //
+//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -365,6 +365,11 @@ namespace h3
 		return ByteAt(0x5FA228 + 3);
 	}
 #endif
+	_H3API_ VOID H3ObjectMask::operator=(const H3ObjectMask & other)
+	{
+		m_bits[0].Set(other.m_bits[0].Get());
+		m_bits[1].Set(other.m_bits[1].Get());
+	}
 }
 
 namespace h3
@@ -401,4 +406,3 @@ namespace h3
 		}
 	}
 }
-
