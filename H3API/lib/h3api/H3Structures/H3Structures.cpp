@@ -576,8 +576,6 @@ namespace h3
 				GiveArtifact(art);
 			}
 		}
-
-		return _H3API_ VOID();
 	}
 	_H3API_ UINT32 H3Date::CurrentDay() const
 	{

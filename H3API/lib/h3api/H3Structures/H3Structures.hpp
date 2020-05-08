@@ -3088,6 +3088,30 @@ namespace h3
 		_H3API_ VOID DeleteCreatures();
 	};
 
+	struct H3AIBattleSpell // ctor 4365D0
+	{
+		// * +0
+		INT spellId;
+		// * +4
+		INT skillLevel; // the associated secondary skill level to the spell
+		// * +8
+		INT spellPower;
+		// * +C
+		INT spellDuration;
+		// * +10
+		UINT8 f_10; // {1}
+		h3align _f_11[3];
+		// * +14
+		INT f_14; // {-1}
+		// * +18
+		INT f_18; // {-1}
+		// * +1C
+		INT f_1C; // {0}
+		// * +20
+		UINT8 f_20; // {0}
+		h3align _f_21[3];
+	};
+
 	struct H3AICombatInfo
 	{
 		// * +0
