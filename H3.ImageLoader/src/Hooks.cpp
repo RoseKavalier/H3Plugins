@@ -23,7 +23,7 @@ class ImageLoaderPcx16
 	stbi_uc *m_pixels;
 	BOOL m_state;
 
-	H3LoadedPCX16 *pcx16;
+	H3LoadedPcx16 *pcx16;
 
 public:
 	ImageLoaderPcx16(LPCSTR filepath);
@@ -32,7 +32,7 @@ public:
 	int Width() { return m_w; }
 	int Height() { return m_h; }
 	VOID Resize(int w, int h);
-	H3LoadedPCX16* CreatePcx16(LPCSTR h3name);
+	H3LoadedPcx16* CreatePcx16(LPCSTR h3name);
 	VOID RGB_to_BGR();
 };
 
@@ -65,14 +65,14 @@ VOID ImageLoaderPcx16::Resize(int w, int h)
 	}
 }
 
-H3LoadedPCX16 * ImageLoaderPcx16::CreatePcx16(LPCSTR h3name)
+H3LoadedPcx16 * ImageLoaderPcx16::CreatePcx16(LPCSTR h3name)
 {
-	H3LoadedPCX24 pcx24;
+	H3LoadedPcx24 pcx24;
 	pcx24.width = m_w;
 	pcx24.height = m_h;
 	pcx24.buffer = m_pixels;
 
-	pcx16 = H3LoadedPCX16::Create(h3name, m_w, m_h);
+	pcx16 = H3LoadedPcx16::Create(h3name, m_w, m_h);
 	if (!pcx16)
 	{
 		stbi__g_failure_reason = "Could not create PCX16.";
@@ -82,7 +82,7 @@ H3LoadedPCX16 * ImageLoaderPcx16::CreatePcx16(LPCSTR h3name)
 	// * use game assets to convert into pcx16 format
 	pcx24.DrawToPcx16(0, 0, pcx16);
 
-	pcx16->AddToBinaryTree();
+	pcx16->AddToResourceManager();
 
 	// * so that it stays in the binary tree after use
 	pcx16->IncreaseReferences();
@@ -129,7 +129,7 @@ public:
 	// * @filepath - the complete path to the image you are looking to load
 	// * @h3name - the name to use within the H3 assets (to recuperate the image later)
 	// * @width and @height are optional, but can be used to resize the image
-	virtual H3LoadedPCX16* LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width = -1, INT height = -1) override;
+	virtual H3LoadedPcx16* LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width = -1, INT height = -1) override;
 }InternalImageLoader;
 
 H3Plugin::ImageLoader::H3ImageLoader * GetImageLoader_()
@@ -147,7 +147,7 @@ LPCSTR H3ImageLoaderInternal::GetLastError()
 	return stbi_failure_reason();
 }
 
-H3LoadedPCX16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width, INT height)
+H3LoadedPcx16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width, INT height)
 {
 	if (!filepath)
 	{
@@ -161,7 +161,7 @@ H3LoadedPCX16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR 
 		return nullptr;
 	}
 
-	if (P_BinaryTree->FindItem(h3name))
+	if (P_ResourceManager()->FindItem(h3name))
 	{
 		stbi__g_failure_reason = "An asset already exists with the provided name.";
 		return nullptr;
@@ -171,12 +171,12 @@ H3LoadedPCX16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR 
 	if (!image.Valid())
 		return nullptr;
 
-	INT32 req_width = width > 0 ? width : image.Width();
-	INT32 req_height = height > 0 ? height : image.Height();
+	UINT32 req_width = width > 0 ? width : image.Width();
+	UINT32 req_height = height > 0 ? height : image.Height();
 
 	// * no use making something too large
-	req_width = std::min(req_width, gameWidth);
-	req_height = std::min(req_height, gameHeight);
+	req_width = std::min(req_width, *P_GameWidth());
+	req_height = std::min(req_height, *P_GameHeight());
 
 	if (req_width <= 0 || req_height <= 0)
 	{
@@ -194,7 +194,7 @@ H3LoadedPCX16 * H3ImageLoaderInternal::LoadImageToPcx16(LPCSTR filepath, LPCSTR 
 	// * swap blue and red for h3 format
 	image.RGB_to_BGR();
 
-	H3LoadedPCX16 *pcx = image.CreatePcx16(h3name);
+	H3LoadedPcx16 *pcx = image.CreatePcx16(h3name);
 	if (pcx)
 		++m_images_added;
 	return pcx;

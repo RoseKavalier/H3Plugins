@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-15                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -42,8 +41,38 @@ namespace h3
 	template<typename _Elem>
 	inline VOID H3Vector<_Elem>::Deallocate()
 	{
-		H3ObjectAllocator<_Elem>().deallocate(m_first);		
+		H3ObjectAllocator<_Elem>().deallocate(m_first);
 	}
+
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::reserveExtra(INT32 number)
+	{
+		const INT32 count = Count();
+		const INT32 capacity = CountMax();
+		const INT32 avail = capacity - count;
+		if (avail >= number)
+			return TRUE;
+
+		return Reserve(EXPAND_NUMBER(number));
+	}
+	template<typename _Elem>
+	inline INT H3Vector<_Elem>::EXPAND_NUMBER(INT minimumNeeded)
+	{
+		INT32 cap = CountMax();
+		int num = std::max(cap * GROWTH_MULTIPLIER(), MIN_ELEMENTS());
+		return std::max(num, minimumNeeded);
+	}
+	template<typename _Elem>
+	inline INT H3Vector<_Elem>::MIN_ELEMENTS() const
+	{
+		return 10;
+	}
+	template<typename _Elem>
+	inline INT H3Vector<_Elem>::GROWTH_MULTIPLIER() const
+	{
+		return 2;
+	}
+
 	template<typename _Elem>
 	inline H3Vector<_Elem>::H3Vector(const int number_elements) :
 		m_first(nullptr),
@@ -59,10 +88,71 @@ namespace h3
 		m_capacity(nullptr)
 	{
 	}
+#ifdef _H3API_CPLUSPLUS11_
+	template<typename _Elem>
+	inline H3Vector<_Elem>::H3Vector(H3Vector<_Elem>&& other) :
+		m_first(other.m_first), m_end(other.m_end), m_capacity(other.m_capacity)
+	{
+		other.m_first    = nullptr;
+		other.m_end      = nullptr;
+		other.m_capacity = nullptr;
+	}
+	template<typename _Elem>
+	inline H3Vector<_Elem>& H3Vector<_Elem>::operator=(H3Vector<_Elem>&& other)
+	{
+		if (&other == this)
+			return *this;
+		RemoveAll();
+		m_first    = other.m_first;
+		m_end      = other.m_end;
+		m_capacity = other.m_capacity;
+		other.m_first    = nullptr;
+		other.m_end      = nullptr;
+		other.m_capacity = nullptr;
+		return *this;
+	}
+	template<typename _Elem>
+	inline void H3Vector<_Elem>::swap(H3Vector<_Elem>& other)
+	{
+		if (&other == this)
+			return;
+
+		_Elem* first     = m_first;
+		_Elem* last      = m_end;
+		_Elem* cap       = m_capacity;
+		m_first          = other.m_first;
+		m_end            = other.m_end;
+		m_capacity       = other.m_capacity;
+		other.m_first    = first;
+		other.m_end      = last;
+		other.m_capacity = cap;
+	}
+#endif
+
 	template<typename _Elem>
 	inline H3Vector<_Elem>::~H3Vector()
 	{
 		Deref();
+	}
+	template<typename _Elem>
+	inline H3Vector<_Elem>::H3Vector(const H3Vector<_Elem>& other)
+	{
+		UINT num = other.Size();
+		Resize(num);
+		for (UINT i = 0; i < num; ++i)
+			(*this)[i] = other[i];
+	}
+	template<typename _Elem>
+	inline H3Vector<_Elem>& H3Vector<_Elem>::operator=(const H3Vector<_Elem>& other)
+	{
+		if (&other == this)
+			return *this;
+		RemoveAll();
+		UINT num = other.Size();
+		Resize(num);
+		for (UINT i = 0; i < num; ++i)
+			(*this)[i] = other[i];
+		return *this;
 	}
 	template<typename _Elem>
 	inline _Elem* H3Vector<_Elem>::begin()
@@ -75,10 +165,20 @@ namespace h3
 		return m_end;
 	}
 	template<typename _Elem>
+	inline _Elem* H3Vector<_Elem>::begin() const
+	{
+		return m_first;
+	}
+	template<typename _Elem>
+	inline _Elem* H3Vector<_Elem>::end() const
+	{
+		return m_end;
+	}
+	template<typename _Elem>
 	inline VOID H3Vector<_Elem>::Init()
 	{
-		m_first = nullptr;
-		m_end = nullptr;
+		m_first    = nullptr;
+		m_end      = nullptr;
 		m_capacity = nullptr;
 	}
 	template<typename _Elem>
@@ -88,9 +188,9 @@ namespace h3
 		{
 			Destruct(begin(), end());
 			Deallocate();
-		}			
-		m_first = nullptr;
-		m_end = nullptr;
+		}
+		m_first    = nullptr;
+		m_end      = nullptr;
 		m_capacity = nullptr;
 	}
 	template<typename _Elem>
@@ -108,22 +208,27 @@ namespace h3
 		return FALSE;
 	}
 	template<typename _Elem>
-	inline INT32 H3Vector<_Elem>::Count() const
+	inline UINT32 H3Vector<_Elem>::Size() const
 	{
 		return m_end - m_first;
 	}
 	template<typename _Elem>
-	inline INT32 H3Vector<_Elem>::CountMax() const
+	inline UINT32 H3Vector<_Elem>::Count() const
+	{
+		return m_end - m_first;
+	}
+	template<typename _Elem>
+	inline UINT32 H3Vector<_Elem>::CountMax() const
 	{
 		return m_capacity - m_first;
 	}
 	template<typename _Elem>
-	inline UINT32 H3Vector<_Elem>::Size() const
+	inline UINT32 H3Vector<_Elem>::RawSize() const
 	{
 		return UINT32(m_end) - UINT32(m_first);
 	}
 	template<typename _Elem>
-	inline UINT32 H3Vector<_Elem>::SizeAllocated() const
+	inline UINT32 H3Vector<_Elem>::RawSizeAllocated() const
 	{
 		return UINT32(m_capacity) - UINT32(m_first);
 	}
@@ -177,12 +282,9 @@ namespace h3
 	template<typename _Elem>
 	inline BOOL H3Vector<_Elem>::Expand()
 	{
-		constexpr INT MIN_ELEMENTS    = 10;
-		constexpr INT SIZE_MULTIPLIER = 2;
-
 		if (!m_first)
-			return Reserve(MIN_ELEMENTS);
-		return Reserve(CountMax()* SIZE_MULTIPLIER);
+			return Reserve(MIN_ELEMENTS());
+		return Reserve(CountMax() * GROWTH_MULTIPLIER());
 	}
 	template<typename _Elem>
 	inline _Elem* H3Vector<_Elem>::First()
@@ -245,82 +347,92 @@ namespace h3
 		return m_end;
 	}
 	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::At(INT32 pos)
+	inline _Elem* H3Vector<_Elem>::At(UINT32 pos)
 	{
-		INT32 n;
-		if (pos >= 0)
-			n = std::min(pos, Count() - 1);
-		else
-		{
-			int c = Count();
-			n = std::min(-(pos), c);
-			n = c - n;
-		}
-		return m_first + n;
+		return m_first + pos;
 	}
 	template<typename _Elem>
-	inline const _Elem* H3Vector<_Elem>::CAt(INT32 pos) const
+	inline const _Elem* H3Vector<_Elem>::At(UINT32 pos) const
 	{
-		INT32 n;
-		if (pos >= 0)
-			n = std::min(pos, Count() - 1);
-		else
-		{
-			int c = Count();
-			n = std::min(-(pos), c);
-			n = c - n;
-		}
-		return m_first + n;
+		return m_first + pos;
 	}
 	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::RAt(INT32 pos)
+	inline _Elem& H3Vector<_Elem>::RAt(UINT32 pos)
 	{
 		return *At(pos);
 	}
 	template<typename _Elem>
-	inline const _Elem& H3Vector<_Elem>::CRAt(INT32 pos) const
+	inline const _Elem& H3Vector<_Elem>::RAt(UINT32 pos) const
 	{
-		return RAt(pos);
+		return *At(pos);
 	}
 	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Remove(INT32 pos)
+	inline BOOL H3Vector<_Elem>::Remove(UINT32 pos)
 	{
-		return Remove(pos, pos);
+		return Remove(begin() + pos, begin() + pos + 1);
 	}
 	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Remove(INT32 fromPos, INT32 toPos)
+	inline BOOL H3Vector<_Elem>::Remove(UINT32 fromPos, UINT32 toPos)
 	{
-		if (fromPos < 0 || toPos < 0 || toPos < fromPos)
+		return Remove(begin() + fromPos, begin() + toPos);
+
+		//UINT num = Count();
+		//if (fromPos >= num)
+		//	return FALSE;
+		//toPos = std::min(toPos, num);
+		//if (toPos <= fromPos)
+		//	return FALSE;
+		//
+		//Destruct(begin() + fromPos, begin() + toPos);
+		//
+		//_Elem* rem     = m_first + fromPos;
+		//_Elem* remEnd  = rem + toPos;
+		//size_t copyLen = size_t(m_end) - size_t(remEnd);
+
+		////* move any elements from the end
+		//memmove(PVOID(rem), PVOID(remEnd), copyLen);
+		//
+		//m_end -= toPos - fromPos;
+		//return TRUE;
+	}
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Remove(_Elem * first, _Elem * last)
+	{
+		if (first >= last || IsEmpty())
 			return FALSE;
-		INT num = Count();
-		if (fromPos >= num)
-			return FALSE;
+		if (first < m_first)
+			first = m_first;
+		if (last > m_end)
+			last = m_end;
 
-		INT to = std::min(num - 1, toPos);
-		INT r = to - fromPos + 1;
+		Destruct(first, last);
+#ifdef _H3API_CPLUSPLUS11_
+		_Elem* itFirst = first;
+		_Elem* itLast  = last;
+		while (itLast < m_end)
+		{
+			*itFirst = std::move(*itLast);
+			++itFirst;
+			++itLast;
+		}
+#else
+		memmove(PVOID(first), PVOID(last), UINT(m_end) - UINT(last));
+#endif
+		m_end -= last - first;
 
-		for (int i = fromPos; i <= toPos; ++i)
-			m_first[i]->~_Elem();
-
-		_Elem* rem = m_first + fromPos;
-		_Elem* remEnd = rem + r;
-		size_t copyLen = size_t(m_end) - size_t(remEnd);
-		//* move any elements from the end
-		memmove(PVOID(rem), PVOID(remEnd), copyLen);
-		//* blank out the moved end elements
-		F_memset(PVOID(remEnd), 0, copyLen);
-		m_end -= r;
 		return TRUE;
 	}
 	template<typename _Elem>
-	inline BOOL H3Vector<_Elem>::Reserve(INT number)
+	inline BOOL H3Vector<_Elem>::Remove(_Elem * elem)
 	{
-		if (number <= 0)
-			return FALSE;
-
-		INT num = Count();
+		return Remove(elem, elem + 1);
+	}
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Reserve(UINT number)
+	{
+		UINT num = Count();
 		if (number <= num)
-			return FALSE;
+			return TRUE;
 
 		_Elem *t = Allocate(number);
 		if (!t)
@@ -328,29 +440,73 @@ namespace h3
 
 		Construct(&t[0], &t[number]);
 
-	#ifdef _CPLUSPLUS11_
-		for (int i = 0; i < num; ++i)
-			t[i] = std::move(m_first[i]);		
+	#ifdef _H3API_CPLUSPLUS11_
+		for (UINT i = 0; i < num; ++i)
+			t[i] = std::move(m_first[i]);
 	#else
-		for (int i = 0; i < num; ++i)
+		for (UINT i = 0; i < num; ++i)
 			t[i] = m_first[i];
-	#endif		
+	#endif
 		Destruct(begin(), end());
 		Deallocate();
-		
-		m_first = t;
-		m_end = m_first + num;
+
+		m_first    = t;
+		m_end      = m_first + num;
 		m_capacity = m_first + number;
 
 		return TRUE;
 	}
 	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::operator[](INT32 pos)
+	inline BOOL H3Vector<_Elem>::Resize(UINT number)
+	{
+		const UINT count = Count();
+
+		if (number == count)
+		{
+			m_end = m_capacity;
+			return TRUE;
+		}
+		if (number > count)
+		{
+			if (!Reserve(number))
+				return FALSE;
+			m_end = m_capacity;
+			return TRUE;
+		}
+
+		// number < count
+
+		Destruct(begin() + number, end());
+		m_end    = m_first + number;
+		_Elem *t = Allocate(number);
+		if (!t)
+			return FALSE;
+
+		Construct(t, t + number);
+
+#ifdef _H3API_CPLUSPLUS11_
+		for (UINT i = 0; i < number; ++i)
+			t[i] = std::move(m_first[i]);
+#else
+		for (UINT i = 0; i < number; ++i)
+			t[i] = m_first[i];
+#endif
+		Destruct(begin(), end());
+		Deallocate();
+
+		m_first    = t;
+		m_end      = m_first + number;
+		m_capacity = m_end;
+
+		return TRUE;
+	}
+	template<typename _Elem>
+	inline _Elem& H3Vector<_Elem>::operator[](UINT32 pos)
 	{
 		return m_first[pos];
 	}
 	template<typename _Elem>
-	inline _Elem& H3Vector<_Elem>::operator[](INT32 pos) const
+	inline _Elem& H3Vector<_Elem>::operator[](UINT32 pos) const
 	{
 		return m_first[pos];
 	}
@@ -359,12 +515,7 @@ namespace h3
 	{
 		return Add(item);
 	}
-	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::operator<<(_Elem& item)
-	{
-		return Add(item);
-	}	
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 	template<typename _Elem>
 	inline _Elem * H3Vector<_Elem>::Add(_Elem && item)
 	{
@@ -413,8 +564,109 @@ namespace h3
 		return Add(std::move(item));
 	}
 
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Insert(_Elem * position, _Elem * first, _Elem * last)
+	{
+		if (UINT(first) >= UINT(last))
+			return FALSE;
+
+		const UINT32 num = last - first;
+		const UINT32 currNum = Count();
+		UINT32 pos = 0;
+		if (!IsEmpty())
+		{
+			if (UINT(position) > UINT(begin()))
+			{
+				if (UINT(position) > UINT(end()))
+					pos = currNum;
+				else
+					pos = position - begin();
+			}
+		}
+
+		if (!reserveExtra(num))
+			return FALSE;
+
+		// move elements to end
+		_Elem* origStart = begin() + pos;
+		_Elem* newEnd = end() + num - 1;
+		_Elem* oldEnd = end() - 1;
+		if (pos < currNum)
+		{
+			while (oldEnd >= origStart)
+			{
+#ifdef _H3API_CPLUSPLUS11_
+				*newEnd-- = std::move(*oldEnd--);
+#else
+				*newEnd-- = *oldEnd--;
+#endif
+			}
+		}
+
+		// Insert new elements
+		_Elem* it = first;
+		while (it < last)
+		{
+			*origStart++ = *it++;
+		}
+
+		m_end += num;
+
+		return TRUE;
+	}
+
 #endif
 #ifdef _H3_STD_CONVERSIONS_
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Insert(_Elem * position, typename std::vector<_Elem>::iterator first, typename std::vector<_Elem>::iterator last)
+	{
+		if (first >= last)
+			return FALSE;
+
+		const INT32 num = std::distance(first, last);
+		const INT32 currNum = Count();
+		INT32 pos = 0;
+		if (!IsEmpty())
+		{
+			if (UINT(position) > UINT(begin()))
+			{
+				if (UINT(position) > UINT(end()))
+					pos = currNum;
+				else
+					pos = position - begin();
+			}
+		}
+
+		if (!reserveExtra(num))
+			return FALSE;
+
+		// move elements to end
+		_Elem* origStart = begin() + pos;
+		_Elem* newEnd = end() + num - 1;
+		_Elem* oldEnd = end() - 1;
+		if (pos < currNum)
+		{
+			while (oldEnd >= origStart)
+			{
+#ifdef _H3API_CPLUSPLUS11_
+				*newEnd-- = std::move(*oldEnd--);
+#else
+				*newEnd-- = *oldEnd--;
+#endif
+			}
+		}
+
+		// Insert new elements
+		while (first < last)
+		{
+			*origStart++ = *first++;
+		}
+
+		m_end += num;
+
+		return TRUE;
+	}
+
 	template<typename _Elem>
 	inline H3Vector<_Elem>::H3Vector(const std::vector<_Elem>& vec)
 	{
@@ -431,12 +683,13 @@ namespace h3
 		std::vector<_Elem> vec;
 		for (_Elem* i = begin(); i < end(); ++i)
 			vec.push_back(*i);
-		
+
 		return vec;
 	}
 	template<typename _Elem>
 	inline H3Vector<_Elem>& H3Vector<_Elem>::operator=(const std::vector<_Elem>& vec)
 	{
+		RemoveAll();
 		const INT n = vec.size();
 		Reserve(n);
 		for (int i = 0; i < n; ++i)

@@ -24,7 +24,7 @@ PatcherInstance *_PI;
 // * milliseconds
 constexpr INT TIME_BETWEEN_ANIMATION = 95;
 
-int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
+int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 {
 	// can't use the default creature time reference
 	// it would prevent random animations
@@ -38,7 +38,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 			auto mon = &combat->stacks[side][i];
 			// under these conditions, a creature should not be animated
 			if (mon->type == NH3Creatures::ARROW_TOWER
-				|| mon->info.flags.CANNOTMOVE
+				|| mon->info.flags.CANNOT_MOVE
 				|| mon->activeSpellsDuration[H3Spell::BLIND]
 				|| mon->activeSpellsDuration[H3Spell::PARALYZE]
 				|| mon->activeSpellsDuration[H3Spell::STONE]
@@ -47,7 +47,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 				continue;
 
 			// if undergoing a current animation
-			if (mon->animation != H3LoadedDEF::CG_STANDING)
+			if (mon->animation != H3LoadedDef::CG_STANDING)
 				continue;
 
 			auto def = mon->def;
@@ -57,10 +57,10 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 			if (def->groupsCount <= 1)
 				continue;
 			// check the standing defgroup is loaded...
-			if (!def->activeGroups[H3LoadedDEF::CG_STANDING])
+			if (!def->activeGroups[H3LoadedDef::CG_STANDING])
 				continue;
 			// ... and exists
-			auto standing = def->groups[H3LoadedDEF::CG_STANDING];
+			auto standing = def->groups[H3LoadedDef::CG_STANDING];
 			if (!standing)
 				continue;
 
@@ -88,7 +88,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, h3::H3CombatManager *combat)
 
 _LHF_(ResetDrawingRequest)
 {
-	auto cmb = P_CombatMgr;
+	auto& cmb = P_CombatMgr();
 	F_memset(cmb->RedrawCreatureFrame, 0, sizeof(cmb->RedrawCreatureFrame) + sizeof(cmb->heroAnimation) + sizeof(cmb->heroFlagAnimation));
 	return EXEC_DEFAULT;
 }

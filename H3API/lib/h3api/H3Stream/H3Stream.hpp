@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,55 +11,54 @@
 #ifndef _H3STREAM_HPP_
 #define _H3STREAM_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
 #include "../H3_String.hpp"
 #include "../H3_Vector.hpp"
 
 namespace h3
 {
-	// * read / write files using H3 assets
+	// * read / write files using H3 fwrite() assets
 	class H3Stream
 	{
 		enum StreamModeValues
 		{
-			MV_READ = 1,
-			MV_WRITE = 2,
+			MV_READ   = 1,
+			MV_WRITE  = 2,
 			MV_APPEND = 4,
 			MV_UPDATE = 8,
 			MV_BINARY = 16,
 		};
 
 	public:
-		_H3ENUM_ StreamMode
+		_H3API_ENUM_ StreamMode
 		{
-			SM_INVALID = 0,
+			SM_INVALID              = 0,
 			/* r */
-			SM_READ = MV_READ,
+			SM_READ                 = MV_READ,
 			/* rb */
-			SM_READ_BINARY = MV_READ | MV_BINARY,
+			SM_READ_BINARY          = MV_READ | MV_BINARY,
 			/* w */
-			SM_WRITE = MV_WRITE,
+			SM_WRITE                = MV_WRITE,
 			/* wb */
-			SM_WRITE_BINARY = MV_WRITE | MV_BINARY,
+			SM_WRITE_BINARY         = MV_WRITE | MV_BINARY,
 			/* a */
-			SM_APPEND = MV_APPEND,
+			SM_APPEND               = MV_APPEND,
 			/* ab */
-			SM_APPEND_BINARY = MV_APPEND | MV_BINARY,
+			SM_APPEND_BINARY        = MV_APPEND | MV_BINARY,
 			/* r+ */
-			SM_READ_UPDATE = MV_READ | MV_UPDATE,
+			SM_READ_UPDATE          = MV_READ | MV_UPDATE,
 			/* r+b */
-			SM_READ_UPDATE_BINARY = SM_READ_UPDATE | MV_BINARY,
+			SM_READ_UPDATE_BINARY   = SM_READ_UPDATE | MV_BINARY,
 			/* w+ */
-			SM_WRITE_UPDATE = MV_WRITE | MV_UPDATE,
+			SM_WRITE_UPDATE         = MV_WRITE | MV_UPDATE,
 			/* w+b */
-			SM_WRITE_UPDATE_BINARY = SM_WRITE_UPDATE | MV_BINARY,
+			SM_WRITE_UPDATE_BINARY  = SM_WRITE_UPDATE | MV_BINARY,
 			/* a+ */
-			SM_APPEND_UPDATE = MV_APPEND | MV_UPDATE,
+			SM_APPEND_UPDATE        = MV_APPEND | MV_UPDATE,
 			/* a+b */
 			SM_APPEND_UPDATE_BINARY = SM_APPEND_UPDATE | MV_BINARY,
 		};
-		_H3ENUM_ StreamStatus
+		_H3API_ENUM_ StreamStatus
 		{
 			SS_OK,
 			SS_NOT_LOADED,
@@ -93,7 +91,7 @@ namespace h3
 		_H3API_ BOOL Copy(LPCSTR destination);
 		_H3API_ BOOL Copy(const H3String& destination);
 
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 		// * write varying arguments
 		template<typename ... Args>
 		H3Stream& Write(LPCSTR format, Args ... args);
@@ -149,7 +147,8 @@ namespace h3
 		_H3API_ BOOL CanRead();
 	};
 
-	struct H3File
+	// * read/write using CreateFile (not h3 CreateFile due to HDmod hooks)
+	class H3File
 	{
 	protected:
 		HANDLE m_handle;
@@ -163,35 +162,36 @@ namespace h3
 		_H3API_ void close();
 		_H3API_ BOOL read(const PVOID buffer, DWORD sizeToRead);
 		_H3API_ BOOL write(const PVOID buffer, DWORD sizeToWrite);
+		_H3API_ BOOL exists(LPCSTR filepath);
 	public:
 		_H3API_ H3File();
 		_H3API_ ~H3File();
+		_H3API_ void Close();
 
-		// to read		
+		// * to read
 		_H3API_ BOOL Open(LPCSTR const file);
 		_H3API_ BOOL Read(const PVOID buffer, DWORD sizeToRead);
-		_H3API_ BOOL ReadToBuffer();
-		// to save		
-		_H3API_ BOOL Save(LPCSTR const file);
-		_H3API_ UINT Size() const;
-		_H3API_ const PBYTE Buffer() const;
-		_H3API_ PBYTE ReleaseBuffer();
+		_H3API_ BOOL ReadToBuffer(); // read whole file to memory
+		_H3API_ H3String GetLine();
+		_H3API_ H3Vector<H3String> GetLines(BOOL includeEmptyLines = FALSE);
+		_H3API_ BOOL Read(PVOID data, size_t data_len);
+		template<typename T>
+		inline  BOOL Read(const T& data);
 		_H3API_ BOOL SetPointer(UINT pos);
 		_H3API_ UINT Pointer() const;
 		_H3API_ BOOL Skip(UINT numBytes);
-
+		_H3API_ const PBYTE Buffer() const;
+		_H3API_ PBYTE ReleaseBuffer();
 		_H3API_ PBYTE begin();
 		_H3API_ PBYTE end();
+		_H3API_ UINT Size() const;
 
+		// * to write
+		_H3API_ BOOL Save(LPCSTR const file);
+		_H3API_ BOOL Write(PVOID data, size_t data_len);
+		_H3API_ BOOL Write(const H3String& string);
 		template<typename T>
-		inline BOOL Read(const T& data, size_t sz = sizeof(T));
-		template<typename T>
-		inline BOOL Write(const T& data, size_t sz = sizeof(T));
-
-		_H3API_ H3String GetLine();
-		_H3API_ H3Vector<H3String> GetLines();
-
-		_H3API_ BOOL Exists(LPCSTR filepath);
+		inline BOOL Write(const T& data);
 	};
 }
 

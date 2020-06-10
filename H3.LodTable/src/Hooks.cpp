@@ -38,42 +38,27 @@ DECLSPEC_NOINLINE int __stdcall LoadLodsFromFolder(LPCSTR path)
 	if (!path)
 		return 0;
 
+	H3Path dir(path);
+	if (!dir.IsDirectory())
+		return 0;
+
 	int lodCount = 0;
-	H3String folderPath(path);
-	if (folderPath.Last() != '\\')
-		folderPath += '\\';
-	// * make a copy
-	H3String lodPath(folderPath);
-	// * add '*'
-	folderPath += '*';
-	WIN32_FIND_DATAA data;
-	HANDLE handle = F_FindFirstFileA(folderPath, data);
 
-	CHAR lodName[32];
-	int lpLen = lodPath.Length(); // backup of folderPath length, minus '*'
-
-	if (handle != INVALID_HANDLE_VALUE)
+	for (auto& it : dir)
 	{
-		do
-		{
-			if (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				continue;
+		if (it.IsDirectory())
+			continue;
+		LPCSTR ext = it.Extension();
+		if (!ext)
+			continue;
+		if (!(F_strnicmp(ext, "lod", 3) == 0 || F_strnicmp(ext, "pac", 3) == 0))
+			continue;
 
-			INT len = strlen(data.cFileName);
-			// * file name ends with .lod or .pac and requires at least 1 other char ==> minimum length 5
-			// * LODs can only be 32 chars in name at most, including null char, hence 32 - 1 = 31
-			if (len >= 5 && len <= 31)
-			{
-				F_strncpy(lodName, data.cFileName, 31);
-				lodName[len] = 0; // null terminate
-				if (F_strnicmp(lodName + len - 4, ".lod", 4) == 0 || F_strnicmp(lodName + len - 4, ".pac", 4) == 0) // is a .lod or .pac file
-				{
-					lodPath.Append(lodName, len); // complete lod path with its name
-					lodCount += LoadCustomLod(lodName, lodPath.String()); // load to our LOD table
-					lodPath.Truncate(lpLen); // reset lodPath name without lod name
-				}
-			}
-		} while (F_FindNextFileA(handle, data));
+		H3String filePath(std::move(it.FilePath()));
+		if (filePath.Empty())
+			continue;
+
+		lodCount += LoadCustomLod(it.FileName(), filePath.String());
 	}
 
 	return lodCount; // return number of successfully loaded LODs
@@ -92,27 +77,27 @@ _LHF_(FindAndLoadLODs)
 {
 	constexpr CHAR HD_PACKS_FOLDER[] = "_HD3_Data\\Packs\\";
 
-	HDIni *hdini = (HDIni*)_P->VarGetValue("HD.Ini.Main", NULL); // get HD.ini stored file data
-	if (hdini)
-	{
-		HDIniEntry *entry = hdini->FindEntry("Packs"); // find <Packs> entry
-		int num;
-		if (entry && (num = entry->entryCount)) // are there any Plugin folders loaded?
-		{
-			H3String packPath(h3_GamePath); // set game path
-			packPath.Append(HD_PACKS_FOLDER); // add plugins general path
-			int len = packPath.Length(); // backup current length, for quick reset of packs directory
+	HDIni *hdini = _P->VarGetValue<HDIni*>("HD.Ini.Main", NULL); // get HD.ini stored file data
+	if (!hdini)
+		return EXEC_DEFAULT;
 
-			for (int i = 0; i < num; i++)
-			{
-				entry++; // get next entry, which is next pack
-				packPath += entry->GetText(); // add pack name to ...\_HD3_Data\Packs\ path
-				packPath += '\\';
-				LoadLodsFromFolder(packPath); // load all LODs and PACs from this folder
-				packPath.Truncate(len); // remove current pack name
-			}
-		}
+	auto& packs = hdini->FindEntry("Packs"); // find <Packs> entry
+	if (packs == hdini->end() || packs->entryCount == 0)
+		return EXEC_DEFAULT;
+
+	const UINT num = packs->entryCount;
+	H3String packPath(h3_GamePath); // set game path
+	packPath.AppendA(HD_PACKS_FOLDER); // add plugins general path
+	UINT len = packPath.Length(); // backup current length, for quick reset of packs directory
+
+	for (UINT i = 0; i < num; i++)
+	{
+		packPath += packs[i]->GetText(); // add pack name to ...\_HD3_Data\Packs\ path
+		packPath += '\\';
+		LoadLodsFromFolder(packPath.String()); // load all LODs and PACs from this folder
+		packPath.Truncate(len); // remove current pack name
 	}
+
 	return EXEC_DEFAULT;
 }
 
@@ -203,7 +188,7 @@ void Hooks_init(PatcherInstance *pi)
 
 	// * copy existing LOD to custom LodTable
 	// * this step is required as HDmod loads plugins after regular LOD table is populated
-	memcpy((void*)LodTable, (void*)h3_SoDLodTable, (size_t)(sizeof(H3Lod) * 8));
+	F_memcpy((void*)LodTable, (void*)h3_SoDLodTable, (size_t)(sizeof(H3Lod) * 8));
 
 	// * replace static table references
 	pi->WriteDword(0x55A548 + 3, (UINT)(H3LodTypes::table));

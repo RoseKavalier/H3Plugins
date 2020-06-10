@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -17,45 +16,71 @@
 namespace h3
 {
 	template<typename T>
-	inline BinaryLoader<T>::BinaryLoader() :
+	inline H3BinaryLoader<T>::H3BinaryLoader() :
 		m_binary()
 	{
 	}
 	template<typename T>
-	inline h3::BinaryLoader<T>::BinaryLoader(T* binary_item) :
+	inline H3BinaryLoader<T>::H3BinaryLoader(T* binary_item) :
 		m_binary(binary_item)
 	{
 	}
 	template<typename T>
-	inline BinaryLoader<T>::~BinaryLoader()
+	inline H3BinaryLoader<T>::~H3BinaryLoader()
 	{
 		if (m_binary)
-			m_binary->~T();
+			m_binary->Dereference();
 	}
 	template<typename T>
-	inline void BinaryLoader<T>::Set(T* binary)
+	inline void H3BinaryLoader<T>::Set(T* binary)
 	{
 		m_binary = binary;
 	}
 	template<typename T>
-	inline T* BinaryLoader<T>::Get()
+	inline T* H3BinaryLoader<T>::Get()
 	{
 		return m_binary;
 	}
 	template<typename T>
-	inline T* BinaryLoader<T>::operator->()
+	inline T* H3BinaryLoader<T>::operator->()
 	{
 		return m_binary;
 	}
-
-	inline DefLoader::DefLoader(LPCSTR name)
+	template<typename T>
+	inline T* H3BinaryLoader<T>::operator*()
 	{
-		m_binary = h3::H3LoadedDEF::Load(name);
+		return m_binary;
+	}
+	template<typename T>
+	inline BOOL H3BinaryLoader<T>::operator!()
+	{
+		return m_binary == nullptr;
 	}
 
-	inline PcxLoader::PcxLoader(LPCSTR name)
+	inline H3DefLoader::H3DefLoader(LPCSTR name)
 	{
-		m_binary = h3::H3LoadedPCX::Load(name);
+		m_binary = H3LoadedDef::Load(name);
+	}
+
+	inline H3PcxLoader::H3PcxLoader(LPCSTR name)
+	{
+		m_binary = H3LoadedPcx::Load(name);
+	}
+	inline H3Pcx16Loader::H3Pcx16Loader(LPCSTR name)
+	{
+		m_binary = H3LoadedPcx16::Load(name);
+	}
+	inline H3FontLoader::H3FontLoader(LPCSTR name)
+	{
+		m_binary = H3Font::Load(name);
+	}
+	inline h3::H3TextFileLoader::H3TextFileLoader(LPCSTR name)
+	{
+		m_binary = H3TextFile::Load(name);
+	}
+	inline h3::H3TextTableLoader::H3TextTableLoader(LPCSTR name)
+	{
+		m_binary = H3TextTable::Load(name);
 	}
 }
 

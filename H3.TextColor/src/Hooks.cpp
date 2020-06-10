@@ -17,7 +17,7 @@ constexpr DWORD HDMOD_ERA = 4208204;
 using namespace H3Plugin::TextColor;
 
 // * the maximum length of a color tag
-constexpr INT TAG_LEN = 31;
+constexpr UINT TAG_LEN = 31;
 // * the value to indicate no custom color
 constexpr INT NO_COLOR = -1;
 // * the TextColor file name
@@ -47,14 +47,13 @@ struct TextColorNode
 	{
 		F_strncpy(name, col, sizeof(name));
 	}
+
+	BOOL operator<(const TextColorNode& other) const
+	{
+		return F_strcmpi(name, other.name) < 0;
+	}
 };
 #pragma pack(pop)
-
-// * TextColorNode comparison function for tree
-int __stdcall TextColorNodeComparison(const TextColorNode& new_node, const TextColorNode& old_node)
-{
-	return F_strcmpi(new_node.name, old_node.name);
-}
 
 static class H3TextColor : public H3TextColorInformation
 {
@@ -69,7 +68,7 @@ public:
 
 	// * Returns the number of colors currently
 			// * available to modify the text's appearance
-	virtual INT GetNumberColors() override;
+	virtual UINT GetNumberColors() override;
 
 	// * Fills a vector of H3Strings with the names
 	// * of all current colors
@@ -86,7 +85,7 @@ public:
 
 H3Plugin::TextColor::H3TextColorInformation * GetTextColor_()
 {
-#pragma _H3_EXPORT_
+#pragma _H3API_EXPORT_
 	return &InternalTextColor;
 }
 
@@ -107,28 +106,26 @@ H3String ColorTextFile;
 // * global string to store game text
 H3String TextParser;
 // * the current position from 0 to strlen in TextParser
-INT32 CurrentPosition;
+UINT CurrentPosition;
 // * the color to use at a given index
 H3Vector<INT32> CharColors;
-// * AVL tree containing color names and rgb values
-H3Tree<TextColorNode> ColorsTree(TextColorNodeComparison);
+// * RB tree containing color names and rgb values
+H3Tree<TextColorNode> ColorsTree;
 // * a vector to pass the color names to other plugins
 H3Vector<H3String> ColorNames;
 
-INT H3TextColor::GetNumberColors()
+UINT H3TextColor::GetNumberColors()
 {
-	return ColorsTree.Count();
+	return ColorsTree.Size();
 }
 
 const H3Vector<H3String>* H3TextColor::GetColorNames()
 {
-	auto vec = ColorsTree.OrderedTravel();
-	H3String str_name;
 	ColorNames.RemoveAll();
-	for (auto& col : vec)
+	ColorNames.Reserve(ColorsTree.Size());
+	for (auto& it : ColorsTree)
 	{
-		str_name = col.name;
-		ColorNames += str_name;
+		ColorNames.Push(it.name);
 	}
 	return &ColorNames;
 }
@@ -173,7 +170,7 @@ VOID H3TextColor::AddColor(LPCSTR name, UINT8 red, UINT8 green, UINT8 blue)
 // * works at the start of a new line
 _LHF_(TextPositionNewLine)
 {
-	CurrentPosition = c->ref_local_n(8 / 4);
+	CurrentPosition = c->Local<UINT>(8 / 4);
 	return EXEC_DEFAULT;
 }
 
@@ -242,8 +239,8 @@ _LHF_(TrueStretchModeDrawCharColor)
 // * while storing custom colors to $CharColors
 _LHF_(ParseText) // 0x4B5255
 {
-	PCHAR text = reinterpret_cast<PCHAR>(c->edx);
-	INT32 len = c->local_n(5);
+	PCHAR text = PCHAR(c->edx);
+	UINT len = c->Local<UINT>(5);
 
 	TextColorNode buffer;
 	TextParser.Assign(text, len); // copy text to parser
@@ -252,15 +249,15 @@ _LHF_(ParseText) // 0x4B5255
 
 	CharColors.RemoveAll();
 
-	for (INT i = 0; i < len; i++, current++)
+	for (UINT i = 0; i < len; i++, current++)
 	{
 		if (current[0] == '}')
 			currentColor = NO_COLOR;
 		else if (current[0] == '{' && current[1] == '~') // current[1] is always safe because strings are null-terminated
 		{
-			const INT32 seekLen = std::min(TAG_LEN, len - i - 1); // why -1 ? because if the color tag is at the very end of the string, it will have no effect anyway
+			const UINT seekLen = std::min(TAG_LEN, len - i - 1); // why -1 ? because if the color tag is at the very end of the string, it will have no effect anyway
 			F_strncpy(buffer.name, &current[2], seekLen); // make a temporary copy of text starting after '{~'
-			for (INT tagLen = 0; tagLen < seekLen; tagLen++)
+			for (UINT tagLen = 0; tagLen < seekLen; tagLen++)
 			{
 				if (buffer.name[tagLen] == '}') // seek end of color tag
 				{
@@ -270,13 +267,13 @@ _LHF_(ParseText) // 0x4B5255
 					// * significantly faster than searching in vector
 					// * as was previously done
 					auto color_node = ColorsTree.Find(buffer);
-					if (!color_node)
+					if (color_node == ColorsTree.end())
 						break;
 
 					// * set current color
 					currentColor = color_node->color;
-					const INT removed = sizeof('{') + sizeof('~') + sizeof('}') + tagLen - 1; // we are removing the {~Color} tag from parsed text; -1 as Remove() is now inclusive
-					TextParser.Remove(i, i + removed); // remove this portion of text
+					const UINT removed = sizeof('{') + sizeof('~') + sizeof('}') + tagLen; // we are removing the {~Color} tag from parsed text;
+					TextParser.Erase(i, i + removed); // remove this portion of text
 					len -= removed; // the string length for loop is now shorter
 					break;
 				} // parse color tag contents
@@ -288,8 +285,8 @@ _LHF_(ParseText) // 0x4B5255
 
 	// update registers
 	c->edx = reinterpret_cast<int>(TextParser.String());
-	c->ref_arg_n(1) = reinterpret_cast<int>(TextParser.String());
-	c->ref_local_n(5) = TextParser.Length();
+	c->Arg<LPCSTR>(1) = TextParser.String();
+	c->Local<UINT>(5) = TextParser.Length();
 
 	return EXEC_DEFAULT;
 }
@@ -308,14 +305,14 @@ void DirectDrawHook_5000281(PatcherInstance *pi)
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 54 12 00 00
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle[] = {
-		0x54, 0x12, 0x00, 0x00							// MOV EDX,DWORD PTR DS:[EDI+1254]
+	constexpr UINT8 needle[] = {
+		0x54, 0x12, 0x00, 0x00					// MOV EDX,DWORD PTR DS:[EDI+1254]
 	};
 	///////////////////////////////////////////////////////////////////////////////
 	// Expected code: 8B 2C 82
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle_sought[] = {
-		0x8B, 0x1C, 0x82								// MOV EBX,DWORD PTR DS:[EAX*4+EDX]
+	constexpr UINT8 needle_sought[] = {
+		0x8B, 0x1C, 0x82						// MOV EBX,DWORD PTR DS:[EAX*4+EDX]
 	};
 
 	H3DLL HD_TC2("HD_TC2.dll");
@@ -334,18 +331,18 @@ void TrueColorHook_legacy(PatcherInstance *pi)
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 68 00 04 00 00 B8 92 74 61 00
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle[] = {
+	constexpr UINT8 needle[] = {
 		0x68, 0x00, 0x04, 0x00, 0x00,					// PUSH 400
 		0xB8, 0x92, 0x74, 0x61, 0x00					// MOV EAX, 617492
 	};
 	///////////////////////////////////////////////////////////////////////////////
 	// Expected code: 89 45 38
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle_sought[] = {
+	constexpr UINT8 needle_sought[] = {
 		0x89, 0x45, 0x38								// MOV DWORD PTR SS:[EBP+38], EAX
 	};
 
-	DWORD address = _HD3_DLL.NeedleSearchAround(needle, sizeof(needle), 0x50, needle_sought, sizeof(needle_sought));
+	DWORD address = _HD3_DLL.NeedleSearchAround(needle, 0x50, needle_sought);
 	if (address)
 		pi->WriteLoHook(address, TrueModeDrawCharColor);
 }
@@ -355,13 +352,13 @@ void DirectDrawHook_legacy(PatcherInstance *pi)
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 54 12 00 00
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle[] = {
+	constexpr UINT8 needle[] = {
 		0x54, 0x12, 0x00, 0x00							// MOV EDX,DWORD PTR DS:[EDI+1254]
 	};
 	///////////////////////////////////////////////////////////////////////////////
 	// Expected code: 8B 2C 82
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle_sought[] = {
+	constexpr UINT8 needle_sought[] = {
 		0x8B, 0x2C, 0x82								// MOV EBP,DWORD PTR DS:[EAX*4+EDX]
 	};
 
@@ -381,18 +378,18 @@ void TrueStretchModeColorHook_legacy(PatcherInstance *pi)
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 68 00 04 00 00 B8 92 74 61 00
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle[] = {
+	constexpr UINT8 needle[] = {
 		0x68, 0x00, 0x04, 0x00, 0x00,					// PUSH 400
 		0xB8, 0x92, 0x74, 0x61, 0x00					// MOV EAX, 617492
 	};
 	///////////////////////////////////////////////////////////////////////////////
 	// Expected code: 8B 44 24 3C
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle_sought[] = {
+	constexpr UINT8 needle_sought[] = {
 		0x8B, 0x44, 0x24, 0x3C							// MOV EAX, DWORD PTR SS:[ESP+3C]
 	};
 
-	DWORD address = HD_MCR_DLL.NeedleSearchAround(needle, sizeof(needle), 0x50, needle_sought, sizeof(needle_sought));
+	DWORD address = HD_MCR_DLL.NeedleSearchAround(needle, 0x50, needle_sought);
 	if (address)
 		pi->WriteLoHook(address, TrueStretchModeDrawCharColor);
 }
@@ -407,7 +404,7 @@ void TrueColorHook_ERA(PatcherInstance *pi)
 	///////////////////////////////////////////////////////////////////////////////
 	// Needle: 89 45 E0 83 3D
 	///////////////////////////////////////////////////////////////////////////////
-	UINT8 needle[] = {
+	constexpr UINT8 needle[] = {
 		0x89, 0x45, 0xE0, 					// MOV DWORD PTR SS:[EBP-20],EAX
 		0x83, 0x3D							// CMP DWORD PTR DS:[.....],0
 	};
@@ -425,7 +422,7 @@ _LHF_(MainHook)
 {
 	constexpr INT GREENMASK565 = 0x7E0;
 
-	if (h3_BitMode == 4)
+	if (P_BitMode() == 4)
 		InternalTextColor.mode = InternalTextColor.CM_888;
 	else
 	{
@@ -435,17 +432,17 @@ _LHF_(MainHook)
 			InternalTextColor.mode = InternalTextColor.CM_555;
 	}
 
-	H3Stream colors(ColorTextFile, H3Stream::StreamMode::SM_READ_BINARY, TRUE);
-	H3Vector<H3String> ColorsList;
+	H3Stream colors(ColorTextFile.String(), H3Stream::StreamMode::SM_READ_BINARY, TRUE);
+	H3Vector<H3String> colors_list;
 
 	if (colors.IsReady())
 	{
 		// * read all lines to string vector
-		colors >> ColorsList;
+		colors >> colors_list;
 
 		H3String color_value;
 		// * iterate on vector
-		for (auto& line : ColorsList)
+		for (auto& line : colors_list)
 		{
 			// * skip new lines or comments
 			if (!line.Length() || line[0] == '#')
@@ -519,7 +516,7 @@ _LHF_(MainHook)
 void Hooks_init(PatcherInstance *pi, h3::H3Version& version)
 {
 	F_GetCurrentDirectory(ColorTextFile, false);
-	ColorTextFile.Append(ColorFileName);
+	ColorTextFile.AppendA(ColorFileName);
 	// * place here to check which color format to use
 	pi->WriteLoHook(0x601BCF, MainHook);
 	// * allows the use of '~' key in the save game text field

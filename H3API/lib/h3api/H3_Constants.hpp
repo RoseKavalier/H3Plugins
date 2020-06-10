@@ -1,9 +1,8 @@
-//////////////////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////////////////
 //                                                                  //
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-14                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,19 +11,18 @@
 #ifndef _H3_CONSTANTS_HPP_
 #define _H3_CONSTANTS_HPP_
 
-#include "H3_Core.hpp"
 #include "H3_Base.hpp"
 
 namespace h3
 {
 #pragma warning(push)
 #pragma warning(disable:4146) // disable unary minus operator unsigned type warning
-	
+
 	namespace NH3Constants
 	{
-		constexpr INT COMBATSQUARE_WIDTH = 44;		
+		constexpr INT COMBATSQUARE_WIDTH  = 44;
 		constexpr INT COMBATSQUARE_HEIGHT = 42;
-	}	
+	}
 
 	namespace NH3Creatures
 	{
@@ -1032,7 +1030,7 @@ namespace h3
 			LPCSTR const CREST58          = (LPCSTR(0x6601FC));  // CREST58.def 58x64
 			LPCSTR const TOWN_SMALL       = (LPCSTR(0x65F318));  // itpa.def 48x32
 			LPCSTR const NO_VISION        = (LPCSTR(0x6885A0));  // SYSOPB8.def 46x32
-			LPCSTR const ADVENTURE_CURSOR = (LPCSTR(0x68164C));  // cradvntr.def 40x40			
+			LPCSTR const ADVENTURE_CURSOR = (LPCSTR(0x68164C));  // cradvntr.def 40x40
 			LPCSTR const ON_OFF_CHECKBOX  = (LPCSTR(0x6700F0));  // sysopchk.def 32x24
 			LPCSTR const OKAY_DEF         = (LPCSTR(0x670160));  // iOkay.def 64x30
 			LPCSTR const OKAY32_DEF       = (LPCSTR(0x682374));  // iOkay32.def 66x32
@@ -1048,6 +1046,7 @@ namespace h3
 			LPCSTR const ICM005_DEF       = (LPCSTR(0x66FFD4));  // 48x36
 			LPCSTR const ALTART_DEF       = (LPCSTR(0x683178));  // 64x32
 			LPCSTR const VWSYMBOL_DEF     = (LPCSTR(0x68C740));  // 32x32
+			LPCSTR const SYSLB_DEF        = (LPCSTR(0x670124));  // 18x36
 		} // namespace Assets
 
 		namespace HDassets
@@ -1073,7 +1072,7 @@ namespace h3
 		namespace ID
 		{
 			namespace MainMenu
-			{				
+			{
 				constexpr INT VTABLE     = 0x63FF60;
 				constexpr INT NEW_GAME   = 101;
 				constexpr INT LOAD_GAME  = 102;
@@ -1113,7 +1112,6 @@ namespace h3
 			} // namespace NewGame
 		} // namespace ID
 	} // namespace NH3Dlg
-
 #pragma warning(pop)
 }
 

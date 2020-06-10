@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-15                        //
-//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -13,18 +12,27 @@
 #define _H3ObjectAllocator_HPP_
 
 #include "../H3_Core.hpp"
-#include "../H3_Base.hpp"
+#include "../H3_Config.hpp"
 
 namespace h3
 {
-	// * a base structure to let H3 structures use 
-	// * h3 operators new, delete, new[], delete[]	
+	// * heap realloc using H3 assets
+	_H3API_ PVOID F_realloc(PVOID obj, UINT new_size);
+	// * calloc using h3 assets
+	_H3API_ PVOID F_calloc(UINT count, UINT size = 1);
+	// * heapalloc using H3 assets
+	_H3API_ PVOID F_malloc(UINT size);
+	// * heapfree using H3 assets
+	_H3API_ VOID  F_delete(PVOID obj);
+
+	// * a base structure to let H3 structures use
+	// * h3 operators new, delete, new[], delete[]
 	struct H3Allocator
 	{
 		_H3API_ PVOID operator new(const size_t sz);
-		_H3API_ VOID  operator delete(const PVOID block);
+		_H3API_ VOID  operator delete(PVOID block);
 		_H3API_ PVOID operator new[](const size_t sz);
-		_H3API_ VOID  operator delete[](const PVOID block);
+		_H3API_ VOID  operator delete[](PVOID block);
 	};
 
 	// * an allocator to simulate h3's new & delete on objects
@@ -60,7 +68,7 @@ namespace h3
 		template <typename U>
 		bool operator!=(const H3ObjectAllocator<U>&) const noexcept;
 
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 		// * calls constructor with arbitrary number of arguments
 		template<typename... Args>
 		VOID construct(T* block, Args&&... args);
@@ -104,7 +112,7 @@ namespace h3
 		template <typename U>
 		bool operator!=(const H3ArrayAllocator<U>&) const noexcept;
 
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 		// * calls constructor with arbitrary number of arguments
 		template<typename... Args>
 		VOID construct(T* block, Args&&... args);
@@ -113,6 +121,35 @@ namespace h3
 
 	typedef H3ObjectAllocator<BYTE> ByteAllocator;
 	typedef H3ObjectAllocator<CHAR> CharAllocator;
+
+	// * simili std::unique_ptr
+	template<typename T, typename Allocator = H3ObjectAllocator<T>>
+	struct H3UniquePtr
+	{
+	protected:
+		T* data;
+		void destroy(T* block = nullptr);
+
+	public:
+		H3UniquePtr();
+		H3UniquePtr(T* source);
+		~H3UniquePtr();
+		void Set(T* source);
+		T* Get();
+		T* operator->();
+		T* Release();
+		void Swap(H3UniquePtr<T>& other);
+		BOOL operator!() const;
+
+#ifdef _H3API_CPLUSPLUS11_
+		H3UniquePtr(H3UniquePtr<T, Allocator>&& other);
+		H3UniquePtr<T, Allocator>& operator=(H3UniquePtr<T, Allocator>&& other);
+		H3UniquePtr<T, Allocator>& operator=(H3UniquePtr<T, Allocator>& other) = delete;
+#else
+	private:
+		H3UniquePtr<T, Allocator>& operator=(H3UniquePtr<T, Allocator>& other) {return *this}
+#endif
+	};
 }
 
 #endif /* #define _H3ObjectAllocator_HPP_ */

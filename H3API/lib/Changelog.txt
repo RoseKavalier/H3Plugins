@@ -1,0 +1,62 @@
+#====================
+#   Version 1.0.0
+#====================
+[code]
+* THISCALL_X, STDCALL_X, FASTCALL_X and CDECL_X now use templated functions instead of casting to UINT
+    This makes it completely trivial to pass float, double or other arguments to h3 functions
+* H3Bitset was added to properly handle h3's bitfields like std::bitset would
+  Slightly more heavy than H3Bitfield but safe and usage is more intuitive
+* H3Path was added which acts as a very modest version of std::filesystem for non-recursive RAII directory iteration
+* H3Ini class was added with basic read/write capacity
+  Intended for ini files with known order of sections & keys
+* H3Dlg has been rewritten to use its own virtual functions.
+  A number of new virtual functions have been added for ease of use for example:
+    OnOK()
+    OnCancel()
+    OnLeftClick()
+    OnWheelButton()
+    OnKeyPress()
+    OnCreate() ... and more
+* H3DlgItems have also had their virtual functions explicitly written out
+  Still a work in progress, H3Dlg does not provide a direct way of creating them yet
+* H3Vector indices now are all unsigned
+	Added Remove(_Elem*) and Remove(_Elem*, _Elem*) that act like erase()
+	Size() now behaves like std::vector::size(), the existing Size() was renamed RawSize()
+* H3String now uses UINT everywhere for length of the string
+  Added Erase(first, last) and variants to erase characters between to mean [first, last)
+  Remove(first, last) now uses Erase()
+    range is [first, last) instead of old [first, last]
+  npos replaces previous HS_FAIL and HS_NOT_FOUND enums.
+  cast operator LPCSTR() has been removed; it did more bad that good.
+* H3Tree reworked to include iterators
+  Larger footprint in memory but faster execution
+* H3Defines now shares all definitions between macro pointer-style and non-macro reference-style
+    Macros that define arrays are now enforced to use (index) to access array elements instead of [index]
+    Non-array macros require suffix () as well for interchangeability between macro and non-macro styles
+      In the case of non-arrays that happen to be pointers, this indicates intent that there are
+      no successive elements to be accessed; whereas (index) shows clear intent of having access
+* Added H3Patcher::AddressOfPatch() methods that let you write a reference to any data you have
+    patcher_x86 has equivalent PatcherInstance::WriteAddressOf() if you prefer that method
+* H3UniquePtr is a weak form of std::unique_ptr using H3Allocator specifically to free memory
+* Many minor improvements and bug fixes
+
+[maintenance]
+* added deprecated message to _H3API_DEPRECATED_
+* deprecated functions and macros will be removed entirely after a certain period of time
+* added _H3API_STATIC_ASSERT_ to perform compile-time assertion
+* added preprocessor _H3API_NO_VALIDATION_ to skip usage of _H3API_STATIC_ASSERT_
+* introducing major.minor.build version system
+      _H3API_VERSION_ and _H3API_VERSION_TEXT_ macros can be used to get this information
+* removed 'Last updated' field from file notices, it was never really maintained and not representative
+* a large number of functions, structures have been renamed for consistency.
+    They are all marked as _H3API_DEPRECATED_(Use NewName instead), you should get warnings from the compiler in most cases
+    The prefix h3_ has been reserved for primitive data that can be immediately accessed with an address (e.g. h3_TextBuffer)
+        All other uses have been renamed with the prefix P_ to indicate Pointer behaviour
+    H3LoadedDEF   -> H3LoadedDef
+    H3LoadedPCX   -> H3LoadedPcx
+    H3LoadedPCX16 -> H3LoadedPcx16
+    H3LoadedPCX24 -> H3LoadedPcx24
+    If you are not getting these deprecation messages, edit your IDE to show them
+      MSVC -> Property Pages -> C/C++ -> General -> Treat Warnings As Errors & be certain warning 4996 is not disabled
+* H3API is now its own repository which will make it easier for me to maintain it without having to worry about H3.Plugins
+* Basic CMake support has been added to generate build files for static library compilation

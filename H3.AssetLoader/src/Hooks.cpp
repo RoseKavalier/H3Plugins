@@ -3,11 +3,11 @@
 
 using namespace h3;
 
-constexpr CHAR MissingPath[] = "Path not provided.";
-constexpr CHAR MissingFileName[] = "File name not provided.";
+constexpr CHAR MissingPath[]      = "Path not provided.";
+constexpr CHAR MissingFileName[]  = "File name not provided.";
 constexpr CHAR ErrorReadingFile[] = "Could not read file at provided path.";
 constexpr CHAR MemoryAllocation[] = "Could not allocate memory.";
-constexpr CHAR AlreadyExists[] = "An asset already exists with the provided name.";
+constexpr CHAR AlreadyExists[]    = "An asset already exists with the provided name.";
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
@@ -48,15 +48,13 @@ BOOL ValidateParameters(LPCSTR const filepath, LPCSTR const h3name)
 		return FALSE;
 	}
 
-	FILE* f = F_fopen(filepath, LPCSTR(0x677D6C)); // rb
-	if (f == nullptr)
+	if (!H3Path::IsFile(filepath))
 	{
 		AssetLoaderError = ErrorReadingFile;
 		return FALSE;
 	}
-	F_fclose(f);
 
-	if (P_BinaryTree->FindItem(h3name))
+	if (P_ResourceManager()->FindItem(h3name))
 	{
 		AssetLoaderError = AlreadyExists;
 		return FALSE;
@@ -67,30 +65,18 @@ BOOL ValidateParameters(LPCSTR const filepath, LPCSTR const h3name)
 
 PUINT8 GetFileBuffer(LPCSTR const filepath, DWORD& fileSize)
 {
-	FILE* f = F_fopen(filepath, LPCSTR(0x677D6C)); // rb
-	if (f == nullptr)
-		return nullptr;
-	fileSize = F_GetFileSize(f);
-	PUINT8 fileBuffer = PUINT8(F_malloc(fileSize));
-	if (fileBuffer == nullptr)
-	{
-		AssetLoaderError = MemoryAllocation;
-		F_fclose(f);
-		return nullptr;
-	}
-
-	if (!F_fread(fileBuffer, fileSize, 1, f))
+	H3File f;
+	if (!f.Open(filepath) || !f.ReadToBuffer())
 	{
 		AssetLoaderError = ErrorReadingFile;
-		F_fclose(f);
-		F_delete(fileBuffer);
 		return nullptr;
 	}
-	F_fclose(f);
-	return fileBuffer;
+
+	fileSize = f.Size();
+	return f.ReleaseBuffer();
 }
 
-H3LoadedPCX* LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name)
+H3LoadedPcx* LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name)
 {
 	H3SEHandler seh;
 	try
@@ -98,8 +84,8 @@ H3LoadedPCX* LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name)
 		if (!ValidateParameters(filepath, h3name))
 			return nullptr;
 
-		auto& pcxAlloc = H3ObjectAllocator<H3LoadedPCX>();
-		H3LoadedPCX *pcx = pcxAlloc.allocate();
+		auto& pcxAlloc = H3ObjectAllocator<H3LoadedPcx>();
+		H3LoadedPcx *pcx = pcxAlloc.allocate();
 		if (pcx == nullptr)
 		{
 			AssetLoaderError = MemoryAllocation;
@@ -122,7 +108,7 @@ H3LoadedPCX* LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name)
 			pcxAlloc.deallocate(pcx);
 			return nullptr;
 		}
-		pcx->AddToBinaryTree();
+		pcx->AddToResourceManager();
 		pcx->IncreaseReferences();
 		return pcx;
 	}
@@ -156,7 +142,7 @@ H3WavFile* LoadWavFromFile(LPCSTR const filepath, LPCSTR const h3name)
 		}
 		wavAlloc.construct(wav, h3name, fileBuffer, fileSize);
 
-		wav->AddToBinaryTree();
+		wav->AddToResourceManager();
 		wav->IncreaseReferences();
 		return wav;
 	}
@@ -174,13 +160,13 @@ _LHF_(DefFromFile)
 	if (fileBuffer == nullptr)
 		return EXEC_DEFAULT;
 
-	c->ref_local_n(8) = int(fileBuffer);
+	c->Local<PUINT8>(8) = fileBuffer;
 	c->edi = int(fileBuffer);
 	c->return_address = 0x55CB64;
 	return NO_EXEC_DEFAULT;
 }
 
-H3LoadedDEF* LoadDefFromFile(LPCSTR const filePath, LPCSTR const h3name)
+H3LoadedDef* LoadDefFromFile(LPCSTR const filePath, LPCSTR const h3name)
 {
 	H3SEHandler seh;
 	try
@@ -192,9 +178,9 @@ H3LoadedDEF* LoadDefFromFile(LPCSTR const filePath, LPCSTR const h3name)
 
 		// * applies DefHook for the duration of this scope
 		TempLoHook tlh(DefHook);
-		H3LoadedDEF* def = H3LoadedDEF::Load(h3name);
+		H3LoadedDef* def = H3LoadedDef::Load(h3name);
 
-		// * since H3LoadedDEF::Load() is used, reference is already increased
+		// * since H3LoadedDef::Load() is used, reference is already increased
 		//def->IncreaseReferences();
 		return def;
 	}
@@ -211,9 +197,9 @@ static class H3AssetLoaderInternal : public H3Plugin::AssetLoader::H3AssetLoader
 public:
 	virtual INT NumberAdded() override;
 	virtual LPCSTR GetLastError() override;
-	virtual H3LoadedPCX* LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name) override;
+	virtual H3LoadedPcx* LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name) override;
 	virtual H3WavFile* LoadWavFromFile(LPCSTR const filepath, LPCSTR const h3name) override;
-	virtual H3LoadedDEF* LoadDefFromFile(LPCSTR const filepath, LPCSTR const h3name) override;
+	virtual H3LoadedDef* LoadDefFromFile(LPCSTR const filepath, LPCSTR const h3name) override;
 }InternalAssetLoader;
 
 INT H3AssetLoaderInternal::NumberAdded()
@@ -226,9 +212,9 @@ LPCSTR H3AssetLoaderInternal::GetLastError()
 	return AssetLoaderError.String();
 }
 
-H3LoadedPCX * H3AssetLoaderInternal::LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name)
+H3LoadedPcx * H3AssetLoaderInternal::LoadPcxFromFile(LPCSTR const filepath, LPCSTR const h3name)
 {
-	H3LoadedPCX* pcx = ::LoadPcxFromFile(filepath, h3name);
+	H3LoadedPcx* pcx = ::LoadPcxFromFile(filepath, h3name);
 	if (pcx)
 		++m_assetsLoaded;
 	return pcx;
@@ -242,9 +228,9 @@ H3WavFile * H3AssetLoaderInternal::LoadWavFromFile(LPCSTR const filepath, LPCSTR
 	return wav;
 }
 
-H3LoadedDEF * H3AssetLoaderInternal::LoadDefFromFile(LPCSTR const filepath, LPCSTR const h3name)
+H3LoadedDef * H3AssetLoaderInternal::LoadDefFromFile(LPCSTR const filepath, LPCSTR const h3name)
 {
-	H3LoadedDEF* def = ::LoadDefFromFile(filepath, h3name);
+	H3LoadedDef* def = ::LoadDefFromFile(filepath, h3name);
 	if (def)
 		++m_assetsLoaded;
 	return def;

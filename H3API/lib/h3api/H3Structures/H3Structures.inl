@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -17,12 +16,34 @@
 namespace h3
 {
 	template<typename T>
+	inline BOOL H3ZStream::Read(T & data, UINT data_size)
+	{
+		return Load(PVOID(&data), data_size);
+	}
+	template<typename T>
+	inline BOOL H3ZStream::Write(T & data, UINT data_size)
+	{
+		return Save(PVOID(&data), data_size);
+	}
+
+	template<typename ObjectType>
+	inline ObjectType* H3MapItem::Cast()
+	{
+		return reinterpret_cast<ObjectType*>(this);
+	}
+	template<typename ObjectType>
+	inline ObjectType& H3MapItem::Get()
+	{
+		return *reinterpret_cast<ObjectType*>(this);
+	}
+
+	template<typename T>
 	inline H3SmartPointer<T>::H3SmartPointer(T* _Ptr) :
 		m_used(_Ptr != 0),
 		m_data(_Ptr)
 	{
 	}
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 	template<typename T>
 	inline H3SmartPointer<T>::H3SmartPointer(H3SmartPointer<T>&& other) :
 		m_used(other.m_used),

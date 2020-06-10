@@ -3,9 +3,6 @@
 
 #pragma once
 
-#include "INIReader.h"
-
-// * installs all TextColor hooks
 int Read_Ini();
 
 #endif /* #define _INI_H_ */

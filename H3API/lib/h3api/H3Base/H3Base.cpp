@@ -3,13 +3,13 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3Base.hpp"
+#include "H3Base.inl"
 
 namespace h3
 {
@@ -74,27 +74,6 @@ namespace h3
 		return version() == GameVersion::WOG;
 	}
 
-	_H3API_ PVOID F_realloc(PVOID obj, UINT new_size)
-	{
-		return CDECL_2(PVOID, 0x619890, obj, new_size);
-	}
-
-	_H3API_ PVOID F_calloc(UINT count, UINT size)
-	{
-		return CDECL_2(PVOID, 0x61AA61, count, size);
-	}
-
-	_H3API_ PVOID F_malloc(UINT size)
-	{
-		return CDECL_1(PVOID, 0x617492, size);
-	}
-
-	_H3API_ VOID F_delete(PVOID obj)
-	{
-		if (obj)
-			CDECL_1(VOID, 0x60B0F0, obj);
-	}
-
 	_H3API_ VOID F_memcpy(PVOID dest, PVOID src, const UINT len)
 	{
 		CDECL_3(VOID, 0x61AD70, dest, src, len);
@@ -119,7 +98,7 @@ namespace h3
 	{
 		va_list args;
 		va_start(args, format);
-		const INT r = F_vsprintf(H3Internal::_h3_textBuffer(), format, args);
+		const INT r = F_vsprintf(H3Internal::_textBuffer(), format, args);
 		va_end(args);
 		return r;
 	}
@@ -144,7 +123,7 @@ namespace h3
 	 * ever so slightly modified by RoseKavalier
 	 *
 	 */
-	_H3API_ int H3Numbers::AddCommas(int num, char * out)
+	_H3API_ INT H3Numbers::AddCommas(INT num, CHAR* out)
 	{
 		char buffer[64];
 		char *src = buffer;
@@ -194,10 +173,10 @@ namespace h3
 	 * reads as 200M
 	 *
 	 */
-	_H3API_ int H3Numbers::MakeReadable(int num, char * out, int decimals)
+	_H3API_ INT H3Numbers::MakeReadable(INT num, CHAR * out, INT decimals)
 	{
 		constexpr INT RN_MIN_VALUE = 10000;
-		int power;
+		INT power;
 
 		char buffer[64];
 
@@ -211,23 +190,23 @@ namespace h3
 		// * if smaller than specified value, print regular number
 		if (m < RN_MIN_VALUE)
 		{
-			const int r = F_sprintfbuffer(out, "%d", num);
+			const INT r = F_sprintfbuffer(out, "%d", num);
 			return r;
 		}
 
 		// * round the number to required precision
-		int dec = std::min(decimals, 3);
-		int plus = 500;
-		int div = 1000;
-		for (int i = 0; i < dec; i++)
+		INT dec = std::min(decimals, 3);
+		INT plus = 500;
+		INT div = 1000;
+		for (INT i = 0; i < dec; i++)
 		{
 			plus /= 10;
 			div /= 10;
 		}
-		int d = power = 0;
+		INT d = power = 0;
 		while (m >= 1000)
 		{
-			d = int(m);
+			d = INT(m);
 			m /= 1000;
 			power++;
 		}
@@ -235,11 +214,11 @@ namespace h3
 		d = (d + plus) / div * div;
 
 		// * print template
-		int len = F_sprintfbuffer(buffer, "%d", d);
-		int c = 2 - len % 3;
+		INT len = F_sprintfbuffer(buffer, "%d", d);
+		INT c = 2 - len % 3;
 
-		char *dst = out;
-		char *src = buffer;
+		CHAR *dst = out;
+		CHAR *src = buffer;
 
 		// * leading negative
 		if (num < 0)
@@ -256,7 +235,7 @@ namespace h3
 				{
 					*dst++ = '.';
 					// * add required precision
-					for (int i = 0; i < dec; i++)
+					for (INT i = 0; i < dec; i++)
 						*dst++ = *src++;
 				}
 				break;
@@ -264,26 +243,26 @@ namespace h3
 			c = (c + 1) % 3;
 		}
 		// * add proper ending
-		char scale[] = { 0, 'k', 'M', 'B' };
+		constexpr CHAR scale[] = { 0, 'k', 'M', 'B' };
 		*dst++ = scale[power];
 		*dst = 0;
 
 		return dst - out;
 	}
 
-	_H3API_ BOOL H3Bitfield::GetState(INT32 position) const
+	_H3API_ BOOL H3Bitfield::GetState(UINT32 position) const
 	{
-		INT32 index = position >> 5;
-		INT32 pos = position & 0x1F;
-		INT32 value = 1 << pos;
+		UINT32 index = position >> 5;
+		UINT32 pos   = position & 0x1F;
+		UINT32 value = 1u << pos;
 		return ((&m_bf)[index]) & value;
 	}
 
-	_H3API_ VOID H3Bitfield::SetState(INT32 position, BOOL state)
+	_H3API_ VOID H3Bitfield::SetState(UINT32 position, BOOL state)
 	{
-		INT32 index = position >> 5;
-		INT32 pos = position & 0x1F;
-		INT32 value = 1 << pos;
+		UINT32 index = position >> 5;
+		UINT32 pos   = position & 0x1F;
+		UINT32 value = 1u << pos;
 		if (state)
 			((&m_bf)[index]) |= value;
 		else
@@ -300,25 +279,48 @@ namespace h3
 		return m_bf;
 	}
 
-	_H3API_ void H3Random::SetRandomSeed(UINT seed)
+	VOID H3Bitfield::Flip(UINT32 position)
+	{
+		UINT32 index = position >> 5;
+		UINT32 pos = position & 0x1F;
+		UINT32 value = 1u << pos;
+		((&m_bf)[index]) ^= value;
+	}
+
+	_H3API_ H3Bitfield::reference H3Bitfield::operator[](UINT32 position)
+	{
+		return reference(this, position);
+	}
+
+	_H3API_ BOOL H3Bitfield::operator()(UINT position)
+	{
+		return GetState(position);
+	}
+
+	_H3API_ UINT H3Bitfield::Mask(UINT number_bits)
+	{
+		return UINT((1ull << (number_bits & 0x1F)) - 1);
+	}
+
+	_H3API_ VOID H3Random::SetRandomSeed(UINT seed)
 	{
 		srand(seed);
 	}
 
 	// * From https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range?answertab=active#tab-top
-	_H3API_ int H3Random::Random(int high)
+	_H3API_ INT H3Random::Random(INT high)
 	{
-		const int num_bins = high + 1;
-		const int num_rand = RAND_MAX + 1;
-		const int bin_size = num_rand / num_bins;
-		const int	defect = num_rand % num_bins;
+		const INT num_bins = high + 1;
+		const INT num_rand = RAND_MAX + 1;
+		const INT bin_size = num_rand / num_bins;
+		const INT defect = num_rand % num_bins;
 
-		int x;
+		INT x;
 		do { x = rand(); } while (num_rand - defect <= x);
 
 		return x / bin_size;
 	}
-	_H3API_ int H3Random::RandBetween(int low, int high)
+	_H3API_ INT H3Random::RandBetween(INT low, INT high)
 	{
 		return H3Random::Random(high - low) + low;
 	}
@@ -331,44 +333,74 @@ namespace h3
 	{
 		return MessageBoxA(nullptr, message, title, MB_OKCANCEL | MB_ICONERROR) == IDOK;
 	}
-	_H3API_ VOID H3Error::_ShowError(LPCWSTR message, LPCWSTR title)
+	_H3API_ VOID H3Error::ShowErrorW(LPCWSTR message, LPCWSTR title)
 	{
 		MessageBoxW(nullptr, message, title, MB_OK | MB_ICONERROR);
 	}
-	_H3API_ BOOL H3Error::_ShowErrorChoice(LPCWSTR message, LPCWSTR title)
+	_H3API_ BOOL H3Error::ShowErrorChoiceW(LPCWSTR message, LPCWSTR title)
 	{
 		return MessageBoxW(nullptr, message, title, MB_OKCANCEL | MB_ICONERROR);
 	}
-#ifdef _H3API_DONT_USE_MACROS_
-	_H3API_ INT gameWidth()
-	{
-		return IntAt(0x403401);
-	}
-	_H3API_ INT gameHeight()
-	{
-		return IntAt(0x4033FC);
-	}
-	_H3API_ INT8 gameEdgeHorizontal()
-	{
-		return CharAt(0x4A8FC0);
-	}
-	_H3API_ INT8 gameEdgeVertical()
-	{
-		return CharAt(0x4A8FC5);
-	}
-	_H3API_ INT h3_MapSize()
-	{
-		return IntAt(0x6783C8);
-	}
-	_H3API_ UINT8 h3_BitMode()
-	{
-		return ByteAt(0x5FA228 + 3);
-	}
-#endif
 	_H3API_ VOID H3ObjectMask::operator=(const H3ObjectMask & other)
 	{
-		m_bits[0].Set(other.m_bits[0].Get());
-		m_bits[1].Set(other.m_bits[1].Get());
+		m_bits[0].Set(other[0].Get());
+		m_bits[1].Set(other[1].Get());
+	}
+	_H3API_ H3Bitfield & H3ObjectMask::operator[](UINT index)
+	{
+		return m_bits[index];
+	}
+	_H3API_ const H3Bitfield & H3ObjectMask::operator[](UINT index) const
+	{
+		return m_bits[index];
+	}
+	_H3API_ H3Bitfield::reference::reference(H3Bitfield* bitfield) :
+		m_bitfield(bitfield), m_position()
+	{
+	}
+	_H3API_ H3Bitfield::reference::reference(H3Bitfield* bitfield, UINT position) :
+		m_bitfield(bitfield), m_position(position)
+	{
+	}
+	_H3API_ H3Bitfield::reference& H3Bitfield::reference::operator++()
+	{
+		++m_position;
+		return *this;
+	}
+	_H3API_ H3Bitfield::reference H3Bitfield::reference::operator++(int)
+	{
+		reference ref(m_bitfield, m_position);
+		++m_position;
+		return ref;
+	}
+	_H3API_ H3Bitfield::reference& H3Bitfield::reference::operator~()
+	{
+		Flip();
+		return *this;
+	}
+	_H3API_ H3Bitfield::reference::operator BOOL()
+	{
+		return m_bitfield->GetState(m_position);
+	}
+	_H3API_ BOOL H3Bitfield::reference::operator!()
+	{
+		return m_bitfield->GetState(m_position) == FALSE;
+	}
+	_H3API_ VOID H3Bitfield::reference::operator=(BOOL state)
+	{
+		m_bitfield->SetState(m_position, state);
+	}
+	_H3API_ VOID H3Bitfield::reference::Set()
+	{
+		m_bitfield->SetState(m_position, TRUE);
+	}
+	_H3API_ VOID H3Bitfield::reference::Reset()
+	{
+		m_bitfield->SetState(m_position, FALSE);
+	}
+	_H3API_ VOID H3Bitfield::reference::Flip()
+	{
+		m_bitfield->Flip(m_position);
 	}
 }
 
@@ -392,17 +424,18 @@ namespace h3
 		{
 			return CharAt(0x4A8FC5);
 		}
-		_H3API_ INT _h3_MapSize()
+		_H3API_ INT _mapSize()
 		{
 			return IntAt(0x6783C8);
 		}
-		_H3API_ UINT8 _h3_BitMode()
+		_H3API_ UINT8 _bitMode()
 		{
 			return ByteAt(0x5FA228 + 3);
 		}
-		_H3API_ PCHAR _h3_textBuffer()
+		_H3API_ PCHAR _textBuffer()
 		{
 			return PCHAR(0x697428);
 		}
 	}
 }
+

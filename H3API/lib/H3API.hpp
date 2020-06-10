@@ -65,8 +65,8 @@
 // * H3API may now be used as a header-only style library
 // * in which case all you are required to do is:
 // * #include "[relative_path]/H3API.hpp"
-// *               
-// * It it now possible as well to complie H3API into a 
+// *
+// * It it now possible as well to complie H3API into a
 // * static library, in this case you need to write:
 // * #define _H3API_LIBRARY_
 // * #include "[relative_path]/H3API.hpp"
@@ -74,7 +74,7 @@
 
 // *
 // * H3API Preprocessor Definitions Overview
-// * 
+// *
 
 // * _H3API_LIBRARY_
 // * tells the library that it should only include header files within your project
@@ -97,9 +97,14 @@
 // * your project needs to use /EHa compiler flag to use it.
 
 // * _H3API_DONT_USE_MACROS_
-// * tells the library to exclude some macros that can pollute the global namespace
-// * when defined, these macros are replaced by function calls so you need to add parentheses
-// * e.g. gameWidth <<==>> gameWidth()
+// * tells the library to exclude macros that can pollute the global namespace when defined.
+// * these macros are then replaced by typedefs so extra parentheses may be required.
+// * if you would like the convenience of switching between both modes, always add parentheses at the end.
+
+// * _H3API_NO_VALIDATION_
+// * there are compile-time asserts in H3API to verify
+// * structures' sizes and validate some template parameters.
+// * define this macro if you do not wish to perform these validations.
 
 // * _H3API_PATCHER_X86_
 // * tells the library to include its own "patcher_x86.hpp" header within your project
@@ -115,6 +120,7 @@
 #include "h3api/H3_Allocator.hpp"
 #include "h3api/H3_Base.hpp"
 #include "h3api/H3_BinaryItems.hpp"
+#include "h3api/H3_Bitset.hpp"
 #include "h3api/H3_Constants.hpp"
 #include "h3api/H3_Defines.hpp"
 #include "h3api/H3_Dialogs.hpp"
@@ -123,13 +129,14 @@
 #include "h3api/H3_LOD.hpp"
 #include "h3api/H3_MapItems.hpp"
 #include "h3api/H3_Memory.hpp"
+#include "h3api/H3_Path.hpp"
 #include "h3api/H3_RMG.hpp"
 #include "h3api/H3_Stream.hpp"
-#include "h3api/H3_StreamBuf.hpp"
 #include "h3api/H3_String.hpp"
 #include "h3api/H3_Structures.hpp"
 #include "h3api/H3_Tree.hpp"
 #include "h3api/H3_Vector.hpp"
+#include "h3api/H3_Version.hpp"
 
 #ifdef _H3API_EXCEPTION_
 // * SEH error handler, requires \EHa compiler flag
@@ -149,6 +156,11 @@
 #ifdef _H3API_OPERATORS_
 // * include H3API operators
 #include "h3api/H3_Operators.hpp"
+#endif
+
+#ifdef _H3API_DEVELOPMENT_
+// * includes development files which are not yet available
+#include "h3api/H3_Development.hpp"
 #endif
 
 #endif /* #define _H3API_HPP_ */

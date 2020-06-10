@@ -107,27 +107,27 @@ public:
 // used in HookContext
 struct FlagsRegister
 {
-	_dword_ CF : 1; //0
-	_dword_ reserved_1 : 1; //1
-	_dword_ PF : 1; //2
-	_dword_ reserved_3 : 1; //3
-	_dword_ AF : 1; //4
-	_dword_ reserved_5 : 1; //5
-	_dword_ ZF : 1; //6
-	_dword_ SF : 1; //7
-	_dword_ TF : 1; //8
-	_dword_ IF : 1; //9
-	_dword_ DF : 1; //10
-	_dword_ OF : 1; //11
-	_dword_ IOPL : 2; //12-13
-	_dword_ NT : 1; //14
+	_dword_ CF          : 1; //0
+	_dword_ reserved_1  : 1; //1
+	_dword_ PF          : 1; //2
+	_dword_ reserved_3  : 1; //3
+	_dword_ AF          : 1; //4
+	_dword_ reserved_5  : 1; //5
+	_dword_ ZF          : 1; //6
+	_dword_ SF          : 1; //7
+	_dword_ TF          : 1; //8
+	_dword_ IF          : 1; //9
+	_dword_ DF          : 1; //10
+	_dword_ OF          : 1; //11
+	_dword_ IOPL        : 2; //12-13
+	_dword_ NT          : 1; //14
 	_dword_ reserved_15 : 1; //15
-	_dword_ RF : 1; //16
-	_dword_ VM : 1; //17
-	_dword_ AC : 1; //18
-	_dword_ VIF : 1; //19
-	_dword_ VIP : 1; //20
-	_dword_ ID : 1; //21
+	_dword_ RF          : 1; //16
+	_dword_ VM          : 1; //17
+	_dword_ AC          : 1; //18
+	_dword_ VIF         : 1; //19
+	_dword_ VIP         : 1; //20
+	_dword_ ID          : 1; //21
 	_dword_ reserved_22 : 1; //22
 	_dword_ reserved_23 : 1; //23
 	_dword_ reserved_24 : 1; //24
@@ -179,89 +179,158 @@ struct HookContext
 		return r;
 	}
 	// gives the return address from last call
+	_dword_ Retn()
+	{
+		return *(_dword_*)(ebp + 4);
+	}
+	// to be deprecated
 	_dword_ _retn()
 	{
 		return *(_dword_*)(ebp + 4);
 	}
-	// gives the return address from 2 calls ago
+	// to be deprecated
+	// gives the return address from 2 calls ago [WEAK]
 	_dword_ _retn2()
 	{
 		return *(_dword_*)(*(_dword_*)(ebp)+4);
 	}
-	// gives the return address from 3 calls ago
+	// to be deprecated
+	// gives the return address from 3 calls ago [WEAK]
 	_dword_ _retn3()
 	{
 		return *(_dword_*)(*(_dword_*)*(_dword_*)(ebp)+4);
 	}
-	// gives the nth argument used in the last call.
-	// Should be >= 1
-	_dword_ arg_n(int n)
-	{
-		return *(_dword_*)(ebp + 4 + 4 * n);
-	}
-
-	int& ref_arg_n(int n)
+	
+	// to be deprecated
+	int& arg_n(_dword_ n)
 	{
 		return *reinterpret_cast<int*>(ebp + 4 + 4 * n);
 	}
 
-	// gives the nth local variable value used
-	// Should be >= 1
-	_dword_ local_n(int n)
+	// gives the nth argument used in the last call as int reference
+	// use Arg<> if you wish to cast to something else
+	int& Arg(_dword_ n)
 	{
-		return *(_dword_*)(ebp - 4 * n);
+		return *reinterpret_cast<int*>(ebp + 4 + 4 * n);
 	}
 
-	int& ref_local_n(int n)
+	// gives the nth argument used in the last call as reference
+	// e.g. c->Arg<double>(3);
+	template<typename T>
+	T& Arg(_dword_ n)
+	{
+		return *reinterpret_cast<T*>(ebp + 4 + 4 * n);
+	}
+
+	// to be deprecated
+	int& local_n(_dword_ n)
 	{
 		return *reinterpret_cast<int*>(ebp - 4 * n);
 	}
 
+	// gives the nth local variable value used
+	// Should be >= 1
+	// use Local<> if you wish to cast to something else
+	int& Local(_dword_ n)
+	{
+		return *reinterpret_cast<int*>(ebp - 4 * n);
+	}
+
+	// gives nth local variable as reference
+	// e.g. c->local<H3Vector<H3String>>(20);
+	template<typename T>
+	T& Local(_dword_ n)
+	{
+		return *reinterpret_cast<T*>(ebp - 4 * n);
+	}
+		
 	// gives the nth local variable address
 	// Should be >= 1
-	_ptr_ local_stack(int n)
+	_ptr_ LocalStack(_dword_ n)
 	{
 		return (ebp - 4 * n);
 	}
 
-	_byte_ AL()
+	// gives the nth local variable
+	// casted to specified type
+	// Should be >= 1
+	template<typename T>
+	T* LocalStack(_dword_ n)
 	{
-		return (_byte_)eax;
+		return reinterpret_cast<T*>(ebp - 4 * n);
 	}
 
-	_byte_& ref_al()
+	// to be deprecated
+	_ptr_ local_stack(_dword_ n)
+	{
+		return (ebp - 4 * n);
+	}
+
+	_byte_& AL()
 	{
 		return *reinterpret_cast<_byte_*>(&eax);
 	}
-
-	_byte_ CL()
+	_byte_& AH()
 	{
-		return (_byte_)ecx;
+		return reinterpret_cast<_byte_*>(&eax)[1];
+	}
+	_word_& AX()
+	{
+		return *reinterpret_cast<_word_*>(&eax);
 	}
 
-	_byte_& ref_cl()
+	_byte_& CL()
 	{
 		return *reinterpret_cast<_byte_*>(&ecx);
 	}
-
-	_byte_ DL()
+	_byte_& CH()
 	{
-		return (_byte_)edx;
+		return reinterpret_cast<_byte_*>(&ecx)[1];
+	}
+	_word_& CX()
+	{
+		return *reinterpret_cast<_word_*>(&ecx);
 	}
 
-	_byte_& ref_dl()
+	_byte_& DL()
 	{
 		return *reinterpret_cast<_byte_*>(&edx);
 	}
-
-	_byte_ BL()
+	_byte_& DH()
 	{
-		return (_byte_)ebx;
+		return reinterpret_cast<_byte_*>(&edx)[1];
+	}
+	_word_& DX()
+	{
+		return *reinterpret_cast<_word_*>(&edx);
 	}
 
-	_byte_& ref_bl()
+	_byte_& BL()
 	{
 		return *reinterpret_cast<_byte_*>(&ebx);
+	}
+	_byte_& BH()
+	{
+		return reinterpret_cast<_byte_*>(&ebx)[1];
+	}
+	_word_& BX()
+	{
+		return *reinterpret_cast<_word_*>(&ebx);
+	}
+
+	_word_& BP()
+	{
+		return *reinterpret_cast<_word_*>(&ebp);
+	}
+
+	_word_& SI()
+	{
+		return *reinterpret_cast<_word_*>(&esi);
+	}
+
+	_word_& DI()
+	{
+		return *reinterpret_cast<_word_*>(&edi);
 	}
 };
 
@@ -356,6 +425,11 @@ public:
 	// returns NULL if this patch is applied last
 	virtual Patch* __stdcall GetAppliedAfter() = 0;
 
+	// returns applied address of patch
+	_ptr_ operator&()
+	{
+		return GetAddress();
+	}
 };
 
 
@@ -368,6 +442,7 @@ class LoHook : public Patch
 
 
 typedef int(__stdcall *_LoHookFunc_)(LoHook*, HookContext*);
+typedef int(__stdcall* _LoHookReferenceFunc_)(LoHook&, HookContext&);
 
 // values ​​passed as the hooktype argument in PatcherInstance :: WriteHiHook and PatcherInstance :: CreateHiHook
 #define CALL_ 0
@@ -418,6 +493,11 @@ public:
 	// returns the value of the user hook data
 	// if not specified by the user, then 0
 	virtual _dword_ __stdcall GetUserData() = 0;
+
+	_ptr_ operator()()
+	{
+		return GetDefaultFunc();
+	}
 };
 
 
@@ -448,6 +528,17 @@ public:
 	// (creates and applies DATA_ patch)
 	// Returns the pointer to the patch
 	virtual Patch* __stdcall WriteDword(_ptr_ address, int value) = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	// WriteAddress shortcut
+	// writes a pointer of data type (its address)
+	// to the specified location
+	// The data type can be anything
+	template<typename T>
+	Patch* __stdcall WriteAddressOf(_ptr_ whereTo, const T& data)
+	{
+		return WriteDword(whereTo, reinterpret_cast<int>(&data));
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// WriteJmp method
@@ -497,6 +588,11 @@ public:
 	// using c-> esp and c-> Push, is limited to 128 bytes.
 	// if you need another restriction, use the WriteLoHookEx or CreateLoHookEx method.
 	virtual LoHook* __stdcall WriteLoHook(_ptr_ address, _LoHookFunc_ func) = 0;
+
+	LoHook* WriteLoHook(_ptr_ address, _LoHookReferenceFunc_ func)
+	{
+		return WriteLoHook(address, _LoHookFunc_(func));
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Method WriteHiHook
@@ -621,10 +717,10 @@ public:
 
 	// in the original form, the method is not supposed to be used,
 	// see (below) the description of the wrapper method WriteDataPatch
-	virtual Patch* __stdcall WriteDataPatchVA(_ptr_ address, char* format, _dword_* va_args);
+	virtual Patch* __stdcall WriteDataPatchVA(_ptr_ address, char* format, _dword_* va_args) = 0;
 	// in the original form, the method is not supposed to be used,
 	// see (below) the description of the wrapper method WriteDataPatch
-	virtual Patch* __stdcall CreateDataPatchVA(_ptr_ address, char* format, _dword_* va_args);
+	virtual Patch* __stdcall CreateDataPatchVA(_ptr_ address, char* format, _dword_* va_args) = 0;
 
 
 	// GetLastPatchAt method
@@ -901,7 +997,7 @@ public:
 
 	inline Patch* __stdcall WriteDword(_ptr_ address, const char* value)
 	{
-		return WriteDword(address, (int)value);
+		return WriteDword(address, int(value));
 	}
 
 };
@@ -943,13 +1039,13 @@ public:
 	// otherwise returns the last applied patch / hook in the neighborhood of address
 	// consistently walk through all the patches in a given neighborhood
 	// using this method and Patch :: GetAppliedBefore
-	virtual Patch* __stdcall GetLastPatchAt(_ptr_ address);
+	virtual Patch* __stdcall GetLastPatchAt(_ptr_ address) = 0;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// UndoAllAt Method
 	// cancels all patches / hooks in the neighborhood of address
 	// always returns 1 (for compatibility with earlier versions of the library)
-	virtual Patch* __stdcall UndoAllAt(_ptr_ address);
+	virtual Patch* __stdcall UndoAllAt(_ptr_ address) = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// SaveDump Method
@@ -1008,7 +1104,7 @@ public:
 	// otherwise returns the first applied patch / hook in the neighborhood of address
 	// consistently walk through all the patches in a given neighborhood
 	// using this method and Patch :: GetAppliedAfter
-	virtual Patch* __stdcall GetFirstPatchAt(_ptr_ address);
+	virtual Patch* __stdcall GetFirstPatchAt(_ptr_ address) = 0;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// method MemCopyCodeEx
@@ -1132,8 +1228,6 @@ public:
 #include <windows.h>
 #undef NOMINMAX
 
-#define CALL_0(return_type, func_type, address) ((return_type(func_type *)(void))address)()
-
 //////////////////////////////////////////////////////////////////
 // function GetPatcher
 // loads the library and, by calling the only exported
@@ -1143,6 +1237,8 @@ public:
 // function is called 1 time, which is obvious from its definition
 inline Patcher* GetPatcher()
 {
+	typedef Patcher*(__stdcall* GetPatcher_t)();
+
 	static int calls_count = 0;
 	if (calls_count > 0)
 		return NULL;
@@ -1150,9 +1246,9 @@ inline Patcher* GetPatcher()
 	HMODULE pl = LoadLibraryA("patcher_x86.dll");
 	if (pl)
 	{
-		FARPROC f = GetProcAddress(pl, "_GetPatcherX86@0");
+		GetPatcher_t f = GetPatcher_t(GetProcAddress(pl, "_GetPatcherX86@0"));
 		if (f)
-			return CALL_0(Patcher*, __stdcall, f);
+			return f();
 	}
 	return NULL;
 }

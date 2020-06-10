@@ -3,20 +3,20 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3Memory.hpp"
+#include "H3Memory.inl"
 #include "../H3_String.hpp"
 
 namespace h3
 {
 	_H3API_ H3Protect::H3Protect(UINT32 address, UINT32 size) :
-		m_address(address), 
-		m_size(size), 
+		m_address(address),
+		m_size(size),
 		m_old_protect()
 	{
 		m_protect_edited = VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, PAGE_EXECUTE_WRITECOPY, &m_old_protect);
@@ -59,24 +59,37 @@ namespace h3
 		if (p)
 			p += offset;
 		return p;
-	}		
+	}
 
-	_H3API_ VOID H3Patcher::NakedHook5(UINT32 start, VOID* function)
+	_H3API_ VOID H3Patcher::NakedHook5(UINT32 whereTo, VOID* function)
 	{
-		H3Protect protect(start, 5);
+		H3Protect protect(whereTo, 5);
 		if (protect.CanWrite())
 		{
-			ByteAt(start) = H3Patcher::jmp;
-			DwordAt(start + 1) = reinterpret_cast<UINT32>(function) - start - 5;
+			ByteAt(whereTo)      = H3Patcher::jmp;
+			DwordAt(whereTo + 1) = reinterpret_cast<UINT32>(function) - whereTo - 5;
+		}
+	}
+	_H3API_ VOID H3Patcher::NakedHook(UINT32 whereTo, VOID * function, INT totalBytes)
+	{
+		if (totalBytes < 5)
+			return;
+		H3Protect protect(whereTo, totalBytes);
+		if (protect.CanWrite())
+		{
+			ByteAt(whereTo)      = H3Patcher::jmp;
+			DwordAt(whereTo + 1) = reinterpret_cast<UINT32>(function) - whereTo - 5;
+			for (int i = 5; i < totalBytes; ++i)
+				ByteAt(whereTo + i) = H3Patcher::nop;
 		}
 	}
 	_H3API_ H3DLL::H3DLL() :
-		code(), 
-		size(), 
-		dllName(), 
-		rdata(), 
-		rdataSize(), 
-		data(), 
+		code(),
+		size(),
+		dllName(),
+		rdata(),
+		rdataSize(),
+		data(),
 		dataSize()
 	{
 	}
@@ -103,7 +116,7 @@ namespace h3
 		else
 			message.Printf("Could not find needle:\n\n%s\n\nIn data of module: \"%s\".\n\nData start: 0x%08X\n\nDLL data size: 0x%08X",
 				needleBuffer.String(), dllName, (UINT32)rdata, rdataSize);
-		H3Error::ShowError(message, "Needle not found!");
+		H3Error::ShowError(message.String(), "Needle not found!");
 	}
 	_H3API_ VOID H3DLL::NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize) const
 	{
@@ -120,13 +133,13 @@ namespace h3
 		}
 		message.Printf("Found needle:\n\n%s\n\nIn Module \"%s\".\n\nHowever, expected code...\n\n%s\n\n...does not match existing code:\n\n%s",
 			needle_buffer.String(), dllName, expected_buffer.String(), found_buffer.String());
-		H3Error::ShowError(message, "Needle not found!");
+		H3Error::ShowError(message.String(), "Needle not found!");
 	}
 	_H3API_ VOID H3DLL::DLLNotFound() const
 	{
 		H3String message;
 		message.Printf("Module \"%s\" could not be found!", dllName);
-		H3Error::ShowError(message, "DLL not found!");
+		H3Error::ShowError(message.String(), "DLL not found!");
 	}
 	_H3API_ VOID H3DLL::GetDLLInfo(LPCSTR name)
 	{
@@ -187,7 +200,7 @@ namespace h3
 		}
 		return p;
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset) const
+	_H3API_ UINT32 H3DLL::NeedleSearchAfter(UINT32 after, const PUINT8 needle, INT32 needleSize, INT32 offset) const
 	{
 		UINT32 p = H3Patcher::FindByNeedle(reinterpret_cast<PUINT8>(after), size - (after - reinterpret_cast<UINT32>(code)), needle, needleSize, offset);
 #ifdef _H3DLL_DEBUG_

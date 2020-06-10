@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-15                        //
-//                      Last edit: 2019-12-15                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -19,7 +18,7 @@ namespace h3
 	template<typename T>
 	inline H3ObjectAllocator<T>::H3ObjectAllocator() noexcept
 	{
-	}	
+	}
 	template<typename T>
 	inline T * H3ObjectAllocator<T>::allocate(size_t number) const noexcept
 	{
@@ -51,7 +50,7 @@ namespace h3
 	{
 		block->~T();
 	}
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 	template<typename T>
 	template<typename ...Args>
 	inline VOID H3ObjectAllocator<T>::construct(T * block, Args && ...args)
@@ -63,18 +62,17 @@ namespace h3
 	template<typename T>
 	inline size_t * H3ArrayAllocator<T>::GetArrayBase(T * block) const noexcept
 	{
-		reinterpret_cast<size_t*>(block);
-		return block - 1;
+		return reinterpret_cast<size_t*>(block) - 1;
 	}
 	template<typename T>
 	inline size_t H3ArrayAllocator<T>::GetArraySize(T * block) const noexcept
 	{
-		return *GetArrayBase();
+		return *GetArrayBase(block);
 	}
 	template<typename T>
 	inline H3ArrayAllocator<T>::H3ArrayAllocator() noexcept
 	{
-	}		
+	}
 	template<typename T>
 	inline T * H3ArrayAllocator<T>::allocate(size_t number) const noexcept
 	{
@@ -85,7 +83,7 @@ namespace h3
 	template<typename T>
 	inline VOID H3ArrayAllocator<T>::deallocate(T * block) const noexcept
 	{
-		F_delete(reinterpret_cast<PVOID>(GetArrayBase()));
+		F_delete(reinterpret_cast<PVOID>(GetArrayBase(block)));
 	}
 	template<typename T>
 	inline VOID H3ArrayAllocator<T>::construct(T * block) const noexcept
@@ -127,7 +125,7 @@ namespace h3
 			block->~T();
 			++block;
 		}
-	}	
+	}
 	template<typename T>
 	template<typename U>
 	inline H3ObjectAllocator<T>::H3ObjectAllocator(const H3ObjectAllocator<U>&) noexcept
@@ -164,7 +162,7 @@ namespace h3
 	{
 		return false;
 	}
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 	template<typename T>
 	template<typename ...Args>
 	inline VOID H3ArrayAllocator<T>::construct(T * block, Args && ...args)
@@ -175,6 +173,88 @@ namespace h3
 			new(reinterpret_cast<PVOID>(block)) T(std::forward<Args>(args)...);
 			++block;
 		}
+	}
+#endif
+	template<typename T, typename Allocator>
+	inline void H3UniquePtr<T, Allocator>::destroy(T* replacement)
+	{
+		if (replacement && replacement == data)
+			return;
+		if (data)
+		{
+			Allocator().destroy(data);
+			Allocator().deallocate(data);
+			data = nullptr;
+		}
+	}
+	template<typename T, typename Allocator>
+	inline H3UniquePtr<T, Allocator>::H3UniquePtr() :
+		data()
+	{
+	}
+
+	template<typename T, typename Allocator>
+	inline H3UniquePtr<T, Allocator>::H3UniquePtr(T* source) :
+		data(source)
+	{
+		source = nullptr;
+	}
+	template<typename T, typename Allocator>
+	inline H3UniquePtr<T, Allocator>::~H3UniquePtr()
+	{
+		destroy();
+	}
+	template<typename T, typename Allocator>
+	inline void H3UniquePtr<T, Allocator>::Set(T * source)
+	{
+		destroy(source); // check we aren't releasing ourselves
+		data = source;
+	}
+	template<typename T, typename Allocator>
+	inline T * H3UniquePtr<T, Allocator>::Get()
+	{
+		return data;
+	}
+	template<typename T, typename Allocator>
+	inline T * H3UniquePtr<T, Allocator>::operator->()
+	{
+		return data;
+	}
+	template<typename T, typename Allocator>
+	inline T * H3UniquePtr<T, Allocator>::Release()
+	{
+		T* r = data;
+		data = nullptr;
+		return r;
+	}
+	template<typename T, typename Allocator>
+	inline void H3UniquePtr<T, Allocator>::Swap(H3UniquePtr<T>& other)
+	{
+		T* tmp     = data;
+		data       = other.data;
+		other.data = tmp;
+	}
+	template<typename T, typename Allocator>
+	inline BOOL H3UniquePtr<T, Allocator>::operator!() const
+	{
+		return data == nullptr;
+	}
+#ifdef _H3API_CPLUSPLUS11_
+	template<typename T, typename Allocator>
+	inline H3UniquePtr<T, Allocator>::H3UniquePtr(H3UniquePtr<T, Allocator>&& other) :
+		data(other.Release())
+	{
+	}
+	template<typename T, typename Allocator>
+	inline H3UniquePtr<T, Allocator>& H3UniquePtr<T, Allocator>::operator=(H3UniquePtr<T, Allocator>&& other)
+	{
+		if (&other == this)
+			return *this;
+
+		destroy();
+		data = other.Release();
+
+		return *this;
 	}
 #endif
 }

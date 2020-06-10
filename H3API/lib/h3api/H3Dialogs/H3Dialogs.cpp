@@ -3,13 +3,13 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3Dialogs.hpp"
+#include "H3Dialogs.inl"
 #include "../H3_Functions.hpp"
 #include "../H3_Structures.hpp"
 
@@ -30,7 +30,7 @@ namespace h3
 	{
 		SetCommand(0x200, cmd, 0, 0, 0, 0, param, 0);
 	}
-	_H3API_ H3DlgItem* H3Msg::ItemAtPosition(H3BaseDlg* dlg)
+	_H3API_ H3DlgItem* H3Msg::ItemAtPosition(H3BaseDlg* dlg) const
 	{
 		return THISCALL_3(H3DlgItem*, 0x5FF9A0, dlg, x_abs, y_abs);
 	}
@@ -78,6 +78,35 @@ namespace h3
 	{
 		return STDCALL_1(INT32, 0x491640, this);
 	}
+	_H3API_ H3Msg::MessageFlag H3Msg::GetFlag() const
+	{
+		return MessageFlag(flags);
+	}
+	_H3API_ NH3VKey::eH3VK H3Msg::GetKey() const
+	{
+		return NH3VKey::eH3VK(subtype);
+	}
+	_H3API_ INT H3Msg::GetX() const
+	{
+		return x_abs;
+	}
+	_H3API_ INT H3Msg::GetY() const
+	{
+		return y_abs;
+	}
+	_H3API_ POINT H3Msg::GetCoords() const
+	{
+		POINT pt;
+		pt.x = x_abs;
+		pt.y = y_abs;
+		return pt;
+	}
+	_H3API_ INT H3Msg::StopProcessing()
+	{
+		command = 0;
+		subtype = 0;
+		return 2;
+	}
 	_H3API_ H3Dlg* H3MsgCustom::GetDlg() const
 	{
 		return reinterpret_cast<H3Dlg*>(flags2);
@@ -92,7 +121,7 @@ namespace h3
 		runDlg(0x5FFA20),
 		initDlgItems(0x5FFB30),
 		activateDlg(0x5FFBB0),
-		dlgProc(reinterpret_cast<H3Dlg_proc>(H3DlgCustomProc)), // custom proc to show hint messages and call our own dlg proc), default 0x41B120.
+		dlgProc(0x41B120), // custom proc to show hint messages and call our own dlg proc), default 0x41B120.
 		mouseMove(0x5FFCA0),
 		rightClick(0x5FFD50),
 		clickRet(0x5FFE90),
@@ -100,22 +129,28 @@ namespace h3
 		closeDlg(0x41B0F0)
 	{
 	}
-	_H3API_ H3Dlg::H3Dlg(int width, int height, int x, int y, BOOL statusBar, H3Dlg_proc dlgProc, BOOL makeBackground, INT32 colorIndex)
+	_H3API_ INT H3Dlg::CheckEnd(H3Msg & msg)
 	{
-		THISCALL_6(H3Dlg*, 0x41AFA0, this, x == -1 ? (H3Internal::_gameWidth() - width) / 2 : x, y == -1 ? (H3Internal::_gameHeight() - height) / 2 : y, width, height, 0x12);
-		vtable = &CustomDlgVTable;
-		background = nullptr;
+		if (endDialog)
+			return msg.CloseDialog();
+		return 0;
+	}
+	_H3API_ H3Dlg::H3Dlg(int width, int height, int x, int y, BOOL statusBar, BOOL makeBackground, INT32 colorIndex) :
+		H3BaseDlg(x, y, width, height), endDialog(FALSE), background(nullptr), hintBar(nullptr)
+	{
+		if (x == -1)
+			xDlg = (H3Internal::_gameWidth() - width) >> 1;
+		if (y == -1)
+			yDlg = (H3Internal::_gameHeight() - height) >> 1;
+
 		if (makeBackground)
 			AddBackground(TRUE, statusBar, colorIndex);
-		customProc = dlgProc;
-		H3DlgHintBar* hint = nullptr;
 		if (statusBar)
-			hint = CreateHint();
-		hintBar = hint;
+			hintBar = CreateHint();
 	}
 	_H3API_ H3Dlg::~H3Dlg()
 	{
-		THISCALL_2(VOID, vtable->destroyDlg, this, 0);
+		vDestroy();
 	}
 	_H3API_ VOID H3Dlg::PlaceAtMouse()
 	{
@@ -135,12 +170,19 @@ namespace h3
 	}
 	_H3API_ VOID H3Dlg::Start()
 	{
+		if (!OnCreate())
+			return;
+
 		H3MouseManager* mmgr = H3Internal::MouseManager();
-		INT32 mouseType = mmgr->GetType();
-		INT32 mouseFrame = mmgr->GetFrame();
+		const INT32 mouseType = mmgr->GetType();
+		const INT32 mouseFrame = mmgr->GetFrame();
 		mmgr->DefaultCursor();
-		THISCALL_2(VOID, vtable->runDlg, this, 0); // run H3Dlg
-		mmgr->SetCursor(mouseType, mouseFrame); // restore previous cursor
+		vShowAndRun(FALSE);
+		mmgr->SetCursor(mouseFrame, mouseType); // restore previous cursor
+	}
+	_H3API_ VOID H3Dlg::Stop()
+	{
+		endDialog = TRUE;
 	}
 	_H3API_ VOID H3Dlg::RMB_Show()
 	{
@@ -154,7 +196,7 @@ namespace h3
 		if (frame && (w < 64 || h < 64))
 			return FALSE;
 
-		H3LoadedPCX16* pcx = H3LoadedPCX16::Create(h3_NullString, widthDlg, heightDlg);
+		H3LoadedPcx16* pcx = H3LoadedPcx16::Create(h3_NullString, widthDlg, heightDlg);
 		if (!pcx)
 			return FALSE;
 
@@ -183,11 +225,11 @@ namespace h3
 	{
 		return AddBackground(0, 0, widthDlg, heightDlg, frame, statusBar, colorIndex);
 	}
-	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPCX* pcx)
+	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPcx* pcx)
 	{
 		if (!pcx || background)
 			return FALSE;
-		background = H3LoadedPCX16::Create(h3_NullString, pcx->width, pcx->height);
+		background = H3LoadedPcx16::Create(h3_NullString, pcx->width, pcx->height);
 		if (!background)
 			return FALSE;
 
@@ -205,11 +247,11 @@ namespace h3
 
 		return TRUE;
 	}
-	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPCX16* pcx)
+	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPcx16* pcx)
 	{
 		if (!pcx || background)
 			return FALSE;
-		background = H3LoadedPCX16::Create(h3_NullString, pcx->width, pcx->height);
+		background = H3LoadedPcx16::Create(h3_NullString, pcx->width, pcx->height);
 		if (!background)
 			return FALSE;
 
@@ -227,12 +269,12 @@ namespace h3
 
 		return TRUE;
 	}
-	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPCX24* pcx)
+	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedPcx24* pcx)
 	{
 		if (!pcx || background)
 			return FALSE;
 
-		background = H3LoadedPCX16::Create(h3_NullString, pcx->width, pcx->height);
+		background = H3LoadedPcx16::Create(h3_NullString, pcx->width, pcx->height);
 		if (!background)
 			return FALSE;
 
@@ -250,7 +292,7 @@ namespace h3
 
 		return TRUE;
 	}
-	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedDEF* def, INT group, INT frame)
+	_H3API_ BOOL H3Dlg::AddBackground(H3LoadedDef* def, INT group, INT frame)
 	{
 		if (background || !def || def->groupsCount < group || !def->activeGroups[group])
 			return FALSE;
@@ -260,7 +302,7 @@ namespace h3
 
 		H3DefFrame* fr = grp->frames[frame];
 
-		background = H3LoadedPCX16::Create(h3_NullString, fr->frameWidth, fr->frameHeight);
+		background = H3LoadedPcx16::Create(h3_NullString, fr->frameWidth, fr->frameHeight);
 		if (!background)
 			return FALSE;
 
@@ -278,19 +320,136 @@ namespace h3
 
 		return TRUE;
 	}
-	
+
+	_H3API_ BOOL H3Dlg::Notify(H3DlgItem * it, H3Msg & msg)
+	{
+		return OnNotify(it, msg);
+	}
+
 	_H3API_ VOID H3BaseDlg::Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
 	{
 		H3Internal::WindowManager()->H3Redraw(xDlg + x, yDlg + y, dx, dy);
 	}
 	_H3API_ VOID H3BaseDlg::Redraw()
 	{
-		THISCALL_4(VOID, vtable->redrawDlg, this, TRUE, -65535, 65535);
+		vRedraw(TRUE, -65535, 65535);
 	}
 	_H3API_ INT32 H3BaseDlg::DefaultProc(H3Msg* msg)
 	{
-		return THISCALL_2(INT32, 0x41B120, this, msg);
+		return DefaultProc(*msg);
 	}
+	_H3API_ INT32 H3BaseDlg::DefaultProc(H3Msg& msg)
+	{
+		return THISCALL_2(INT32, 0x41B120, this, &msg);
+	}
+	_H3API_ H3Dlg* H3Dlg::vDestroy()
+	{
+		THISCALL_1(VOID, 0x41B080, this);
+		return this;
+	}
+
+	_H3API_ INT H3Dlg::vShow(INT zorder, BOOL8 draw)
+	{
+		return THISCALL_3(INT, 0x5FF0A0, this, zorder, draw);
+	}
+
+	_H3API_ INT H3Dlg::vHide(BOOL8 redrawScreen)
+	{
+		return THISCALL_2(INT, 0x5FF220, this, redrawScreen);
+	}
+
+	_H3API_ INT H3Dlg::vPreProcess(H3Msg & msg)
+	{
+		return vDialogProc(msg);
+	}
+
+	_H3API_ VOID H3Dlg::vParentActivate_10(H3DlgItem* unknown)
+	{
+	}
+
+	_H3API_ BOOL8 H3Dlg::vRedraw(BOOL8 redrawScreen, INT32 minItemId, INT32 maxItemId)
+	{
+		return THISCALL_4(BOOL8, 0x5FF5E0, this, redrawScreen, minItemId, maxItemId);
+	}
+
+	_H3API_ INT H3Dlg::vShowAndRun(BOOL8 fadeIn)
+	{
+		return THISCALL_2(INT, 0x5FFA20, this, fadeIn);
+	}
+
+	_H3API_ INT H3Dlg::vInitiateItems()
+	{
+		return THISCALL_1(INT, 0x5FFB30, this);
+	}
+
+	_H3API_ INT H3Dlg::vActivateItems(BOOL8 increase)
+	{
+		return THISCALL_2(INT, 0x5FFBB0, this, increase);
+	}
+
+	_H3API_ BOOL8 H3Dlg::vOnMouseMove(INT32 x, INT32 y)
+	{
+		return THISCALL_3(BOOL8, 0x5FFCA0, this, x, y);
+	}
+
+	_H3API_ BOOL8 H3Dlg::vOnRightClick(INT32 id)
+	{
+		return THISCALL_2(BOOL8, 0x5FFD50, this, id);
+	}
+
+	_H3API_ BOOL8 H3Dlg::vOnLeftClick(INT32 id, BOOL8 & closeDialog)
+	{
+		closeDialog = FALSE;
+		return FALSE; // same as original function 0x5FFE90
+	}
+
+	_H3API_ H3DlgTextPcx* H3Dlg::vGetStatusBar()
+	{
+		return nullptr; // same as original 0x4842C0
+	}
+
+	_H3API_ INT H3Dlg::vEndDialogOnTimeExpired(H3Msg & msg)
+	{
+		return THISCALL_2(INT, 0x41B0F0, this, &msg);
+	}
+
+	_H3API_ H3DlgItem * H3BaseDlg::GetDlgItem(UINT16 id, h3func vtable) const
+	{
+		H3DlgItem* it = firstItem;
+		if (it == nullptr)
+			return it;
+		do
+		{
+			if ((it->GetID() == id) && (*reinterpret_cast<h3func*>(it) == vtable))
+				break;
+		} while (it = it->GetNextItem());
+
+		return it;
+	}
+
+	_H3API_ H3BaseDlg::H3BaseDlg(INT x, INT y, INT w, INT h) :
+		zOrder(-1), nextDialog(nullptr), lastDialog(nullptr), flags(0x12), state(0),
+		xDlg(x), yDlg(y), widthDlg(w), heightDlg(h), lastItem(nullptr), firstItem(nullptr),
+		focusedItemId(-1), pcx16(nullptr), deactivatesCount(0), lastHintShowed(-1),
+		messageCommand(512), messageSubtype(10), messageItemId(30721), networkGame(FALSE)
+	{
+		struct unkNetwork
+		{
+			h3unk _f_00[240];
+			BYTE* data;
+		};
+		if (IntAt(0x69959C))
+		{
+			unkNetwork* net = *(unkNetwork**)0x69D858;
+			if (net->data)
+			{
+				if (net->data[4])
+					networkGame = TRUE;
+				net->data[4] = 1;
+			}
+		}
+	}
+
 	_H3API_ INT32 H3BaseDlg::GetWidth() const
 	{
 		return widthDlg;
@@ -316,14 +475,79 @@ namespace h3
 		dlgItems += item;
 		return THISCALL_3(H3DlgItem*, 0x5FF270, this, item, -1); // LoadItem
 	}
-	_H3API_ H3DlgItem * H3BaseDlg::CreateHidden(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id)
+	_H3API_ H3DlgDef * H3BaseDlg::GetDef(UINT16 id) const
 	{
-		H3DlgItem* it = H3DlgItem::Create(x, y, width, height, id, 0);
+		return reinterpret_cast<H3DlgDef*>(GetDlgItem(id, H3DlgItem::VT_DLGDEF));
+	}
+
+	_H3API_ H3DlgPcx * H3BaseDlg::GetPcx(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgPcx*>(GetDlgItem(id, H3DlgItem::VT_DLGPCX));
+	}
+
+	_H3API_ H3DlgEdit * H3BaseDlg::GetEdit(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgEdit*>(GetDlgItem(id, H3DlgItem::VT_DLGEDIT));
+	}
+
+	_H3API_ H3DlgText * H3BaseDlg::GetText(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgText*>(GetDlgItem(id, H3DlgItem::VT_DLGTEXT));
+	}
+
+	_H3API_ H3DlgFrame * H3BaseDlg::GetFrame(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgFrame*>(GetDlgItem(id, H3DlgItem::VT_DLGFRAME));
+	}
+
+	_H3API_ H3DlgPcx16 * H3BaseDlg::GetPcx16(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgPcx16*>(GetDlgItem(id, H3DlgItem::VT_DLGPCX16));
+	}
+
+	_H3API_ H3DlgTextPcx * H3BaseDlg::GetTextPcx(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgTextPcx*>(GetDlgItem(id, H3DlgItem::VT_DLGTEXTPCX));
+	}
+
+	_H3API_ H3DlgDefButton * H3BaseDlg::GetDefButton(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgDefButton*>(GetDlgItem(id, H3DlgItem::VT_DLGDEFBUTTON));
+	}
+
+	_H3API_ H3DlgScrollbar * H3BaseDlg::GetScrollbar(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgScrollbar*>(GetDlgItem(id, H3DlgItem::VT_DLGSCROLLBAR));
+	}
+
+	_H3API_ H3DlgTransparentItem * H3BaseDlg::GetTransparent(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgTransparentItem*>(GetDlgItem(id, H3DlgItem::VT_DLGITEM));
+	}
+
+	_H3API_ H3DlgCustomButton * H3BaseDlg::GetCustomButton(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgCustomButton*>(GetDlgItem(id, H3DlgItem::VT_DLGCUSTOMBUTTOM));
+	}
+
+	_H3API_ H3DlgCaptionButton * H3BaseDlg::GetCaptionButton(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgCaptionButton*>(GetDlgItem(id, H3DlgItem::VT_DLGCAPTIONBUTTON));
+	}
+
+	_H3API_ H3DlgScrollableText * H3BaseDlg::GetScrollabaleText(UINT16 id) const
+	{
+		return reinterpret_cast<H3DlgScrollableText*>(GetDlgItem(id, H3DlgItem::VT_DLGSCROLLTEXT));
+	}
+
+	_H3API_ H3DlgTransparentItem * H3BaseDlg::CreateHidden(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id)
+	{
+		H3DlgTransparentItem* it = H3DlgTransparentItem::Create(x, y, width, height, id);
 		if (it)
 			AddItem(it);
 		return it;
 	}
-	_H3API_ H3LoadedPCX16* H3Dlg::GetBackgroundPcx() const
+	_H3API_ H3LoadedPcx16* H3Dlg::GetBackgroundPcx() const
 	{
 		return background;
 	}
@@ -333,9 +557,9 @@ namespace h3
 			return FALSE;
 		return background->BackgroundRegion(xStart, yStart, w, h, is_blue);
 	}
-	_H3API_ BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPCX16* destination)
+	_H3API_ BOOL H3Dlg::SimpleFrameRegion(INT32 xStart, INT32 yStart, INT32 _width, INT32 _height, H3LoadedPcx16* destination)
 	{
-		H3LoadedPCX16* target = destination ? destination : background;
+		H3LoadedPcx16* target = destination ? destination : background;
 		if (!target)
 			return FALSE;
 		return target->SimpleFrameRegion(xStart, yStart, _width, _height);
@@ -348,17 +572,17 @@ namespace h3
 			return FALSE;
 		return background->FrameRegion(x, y, w, h, statusBar, colorIndex, is_blue);
 	}
-	_H3API_ H3LoadedPCX16* H3BaseDlg::GetCurrentPcx()
+	_H3API_ H3LoadedPcx16* H3BaseDlg::GetCurrentPcx()
 	{
 		return pcx16;
 	}
-	_H3API_ H3Dlg_proc H3Dlg::GetProc()
-	{
-		return customProc;
-	}
 	_H3API_ H3DlgItem* H3BaseDlg::ItemAtPosition(H3Msg* msg)
 	{
-		return THISCALL_3(H3DlgItem*, 0x5FF9A0, this, msg->x_abs, msg->y_abs);
+		return ItemAtPosition(*msg);
+	}
+	_H3API_ H3DlgItem* H3BaseDlg::ItemAtPosition(H3Msg& msg)
+	{
+		return THISCALL_3(H3DlgItem*, 0x5FF9A0, this, msg.x_abs, msg.y_abs);
 	}
 	_H3API_ H3Vector<H3DlgItem*>& H3BaseDlg::GetList()
 	{
@@ -434,7 +658,7 @@ namespace h3
 		return def;
 	}
 	_H3API_ H3DlgDefButton* H3BaseDlg::CreateButton(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey)
-	{		
+	{
 		H3DlgDefButton* but = H3DlgDefButton::Create(x, y, width, height, id, defName, frame, clickFrame, closeDialog, hotkey);
 		if (but)
 			AddItem(but);
@@ -445,12 +669,12 @@ namespace h3
 		H3DlgDefButton* but = CreateButton(x, y, 0, 0, id, defName, frame, clickFrame, closeDialog, hotkey);
 		if (but)
 		{
-			H3LoadedDEF* def = but->GetDef();
+			H3LoadedDef* def = but->GetDef();
 			if (def)
 			{
 				but->SetWidth(def->widthDEF);
 				but->SetHeight(def->heightDEF);
-			}			
+			}
 		}
 		return but;
 	}
@@ -548,7 +772,7 @@ namespace h3
 		H3DlgPcx* pcx = CreatePcx(x, y, 0, 0, id, pcxName);
 		if (pcx && pcx->GetPcx())
 		{
-			H3LoadedPCX* p = pcx->GetPcx();
+			H3LoadedPcx* p = pcx->GetPcx();
 			pcx->SetWidth(p->width);
 			pcx->SetHeight(p->height);
 		}
@@ -608,7 +832,7 @@ namespace h3
 			AddItem(tx);
 		return tx;
 	}
-	_H3API_ H3DlgScrollableText* H3BaseDlg::CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
+	_H3API_ H3DlgScrollableText* H3BaseDlg::CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR font, INT32 color, INT32 isBlue)
 	{
 		H3DlgScrollableText* sc = H3DlgScrollableText::Create(text, x, y, width, height, font, color, isBlue);
 		if (sc)
@@ -622,20 +846,48 @@ namespace h3
 			AddItem(sc);
 		return sc;
 	}
-	_H3API_ VOID H3DlgItem::_SetText(LPCSTR text)
+
+	_H3API_ H3DlgTransparentItem* H3DlgTransparentItem::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id)
 	{
-		THISCALL_2(VOID, vTable->setText, this, text);
-	}
-	_H3API_ H3DlgItem* H3DlgItem::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 flags)
-	{
-		H3DlgItem* d = (H3DlgItem*)F_malloc(sizeof(H3DlgItem));
+		H3DlgTransparentItem* d = (H3DlgTransparentItem*)F_malloc(sizeof(H3DlgTransparentItem));
 		if (d)
-			THISCALL_7(H3DlgItem*, 0x44FBE0, d, x, y, width, height, id, flags);
+			THISCALL_7(H3DlgTransparentItem*, 0x44FBE0, d, x, y, width, height, id, 1);
 		return d;
 	}
+
+	_H3API_ BOOL H3DlgItem::NotifyParent(H3Msg & msg)
+	{
+		return reinterpret_cast<H3Dlg*>(parent)->Notify(this, msg);
+	}
+	_H3API_ BOOL H3DlgItem::TranslateUnprocessedMessage(H3Msg & msg)
+	{
+		switch (msg.command)
+		{
+		case H3Msg::MC_WheelButton:
+			if (msg.subtype != H3Msg::MS_MouseWheelButtonDown || msg.subtype != H3Msg::MS_MouseWheelButtonUp)
+				break;
+			/* fall through */
+		case H3Msg::MC_MouseWheel:
+		{
+			if (deactivatesCount > 0)
+				break;
+			if (!IsActive())
+				break;
+			const int x = msg.GetX() - parent->GetX();
+			const int y = msg.GetY() - parent->GetY();
+			if ((x < GetX()) || (y < GetY()) || (x >= GetX() + GetWidth()) || (y >= GetY() + GetHeight()))
+				break;
+			return NotifyParent(msg);
+		}
+		default:
+			break;
+		}
+		return FALSE;
+	}
+
 	_H3API_ VOID H3DlgItem::EnableItem(BOOL enable)
 	{
-		THISCALL_2(VOID, vTable->setEnabled, this, enable);
+		vEnable(enable);
 	}
 	_H3API_ VOID H3DlgItem::Enable()
 	{
@@ -653,9 +905,21 @@ namespace h3
 	{
 		return yPos;
 	}
+	_H3API_ INT32 H3DlgItem::GetAbsoluteX() const
+	{
+		return xPos + parent->GetX();
+	}
+	_H3API_ INT32 H3DlgItem::GetAbsoluteY() const
+	{
+		return yPos + parent->GetY();
+	}
 	_H3API_ BOOL H3DlgItem::IsEnabled() const
 	{
 		return !(state & 0x20);
+	}
+	_H3API_ BOOL H3DlgItem::IsActive() const
+	{
+		return state & 2;
 	}
 	_H3API_ VOID H3DlgItem::SetX(UINT16 x)
 	{
@@ -683,19 +947,29 @@ namespace h3
 	}
 	_H3API_ VOID H3DlgItem::Draw()
 	{
-		THISCALL_1(VOID, vTable->draw, this);
+		vDrawToWindow();
 	}
 	_H3API_ VOID H3DlgItem::Refresh()
 	{
 		parent->Redraw(xPos, yPos, widthItem, heightItem);
 	}
-	_H3API_ VOID H3DlgItem::Hide()
+	_H3API_ H3DlgItem * H3DlgItem::Hide()
 	{
 		state &= ~4;
+		return this;
 	}
-	_H3API_ VOID H3DlgItem::Show()
+	_H3API_ VOID H3DlgItem::HideDeactivate()
+	{
+		state &= ~6;
+	}
+	_H3API_ VOID H3DlgItem::ShowActivate()
+	{
+		state |= 6;
+	}
+	_H3API_ H3DlgItem * H3DlgItem::Show()
 	{
 		state |= 4;
+		return this;
 	}
 	_H3API_ VOID H3DlgItem::Shade()
 	{
@@ -705,9 +979,15 @@ namespace h3
 	{
 		state &= ~8;
 	}
-	_H3API_ VOID H3DlgItem::SetFocus(BOOL8 focus)
+	_H3API_ H3DlgItem * H3DlgItem::Activate()
 	{
-		THISCALL_2(VOID, vTable->setFocus, this, focus);
+		state |= 2;
+		return this;
+	}
+	_H3API_ H3DlgItem * H3DlgItem::DeActivate()
+	{
+		state &= ~2;
+		return this;
 	}
 	_H3API_ BOOL H3DlgItem::IsVisible() const
 	{
@@ -740,6 +1020,29 @@ namespace h3
 	_H3API_ VOID H3DlgItem::SetHints(LPCSTR shortTipText, LPCSTR rightClickHint, BOOL allocateMemory)
 	{
 		THISCALL_4(void, 0x5FEE00, this, shortTipText, rightClickHint, allocateMemory);
+	}
+	_H3API_ VOID H3DlgItem::DrawTempFrame(INT thickness, BYTE r, BYTE g, BYTE b) const
+	{
+		H3LoadedPcx16* pcx = H3Internal::WindowManager()->GetDrawBuffer();
+		if (!pcx)
+			return;
+		pcx->DrawThickFrame(GetAbsoluteX(), GetAbsoluteY(), GetWidth(), GetHeight(), thickness, r, g, b);
+	}
+	_H3API_ VOID H3DlgItem::DrawTempFrame(INT thickness, const H3RGB888 & color) const
+	{
+		DrawTempFrame(thickness, color.r, color.g, color.b);
+	}
+	_H3API_ H3BaseDlg * H3DlgItem::GetParent() const
+	{
+		return parent;
+	}
+	_H3API_ H3DlgItem * H3DlgItem::GetNextItem() const
+	{
+		return nextDlgItem;
+	}
+	_H3API_ H3DlgItem * H3DlgItem::GetPreviousItem() const
+	{
+		return previousDlgItem;
 	}
 	_H3API_ H3DlgFrame* H3DlgItem::CastFrame()
 	{
@@ -833,16 +1136,16 @@ namespace h3
 	{
 		return &color565;
 	}
-	_H3API_ H3DlgDef* H3DlgDef::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
+	_H3API_ H3DlgDef* H3DlgDef::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 secondFrame, INT32 mirror, BOOL closeDialog)
 	{
 		H3DlgDef* d = (H3DlgDef*)F_malloc(sizeof(H3DlgDef));
 		if (d)
-			THISCALL_12(H3DlgDef*, 0x4EA800, d, x, y, width, height, id, defName, frame, group, mirror, closeDialog, 0x10);
+			THISCALL_12(H3DlgDef*, 0x4EA800, d, x, y, width, height, id, defName, frame, secondFrame, mirror, closeDialog, 0x10);
 		return d;
 	}
-	_H3API_ H3DlgDef* H3DlgDef::Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 group, INT32 mirror, BOOL closeDialog)
+	_H3API_ H3DlgDef* H3DlgDef::Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 secondFrame, INT32 mirror, BOOL closeDialog)
 	{
-		H3DlgDef* d = Create(x, y, 0, 0, id, defName, frame, group, mirror, closeDialog);
+		H3DlgDef* d = Create(x, y, 0, 0, id, defName, frame, secondFrame, mirror, closeDialog);
 		if (d && d->loadedDef)
 		{
 			d->widthItem = d->loadedDef->widthDEF;
@@ -864,23 +1167,56 @@ namespace h3
 	{
 		defFrame = frame;
 	}
-	_H3API_ INT H3DlgDef::ToggleFrame()
+	_H3API_ INT H3DlgDefButton::ToggleFrame()
 	{
 		defFrame = !defFrame; defFrameOnClick = !defFrameOnClick; return defFrame;
+	}
+	_H3API_ INT32 H3DlgDefButton::GetFrame() const
+	{
+		return defFrame;
+	}
+	_H3API_ INT32 H3DlgDefButton::GetClickFrame() const
+	{
+		return defFrameOnClick;
+	}
+	_H3API_ VOID H3DlgDefButton::ColorDefToPlayer(INT32 id)
+	{
+		loadedDef->ColorToPlayer(id);
 	}
 	_H3API_ INT32 H3DlgDef::GetFrame() const
 	{
 		return defFrame;
 	}
+	_H3API_ INT32 H3DlgDef::ToggleFrame()
+	{
+		std::swap(defFrame, secondFrame);
+		return defFrame;
+	}
+	_H3API_ INT32 H3DlgDef::GetClickFrame() const
+	{
+		return secondFrame;
+	}
+	_H3API_ VOID H3DlgDef::SetClickFrame(INT32 clickFrame)
+	{
+		secondFrame = clickFrame;
+	}
 	_H3API_ VOID H3DlgDef::ColorDefToPlayer(INT32 id)
 	{
 		loadedDef->ColorToPlayer(id);
 	}
-	_H3API_ VOID H3DlgDef::SetClickFrame(INT32 clickFrame)
+	_H3API_	VOID H3DlgDefButton::SetFrame(INT32 frame)
+	{
+		defFrame = frame;
+	}
+	_H3API_ VOID H3DlgDefButton::SetClickFrame(INT32 clickFrame)
 	{
 		defFrameOnClick = clickFrame;
 	}
-	_H3API_ H3LoadedDEF * H3DlgDef::GetDef()
+	_H3API_ H3LoadedDef * H3DlgDefButton::GetDef()
+	{
+		return loadedDef;
+	}
+	_H3API_ H3LoadedDef * H3DlgDef::GetDef()
 	{
 		return loadedDef;
 	}
@@ -905,10 +1241,7 @@ namespace h3
 	{
 		return Create(x, y, 0, defName, frame, clickFrame, 0, 0);
 	}
-	_H3API_ VOID H3DlgCaptionButton::SetText(LPCSTR text)
-	{
-		_SetText(text);
-	}
+
 	_H3API_ H3DlgCaptionButton* H3DlgCaptionButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 hotkey, INT32 color)
 	{
 		H3DlgCaptionButton* b = (H3DlgCaptionButton*)F_malloc(sizeof(H3DlgCaptionButton));
@@ -926,6 +1259,7 @@ namespace h3
 		}
 		return b;
 	}
+
 	_H3API_ H3DlgCustomButton* H3DlgCustomButton::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame)
 	{
 		H3DlgCustomButton* b = (H3DlgCustomButton*)F_malloc(sizeof(H3DlgCustomButton));
@@ -976,7 +1310,7 @@ namespace h3
 	{
 		return Create(x, y, 0, pcxName);
 	}
-	_H3API_ VOID H3DlgPcx::SetPcx(H3LoadedPCX* pcx)
+	_H3API_ VOID H3DlgPcx::SetPcx(H3LoadedPcx* pcx)
 	{
 		loadedPcx = pcx;
 	}
@@ -984,14 +1318,15 @@ namespace h3
 	{
 		THISCALL_2(VOID, 0x4501D0, this, player);
 	}
-	_H3API_ H3LoadedPCX* H3DlgPcx::GetPcx()
+	_H3API_ H3LoadedPcx* H3DlgPcx::GetPcx()
 	{
 		return loadedPcx;
 	}
-	_H3API_ H3LoadedPCX* H3DlgPcx::GetPcx() const
+	_H3API_ H3LoadedPcx* H3DlgPcx::GetPcx() const
 	{
 		return loadedPcx;
 	}
+
 	_H3API_ H3DlgPcx16* H3DlgPcx16::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName)
 	{
 		H3DlgPcx16* p = (H3DlgPcx16*)F_malloc(sizeof(H3DlgPcx16));
@@ -1013,11 +1348,11 @@ namespace h3
 	{
 		return Create(x, y, 0, 0, 0, pcxName);
 	}
-	_H3API_ VOID H3DlgPcx16::SetPcx(H3LoadedPCX16* pcx16)
+	_H3API_ VOID H3DlgPcx16::SetPcx(H3LoadedPcx16* pcx16)
 	{
 		loadedPcx16 = pcx16;
 	}
-	_H3API_ H3LoadedPCX16* H3DlgPcx16::GetPcx()
+	_H3API_ H3LoadedPcx16* H3DlgPcx16::GetPcx()
 	{
 		return loadedPcx16;
 	}
@@ -1037,6 +1372,7 @@ namespace h3
 	{
 		BevelArea(it->GetX() - 1, it->GetY() - 1, it->GetWidth() + 2, it->GetHeight() + 2);
 	}
+
 	_H3API_ H3DlgEdit* H3DlgEdit::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY)
 	{
 		H3DlgEdit* e = (H3DlgEdit*)F_malloc(sizeof(H3DlgEdit));
@@ -1054,7 +1390,7 @@ namespace h3
 	}
 	_H3API_ VOID H3DlgEdit::SetText(LPCSTR text)
 	{
-		_SetText(text);
+		vSetText(text);
 	}
 	_H3API_ VOID H3DlgEdit::DecreaseCaret()
 	{
@@ -1066,11 +1402,11 @@ namespace h3
 		if (caretPos < text.Length())
 			++caretPos;
 	}
-	_H3API_ INT H3DlgEdit::GetCaret() const
+	_H3API_ UINT H3DlgEdit::GetCaret() const
 	{
 		return caretPos;
 	}
-	_H3API_ BOOL H3DlgEdit::SetCaret(INT pos)
+	_H3API_ BOOL H3DlgEdit::SetCaret(UINT pos)
 	{
 		if (pos < 0 || pos == caretPos || pos > text.Length())
 			return FALSE;
@@ -1083,8 +1419,9 @@ namespace h3
 	}
 	_H3API_ VOID H3DlgEdit::SetFocus(BOOL on)
 	{
-		THISCALL_2(VOID, vTable->setFocus, this, on);
+		vSetFocus(on);
 	}
+
 	_H3API_ H3DlgText* H3DlgText::Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, INT32 color, INT32 id, INT32 align, INT32 bkColor)
 	{
 		H3DlgText* t = (H3DlgText*)F_malloc(sizeof(H3DlgText));
@@ -1098,8 +1435,9 @@ namespace h3
 	}
 	_H3API_ VOID H3DlgText::SetText(LPCSTR text)
 	{
-		_SetText(text);
+		vSetText(text);
 	}
+
 	_H3API_ H3DlgTextPcx* H3DlgTextPcx::Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id, INT32 align)
 	{
 		H3DlgTextPcx* t = (H3DlgTextPcx*)F_malloc(sizeof(H3DlgTextPcx));
@@ -1118,7 +1456,7 @@ namespace h3
 		return t;
 	}
 	_H3API_ VOID H3DlgHintBar::ShowHint(H3Msg* msg)
-	{		
+	{
 		if (msg->command == int(H3Msg::MessageCommand::MC_MouseOver))
 		{
 			H3DlgItem* di = msg->ItemAtPosition(parent);
@@ -1147,13 +1485,19 @@ namespace h3
 	{
 		return (H3DlgHintBar*)H3DlgTextPcx::Create(x, y, w, h, h3_NullString, NH3Dlg::Text::SMALL, NH3Dlg::HDassets::HD_STATUSBAR_PCX, NH3Dlg::TextColor::REGULAR);
 	}
-	_H3API_ H3DlgScrollableText* H3DlgScrollableText::Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, INT32 font, INT32 color, INT32 isBlue)
+
+	_H3API_ H3DlgScrollableText* H3DlgScrollableText::Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR font, INT32 color, INT32 isBlue)
 	{
 		H3DlgScrollableText* s = (H3DlgScrollableText*)F_malloc(sizeof(H3DlgScrollableText));
 		if (s)
 			THISCALL_9(H3DlgScrollableText*, 0x5BA360, s, text, x, y, width, height, font, color, isBlue);
 		return s;
 	}
+	_H3API_ VOID H3DlgScrollbar::LoadButton(LPCSTR buttonName)
+	{
+		THISCALL_2(VOID, 0x596340, this, buttonName);
+	}
+
 	_H3API_ H3DlgScrollbar* H3DlgScrollbar::Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc, BOOL isBlue, INT32 stepSize, BOOL arrowsEnabled)
 	{
 		H3DlgScrollbar* s = (H3DlgScrollbar*)F_malloc(sizeof(H3DlgScrollbar));
@@ -1201,40 +1545,359 @@ namespace h3
 	{
 		return parent->GetX() + xPos + btnPosition;
 	}
-	_H3API_ H3LoadedPCX * H3DlgScrollbar::GetPcx()
+	_H3API_ H3LoadedPcx * H3DlgScrollbar::GetPcx()
 	{
 		return loadedPcx;
 	}
-	_H3API_ INT32 __fastcall H3DlgCustomProc(H3Dlg* dlg, int, H3Msg* msg)
+
+	_H3API_ VOID H3DlgBasePanel::BackupScreen()
 	{
-		if (H3DlgHintBar* hint = dlg->GetHintBar())
-			hint->ShowHint(msg);
-		if (H3Dlg_proc cProc = dlg->GetProc())
-			return STDCALL_2(INT32, cProc, dlg, msg);
-		return dlg->DefaultProc(msg);
+		THISCALL_1(VOID, 0x5AA870, this);
 	}
-	_H3API_ void H3CombatBottomPanel::AddComment(LPCSTR text)
+	_H3API_ VOID H3DlgBasePanel::RestoreBackupScreen()
 	{
-		THISCALL_2(void, vTable[1], this, text);
+		THISCALL_1(VOID, 0x5AA920, this);
 	}
-	_H3API_ H3Vector<H3DlgItem*>& H3DlgPanel::GetItems()
+
+	_H3API_ H3Vector<H3DlgItem*>& H3DlgBasePanel::GetItems()
 	{
 		return items;
+	}
+	_H3API_ H3DlgItem* H3DlgBasePanel::AddItem(H3DlgItem * item)
+	{
+		// H3DlgBasePanel items are hidden by default
+		// use Show() when needed.
+		item->HideDeactivate();
+		items += item;
+		return THISCALL_3(H3DlgItem*, 0x5AA7B0, this, item, -1);
+	}
+	_H3API_ VOID H3DlgBasePanel::Redraw()
+	{
+		//THISCALL_4(VOID, 0x5AA800, this, TRUE, -65535, 65535);
+
+		for (H3DlgItem** i = items.begin(); i != items.end(); ++i)
+		{
+			H3DlgItem* it = *i;
+			if (it->IsVisible())
+				it->Draw();
+		}
+
+		H3Internal::WindowManager()->H3Redraw(x + parent->GetX(), y + parent->GetY(), width, height);
+	}
+	_H3API_ VOID H3DlgBasePanel::Hide()
+	{
+		for (H3DlgItem** it = items.begin(); it != items.end(); ++it)
+			(*it)->HideDeactivate();
+		RestoreBackupScreen();
+	}
+	_H3API_ VOID H3DlgBasePanel::Show()
+	{
+		// if backup pcx exists, panel is already shown
+		if (backupPcx)
+			return;
+		BackupScreen();
+		for (H3DlgItem** it = items.begin(); it != items.end(); ++it)
+			(*it)->ShowActivate();
+		Redraw();
+	}
+	_H3API_ VOID H3DlgBasePanel::Move(INT xDest, INT yDest)
+	{
+		if (items.IsEmpty())
+			return;
+
+		const BOOL shown = backupPcx != nullptr;
+		if (shown)
+			Hide();
+
+		const int dx = xDest - x;
+		const int dy = yDest - y;
+		x = xDest;
+		y = yDest;
+
+		for (H3DlgItem** i = items.begin(); i != items.end(); ++i)
+		{
+			H3DlgItem* it = *i;
+			it->SetX(it->GetX() + dx);
+			it->SetY(it->GetY() + dy);
+		}
+
+		if (shown)
+			Show();
+	}
+	_H3API_ VOID H3DlgBasePanel::MoveRelative(INT xDest, INT yDest)
+	{
+		xDest -= parent->GetX();
+		yDest -= parent->GetY();
+		Move(xDest, yDest);
+	}
+
+	_H3API_ INT32 H3DlgBasePanel::GetWidth() const
+	{
+		return width;
+	}
+	_H3API_ INT32 H3DlgBasePanel::GetHeight() const
+	{
+		return height;
+	}
+	_H3API_ INT32 H3DlgBasePanel::GetX() const
+	{
+		return x;
+	}
+	_H3API_ INT32 H3DlgBasePanel::GetY() const
+	{
+		return y;
 	}
 	_H3API_ INT HDDlg::CallHDProc(H3Msg & msg)
 	{
 		return hdProc(this, &msg);
 	}
+
 	_H3API_ H3TownAlignmentDlg::H3TownAlignmentDlg(int town)
 	{
 		THISCALL_2(H3TownAlignmentDlg&, 0x5761A0, this, 1);
 		int frame = 2 * town + 2;
-		DefLoader def(NH3Dlg::Assets::TOWN_SMALL);
+		H3DefLoader def(NH3Dlg::Assets::TOWN_SMALL);
 		THISCALL_4(BOOL8, 0x5761C0, this, def.Get(), frame, town);
-		THISCALL_2(VOID, vtable->runDlg, this, 0);
-	}	
+		THISCALL_2(VOID, m_vtable->runDlg, this, 0);
+	}
 	_H3API_ H3TownAlignmentDlg::~H3TownAlignmentDlg()
 	{
 		THISCALL_1(VOID, 0x48FA10, this);
+	}
+	_H3API_ INT H3Dlg::vDialogProc(H3Msg & msg)
+	{
+		H3DlgItem* it = nullptr;
+
+		switch (msg.command)
+		{
+		case H3Msg::MessageCommand::MC_KeyUp:
+			if (OnKeyPress(msg.GetKey(), msg.GetFlag()))
+				break;
+			return CheckEnd(msg);
+		case H3Msg::MessageCommand::MC_MouseOver:
+			if (!OnMouseHover(msg.GetX(), msg.GetY()))
+				return CheckEnd(msg);
+			it = ItemAtPosition(msg);
+			if (!it)
+				break;
+
+			if (hintBar && it->GetHint())
+				hintBar->ShowMessage(it->GetHint());
+
+			if (OnMouseHover(it))
+				break;
+			return CheckEnd(msg);
+		case H3Msg::MessageCommand::MC_LClickOutside:
+			if (OnLeftClickOutside())
+				break;
+			return CheckEnd(msg);
+		case H3Msg::MessageCommand::MC_RClickOutside:
+			if (OnRightClickOutside())
+				break;
+			return CheckEnd(msg);
+		case H3Msg::MessageCommand::MC_KeyHeld:
+			if (OnKeyHeld(msg.GetKey(), msg.GetFlag()))
+				break;
+			return CheckEnd(msg);
+		case H3Msg::MessageCommand::MC_MouseButton:
+			switch (msg.subtype)
+			{
+			case H3Msg::MessageSubtype::MS_EndDialog:
+				switch (msg.item_id)
+				{
+				case H3Msg::ItemIDs::ID_OK:
+					OnOK();
+					break;
+				case H3Msg::ItemIDs::ID_CANCEL:
+					OnCancel();
+					break;
+				default:
+					OnClose(msg.item_id);
+					break;
+				}
+				break;
+			case H3Msg::MessageSubtype::MS_LButtonClick:
+				if (OnLeftClick(msg.item_id, msg))
+					break;
+				return CheckEnd(msg);
+			case H3Msg::MessageSubtype::MS_RButtonDown:
+				it = ItemAtPosition(msg);
+				if (!it)
+					break;
+				if (OnRightClick(it))
+					break;
+				return CheckEnd(msg);
+			default:
+				break;
+			}
+			break;
+		case H3Msg::MessageCommand::MC_MouseWheel:
+			if (OnMouseWheel(msg.subtype))
+				break;
+			return CheckEnd(msg);
+		case H3Msg::MessageCommand::MC_WheelButton:
+			if (msg.subtype == H3Msg::MessageSubtype::MS_MouseWheelButtonDown)
+			{
+				it = ItemAtPosition(msg);
+				if (!it)
+					break;
+				if (OnWheelButton(it))
+					break;
+				return CheckEnd(msg);
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (endDialog)
+			return msg.CloseDialog();
+
+		if (DialogProc(msg))
+			return DefaultProc(msg);
+
+		return CheckEnd(msg);
+	}
+	_H3API_ VOID H3Dlg::OnOK()
+	{
+	}
+	_H3API_ VOID H3Dlg::OnCancel()
+	{
+	}
+	_H3API_ VOID H3Dlg::OnClose(INT itemId)
+	{
+	}
+	_H3API_ BOOL H3Dlg::OnNotify(H3DlgItem * it, H3Msg & msg)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::DialogProc(H3Msg & msg)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnLeftClick(INT itemId, H3Msg& msg)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnLeftClickOutside()
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnRightClick(H3DlgItem* it)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnRightClickOutside()
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnMouseWheel(INT direction)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnWheelButton(H3DlgItem* it)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnMouseHover(INT32 x, INT32 y)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnMouseHover(H3DlgItem* it)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnKeyPress(NH3VKey::eH3VK key, H3Msg::MessageFlag flag)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnKeyHeld(NH3VKey::eH3VK key, H3Msg::MessageFlag flag)
+	{
+		return TRUE;
+	}
+	_H3API_ BOOL H3Dlg::OnCreate()
+	{
+		return TRUE;
+	}
+
+	_H3API_ VOID H3CombatDlg::ShowHint(LPCSTR hint, BOOL8 addToLog)
+	{
+		THISCALL_4(VOID, 0x4729D0, this, hint, addToLog, 0);
+	}
+	_H3API_ H3Vector<H3String*>& H3CombatDlg::GetCombatText()
+	{
+		return *reinterpret_cast<H3Vector<H3String*>*>(PBYTE(this) + 0x54);
+	}
+
+	_H3API_ BOOL H3DlgHighlightable::UnhighlightSelection() const
+	{
+		if (m_currentHighlight)
+		{
+			m_currentHighlight->Draw();
+			m_currentHighlight->Refresh();
+			m_currentHighlight = nullptr;
+			return TRUE;
+		}
+		return FALSE;
+	}
+	_H3API_ H3DlgHighlightable::H3DlgHighlightable() :
+		m_currentHighlight()
+	{
+	}
+	_H3API_ VOID H3DlgHighlightable::AddItem(H3DlgItem * dlgItem, BYTE red, BYTE green, BYTE blue, UINT frameThickness)
+	{
+		AddItem(dlgItem, H3RGB888(red, green, blue), frameThickness);
+	}
+	_H3API_ VOID H3DlgHighlightable::AddItem(H3DlgItem * dlgItem, const H3RGB888 & color, UINT frameThickness)
+	{
+		H3Highlighter highlight(dlgItem, color, frameThickness);
+		m_highlightableItems += highlight;
+	}
+	_H3API_ BOOL H3DlgHighlightable::HighlightItem(H3DlgItem * dlgItem) const
+	{
+		if (!dlgItem)
+			return UnhighlightSelection();
+		else
+		{
+			if (dlgItem == m_currentHighlight)
+				return FALSE;
+			UnhighlightSelection();
+			for (H3Highlighter* it = m_highlightableItems.begin(); it != m_highlightableItems.end(); ++it)
+			{
+				if (it->m_item == dlgItem)
+				{
+					it->m_item->DrawTempFrame(it->m_thickness, it->m_highlight);
+					it->m_item->Refresh();
+					m_currentHighlight = it->m_item;
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
+	}
+	_H3API_ BOOL H3DlgHighlightable::HighlightItem(const H3Msg & msg) const
+	{
+		if (m_highlightableItems.IsEmpty())
+			return FALSE;
+		if (!msg.IsMouseOver())
+			return FALSE;
+		return HighlightItem(msg.ItemAtPosition(m_highlightableItems[0].m_item->GetParent()));
+	}
+	_H3API_ VOID H3DlgHighlightable::Clear()
+	{
+		m_currentHighlight = nullptr;
+		m_highlightableItems.RemoveAll();
+	}
+	H3DlgHighlightable::H3Highlighter::H3Highlighter() :
+		m_item(), m_highlight(), m_thickness()
+	{
+	}
+	_H3API_ H3DlgHighlightable::H3Highlighter::H3Highlighter(H3DlgItem * item, const H3RGB888 & color, UINT thickness) :
+		m_item(item), m_highlight(color), m_thickness(thickness)
+	{
+	}
+	_H3API_ H3DlgHighlightable::H3Highlighter::H3Highlighter(H3DlgItem * item, BYTE r, BYTE g, BYTE b, UINT thickness) :
+		m_item(item), m_highlight(r, g, b), m_thickness(thickness)
+	{
 	}
 }

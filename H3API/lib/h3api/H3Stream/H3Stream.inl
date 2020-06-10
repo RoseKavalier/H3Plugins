@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -16,7 +15,7 @@
 
 namespace h3
 {
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 	template<typename ...Args>
 	inline H3Stream& H3Stream::Write(LPCSTR format, Args ...args)
 	{
@@ -40,14 +39,14 @@ namespace h3
 #endif
 
 	template<typename T>
-	inline BOOL h3::H3File::Read(const T & data, size_t sz)
+	inline BOOL h3::H3File::Read(const T & data)
 	{
-		return read(PVOID(&data), sz);
+		return read(PVOID(&data), sizeof(T));
 	}
 	template<typename T>
-	inline BOOL H3File::Write(const T & data, size_t sz)
+	inline BOOL H3File::Write(const T & data)
 	{
-		return write(PVOID(&data), sz);
+		return write(PVOID(&data), sizeof(T));
 	}
 }
 

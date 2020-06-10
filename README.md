@@ -1,6 +1,8 @@
 # H3Plugins
 
-Welcome to the home of the Heroes of Might and Magic III **H3API** library and plugins made using them. This repository will also be used to distribute the **SoD_SP** plugin which is coded using the same library.
+Welcome to H3Plugins, a collection of plugins for Heroes of Might and Magic III built using the H3API library. **H3API** library has moved to a separate repository which [can be found here](https://github.com/RoseKavalier/H3API). Although there is an H3API project distributed with the included solution, it may lag in being updated so it is recommended to pull the library from its home repository.
+
+This repository will also be used to distribute the **SoD_SP** plugin which is coded using the same library.
 
 ## Description
 
@@ -15,6 +17,12 @@ Welcome to the home of the Heroes of Might and Magic III **H3API** library and p
 
 **H3.DataLoader**
 >Loads any .def or .msk file from \Data\ folder, the same way as PCX, WAV or TXT files are normally read from there.
+
+**H3.DisableHWrules**
+>Disables all hooks set by HWrules plugin which can have undesirable effects in single player with no way to turn it off.
+
+**H3.DoubleClickShowcase**
+>Boilerplate code to show how one could detect double-clicks in H3.
 
 **H3.ImageLoader**
 >Loads image from given directory as H3LoadedPcx16*.

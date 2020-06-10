@@ -3,13 +3,13 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3RMG.hpp"
+#include "H3RMG.inl"
 
 namespace h3
 {
@@ -68,11 +68,11 @@ namespace h3
 		}
 	}
 	_H3API_ RMG_MapInfo::RMG_MapInfo(RMG_Main* main, BOOL underground) :
-		vTable((h3func*)0x6409DC), 
-		has_map(0), 
-		underground_map(nullptr), 
-		width(main->map.mapWidth), 
-		height(main->map.mapHeight), 
+		vTable((h3func*)0x6409DC),
+		has_map(0),
+		underground_map(nullptr),
+		width(main->map.mapWidth),
+		height(main->map.mapHeight),
 		underground(underground)
 	{
 		underground_map = &main->map.mapItems[width * height];
@@ -100,8 +100,12 @@ namespace h3
 	{
 		return THISCALL_1(BOOL8, 0x549E20, this);
 	}
-	_H3API_ BOOL8 RMG_Main::WriteMap(H3Streambuf& stream)
+	_H3API_ BOOL8 RMG_Main::WriteMap(H3ZStream& stream)
 	{
 		return THISCALL_2(BOOL8, 0x54B0E0, this, &stream);
+	}
+	_H3API_ h3func RMG_Object::GetVTable() const
+	{
+		return h3func(vTable);
 	}
 }

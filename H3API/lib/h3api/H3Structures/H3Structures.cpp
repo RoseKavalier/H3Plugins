@@ -3,13 +3,13 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3Structures.hpp"
+#include "H3Structures.inl"
 #include "../H3_Constants.hpp"
 #include "../H3_BinaryItems.hpp"
 
@@ -26,6 +26,26 @@ namespace h3
 	{
 		return FASTCALL_4(INT32, 0x5549E0, this, 127, 0, 1);
 	}
+
+	_H3API_ BOOL H3ZStream::Save(PVOID data, UINT data_size)
+	{
+		return THISCALL_3(UINT, vTable->write, this, data, data_size) == data_size;
+	}
+	_H3API_ BOOL H3ZStream::Load(PVOID data, UINT data_size)
+	{
+		return THISCALL_3(UINT, vTable->write, this, data, data_size) == data_size;
+	}
+
+	_H3API_ H3ZStream::H3ZStream(LPCSTR file_name, LPCSTR mode)
+	{
+		THISCALL_3(H3ZStream*, 0x4D6EB0, this, file_name, mode);
+	}
+
+	_H3API_ H3ZStream::~H3ZStream()
+	{
+		THISCALL_1(VOID, 0x4D6FC0, this);
+	}
+
 	_H3API_ H3Position::operator UINT() const
 	{
 		return pos;
@@ -93,12 +113,12 @@ namespace h3
 	}
 
 	_H3API_ H3Resources::H3Resources() :
-		wood(0), 
-		mercury(0), 
-		ore(0), 
-		sulfur(0), 
-		crystal(0), 
-		gems(0), 
+		wood(0),
+		mercury(0),
+		ore(0),
+		sulfur(0),
+		crystal(0),
+		gems(0),
 		gold(0)
 	{
 	}
@@ -114,38 +134,15 @@ namespace h3
 	}
 	_H3API_ BOOL H3Resources::EnoughResources(const H3Resources& cost) const
 	{
-		for (int i = 0; i < 7; ++i)
-			if (cost.cbegin()[i] > cbegin()[i])
-				return FALSE;
-		return TRUE;
+		return *this >= cost;
 	}
 	_H3API_ VOID H3Resources::RemoveResources(const H3Resources& cost)
 	{
-		for (int i = 0; i < 7; ++i)
-		{
-			if (AsRef(i) >= 0)
-				AsRef(i) = std::max(0, AsRef(i) - cost.cbegin()[i]);
-			else
-				AsRef(i) -= cost.cbegin()[i];
-		}			
+		operator-=(cost);
 	}
 	_H3API_ VOID H3Resources::GainResourcesOF(const H3Resources& gain)
 	{
-		for (int i = 0; i < 7; ++i)
-			if (AsRef(i) > 0) // positive
-			{
-				AsRef(i) += gain.cbegin()[i]; // add resources
-
-				if (gain.cbegin()[i] > 0) // check if there was overflow
-				{
-					if (AsRef(i) <= 0)
-						AsRef(i) = INT_MAX;
-				}
-				else if (AsRef(i) < 0) // no negative resources from subtraction
-					AsRef(i) = 0;
-			}
-			else // gain normally
-				AsRef(i) += gain.cbegin()[i];
+		operator+=(gain);
 	}
 	_H3API_ INT& H3Resources::AsRef(int index)
 	{
@@ -178,13 +175,31 @@ namespace h3
 	_H3API_ H3Resources& H3Resources::operator+=(const H3Resources& other)
 	{
 		for (int i = 0; i < 7; ++i)
-			begin()[i] += other.cbegin()[i];
+			if (AsRef(i) > 0) // positive
+			{
+				AsRef(i) += other.cbegin()[i]; // add resources
+
+				if (other.cbegin()[i] > 0) // check if there was overflow
+				{
+					if (AsRef(i) <= 0)
+						AsRef(i) = INT_MAX;
+				}
+				else if (AsRef(i) < 0) // no negative resources from subtraction
+					AsRef(i) = 0;
+			}
+			else // gain normally
+				AsRef(i) += other.cbegin()[i];
 		return *this;
 	}
 	_H3API_ H3Resources& H3Resources::operator-=(const H3Resources& other)
 	{
 		for (int i = 0; i < 7; ++i)
-			begin()[i] -= other.cbegin()[i];
+		{
+			if (AsRef(i) >= 0)
+				AsRef(i) = std::max(0, AsRef(i) - other.cbegin()[i]);
+			else
+				AsRef(i) -= other.cbegin()[i];
+		}
 		return *this;
 	}
 	_H3API_ H3Resources& H3Resources::operator=(const H3Resources& other)
@@ -194,30 +209,73 @@ namespace h3
 		return *this;
 
 	}
+	_H3API_ BOOL H3Resources::operator>=(const H3Resources & other) const
+	{
+		for (int i = 0; i < 7; ++i)
+			if (other.cbegin()[i] > cbegin()[i])
+				return FALSE;
+		return TRUE;
+	}
+	_H3API_ BOOL H3Resources::operator>(const H3Resources & other) const
+	{
+		for (int i = 0; i < 7; ++i)
+			if (other.cbegin()[i] >= cbegin()[i])
+				return FALSE;
+		return TRUE;
+	}
+	_H3API_ BOOL H3Resources::operator<(const H3Resources & other) const
+	{
+		return other >= *this;
+	}
+	_H3API_ BOOL H3Resources::operator<=(const H3Resources & other) const
+	{
+		return other > *this;
+	}
 	_H3API_ INT & H3Resources::operator[](int index)
 	{
 		return begin()[index];
 	}
-	_H3API_ PINT32 H3Army::H3Iterator::AsArray() const
+
+	_H3API_ H3Army::iterator::iterator(INT32* type) :
+		m_type(type)
 	{
-		return PINT32(this);
 	}
-	_H3API_ INT32 H3Army::H3Iterator::Type() const
+	_H3API_ H3Army::iterator& H3Army::iterator::operator*()
 	{
-		return m_type;
+		return *this;
 	}
-	_H3API_ INT32 H3Army::H3Iterator::Count() const
+	_H3API_ H3Army::iterator& H3Army::iterator::operator++()
 	{
-		return AsArray()[7];
+		++m_type;
+		return *this;
 	}
-	_H3API_ INT32& H3Army::H3Iterator::RType()
+	_H3API_ H3Army::iterator H3Army::iterator::operator++(int)
 	{
-		return m_type;
+		iterator it(m_type);
+		++m_type;
+		return it;
 	}
-	_H3API_ INT32& H3Army::H3Iterator::RCount()
+	_H3API_ BOOL H3Army::iterator::operator==(const iterator& other)
 	{
-		return AsArray()[7];
+		return m_type == other.m_type;
 	}
+	_H3API_ BOOL H3Army::iterator::operator!=(const iterator& other)
+	{
+		return m_type != other.m_type;
+	}
+	_H3API_ BOOL H3Army::iterator::operator!() const
+	{
+		return *m_type == -1;
+	}
+	_H3API_ INT32& H3Army::iterator::Type()
+	{
+		return *m_type;
+	}
+	_H3API_ INT32& H3Army::iterator::Count()
+	{
+		return m_type[7];
+	}
+
 	_H3API_ VOID H3Army::AddStack(INT32 type, INT32 amount, INT32 slot)
 	{
 		THISCALL_4(VOID, 0x44A9B0, this, type, amount, slot);
@@ -295,13 +353,13 @@ namespace h3
 	{
 		return THISCALL_1(INT32, 0x44A950, this);
 	}
-	_H3API_ H3Army::H3Iterator* H3Army::begin()
+	_H3API_ H3Army::iterator H3Army::begin()
 	{
-		return reinterpret_cast<H3Iterator*>(&type);
+		return iterator(type);
 	}
-	_H3API_ H3Army::H3Iterator* H3Army::end()
+	_H3API_ H3Army::iterator H3Army::end()
 	{
-		return reinterpret_cast<H3Iterator*>(&count);
+		return iterator(type + 7);
 	}
 	_H3API_ H3Army& H3Army::operator=(const H3Army& other)
 	{
@@ -313,9 +371,9 @@ namespace h3
 		return *this;
 	}
 
-	_H3API_ H3Army::H3Iterator& H3Army::operator[](int index)
+	_H3API_ H3Army::iterator H3Army::operator[](UINT index)
 	{
-		return begin()[index];
+		return iterator(type + index);
 	}
 
 	_H3API_ INT32 H3Hero::MaxLandMovement()
@@ -501,13 +559,13 @@ namespace h3
 		THISCALL_2(VOID, 0x4E2FC0, this, slot);
 	}
 	_H3API_ VOID H3Hero::ShowCreatureDialog(int slot, BOOL rightClick)
-	{		
+	{
 		THISCALL_9(VOID, 0x4C6910, H3Internal::Main(), &army, slot, this, 0, 119, 20, 0, rightClick);
 	}
 	_H3API_ VOID H3Hero::ShowSpellInfo(int spell, BOOL RMB)
 	{
 		int expertise = GetSpellExpertise(spell, GetSpecialSpellTerrain());
-		FASTCALL_12(VOID, 0x4F6C00, H3Internal::Spell()[spell].description[expertise], 
+		FASTCALL_12(VOID, 0x4F6C00, H3Internal::Spell()[spell].description[expertise],
 					RMB ? 4 : 1, -1, -1, 9, spell, -1, 0, - 1, 0, - 1, 0);
 	}
 	_H3API_ VOID H3Hero::ShowSSkillInfo(int skill, BOOL RMB)
@@ -544,7 +602,7 @@ namespace h3
 			return FALSE;
 
 		int numArts = H3Internal::ArtifactCount();
-		
+
 		for (int i = 0; i < numArts; ++i)
 		{
 			if (H3Internal::ArtifactSetup()[i].partOfCombo == comboId)
@@ -577,38 +635,66 @@ namespace h3
 			}
 		}
 	}
+	_H3API_ INT32 H3Hero::CalculateSpellCost(INT spell, H3Army * opponentArmy, INT specialTerrain)
+	{
+		return THISCALL_4(INT32, 0x4E54B0, this, spell, opponentArmy, specialTerrain);
+	}
+	_H3API_ INT32 H3Hero::CalculateAdventureMapSpellCost(INT spell)
+	{
+		return CalculateSpellCost(spell, nullptr, GetSpecialSpellTerrain());
+	}
+	_H3API_ VOID H3Hero::RemoveSpellPointsAndRefresh(UINT16 spellPoints)
+	{
+		THISCALL_2(VOID, 0x4D9540, this, spellPoints);
+	}
 	_H3API_ UINT32 H3Date::CurrentDay() const
 	{
 		return 28 * (month - 1) + 7 * (week - 1) + day - 1;
 	}
 
-	_H3API_ PINT32 H3TownCreatureTypes::H3Iterator::AsArray() const
+	_H3API_ INT32& H3TownCreatureTypes::iterator::Base()
 	{
-		return PINT32(this);
+		return *m_base;
 	}
-	_H3API_ INT32 H3TownCreatureTypes::H3Iterator::Base() const
+	_H3API_ H3TownCreatureTypes::iterator::iterator(INT32* base) :
+		m_base(base)
 	{
-		return m_base;
 	}
-	_H3API_ INT32 H3TownCreatureTypes::H3Iterator::Upgraded() const
+	_H3API_ INT32& H3TownCreatureTypes::iterator::Upgraded()
 	{
-		return AsArray()[7];
+		return m_base[7];
 	}
-	_H3API_ INT32& H3TownCreatureTypes::H3Iterator::RBase()
+	_H3API_ H3TownCreatureTypes::iterator& H3TownCreatureTypes::iterator::operator*()
 	{
-		return m_base;
+		return *this;
 	}
-	_H3API_ INT32& H3TownCreatureTypes::H3Iterator::RUpgraded()
+	_H3API_ H3TownCreatureTypes::iterator& H3TownCreatureTypes::iterator::operator++()
 	{
-		return AsArray()[7];
+		++m_base;
+		return *this;
 	}
-	_H3API_ H3TownCreatureTypes::H3Iterator* H3TownCreatureTypes::begin()
+	_H3API_ H3TownCreatureTypes::iterator H3TownCreatureTypes::iterator::operator++(int)
 	{
-		return reinterpret_cast<H3Iterator*>(this);
+		iterator it(m_base);
+		++m_base;
+		return it;
 	}
-	_H3API_ H3TownCreatureTypes::H3Iterator* H3TownCreatureTypes::end()
+	_H3API_ BOOL H3TownCreatureTypes::iterator::operator==(const iterator& other) const
 	{
-		return reinterpret_cast<H3Iterator*>(&upgrade);
+		return m_base == other.m_base;
+	}
+	_H3API_ BOOL H3TownCreatureTypes::iterator::operator!=(const iterator& other) const
+	{
+		return m_base != other.m_base;
+	}
+
+	_H3API_ H3TownCreatureTypes::iterator H3TownCreatureTypes::begin()
+	{
+		return iterator(base);
+	}
+	_H3API_ H3TownCreatureTypes::iterator H3TownCreatureTypes::end()
+	{
+		return iterator(base + 7);
 	}
 	_H3API_ BOOL H3Town::IsBuildingBuilt(INT32 id) const
 	{
@@ -663,9 +749,9 @@ namespace h3
 	{
 		return H3Internal::Main()->GetHero(currentHero);
 	}
-	_H3API_ H3ObjectDraw::H3ObjectDraw(UINT16 sprite, UINT8 tile_id, UINT8 layer) : 
-		sprite(sprite), 
-		tileID(tile_id), 
+	_H3API_ H3ObjectDraw::H3ObjectDraw(UINT16 sprite, UINT8 tile_id, UINT8 layer) :
+		sprite(sprite),
+		tileID(tile_id),
 		layer(layer)
 	{
 	}
@@ -821,7 +907,7 @@ namespace h3
 	{
 		H3CreatureBankState* cbs = &H3Internal::CreatureBankSetup()[type].states[level];
 		guardians = cbs->guardians;
-		resources = cbs->resources;		
+		resources = cbs->resources;
 		creatureRewardType = cbs->creatureRewardType;
 		creatureRewardCount = cbs->creatureRewardCount;
 
@@ -889,7 +975,7 @@ namespace h3
 	{
 		return base_value[level] + spellPower * sp_effect;
 	}
-	
+
 	_H3API_ LPCSTR H3CreatureInformation::GetCreatureName(INT32 count)
 	{
 		return count > 1 ? namePlural : nameSingular;
@@ -928,7 +1014,7 @@ namespace h3
 
 	_H3API_ BOOL H3CombatMonster::IsSiege()
 	{
-		return info.flags.SIEGEWEAPON;
+		return info.flags.SIEGE_WEAPON;
 	}
 
 	_H3API_ BOOL H3CombatMonster::IsSummon()
@@ -979,6 +1065,46 @@ namespace h3
 	_H3API_ INT32 H3CombatMonster::MagicMirrorEffect()
 	{
 		return THISCALL_1(INT32, 0x448510, this);
+	}
+
+	_H3API_ INT32 H3CombatMonster::ApplyPhysicalDamage(INT32 amount)
+	{
+		return THISCALL_2(INT32, 0x443DB0, this, amount);
+	}
+
+	_H3API_ VOID H3CombatMonster::ApplySpell(INT32 spellId, INT32 spellPower, INT32 schoolLevel, H3Hero* hero)
+	{
+		return THISCALL_5(VOID, 0x444610, this, spellId, spellPower, schoolLevel, hero);
+	}
+
+	_H3API_ BOOL8 H3CombatMonster::CanReceiveSpell(INT32 spellId)
+	{
+		return FASTCALL_2(BOOL8, 0x4477A0, spellId, this);
+	}
+
+	_H3API_ BOOL H3CombatMonster::CanCastSpellAtEmptyHex(INT32 hexId)
+	{
+		return THISCALL_2(BOOL, 0x4470F0, this, hexId);
+	}
+
+	_H3API_ BOOL8 H3CombatMonster::MoveToHex(INT32 hexId)
+	{
+		return THISCALL_3(BOOL8, 0x445A30, this, hexId, 0);
+	}
+
+	_H3API_ BOOL8 H3CombatMonster::UseEnchanters()
+	{
+		return THISCALL_1(BOOL8, 0x447D00, this);
+	}
+
+	_H3API_ INT32 H3CombatMonster::GetX() const
+	{
+		return THISCALL_1(INT32, 0x446380, this);
+	}
+
+	_H3API_ INT32 H3CombatMonster::GetY() const
+	{
+		return THISCALL_1(INT32, 0x446350, this);
 	}
 
 	_H3API_ PINT8 H3PrimarySkills::begin()
@@ -1148,6 +1274,10 @@ namespace h3
 	{
 		return mainSetup.GetCoordinates(item);
 	}
+	_H3API_ BOOL8 H3Main::IsHuman(UINT8 player_id)
+	{
+		return THISCALL_2(BOOL8, 0x4CE600, this, player_id);
+	}
 
 	_H3API_ VOID H3Manager::SetPreviousManager(H3Manager* prev)
 	{
@@ -1224,7 +1354,7 @@ namespace h3
 		return resultItemID == int(H3WindowManager::H3ClickIDs::H3ID_CANCEL);
 	}
 
-	_H3API_ H3LoadedPCX16* H3WindowManager::GetDrawBuffer()
+	_H3API_ H3LoadedPcx16* H3WindowManager::GetDrawBuffer()
 	{
 		return screenPcx16;
 	}
@@ -1248,7 +1378,7 @@ namespace h3
 	_H3API_ VOID H3SoundManager::PlaySound(LPCSTR wavName)
 	{
 		H3WavFile *wav = H3WavFile::Load(wavName);
-		PlaySound(H3WavFile::Load(wavName));		
+		PlaySound(H3WavFile::Load(wavName));
 		wav->Dereference();
 	}
 
@@ -1314,7 +1444,7 @@ namespace h3
 
 	_H3API_ VOID H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
 	{
-		if (x >= 0 && x < H3Internal::_h3_MapSize() && y >= 0 && y < H3Internal::_h3_MapSize())
+		if (x >= 0 && x < H3Internal::_mapSize() && y >= 0 && y < H3Internal::_mapSize())
 		{
 			DemobilizeHero();
 			screenPosition.SetXYZ(H3Internal::_gameEdgeHorizontal() + x, H3Internal::_gameEdgeVertical() + y, z);
@@ -1350,6 +1480,11 @@ namespace h3
 	_H3API_ VOID H3TownManager::RefreshScreen()
 	{
 		THISCALL_1(VOID, 0x5D5810, this);
+	}
+
+	_H3API_ VOID H3TownManager::ViewTavern()
+	{
+		THISCALL_1(char, 0x5D82C0, this);
 	}
 
 	_H3API_ H3InputManager::InputMessages& H3InputManager::GetCurrentMessage()
@@ -1443,6 +1578,51 @@ namespace h3
 	_H3API_ VOID H3CombatManager::AddStatusMessage(LPCSTR message, BOOL permanent)
 	{
 		THISCALL_4(VOID, 0x4729D0, dlg, message, permanent, 0);
+	}
+
+	_H3API_ VOID H3CombatManager::PlayMagicAnimation(INT32 id, H3CombatMonster* target, INT32 timeStep, BOOL8 showTargetBeingHit)
+	{
+		return THISCALL_5(VOID, 0x4963C0, this, id, target, timeStep, showTargetBeingHit);
+	}
+
+	_H3API_ VOID H3CombatManager::ReportDamageDone(H3Spell* spell, LPCSTR attackerName, INT32 damageDone, H3CombatMonster* target, INT32 killedCount)
+	{
+		return THISCALL_6(VOID, 0x469670, this, spell, attackerName, damageDone, target, killedCount);
+	}
+
+	_H3API_ BOOL8 H3CombatManager::ShouldCastSpellAfterHit(INT32 spellId, INT32 side, H3CombatMonster* target)
+	{
+		return THISCALL_6(BOOL8, 0x5A8950, this, spellId, side, target, 1, 1);
+	}
+
+	_H3API_ VOID H3CombatManager::ResurrectTarget(H3CombatMonster* target, INT32 hitPoints, INT32 isTemporary)
+	{
+		return THISCALL_4(VOID, 0x5A7870, this, target, hitPoints, isTemporary);
+	}
+
+	_H3API_ H3CombatMonster* H3CombatManager::SummonCreature(INT32 side, INT32 creatureId, INT32 amount, INT32 position, INT32 redrawAnimation, BOOL redraw)
+	{
+		return THISCALL_7(H3CombatMonster*, 0x479A30, this, side, creatureId, amount, position, redrawAnimation, redraw);
+	}
+
+	_H3API_ H3CombatMonster* H3CombatManager::GetSummonDemonTarget(INT32 side, INT32 coordinate)
+	{
+		return THISCALL_3(H3CombatMonster*, 0x5A4150, this, side, coordinate);
+	}
+
+	_H3API_ VOID H3CombatManager::RaiseDemon(H3CombatMonster* caster, H3CombatMonster* target)
+	{
+		return THISCALL_3(VOID, 0x5A76A0, this, caster, target);
+	}
+
+	_H3API_ VOID H3CombatManager::DrawRay(BOOL redraw, INT startX, INT startY, INT dstX, INT dstY, INT allowBranches, INT randomnessRange, INT startThickness, INT endThickness, WORD color565, INT amplitude, INT arching, INT rayStraightness, INT smoothness, BOOL pathRandomness, INT timeDelay)
+	{
+		THISCALL_18(VOID, 0x5A5F30, this, redraw, startX, startY, dstX, dstY, allowBranches, randomnessRange, startThickness, endThickness, color565, amplitude, arching, rayStraightness, smoothness, pathRandomness, timeDelay, 0);
+	}
+
+	_H3API_ VOID H3CombatManager::DrawRay(BOOL redraw, H3CombatMonster * start, H3CombatMonster * end, INT allowBranches, INT randomnessRange, INT startThickness, INT endThickness, WORD color565, INT amplitude, INT arching, INT rayStraightness, INT smoothness, BOOL pathRandomness, INT timeDelay)
+	{
+		DrawRay(redraw, start->GetX(), start->GetY(), end->GetX(), end->GetY(), allowBranches, randomnessRange, startThickness, endThickness, color565, amplitude, arching, rayStraightness, smoothness, pathRandomness, timeDelay);
 	}
 
 	namespace H3Internal
@@ -1565,9 +1745,9 @@ namespace h3
 			return **(H3ComboArtifactSetup***)(0x4DDFF2 + 2);
 		}
 	}
-	_H3API_ H3IndexVector::H3IndexVector(int minNum, int maxNum)
+	_H3API_ H3IndexVector::H3IndexVector(INT min_num, INT max_num)
 	{
-		THISCALL_3(H3IndexVector*, 0x50C8D0, this, minNum, maxNum);
+		THISCALL_3(H3IndexVector*, 0x50C8D0, this, min_num, max_num);
 	}
 	_H3API_ H3IndexVector::~H3IndexVector()
 	{

@@ -1,8 +1,6 @@
 #ifndef _H3TEXTCOLOR_HPP_
 #define _H3TEXTCOLOR_HPP_
 
-#pragma once
-
 #include "../../H3_Base.hpp"
 #include "../../H3_String.hpp"
 #include "../../H3_Vector.hpp"
@@ -23,7 +21,7 @@ namespace h3
 
 				// * Returns the number of colors currently
 				// * available to modify the text's appearance
-				virtual INT GetNumberColors() = 0;
+				virtual UINT GetNumberColors() = 0;
 
 				// * returns a vector of H3Strings with names of colors
 				virtual const H3Vector<H3String>* GetColorNames() = 0;

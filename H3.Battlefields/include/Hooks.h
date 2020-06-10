@@ -7,7 +7,7 @@
 #include "H3API.hpp"
 
 // * 20 valid scenes
-#define SCENE_COUNT 20
+constexpr UINT SCENE_COUNT = 20;
 
 // * Global Patcher
 extern Patcher *_P;

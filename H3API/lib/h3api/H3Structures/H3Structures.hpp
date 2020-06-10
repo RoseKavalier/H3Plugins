@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,7 +11,6 @@
 #ifndef _H3STRUCTURES_HPP_
 #define _H3STRUCTURES_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
 #include "../H3_Vector.hpp"
 #include "../H3_String.hpp"
@@ -21,92 +19,96 @@
 
 namespace h3
 {
-	// * forward declarations	
-	_H3_DECLARE_(H3NetworkData);
-	_H3_DECLARE_(H3Position);
-	_H3_DECLARE_(H3IndexVector);
-	_H3_DECLARE_(H3Artifact);
-	_H3_DECLARE_(H3AnimationSpeed);
-	_H3_DECLARE_(H3Resources);
-	_H3_DECLARE_(H3Army);
-	_H3_DECLARE_(H3SetupHero);
-	_H3_DECLARE_(H3HeroInfo);
-	_H3_DECLARE_(H3HeroSpecialty);
-	_H3_DECLARE_(H3HeroFlags);
-	_H3_DECLARE_(H3Hero);
-	_H3_DECLARE_(H3Date);
-	_H3_DECLARE_(H3Player);
-	_H3_DECLARE_(H3TownCreatureTypes);
-	_H3_DECLARE_(H3Town);
-	_H3_DECLARE_(H3SpecialBuildingCosts);
-	_H3_DECLARE_(H3NeutralBuildingCosts);
-	_H3_DECLARE_(H3DwellingBuildingCosts);
-	_H3_DECLARE_(H3TownDependencies);
-	_H3_DECLARE_(H3ComboArtifactSetup);
-	_H3_DECLARE_(H3CreatureBank);
-	_H3_DECLARE_(H3CreatureBankState);
-	_H3_DECLARE_(H3CreatureBankSetup);
-	_H3_DECLARE_(H3ValidCatapultTargets);
-	_H3_DECLARE_(H3WallSection);
-	_H3_DECLARE_(H3Spell);
-	_H3_DECLARE_(H3ObstacleInfo);
-	_H3_DECLARE_(H3Obstacle);
-	_H3_DECLARE_(H3CreatureFlags);
-	_H3_DECLARE_(H3CreatureInformation);
-	_H3_DECLARE_(H3CombatMonsterSpellsData);
-	_H3_DECLARE_(H3MonsterAnimation);
-	_H3_DECLARE_(H3CombatMonster);
-	_H3_DECLARE_(H3PrimarySkills);
-	_H3_DECLARE_(H3SecondarySkill);
-	_H3_DECLARE_(H3SecondarySkillInfo);
-	_H3_DECLARE_(H3PandorasBox);
-	_H3_DECLARE_(H3Event);
-	_H3_DECLARE_(H3QuestVector);
-	_H3_DECLARE_(H3Quest);
-	_H3_DECLARE_(H3QuestGuard);
-	_H3_DECLARE_(H3SeerHut);
-	_H3_DECLARE_(H3QuestText);
-	_H3_DECLARE_(H3MapArtifact);
-	_H3_DECLARE_(H3MapResource);
-	_H3_DECLARE_(H3Monster);
-	_H3_DECLARE_(H3GlobalEvent);
-	_H3_DECLARE_(H3CastleEvent);
-	_H3_DECLARE_(H3MainSetup);
-	_H3_DECLARE_(H3CampaignInfo);
-	_H3_DECLARE_(H3ArtifactMerchant);
-	_H3_DECLARE_(H3BlackMarket);
-	_H3_DECLARE_(H3Grail);
-	_H3_DECLARE_(H3TileVision);
-	_H3_DECLARE_(H3PlayersInfo);
-	_H3_DECLARE_(_PlayerUnk_);
-	_H3_DECLARE_(H3MapInfo);
-	_H3_DECLARE_(H3Mine);
-	_H3_DECLARE_(H3Signpost);
-	_H3_DECLARE_(H3Dwelling);
-	_H3_DECLARE_(H3Garrison);
-	_H3_DECLARE_(H3Boat);
-	_H3_DECLARE_(H3QuickBattleCreatures);
-	_H3_DECLARE_(H3AIQuickBattle);
-	_H3_DECLARE_(H3AICombatInfo);
-	_H3_DECLARE_(H3GlobalObjectSettings);
-	_H3_DECLARE_(H3TileMovement);
-	_H3_DECLARE_(H3TurnTimer);
-	_H3_DECLARE_(H3CreatureExchange);
-	_H3_DECLARE_(H3MovementManager);
-	_H3_DECLARE_(H3Main);
-	_H3_DECLARE_(H3Manager);
-	_H3_DECLARE_(H3Executive);
-	_H3_DECLARE_(H3MouseManager);
-	_H3_DECLARE_(H3WindowManager);
-	_H3_DECLARE_(H3SoundManager);
-	_H3_DECLARE_(H3AdventureManager);
-	_H3_DECLARE_(H3SwapManager);
-	_H3_DECLARE_(H3TownManager);
-	_H3_DECLARE_(H3InputManager);
-	_H3_DECLARE_(H3CombatSquare);
-	_H3_DECLARE_(TownTowerLoaded);
-	_H3_DECLARE_(H3AdjacentSquares);
-	_H3_DECLARE_(H3CombatManager);
+	struct _H3API_DEPRECATED_("Use H3ZStream instead") H3StreamBuf;
+
+	// * forward declarations
+	_H3API_DECLARE_(H3NetworkData);
+	_H3API_DECLARE_(H3ZStream);
+	_H3API_DECLARE_(H3Position);
+	_H3API_DECLARE_(H3IndexVector);
+	_H3API_DECLARE_(H3Artifact);
+	_H3API_DECLARE_(H3AnimationSpeed);
+	_H3API_DECLARE_(H3Resources);
+	_H3API_DECLARE_(H3Army);
+	_H3API_DECLARE_(H3SetupHero);
+	_H3API_DECLARE_(H3HeroInfo);
+	_H3API_DECLARE_(H3HeroSpecialty);
+	_H3API_DECLARE_(H3HeroFlags);
+	_H3API_DECLARE_(H3Hero);
+	_H3API_DECLARE_(H3Date);
+	_H3API_DECLARE_(H3Player);
+	_H3API_DECLARE_(H3TownCreatureTypes);
+	_H3API_DECLARE_(H3Town);
+	_H3API_DECLARE_(H3SpecialBuildingCosts);
+	_H3API_DECLARE_(H3NeutralBuildingCosts);
+	_H3API_DECLARE_(H3DwellingBuildingCosts);
+	_H3API_DECLARE_(H3TownDependencies);
+	_H3API_DECLARE_(H3ComboArtifactSetup);
+	_H3API_DECLARE_(H3CreatureBank);
+	_H3API_DECLARE_(H3CreatureBankState);
+	_H3API_DECLARE_(H3CreatureBankSetup);
+	_H3API_DECLARE_(H3ValidCatapultTargets);
+	_H3API_DECLARE_(H3WallSection);
+	_H3API_DECLARE_(H3Spell);
+	_H3API_DECLARE_(H3ObstacleInfo);
+	_H3API_DECLARE_(H3Obstacle);
+	_H3API_DECLARE_(H3CreatureFlags);
+	_H3API_DECLARE_(H3CreatureInformation);
+	_H3API_DECLARE_(H3CombatMonsterSpellsData);
+	_H3API_DECLARE_(H3MonsterAnimation);
+	_H3API_DECLARE_(H3CombatMonster);
+	_H3API_DECLARE_(H3PrimarySkills);
+	_H3API_DECLARE_(H3SecondarySkill);
+	_H3API_DECLARE_(H3SecondarySkillInfo);
+	_H3API_DECLARE_(H3PandorasBox);
+	_H3API_DECLARE_(H3Event);
+	_H3API_DECLARE_(H3QuestVector);
+	_H3API_DECLARE_(H3Quest);
+	_H3API_DECLARE_(H3QuestGuard);
+	_H3API_DECLARE_(H3SeerHut);
+	_H3API_DECLARE_(H3QuestText);
+	_H3API_DECLARE_(H3SpellbookText);
+	_H3API_DECLARE_(H3MapArtifact);
+	_H3API_DECLARE_(H3MapResource);
+	_H3API_DECLARE_(H3Monster);
+	_H3API_DECLARE_(H3GlobalEvent);
+	_H3API_DECLARE_(H3CastleEvent);
+	_H3API_DECLARE_(H3MainSetup);
+	_H3API_DECLARE_(H3CampaignInfo);
+	_H3API_DECLARE_(H3ArtifactMerchant);
+	_H3API_DECLARE_(H3BlackMarket);
+	_H3API_DECLARE_(H3Grail);
+	_H3API_DECLARE_(H3TileVision);
+	_H3API_DECLARE_(H3PlayersInfo);
+	_H3API_DECLARE_(_PlayerUnk_);
+	_H3API_DECLARE_(H3MapInfo);
+	_H3API_DECLARE_(H3Mine);
+	_H3API_DECLARE_(H3Signpost);
+	_H3API_DECLARE_(H3Dwelling);
+	_H3API_DECLARE_(H3Garrison);
+	_H3API_DECLARE_(H3Boat);
+	_H3API_DECLARE_(H3QuickBattleCreatures);
+	_H3API_DECLARE_(H3AIQuickBattle);
+	_H3API_DECLARE_(H3AICombatInfo);
+	_H3API_DECLARE_(H3GlobalObjectSettings);
+	_H3API_DECLARE_(H3TileMovement);
+	_H3API_DECLARE_(H3TurnTimer);
+	_H3API_DECLARE_(H3CreatureExchange);
+	_H3API_DECLARE_(H3MovementManager);
+	_H3API_DECLARE_(H3Main);
+	_H3API_DECLARE_(H3Manager);
+	_H3API_DECLARE_(H3Executive);
+	_H3API_DECLARE_(H3MouseManager);
+	_H3API_DECLARE_(H3WindowManager);
+	_H3API_DECLARE_(H3SoundManager);
+	_H3API_DECLARE_(H3AdventureManager);
+	_H3API_DECLARE_(H3SwapManager);
+	_H3API_DECLARE_(H3TownManager);
+	_H3API_DECLARE_(H3InputManager);
+	_H3API_DECLARE_(H3CombatSquare);
+	_H3API_DECLARE_(TownTowerLoaded);
+	_H3API_DECLARE_(H3AdjacentSquares);
+	_H3API_DECLARE_(H3CombatManager);
 
 #pragma pack(push, 1)
 
@@ -124,7 +126,7 @@ namespace h3
 		T*      m_data;
 	public:
 		H3SmartPointer(T* _Ptr = 0);
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 		H3SmartPointer(H3SmartPointer<T>&& other);
 #else
 		H3SmartPointer(H3SmartPointer<T>& other);
@@ -158,6 +160,33 @@ namespace h3
 	{
 		H3NetworkDataExtra(int recipient_id, int msg_id, int data, T& extra_data);
 		T extra_data;
+	};
+
+	// * the save/load structure used by H3
+	// * that also handles gzip inflat/deflate
+	// * gz_state or similar from zlib
+	struct H3ZStream
+	{
+	protected:
+		struct
+		{
+			h3func destroy; // [00]
+			h3func read;    // [04]
+			h3func write;   // [08]
+		}*vTable;
+
+		h3unk _f_04[156]; // guess based on gz_state
+	public:
+		_H3API_ BOOL Save(PVOID data, UINT data_size);
+		_H3API_ BOOL Load(PVOID data, UINT data_size);
+
+		template<typename T>
+		inline BOOL Read(T& data, UINT data_size = sizeof(T));
+		template<typename T>
+		inline BOOL Write(T& data, UINT data_size = sizeof(T));
+
+		_H3API_ H3ZStream(LPCSTR file_name, LPCSTR mode);
+		_H3API_ ~H3ZStream();
 	};
 
 	// * stored (x,y,z) coordinates H3format
@@ -210,7 +239,7 @@ namespace h3
 		BOOL8* m_end;
 		BOOL8* m_capacity;
 	public:
-		_H3API_ H3IndexVector(int minNum, int maxNum);
+		_H3API_ H3IndexVector(INT min_num, INT max_num);
 		_H3API_ ~H3IndexVector();
 		// * never returns the same value
 		// * returns InvalidIndex() if there are no non-selected indexes
@@ -442,29 +471,37 @@ namespace h3
 		_H3API_ PINT end();
 		_H3API_ PINT cbegin() const;
 		_H3API_ PINT cend() const;
-		// * does not check for overflow
+		// * checks for overflow
 		_H3API_ H3Resources& operator+=(const H3Resources& other);
-		// * does not check for overflow
+		// * checks for overflow
 		_H3API_ H3Resources& operator-=(const H3Resources& other);
 		// * does not check for overflow
 		_H3API_ H3Resources& operator=(const H3Resources& other);
+		_H3API_ BOOL operator>=(const H3Resources& other) const;
+		_H3API_ BOOL operator>(const H3Resources& other) const;
+		_H3API_ BOOL operator<(const H3Resources& other) const;
+		_H3API_ BOOL operator<=(const H3Resources& other) const;
 		_H3API_ INT& operator[](int index);
 	};
 
 	// * The arrangment of 7 creatures on various H3 structures
 	struct H3Army
 	{
-		class H3Iterator
+		struct iterator
 		{
-			INT32 m_type;
-			_H3API_ PINT32 AsArray() const;
-
+		protected:
+			INT32* m_type;
 		public:
-			_H3API_ INT32 Type() const;
-			_H3API_ INT32 Count() const;
+			_H3API_ iterator(INT32* type);
+			_H3API_ iterator& operator*();
+			_H3API_ iterator& operator++();
+			_H3API_ iterator operator++(int);
+			_H3API_ BOOL operator==(const iterator& other);
+			_H3API_ BOOL operator!=(const iterator& other);
+			_H3API_ BOOL operator!() const;
 
-			_H3API_ INT32& RType();
-			_H3API_ INT32& RCount();
+			_H3API_ INT32& Type();
+			_H3API_ INT32& Count();
 		};
 
 		INT32 type[7];
@@ -500,10 +537,10 @@ namespace h3
 		_H3API_ INT32 NumberAlignments(INT8(&towns)[9]);
 		// * AI value total for army
 		_H3API_ INT32 GetArmyValue();
-		_H3API_ H3Iterator* begin();
-		_H3API_ H3Iterator* end();
+		_H3API_ iterator begin();
+		_H3API_ iterator end();
 		_H3API_ H3Army& operator=(const H3Army& other);
-		_H3API_ H3Iterator& operator[](int index);
+		_H3API_ iterator operator[](UINT index);
 	};
 
 	// * not the hero on the map
@@ -866,7 +903,8 @@ namespace h3
 		// * temporary hero flags
 		H3HeroFlags  flags;
 	protected:
-		UINT8  _u6[4];   // +109
+		// * +109
+		FLOAT  AI_experienceEffectiveness;
 	public:
 		// * +10D
 		// * the number of times dimension door was cast this day
@@ -885,7 +923,7 @@ namespace h3
 		// * +11B
 		INT8	luckBonus;
 	protected:
-		INT8	isSleeping;	// +11C
+		BOOL8	isSleeping;	// +11C
 		UINT8  _u7[12]; // 11D
 		INT32	visionPower; // +129
 	public:
@@ -924,10 +962,19 @@ namespace h3
 		// * +476
 		// * the four primary skills, attack, defense, spell power, knowledge
 		INT8   primarySkill[4];
-	protected:
 		// * +47A
-		// * AI stuff
-		UINT8  _u8[24];
+		UINT   AI_aggressiveness;
+		// * +47E
+		UINT   AI_spellLengthEffectiveness;
+		// * +482
+		UINT   AI_spellPowerEffectiveness;
+		// * +486
+		UINT   AI_extraKnowledgeEffectiveness;
+		// * +48A
+		UINT   AI_doubleSpellPointsEffectiveness;
+		// * +48E
+		UINT   AI_extraSpellPointsEffectiveness;
+
 	public:
 		// * calculates maximum daily movement on land
 		_H3API_ INT32 MaxLandMovement();
@@ -937,7 +984,7 @@ namespace h3
 		_H3API_ INT32 CalcMaxMovement();
 		// * give an artifact by reference
 		_H3API_ VOID GiveArtifact(H3Artifact& art, INT32 slot);
-		// * give an artifact to hero		
+		// * give an artifact to hero
 		_H3API_ VOID GiveArtifact(H3Artifact& art);
 		// * give an artifact to hero's backpack
 		// * index = -1 means first free slot
@@ -1005,7 +1052,15 @@ namespace h3
 		// * disassembles a combination artifact and
 		// * gives a hero all pieces of a combination artifact
 		_H3API_ VOID DisassembleCombinationArtifact(INT slot);
+		// * opponentArmy may be nullptr to calculate the cost on adventure map
+		_H3API_ INT32 CalculateSpellCost(INT spell, H3Army* opponentArmy, INT specialTerrain);
+		// * opponentArmy may be nullptr to calculate the cost on adventure map
+		_H3API_ INT32 CalculateAdventureMapSpellCost(INT spell);
+		// * remove spell points and redraw hero preview on adventure map
+		_H3API_ VOID RemoveSpellPointsAndRefresh(UINT16 spellPoints);
 	};
+
+	_H3API_STATIC_ASSERT_(sizeof(h3::H3Hero) == 0x492, "H3Hero size is invalid");
 
 	// * how date is represented
 	struct H3Date
@@ -1019,24 +1074,28 @@ namespace h3
 
 	struct H3TownCreatureTypes
 	{
-		class H3Iterator
+		struct iterator
 		{
-			INT m_base;
-
-			_H3API_ PINT AsArray() const;
-
+		protected:
+			INT* m_base;
 		public:
-			_H3API_ INT32 Base() const;
-			_H3API_ INT32 Upgraded() const;
-			_H3API_ INT32& RBase();
-			_H3API_ INT32& RUpgraded();
+			_H3API_ iterator(INT32* base);
+
+			_H3API_ iterator& operator*();
+			_H3API_ iterator& operator++();
+			_H3API_ iterator operator++(int);
+			_H3API_ BOOL operator==(const iterator& other) const;
+			_H3API_ BOOL operator!=(const iterator& other) const;
+
+			_H3API_ INT32& Base();
+			_H3API_ INT32& Upgraded();
 		};
 
 		INT base[7];
 		INT upgrade[7];
 
-		_H3API_ H3Iterator* begin();
-		_H3API_ H3Iterator* end();
+		_H3API_ iterator begin();
+		_H3API_ iterator end();
 	};
 
 	// * how towns are represented in memory
@@ -1097,7 +1156,7 @@ namespace h3
 		BOOL8	manaVortextUnused;
 	protected:
 		h3unk	_f_34;
-		h3unk	_f_5a[3];
+		h3unk	_f_35[3];
 		h3unk	_f_38[8];
 		h3unk	_f_40[2][2];
 	public:
@@ -1558,7 +1617,7 @@ namespace h3
 		_H3API_ H3Hero* GetActiveHero();
 	};
 
-	/*
+/*
  * Modeled after H3M_OA_ENTRY in h3m format
  * https://github.com/potmdehex/homm3tools/blob/master/h3m/h3mlib/h3m_structures/object_attributes/h3m_oa.h#L20
  * see also https://github.com/potmdehex/homm3tools/blob/master/h3m/h3mlib/h3m_structures/object_attributes/h3m_oa_body.h#L13
@@ -1730,6 +1789,11 @@ namespace h3
 		_H3API_ BOOL CanDig() const;
 
 		// * casts setup to relevant map item data
+		template<typename ObjectType>
+		ObjectType* Cast();
+		// * get setup as reference of relevant type
+		template<typename ObjectType>
+		ObjectType& Get();
 
 		_H3API_ MapMonster*         CastMonster();
 		_H3API_ MapScholar*         CastScholar();
@@ -1913,7 +1977,7 @@ namespace h3
 		INT32 fort_element_id;
 		h3unk f_04[8];
 
-		enum FORT_ELEMENTS {
+		enum eFortElements {
 			FE_DRAWBRIDGE      = 0,
 			FE_DRAWBRIDGE_ROPE = 1,
 			FE_MOAT            = 2,
@@ -2042,7 +2106,8 @@ namespace h3
 			AIR   = 1,
 			FIRE  = 2,
 			WATER = 4,
-			EARTH = 8
+			EARTH = 8,
+			ALL   = AIR | FIRE | WATER | EARTH,
 		};
 		// * +1C
 		eSchool school;
@@ -2156,20 +2221,20 @@ namespace h3
 	// * information about combat obstacles
 	struct H3ObstacleInfo // size 20
 	{
-		// * +0
-		UINT16 LandTypes;
-		// * +2
-		UINT16 SpecialGroundTypes;
+		// * +0 (bitfield)
+		UINT16 landTypes;
+		// * +2 (bitfield)
+		UINT16 specialGroundTypes;
 		// * +4
-		INT8 HeightInCells;
+		INT8 heightInCells;
 		// * +5
-		INT8 WidthInCells;
+		INT8 widthInCells;
 		// * +6
-		INT8 BlockedCount;
+		INT8 blockedCount;
 		// * +7
 		h3unk _f_7;
 		// * +8
-		INT8 RelativeCells[8];
+		INT8 relativeCells[8];
 		// * +10
 		LPCSTR defName;
 	};
@@ -2178,11 +2243,11 @@ namespace h3
 	struct H3Obstacle // size 24
 	{
 		// * +0
-		struct H3LoadedDEF* def;
+		struct H3LoadedDef* def;
 		// * +4
 		H3ObstacleInfo* info;
 		// * +8
-		UINT8 AnchorHex;
+		UINT8 anchorHex;
 	protected:
 		h3unk f_09;
 		h3unk f_0A;
@@ -2192,39 +2257,62 @@ namespace h3
 	// * bitfield flags for creatures
 	struct H3CreatureFlags
 	{
-		unsigned DOUBLE_WIDE : 1;			// 1
-		unsigned FLYER : 1;					// 2
-		unsigned SHOOTER : 1;				// 4
-		unsigned EXTENDED : 1;				// 8 ~ aka dragon breath
-		unsigned ALIVE : 1;					// 10
-		unsigned DESTROYWALLS : 1;			// 20
-		unsigned SIEGEWEAPON : 1;			// 40
-		unsigned KING1 : 1;					// 80 ~ all creatures of 7th level and neutral dragons that do not belong to the KING2 or KING3
-		unsigned KING2 : 1;					// 100
-		unsigned KING3 : 1;					// 200
-		unsigned MINDIMMUNITY : 1;			// 400
-		unsigned NOOBSTACLEPENALTY : 1;		// 800
-		unsigned NOMELEEPENALTY : 1;		// 1000
-		unsigned unk2000 : 1;				// 2000
-		unsigned FIREIMMUNITY : 1;			// 4000
-		unsigned DOUBLEATTACK : 1;			// 8000
-		unsigned NORETALIATION : 1;			// 10000
-		unsigned NOMORALE : 1;				// 20000
-		unsigned UNDEAD : 1;				// 40000
-		unsigned ATTACKALLAROUND : 1;		// 80000
-		unsigned MAGOG : 1;					// 100000
-		unsigned CANNOTMOVE : 1;			// 200000 ~21
-		unsigned SUMMON : 1;				// 400000
-		unsigned CLONE : 1;					// 800000
-		unsigned MORALE : 1;				// 1000000
-		unsigned WAITING : 1;				// 2000000 ~25
-		unsigned DONE : 1;					// 4000000
-		unsigned DEFENDING : 1;				// 8000000
-		unsigned SACRIFICED : 1;			// 10000000
-		unsigned NOCOLORING : 1;			// 20000000
-		unsigned GRAY : 1;					// 40000000
-		unsigned DRAGON : 1;				// 80000000
+		union
+		{
+			struct
+			{
+				unsigned DOUBLE_WIDE         : 1; // 1
+				unsigned FLYER               : 1; // 2
+				unsigned SHOOTER             : 1; // 4
+				unsigned EXTENDED_ATTACK     : 1; // 8 ~ aka dragon breath
+				unsigned ALIVE               : 1; // 10
+				unsigned DESTROY_WALLS       : 1; // 20
+				unsigned SIEGE_WEAPON        : 1; // 40
+				unsigned KING1               : 1; // 80 ~ all creatures of 7th level and neutral dragons that do not belong to the KING2 or KING3
+				unsigned KING2               : 1; // 100
+				unsigned KING3               : 1; // 200
+				unsigned MIND_IMMUNITY       : 1; // 400
+				unsigned NO_OBSTACLE_PENALTY : 1; // 800
+				unsigned NO_MELEE_PENALTY    : 1; // 1000
+				unsigned unk2000             : 1; // 2000
+				unsigned FIRE_IMMUNITY       : 1; // 4000
+				unsigned DOUBLE_ATTACK       : 1; // 8000
+				unsigned NO_RETALIATION      : 1; // 10000
+				unsigned NO_MORALE           : 1; // 20000
+				unsigned UNDEAD              : 1; // 40000
+				unsigned ATTACK_ALL_AROUND   : 1; // 80000
+				unsigned MAGOG               : 1; // 100000
+				unsigned CANNOT_MOVE         : 1; // 200000 ~21
+				unsigned SUMMON              : 1; // 400000
+				unsigned CLONE               : 1; // 800000
+				unsigned MORALE              : 1; // 1000000
+				unsigned WAITING             : 1; // 2000000 ~25
+				unsigned DONE                : 1; // 4000000
+				unsigned DEFENDING           : 1; // 8000000
+				unsigned SACRIFICED          : 1; // 10000000
+				unsigned NO_COLORING         : 1; // 20000000
+				unsigned GRAY                : 1; // 40000000
+				unsigned DRAGON              : 1; // 80000000
+			};
+			struct /* deprecated names */
+			{
+				_H3API_DEPRECATED_("Use EXTENDED_ATTACK")     unsigned EXTENDED : 1;
+				_H3API_DEPRECATED_("Use DESTROY_WALLS")       unsigned DESTROYWALLS : 1;
+				_H3API_DEPRECATED_("Use SIEGE_WEAPON")        unsigned SIEGEWEAPON : 1;
+				_H3API_DEPRECATED_("Use MIND_IMMUNITY")       unsigned MINDIMMUNITY : 1;
+				_H3API_DEPRECATED_("Use NO_OBSTACLE_PENALTY") unsigned NOOBSTACLEPENALTY : 1;
+				_H3API_DEPRECATED_("Use NO_MELEE_PENALTY")    unsigned NOMELEEPENALTY : 1;
+				_H3API_DEPRECATED_("Use FIRE_IMMUNITY")       unsigned FIREIMMUNITY : 1;
+				_H3API_DEPRECATED_("Use DOUBLE_ATTACK")       unsigned DOUBLEATTACK : 1;
+				_H3API_DEPRECATED_("Use NO_RETALIATION")      unsigned NORETALIATION : 1;
+				_H3API_DEPRECATED_("Use NO_MORALE")           unsigned NOMORALE : 1;
+				_H3API_DEPRECATED_("Use ATTACK_ALL_AROUND")   unsigned ATTACKALLAROUND : 1;
+				_H3API_DEPRECATED_("Use CANNOT_MOVE")         unsigned CANNOTMOVE : 1;
+				_H3API_DEPRECATED_("Use NO_COLORING")         unsigned NOCOLORING : 1;
+			};
+		};
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3CreatureFlags) == 4, "H3CreatureFlags size is invalid");
 
 	// * hardcoded creature information in heroes3.exe
 	struct H3CreatureInformation
@@ -2435,10 +2523,10 @@ namespace h3
 		H3MonsterAnimation cranim;
 	public:
 		// * +164
-		H3LoadedDEF* def;
+		H3LoadedDef* def;
 	protected:
 		// * +168
-		H3LoadedDEF* shootingDef;
+		H3LoadedDef* shootingDef;
 		h3unk _f_16C[4];
 		// * +170
 		UINT32 moveSound;
@@ -2502,7 +2590,18 @@ namespace h3
 		_H3API_ INT32 GetProtectiveSpellEffect(INT32 damage, INT32 spellID);
 		// * odds of magic resisting
 		_H3API_ INT32 MagicMirrorEffect();
+
+		_H3API_ INT32 ApplyPhysicalDamage(INT32 amount);
+		_H3API_ VOID  ApplySpell(INT32 spellId, INT32 spellPower, INT32 schoolLevel, H3Hero* hero);
+		_H3API_ BOOL8 CanReceiveSpell(INT32 spellId);
+		_H3API_ BOOL  CanCastSpellAtEmptyHex(INT32 hexId);
+		_H3API_ BOOL8 MoveToHex(INT32 hexId);
+		_H3API_ BOOL8 UseEnchanters();
+		_H3API_ INT32 GetX() const;
+		_H3API_ INT32 GetY() const;
 	};
+
+	constexpr auto sz = sizeof(H3CombatMonster);
 
 	struct H3PrimarySkills
 	{
@@ -2661,7 +2760,7 @@ namespace h3
 			} getCreatures;					// bring creatures
 			INT getResources[7];			// bring resources
 			INT32 beHero;					// visit as a certain hero
-			INT32 bePlayer;					// visit as a certain player			
+			INT32 bePlayer;					// visit as a certain player
 		} data;
 
 		_H3API_ eQuestType GetQuestType() const;
@@ -2734,6 +2833,23 @@ namespace h3
 		}variants[3];
 	};
 
+	struct H3SpellbookText
+	{
+		struct TextPair
+		{
+			LPCSTR text;
+			LPCSTR description;
+		};
+
+		TextPair previousPage;
+		TextPair nextPage;
+		TextPair adventureMapSpells;
+		TextPair combatSpells;
+		TextPair schoolSpells[5]; // air, fire, water, earth, all
+		TextPair spellPoints;
+		TextPair closeSpellbook;
+	};
+
 	// * if a mapartifact has a custom setup, this is the referenced data
 	struct H3MapArtifact
 	{
@@ -2802,7 +2918,7 @@ namespace h3
 	{
 		H3Vector<H3ObjectAttributes> objectAttributes; // +00	// +01FB70
 		H3Vector<H3ObjectDetails> objectDetails;	   // +10
-		H3Vector<H3LoadedDEF*> defs;			       // +20 ???
+		H3Vector<H3LoadedDef*> defs;			       // +20 ???
 		H3Vector<H3MapArtifact> artifactResource;      // +30
 		H3Vector<H3Monster> monsters;	               // +40
 		H3Vector<H3PandorasBox> pandoraEvents;         // +50	// +01FBC0
@@ -3181,7 +3297,7 @@ namespace h3
 
 	struct H3CreatureExchange
 	{
-		struct H3LoadedDEF* def;
+		struct H3LoadedDef* def;
 	protected:
 		h3unk _f_04[104];
 	public:
@@ -3399,7 +3515,9 @@ namespace h3
 		_H3API_ VOID PlaceObjectOnMap(int x, int y, int z, int type, int subtype, int setup = -1);
 		_H3API_ VOID RefreshMapItemAppearrance(H3MapItem* mi);
 		_H3API_ H3Point GetCoordinates(H3MapItem* item);
+		_H3API_ BOOL8 IsHuman(UINT8 player_id);
 	};
+	_H3API_STATIC_ASSERT_(sizeof(h3::H3Main) == 0x4E7D0, "H3Main size is invalid");
 
 	// * size 38h
 // * base manager format
@@ -3448,7 +3566,7 @@ namespace h3
 		h3unk _f_38[20];
 		INT32 cursorType; // 0 crdeflt, 1 cradvntr, 2 crcombat, 3 crspell, 4 artifact @ 0x67FF88
 		INT32 cursorFrame;
-		H3LoadedDEF* cursorDef;
+		H3LoadedDef* cursorDef;
 		h3unk _f_58[16];
 		BOOL cursorHidden;
 		h3unk _f_6C[12];
@@ -3544,6 +3662,7 @@ namespace h3
 		_H3API_ VOID DefaultCursor();
 		_H3API_ VOID SetArtifactCursor(INT32 art_id);
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3MouseManager) == 0x90, "H3MouseManager size is invalid");
 
 	// * named heroWindowManager in H3, abbreviated
 	// * in charge of drawing and dialogs
@@ -3552,11 +3671,11 @@ namespace h3
 	protected:
 		UINT32 resultItemID; // 0x38
 		h3unk _f_3C[4];
-		struct H3LoadedPCX16* screenPcx16; // +40
-		h3unk _f_44[4];
-		struct H3LoadedPCX16* backupScreen; // +4C
-		struct H3Dlg* firstDlg; // +50
-		struct H3Dlg* lastDlg; // +54
+		struct H3LoadedPcx16* screenPcx16; // +40
+		h3unk _f_44[8];
+		struct H3LoadedPcx16* backupScreen; // +4C
+		struct H3BaseDlg* firstDlg; // +50
+		struct H3BaseDlg* lastDlg; // +54
 		h3unk _f_58[8];
 	public:
 
@@ -3570,8 +3689,9 @@ namespace h3
 		UINT32 ClickedItemID() const;
 		BOOL ClickedOK() const;
 		BOOL ClickedCancel() const;
-		struct H3LoadedPCX16* GetDrawBuffer();
+		struct H3LoadedPcx16* GetDrawBuffer();
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3WindowManager) == 0x60, "H3WindowManager size is invalid");
 #pragma warning(pop)
 
 	// * in charge of playing sounds
@@ -3586,6 +3706,7 @@ namespace h3
 		_H3API_ VOID PlaySound(struct H3WavFile* wav);
 		_H3API_ VOID PlaySound(LPCSTR wavName);
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3SoundManager) == 0xD4, "H3SoundManager size is invalid");
 
 	// * in charge of the adventure map
 	struct H3AdventureManager : public H3Manager
@@ -3612,35 +3733,35 @@ namespace h3
 		H3MainSetup* map;
 	protected:
 		// * +60
-		H3LoadedDEF* terrainDEF[10];
+		H3LoadedDef* terrainDEF[10];
 		h3unk _f_088[4];
 		// * +8C
-		H3LoadedDEF* riverDEF[4];
+		H3LoadedDef* riverDEF[4];
 		h3unk _f_09C[4];
 		// * +A0
-		H3LoadedDEF* roadDEF[3];
+		H3LoadedDef* roadDEF[3];
 		// * +AC
-		H3LoadedDEF* edgDEF;
+		H3LoadedDef* edgDEF;
 		// * +B0
-		H3LoadedDEF* adagDEF;
+		H3LoadedDef* adagDEF;
 		// * +B4
-		H3LoadedDEF* agemulDEF;
+		H3LoadedDef* agemulDEF;
 		// * +B8
-		H3LoadedDEF* agemurDEF;
+		H3LoadedDef* agemurDEF;
 		// * +BC
-		H3LoadedDEF* agemllDEF;
+		H3LoadedDef* agemllDEF;
 		// * +C0
-		H3LoadedDEF* agemlrDEF;
+		H3LoadedDef* agemlrDEF;
 		// * +C4
-		H3LoadedDEF* tshrcDEF;
+		H3LoadedDef* tshrcDEF;
 		// * +C8
-		H3LoadedDEF* radarDEF;
+		H3LoadedDef* radarDEF;
 		// * +CC
-		H3LoadedDEF* tshreDEF;
+		H3LoadedDef* tshreDEF;
 		// * +D0
-		H3Vector<H3LoadedDEF*> defs;
+		H3Vector<H3LoadedDef*> defs;
 		// * +E0
-		H3LoadedDEF* attackDEF;
+		H3LoadedDef* attackDEF;
 		// * +E4
 		// * the position of top left of the screen
 		H3Position screenPosition;
@@ -3654,19 +3775,19 @@ namespace h3
 	protected:
 		h3unk _f_0F4[24];
 		// * +10C
-		H3LoadedDEF* heroDEF[18];
+		H3LoadedDef* heroDEF[18];
 		// * +154
-		H3LoadedDEF* boatDEF[3];
+		H3LoadedDef* boatDEF[3];
 		// * +160
-		H3LoadedDEF* boatMovementDEF[3];
+		H3LoadedDef* boatMovementDEF[3];
 		// * +16C
-		H3LoadedDEF* heroFlags_00[8];
+		H3LoadedDef* heroFlags_00[8];
 		// * +18C
-		H3LoadedDEF* heroFlags_01[8];
+		H3LoadedDef* heroFlags_01[8];
 		// * +1AC
-		H3LoadedDEF* heroFlags_02[8];
+		H3LoadedDef* heroFlags_02[8];
 		// * +1CC
-		H3LoadedDEF* heroFlags_03[8];
+		H3LoadedDef* heroFlags_03[8];
 		// * +1EC
 		BOOL8 drawTransparentHero; // see 40F65F
 		h3unk _f_1ED[3];
@@ -3728,6 +3849,7 @@ namespace h3
 		_H3API_ CHAR UpdateHintMessage();
 		_H3API_ H3Point GetCoordinates(H3MapItem* item);
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3AdventureManager) == 0x3B8, "H3AdventureManager size is invalid");
 
 	// * trading between two armies
 	struct H3SwapManager : public H3Manager // size 0x68
@@ -3750,6 +3872,7 @@ namespace h3
 		BOOL8 samePlayer; // +5D
 		h3unk _f_5E[10];
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3SwapManager) == 0x68, "H3SwapManager size is invalid");
 
 	// * in charge of towns
 	struct H3TownManager : public H3Manager // size 472
@@ -3766,6 +3889,9 @@ namespace h3
 		// * +120
 		// * this gets copied to recipientPage during mouse hover, however if you click fast enough the update isn't done
 		H3CreatureExchange* bottom;
+	protected:
+		h3unk _f_124[8];
+	public:
 		// * +12C
 		// * source page
 		H3CreatureExchange* source;
@@ -3778,18 +3904,18 @@ namespace h3
 		// * +138
 		// * number of recipient page
 		INT32 recipientPageStack;
-	protected:
+	//protected:
 		h3unk _f_13C[100];
 		// * +1A0
 		// * bitfield of what can be built in the construction screen of the city
 		H3Bitfield buildings[2];
-		h3unk _f_1B0[20];
-		h3unk _f_1C4[4];
-		h3unk _f_1C8[16];
+		h3unk _f_1A8[48];
 	public:
 		_H3API_ VOID Draw();
 		_H3API_ VOID RefreshScreen();
+		_H3API_ VOID ViewTavern();
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3TownManager) == 0x1D8, "H3TownManager size is invalid");
 
 	// * keyboard and mouse input
 	struct H3InputManager : public H3Manager
@@ -3812,13 +3938,15 @@ namespace h3
 		{
 			UINT message;
 			h3unk f_4[28]; // contents vary
-		}messages[64]; // see 0x4EC6B8, % 64
-		INT current_message;
-		INT next_message;
-		// ... goes on a bit
-
+		}messages[64]; // * +38, see 0x4EC6B8, % 64
+		INT current_message; // * +838
+		INT next_message; // * +83C
+	protected:
+		h3unk _f_840[288];
+	public:
 		_H3API_ InputMessages& GetCurrentMessage();
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3InputManager) == 0x960, "H3InputManager size is invalid");
 
 	// * data for a single battlefield square
 	struct H3CombatSquare
@@ -3880,8 +4008,8 @@ namespace h3
 	struct TownTowerLoaded
 	{
 		INT32 crType2Shot;
-		struct H3LoadedDEF* monDefLoaded;
-		struct H3LoadedDEF* shotDefLoaded;
+		struct H3LoadedDef* monDefLoaded;
+		struct H3LoadedDef* shotDefLoaded;
 		INT32 creatureX;
 		INT32 creatureY;
 		INT32 orientation;
@@ -3936,7 +4064,16 @@ namespace h3
 		// * +4C
 		INT8 accessibleSquares[187];
 		// * +107
-		INT8 accessibleSquares2[187];
+		// * 1 -> can attack
+		// * 2 -> can reach
+		enum SquareAccess : UINT8
+		{
+			INACCESSIBLE = 0,
+			CAN_ATTACK   = 1,
+			CAN_REACH    = 2,
+			ACCESSIBLE   = CAN_ATTACK | CAN_REACH,
+		};
+		SquareAccess accessibleSquares2[187];
 	protected:
 		h3unk _f_01C2[2];
 	public:
@@ -3957,7 +4094,7 @@ namespace h3
 		h3unk _f_53AC[4];
 	public:
 		// * +53B0
-		H3LoadedPCX16* drawBuffer;
+		H3LoadedPcx16* drawBuffer;
 	protected:
 		h3unk _f_53B4[4];
 	public:
@@ -3996,9 +4133,9 @@ namespace h3
 		UINT32 HeroAnimationFrame[2];
 		h3unk _f_53F4[16];
 		// * +5404
-		H3LoadedDEF* heroDefLoaded[2];
+		H3LoadedDef* heroDefLoaded[2];
 		// * +540C
-		H3LoadedDEF* heroFlagLoaded[2];
+		H3LoadedDef* heroFlagLoaded[2];
 		// * +5414
 		INT32 heroFlagFrame[2];
 		// * +541C
@@ -4128,10 +4265,10 @@ namespace h3
 	public:
 		// * +13FF4
 		// * pcx of grids
-		struct H3LoadedPCX* CCellGrdPcx;
+		struct H3LoadedPcx* CCellGrdPcx;
 		// * +13FF8
 		// * pcx to shade in blue using cheat menu
-		struct H3LoadedPCX* CCellShdPcx;
+		struct H3LoadedPcx* CCellShdPcx;
 	protected:
 		// * +13FFC
 		INT32 GlobalCardeIndex;
@@ -4147,7 +4284,7 @@ namespace h3
 		BOOL8 turretAnimation[3];
 	protected:
 		h3align _f_1402F;
-		h3unk _f_14030[220];
+		h3unk _f_14030[188];
 	public:
 		// functions
 		_H3API_ VOID SimulateMouseAtHex(int hex_id);
@@ -4166,7 +4303,20 @@ namespace h3
 		_H3API_ VOID ShadeSquare(int index);
 		_H3API_ BOOL8 IsHumanTurn();
 		_H3API_ VOID AddStatusMessage(LPCSTR message, BOOL permanent = TRUE);
+
+		_H3API_ VOID PlayMagicAnimation(INT32 id, H3CombatMonster* target, INT32 timeStep, BOOL8 showTargetBeingHit);
+		_H3API_ VOID ReportDamageDone(H3Spell* spell, LPCSTR attackerName, INT32 damageDone, H3CombatMonster* target, INT32 killedCount);
+		_H3API_ BOOL8 ShouldCastSpellAfterHit(INT32 spellId, INT32 side, H3CombatMonster* target);
+
+		_H3API_ VOID ResurrectTarget(H3CombatMonster* target, INT32 hitPoints, INT32 isTemporary);
+		_H3API_ H3CombatMonster* SummonCreature(INT32 side, INT32 creatureId, INT32 amount, INT32 position, INT32 redrawAnimation, BOOL redraw);
+		_H3API_ H3CombatMonster* GetSummonDemonTarget(INT32 side, INT32 coordinate);
+		_H3API_ VOID RaiseDemon(H3CombatMonster* caster, H3CombatMonster* target);
+
+		_H3API_ VOID DrawRay(BOOL redraw, INT startX, INT startY, INT dstX, INT dstY, INT allowBranches, INT randomnessRange, INT startThickness, INT endThickness, WORD color565, INT amplitude, INT arching, INT rayStraightness, INT smoothness, BOOL pathRandomness, INT timeDelay);
+		_H3API_ VOID DrawRay(BOOL redraw, H3CombatMonster* start, H3CombatMonster* end, INT allowBranches, INT randomnessRange, INT startThickness, INT endThickness, WORD color565, INT amplitude, INT arching, INT rayStraightness, INT smoothness, BOOL pathRandomness, INT timeDelay);
 	};
+	_H3API_STATIC_ASSERT_(sizeof(H3CombatManager) == 0x140EC, "H3CombatManager size is invalid");
 
 	// * these are internal to H3API to avoid conflicts
 	namespace H3Internal

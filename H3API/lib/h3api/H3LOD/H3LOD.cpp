@@ -3,13 +3,13 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3LOD.hpp"
+#include "H3LOD.inl"
 
 namespace h3
 {
@@ -40,9 +40,9 @@ namespace h3
 		msk.colorMask  >> colors;
 		msk.shadowMask >> shadow;
 	}
-	_H3API_ VOID H3Msk::Msk::operator>>(H3ObjectMask & mask) const
+	_H3API_ void H3Msk::Msk::operator>>(H3ObjectMask & mask) const
 	{
-		mask.m_bits[0].Set(dbits);
-		mask.m_bits[1].Set(wbits);
+		mask[0].Set(dbits);
+		mask[1].Set(wbits);
 	}
 }

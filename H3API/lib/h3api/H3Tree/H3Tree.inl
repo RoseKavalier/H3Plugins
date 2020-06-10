@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -16,241 +15,646 @@
 
 namespace h3
 {
-	template<typename Type>
-	inline Type& H3Node<Type>::GetData()
-	{
-		return m_data;
-	}
-	template<typename Type>
-	inline Type* H3Node<Type>::GetDataPtr()
-	{
-		return &m_data;
-	}
-	template<typename Type>
-	inline H3Node<Type>::H3Node(Type& t) :
-		m_data(t),
-		m_height(1),
-		m_left(nullptr),
-		m_right(nullptr)
+	template<typename T>
+	inline H3Tree<T>::H3Node::H3Node() :
+		m_data(), m_black(true), m_parent(), m_left(), m_right()
 	{
 	}
-	template<typename Type>
-	inline INT H3Tree<Type>::_Height(H3Node<Type>* node)
+
+	template<typename T>
+	inline H3Tree<T>::H3Node::H3Node(const T& data) :
+		m_data(data), m_black(true), m_parent(), m_left(), m_right()
 	{
-		if (node == nullptr)
-			return 0;
-		return node->m_height;
 	}
-	template<typename Type>
-	inline H3Node<Type>* H3Tree<Type>::_RotateRight(H3Node<Type>* node)
+
+	template<typename T>
+	inline typename H3Tree<T>::H3Node* H3Tree<T>::H3Node::Next()
 	{
-		H3Node<Type>* root = node->m_left;
-		node->m_left = root->m_right;
-		root->m_right = node;
-		node->m_height = 1 + std::max(_Height(node->m_left), _Height(node->m_right));
-		root->m_height = 1 + std::max(_Height(root->m_left), _Height(root->m_right));
+		H3Node* node;
+		if (node = m_right)
+		{
+			while (node->m_left)
+				node = node->m_left;
+			return node;
+		}
+		node = this;
+		H3Node* parent = m_parent;
+		while (parent->m_left != node)
+		{
+			node = parent;
+			parent = node->m_parent;
+		}
+		return parent;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::H3Node* H3Tree<T>::H3Node::Previous()
+	{
+		H3Node* node;
+		if (node = m_left)
+		{
+			while (node->m_right)
+				node = node->m_right;
+			return node;
+		}
+		node = this;
+		H3Node* parent = node->m_parent;
+		while (parent->m_right != node)
+		{
+			node = parent;
+			parent = node->m_parent;
+		}
+		return parent;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::H3Node* H3Tree<T>::H3Node::LeftMost()
+	{
+		H3Node* node = this;
+		while (node->m_left)
+			node = node->m_left;
+		return node;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator& H3Tree<T>::iterator::operator++()
+	{
+		m_ptr = m_ptr->Next();
+		return *this;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator H3Tree<T>::iterator::operator++(int)
+	{
+		iterator it(m_ptr);
+		m_ptr = m_ptr->Next();
+		return it;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator& H3Tree<T>::iterator::operator--()
+	{
+		m_ptr = m_ptr->Previous();
+		return *this;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator H3Tree<T>::iterator::operator--(int)
+	{
+		iterator it(m_ptr);
+		m_ptr = m_ptr->Previous();
+		return it;
+	}
+
+	template<typename T>
+	inline typename T& H3Tree<T>::iterator::operator*() const
+	{
+		return m_ptr->m_data;
+	}
+
+	template<typename T>
+	inline typename T* H3Tree<T>::iterator::operator->() const
+	{
+		return &m_ptr->m_data;
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::iterator::operator==(const iterator& it) const
+	{
+		return m_ptr == it.m_ptr;
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::iterator::operator!=(const iterator& it) const
+	{
+		return m_ptr != it.m_ptr;
+	}
+
+	template<typename T>
+	inline H3Tree<T>::iterator::iterator(H3Node* node) :
+		m_ptr(node)
+	{
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator& h3::H3Tree<T>::const_iterator::operator++()
+	{
+		m_ptr = next(m_ptr);
+		return *this;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::const_iterator::operator++(int)
+	{
+		const_iterator it(m_ptr);
+		m_ptr = next(m_ptr);
+		return it;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator& H3Tree<T>::const_iterator::operator--()
+	{
+		m_ptr = previous(m_ptr);
+		return *this;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::const_iterator::operator--(int)
+	{
+		const_iterator it(m_ptr);
+		m_ptr = previous(m_ptr);
+		return it;
+	}
+
+	template<typename T>
+	inline typename const T& H3Tree<T>::const_iterator::operator*() const
+	{
+		return m_ptr->m_data;
+	}
+
+	template<typename T>
+	inline typename const T* H3Tree<T>::const_iterator::operator->() const
+	{
+		return &m_ptr->m_data;
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::const_iterator::operator==(const const_iterator& it) const
+	{
+		return m_ptr == it.m_ptr;
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::const_iterator::operator!=(const const_iterator& it) const
+	{
+		return m_ptr != it.m_ptr;
+	}
+
+	template<typename T>
+	inline H3Tree<T>::const_iterator::const_iterator(H3Node* node) :
+		m_ptr(node)
+	{
+	}
+
+	template<typename T>
+	inline H3Tree<T>::H3Tree() :
+		m_anchor(), m_begin(m_end), m_end(&m_anchor), m_size(0)
+	{
+		m_anchor.m_parent = m_end;
+	}
+
+	template<typename T>
+	inline H3Tree<T>::~H3Tree()
+	{
+		Clear();
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator H3Tree<T>::begin()
+	{
+		return iterator(m_begin);
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator H3Tree<T>::end()
+	{
+		return iterator(m_end);
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::begin() const
+	{
+		return const_iterator(m_begin);
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::end() const
+	{
+		return const_iterator(m_end);
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::cbegin() const
+	{
+		return const_iterator(m_begin);
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::cend() const
+	{
+		return const_iterator(m_end);
+	}
+
+	template<typename T>
+	inline void H3Tree<T>::Clear()
+	{
+		for (H3Node* it = m_begin; it != m_end; )
+		{
+			H3Node* curr = it;
+			it = it->Next();
+			delete curr;
+		}
+		
+		m_size = 0;
+		m_begin = m_end;
+		m_end = &m_anchor;
+		m_anchor.m_parent = m_end;
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::Insert(const T& data)
+	{
+		return insert(data);
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::Erase(const T& data)
+	{
+		return erase(data);
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::Erase(iterator& it)
+	{
+		return erase(it);
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::iterator H3Tree<T>::Find(const T& data)
+	{
+		return iterator(find(data));
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::const_iterator H3Tree<T>::Find(const T& data) const
+	{
+		return const_iterator(find(data));
+	}
+
+	template<typename T>
+	inline UINT H3Tree<T>::Size() const
+	{
+		return m_size;
+	}
+
+	template<typename T>
+	inline typename H3Tree<T>::H3Node* H3Tree<T>::find(const T& data)
+	{
+		H3Node* root = m_end;
+		H3Node* node = m_end->m_left;
+
+		while (node)
+		{
+			if (node->m_data < data)
+				node = node->m_right;
+			else
+			{
+				root = node;
+				node = node->m_left;
+			}
+		}
+
+		if (root == m_end || data < root->m_data)
+			return m_end;
 		return root;
 	}
-	template<typename Type>
-	inline H3Node<Type>* H3Tree<Type>::_RotateLeft(H3Node<Type>* node)
+
+	template<typename T>
+	inline bool H3Tree<T>::erase(const T& data)
 	{
-		H3Node<Type>* root = node->m_right;
-		node->m_right = root->m_left;
-		root->m_left = node;
-		node->m_height = 1 + std::max(_Height(node->m_left), _Height(node->m_right));
-		root->m_height = 1 + std::max(_Height(root->m_left), _Height(root->m_right));
-		return root;
+		return erase(find(data));
 	}
-	template<typename Type>
-	inline const H3Node<Type>* H3Tree<Type>::_Search(H3Node<Type>* root, Type& t) const
+
+	template<typename T>
+	inline bool H3Tree<T>::erase(iterator& it)
 	{
-		if (root == nullptr)
-			return nullptr;
-		int comparison = m_compare(t, root->m_data);
-		if (comparison == 0)
-			return root;
-		if (comparison < 0)
-			return _Search(root->m_left, t);
+		if (it == end())
+			return false;
+
+		H3Node* node = it.m_ptr;
+		H3Node* root;
+		H3Node* parent;
+		H3Node* temp = node;
+		bool yblack = temp->m_black;
+
+		if (!node->m_left)
+		{
+			root = node->m_right;
+			if (node == m_begin)
+				m_begin = node->Next();
+			insertAt(node, node->m_right);
+			parent = temp->m_parent;
+		}
+		else if (!node->m_right)
+		{
+			root = node->m_left;
+			insertAt(node, node->m_left);
+			parent = temp->m_parent;
+		}
 		else
-			return _Search(root->m_right, t);
-	}
-	template<typename Type>
-	inline H3Node<Type>* H3Tree<Type>::_Insert(H3Node<Type>* root, Type& t, Type* result)
-	{
-		if (root == nullptr)
 		{
-			++m_count;
-			H3Node<Type>* new_node = new H3Node<Type>(t);
-			result = &new_node->m_data;
-			return new_node;
-		}
-
-		int comparison = m_compare(t, root->m_data);
-		if (comparison < 0)
-			root->m_left = _Insert(root->m_left, t, result);
-		else if (comparison > 0)
-			root->m_right = _Insert(root->m_right, t, result);
-		else // (comparison == 0) --> no insertion, no re-ordering
-		{
-			result = &root->m_data;
-			return root;
-		}
-
-		int height_left = _Height(root->m_left);
-		int height_right = _Height(root->m_right);
-
-		root->m_height = 1 + std::max(height_left, height_right);
-
-		int balance = height_left - height_right;
-
-		if (balance > 1)
-		{
-			int left_compare = m_compare(t, root->m_left->m_data);
-			if (left_compare < 0)
-				return _RotateRight(root);
-			else
+			temp = node->LeftMost();
+			yblack = temp->m_black;
+			root = temp->m_right;
+			if (temp->m_parent != node)
 			{
-				root->m_left = _RotateLeft(root->m_left);
-				return _RotateRight(root);
-			}
-		}
-		else if (balance < -1)
-		{
-			int right_compare = m_compare(t, root->m_right->m_data);
-			if (right_compare > 0)
-				return _RotateLeft(root);
-			else
-			{
-				root->m_right = _RotateRight(root->m_right);
-				return _RotateLeft(root);
-			}
-		}
-
-		return root;
-	}
-	template<typename Type>
-	inline H3Node<Type>* H3Tree<Type>::_Remove(H3Node<Type>* root, Type& t)
-	{
-		if (root == nullptr)
-			return nullptr;
-
-		int comparison = m_compare(t, root->m_data);
-		if (comparison < 0)
-			root->m_left = _Remove(root->m_left, t);
-		else if (comparison > 0)
-			root->m_right = _Remove(root->m_right, t);
-		else // == 0
-		{
-			H3Node<Type>* right = root->m_right;
-			if (right == nullptr)
-			{
-				H3Node<Type>* left = root->m_left;
-				delete root;
-				root = left;
-			}
-			else if (root->m_left == nullptr)
-			{
-				delete root;
-				root = right;
+				insertAt(temp, temp->m_right);
+				temp->m_right = node->m_right;
+				temp->m_right->m_parent = temp;
+				parent = temp->m_parent;
 			}
 			else
-			{
-				while (right->m_left != nullptr)
-					right = right->m_left;
-				root->m_data(right->m_data);
-				root->m_right = _Remove(root->m_right, right->m_data);
+				parent = temp;
+			insertAt(node, temp);
+			temp->m_left = node->m_left;
+			temp->m_left->m_parent = temp;
+			temp->m_black = node->m_black;
+		}
+
+		if (yblack)
+			erasureBalance(root, parent);
+
+		--m_size;
+		delete node;
+	}
+
+	template<typename T>
+	inline bool H3Tree<T>::insert(const T& data)
+	{
+		H3Node* left = m_end->m_left;
+		H3Node* node = m_end;
+		bool is_smaller = true;
+		while (left)
+		{
+			node = left;
+			is_smaller = data < left->m_data;
+			left = is_smaller ? left->m_left : left->m_right;
+		}
+
+		H3Node* right = node;
+		if (is_smaller) // left
+		{
+			if (node == m_end) // tree is empty, set new root
+			{				
+				H3Node* new_node = new H3Node(data);
+				++m_size;
+				m_begin = new_node;
+				m_end->m_left = new_node;
+				m_end->m_right = new_node;
+				new_node->m_parent = m_end;				
+				insertionBalance(new_node);
+				return true;
+			}
+			else if (node == m_begin) 
+			{				
+				H3Node* new_node = new H3Node(data);
+				++m_size;
+
+				m_begin = new_node;
+				node->m_left = new_node;
+				new_node->m_parent = node;
+
+				insertionBalance(new_node);
+				return true;
+			}
+			else 
+			{				
+				H3Node* parent = right->m_parent;
+				while (right != parent->m_right) 
+				{
+					right = parent;
+					parent = right->m_parent;
+				}
+				right = parent;
+
+				if (right->m_data < data)
+				{
+					H3Node* new_node = new H3Node(data);
+					++m_size;
+
+					node->m_left = new_node;
+					new_node->m_parent = node;
+
+					insertionBalance(new_node);
+					return true;
+				}
+				// * duplicate
+				return false;				
 			}
 		}
-
-		if (root == nullptr)
-			return root;
-
-		int height_left = _Height(root->m_left);
-		int height_right = _Height(root->m_right);
-		int balance = height_left - height_right;
-
-		if (balance > 1)
+		
+		if (right->m_data < data)
 		{
-			int left_compare = m_compare(t, root->m_left->m_data);
-			if (left_compare > 0)
-				return _RotateRight(root);
-
-			root->m_left = _RotateLeft(root->m_left);
-			return _RotateRight(root);
+			H3Node* new_node = new H3Node(data);
+			++m_size;
+			node->m_right = new_node;
+			new_node->m_parent = node;
+			insertionBalance(new_node);
+			return true;
 		}
-		if (balance < -1)
+		// * duplicate
+		return false;
+	}
+
+	template<typename T>
+	inline void H3Tree<T>::insertionBalance(H3Node* node)
+	{
+		H3Node* uncle;
+
+		node->m_black = false;
+
+		while (!node->m_parent->m_black) 
 		{
-			int right_compare = m_compare(t, root->m_right->m_data);
-			if (right_compare < 0)
-				return _RotateLeft(root);
+			if (node->m_parent == node->m_parent->m_parent->m_left) 
+			{
+				uncle = node->m_parent->m_parent->m_right;
 
-			root->m_right = _RotateRight(root->m_right);
-			return _RotateLeft(root);
+				if (uncle && !uncle->m_black) 
+				{
+					node->m_parent->m_black = true;
+					uncle->m_black = true;
+					node->m_parent->m_parent->m_black = false;
+					node = node->m_parent->m_parent;
+				}
+				else {
+					if (node == node->m_parent->m_right) 
+					{
+						node = node->m_parent;
+						rotateLeft(node);
+					}
+					node->m_parent->m_black = true;
+					node->m_parent->m_parent->m_black = false;
+
+					rotateRight(node->m_parent->m_parent);
+				}
+			}
+			else {
+				uncle = node->m_parent->m_parent->m_left;
+				if (uncle && !uncle->m_black) 
+				{
+					node->m_parent->m_black = true;
+					uncle->m_black = true;
+					node->m_parent->m_parent->m_black = false;
+					node = node->m_parent->m_parent;
+				}
+				else 
+				{
+					if (node == node->m_parent->m_left) 
+					{
+						node = node->m_parent;
+						rotateRight(node);
+					}
+					node->m_parent->m_black = true;
+					node->m_parent->m_parent->m_black = false;
+
+					rotateLeft(node->m_parent->m_parent);
+				}
+			}
 		}
+		m_end->m_left->m_black = true;
+	}
 
-		return root;
-	}
-	template<typename Type>
-	inline VOID H3Tree<Type>::_Delete(H3Node<Type>* root)
+	template<typename T>
+	inline void H3Tree<T>::erasureBalance(H3Node* node, H3Node* parent)
 	{
-		if (root == nullptr)
-			return;
-		_Delete(root->m_left);
-		_Delete(root->m_right);
-		delete root;
+		while (node != m_end->m_left && (!node || node->m_black)) 
+		{
+			if (node == parent->m_left) 
+			{
+				H3Node* sibling = parent->m_right;
+				if (!sibling->m_black)
+				{
+					sibling->m_black = true;
+					parent->m_black = false;
+					rotateLeft(parent);
+					sibling = parent->m_right;
+				}
+				if ((!sibling->m_left || sibling->m_left->m_black) && (!sibling->m_right || sibling->m_right->m_black)) 
+				{
+					sibling->m_black = false;
+					node = parent;
+					parent = parent->m_parent;
+				}
+				else {
+					if (!sibling->m_right|| sibling->m_right->m_black)
+					{
+						if (sibling->m_left)
+							sibling->m_left->m_black = true;
+						sibling->m_black = false;
+						rotateRight(sibling);
+						sibling = parent->m_right;
+					}
+					sibling->m_black = parent->m_black;
+					parent->m_black = true;
+					if (sibling->m_right)
+						sibling->m_right->m_black = true;
+					rotateLeft(parent);
+					node = m_end->m_left;
+				}
+			}
+			else {
+				H3Node* sibling = parent->m_left;
+				if (!sibling->m_black) 
+				{
+					sibling->m_black = true;
+					parent->m_black = false;
+					rotateRight(parent);
+					sibling = parent->m_left;
+				}
+				if ((!sibling->m_left || sibling->m_left->m_black) && (!sibling->m_right || sibling->m_right->m_black)) 
+				{
+					sibling->m_black = false;
+					node = parent;
+					parent = parent->m_parent;
+				}
+				else 
+				{
+					if (!sibling->m_left || sibling->m_left->m_black) 
+					{
+						if (sibling->m_right)
+							sibling->m_right->m_black = true;
+						sibling->m_black = false;
+						rotateLeft(sibling);
+						sibling = parent->m_left;
+					}
+					sibling->m_black = parent->m_black;
+					parent->m_black = true;
+					if (sibling->m_left)
+						sibling->m_left->m_black = true;
+					rotateRight(parent);
+					node = m_end->m_left;
+				}
+			}
+		}
+		if (node)
+			node->m_black = true;
 	}
-	template<typename Type>
-	inline VOID H3Tree<Type>::_Inorder(H3Node<Type>* root, H3Vector<Type>& vector)
+
+	template<typename T>
+	inline void H3Tree<T>::rotateLeft(H3Node* node)
 	{
-		if (root == nullptr)
-			return;
-		_Inorder(root->m_left, vector);
-		vector.Add(root->GetData());
-		_Inorder(root->m_right, vector);
+		H3Node* tmp = node->m_right;
+
+		node->m_right = tmp->m_left;
+		if (tmp->m_left)
+			tmp->m_left->m_parent = node;
+
+		tmp->m_parent = node->m_parent;
+
+		if (node->m_parent == m_end) 
+		{
+			m_end->m_left = tmp;
+			m_end->m_right = tmp;
+			tmp->m_parent = m_end;			
+		}
+		else if (node == node->m_parent->m_left) 
+			node->m_parent->m_left = tmp;		
+		else 
+			node->m_parent->m_right = tmp;		
+
+		tmp->m_left = node;
+		node->m_parent = tmp;
 	}
-	template<typename Type>
-	inline H3Tree<Type>::H3Tree(CompFunc TypeComparison) :
-		m_count(0),
-		m_compare(TypeComparison),
-		m_root(nullptr)
-	{		
-	}
-	template<typename Type>
-	inline H3Tree<Type>::~H3Tree()
+
+	template<typename T>
+	inline void H3Tree<T>::rotateRight(H3Node* node)
 	{
-		_Delete(m_root);
+		H3Node* tmp = node->m_left;
+		node->m_left = tmp->m_right;
+		if (tmp->m_right)
+			tmp->m_right->m_parent = node;
+
+		tmp->m_parent = node->m_parent;
+		if (node->m_parent == m_end) 
+		{
+			m_end->m_left = tmp;
+			m_end->m_right = tmp;
+			tmp->m_parent = m_end;			
+		}
+		else if (node == node->m_parent->m_right) 
+			node->m_parent->m_right = tmp;		
+		else 
+			node->m_parent->m_left = tmp;		
+
+		tmp->m_right = node;
+		node->m_parent = tmp;
 	}
-	template<typename Type>
-	inline Type* H3Tree<Type>::Insert(Type& t)
+
+	template<typename T>
+	inline void H3Tree<T>::insertAt(H3Node* dst, H3Node* node)
 	{
-		Type* result = nullptr;
-		m_root = _Insert(m_root, t, result);
-		return result;
-	}
-	template<typename Type>
-	inline VOID H3Tree<Type>::Remove(Type& t)
-	{
-		m_root = _Remove(m_root, t);
-	}
-	template<typename Type>
-	inline INT H3Tree<Type>::Count() const
-	{
-		return m_count;
-	}
-	template<typename Type>
-	inline const Type* H3Tree<Type>::Find(Type& t) const
-	{
-		const H3Node<Type>* f = _Search(m_root, t);
-		if (f == nullptr)
-			return nullptr;
-		return &f->m_data;
-	}
-	template<typename Type>
-	inline H3Vector<Type> H3Tree<Type>::OrderedTravel()
-	{
-		H3Vector<Type> nodes;
-		_Inorder(m_root, nodes);
-		return nodes;
+		if (dst->m_parent == m_end) 
+		{			
+			m_end->m_left = node;
+			m_end->m_right = node;
+		}
+		else if (dst == dst->m_parent->m_left) 
+			dst->m_parent->m_left = node;		
+		else 
+			dst->m_parent->m_right = node;
+
+		if (node)
+			node->m_parent = dst->m_parent;
 	}
 }
 

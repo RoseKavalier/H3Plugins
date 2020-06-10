@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2020-05-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,7 +11,6 @@
 #ifndef _H3LOD_HPP_
 #define _H3LOD_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
 
 namespace h3
@@ -22,7 +20,7 @@ namespace h3
 	{
 		// * +0
 		CHAR name[12];
-		h3unk name_end[4];
+		h3unk nameEnd[4];
 		// * +10
 		PUINT8 buffer;
 		// * +14
@@ -41,7 +39,7 @@ namespace h3
 			DWORD dbits;
 			WORD  wbits;
 
-			_H3API_ VOID operator>>(H3ObjectMask& mask) const;
+			_H3API_ void operator>>(H3ObjectMask& mask) const;
 		};
 		Msk colorMask;
 		Msk shadowMask;

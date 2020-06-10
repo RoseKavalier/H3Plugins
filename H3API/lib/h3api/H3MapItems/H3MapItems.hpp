@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,7 +11,6 @@
 #ifndef _H3MAPITEMS_HPP_
 #define _H3MAPITEMS_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
 
 namespace h3
@@ -21,7 +19,7 @@ namespace h3
 	struct MapMonster
 	{
 		unsigned  count           : 12;// +00 max 4095
-		unsigned  aggression      : 5; // for diplomacy
+		  signed  aggression      : 5; // for diplomacy
 		unsigned  noRun           : 1; // +17
 		unsigned  noGrowth        : 1; // +18
 		unsigned  setupIndex      : 8; // +19 up to 256 individual messages/prizes
@@ -33,7 +31,7 @@ namespace h3
 	struct SODSP_MapMonster
 	{
 		unsigned  count      : 12; // +00 max 4095
-		unsigned  aggression : 5;  // for diplomacy
+		  signed  aggression : 5;  // for diplomacy
 		unsigned  noRun      : 1;  // +17
 		unsigned  noGrowth   : 1;  // +18
 		unsigned  setupIndex : 12; // +19 up to 4096 individual messages/prizes. Extra growth is handled using the same game logic, just not stored

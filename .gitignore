@@ -32,3 +32,6 @@ H3.Plugin.Template/bin/Release/H3.Plugin.Template.vsix
 *.cs
 *.enc
 *.py
+H3API/lib/h3api/Backups/
+H3API/lib/h3api/H3Development/
+H3API/lib/h3api/H3_Development.hpp

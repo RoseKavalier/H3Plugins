@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-05                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -16,36 +15,39 @@
 
 namespace h3
 {
-	template<INT32 Sz>
-	inline H3String& H3String::Append(const CHAR(& buffer)[Sz])
+	template<UINT Sz>
+	inline H3String& H3String::AppendA(const CHAR(& buffer)[Sz])
 	{
 		return Append(buffer, Sz - 1);
 	}
-	template<INT32 Sz>
-	inline H3String& H3String::operator+=(const CHAR(&buffer)[Sz])
+	template<UINT Sz>
+	inline H3String & H3String::AssignA(const CHAR(&buffer)[Sz])
 	{
-		return Append(buffer, Sz - 1);
+		return Assign(buffer, Sz - 1);
 	}
-#ifdef _CPLUSPLUS11_
+#ifdef _H3API_CPLUSPLUS11_
 	template<typename ...Args>
 	inline H3String&  H3String::Printf(LPCSTR format, Args ...args)
 	{
 		// * snprintf with null buffer returns print length
 		// * does not count null-pointer in return value
-		int len = _snprintf(nullptr, 0, format, args ...);
+#pragma warning(push)
+#pragma warning(disable : 4996)
+		UINT len = _snprintf(nullptr, 0, format, args ...);
 		if (len > 0 && Reserve(len + 2))
 		{
 			len = _snprintf(Begin(), len + 1, format, args ...);
+#pragma warning(pop)
 			if (len)
 			{
-				length = len;
-				str[len] = 0;
+				m_length = len;
+				m_string[len] = 0;
 			}
 		}
 		return *this;
 	}
 	template<typename ...Args>
-	inline H3String&  H3String::PrintfAppend(LPCSTR format, Args ...args)
+	inline H3String& H3String::PrintfAppend(LPCSTR format, Args ...args)
 	{
 		H3String append_to_me;
 		append_to_me.Printf(format, args ...);
@@ -87,7 +89,7 @@ namespace h3
 	inline H3String operator+(H3String&  lhs, LPCSTR rhs)
 	{
 		H3String ans;
-		const int slen = strlen(rhs);
+		const UINT slen = strlen(rhs);
 		if (!(ans.Reserve(lhs.Length()) + slen))
 			return ans;
 		ans += lhs;
@@ -98,7 +100,7 @@ namespace h3
 	inline H3String operator+(LPCSTR lhs, H3String&  rhs)
 	{
 		H3String ans;
-		int slen = strlen(lhs);
+		UINT slen = strlen(lhs);
 		if (!(ans.Reserve(rhs.Length()) + slen))
 			return ans;
 		ans += lhs;

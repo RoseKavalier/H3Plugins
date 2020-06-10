@@ -1,8 +1,6 @@
 #ifndef _H3IMAGELOADER_HPP_
 #define _H3IMAGELOADER_HPP_
 
-#pragma once
-
 #include "../../H3_Base.hpp"
 #include "../../H3_BinaryItems.hpp"
 
@@ -29,7 +27,7 @@ namespace h3
 				// * @filepath - the complete path to the image you are looking to load
 				// * @h3name - the name to use within the H3 assets (to recuperate the image later)
 				// * @width and @height are optional, but can be used to resize the image
-				virtual H3LoadedPCX16* LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width = -1, INT height = -1) = 0;
+				virtual H3LoadedPcx16* LoadImageToPcx16(LPCSTR filepath, LPCSTR h3name, INT width = -1, INT height = -1) = 0;
 			};
 
 			inline H3ImageLoader * GetImageLoader()

@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-05                        //
-//                      Last edit: 2019-12-15                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,9 +11,7 @@
 #ifndef _H3VECTOR_HPP_
 #define _H3VECTOR_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
-#include "../H3_Allocator.hpp"
 
 #ifdef _H3_STD_CONVERSIONS_
 #include <vector>
@@ -40,15 +37,34 @@ namespace h3
 		VOID Construct(_Elem* start, _Elem* finish);
 		VOID Destruct(_Elem* start, _Elem* finish);
 		VOID Deallocate();
+		BOOL reserveExtra(INT32 number);
+
+		INT EXPAND_NUMBER(INT minimumNeeded);
+		INT MIN_ELEMENTS() const;
+		INT GROWTH_MULTIPLIER() const;
 	public:
 		H3Vector(const int number_elements);
 		H3Vector();
 		~H3Vector();
 
+		H3Vector(const H3Vector<_Elem>& other);
+		H3Vector<_Elem>& operator=(const H3Vector<_Elem>& other);
+
+#ifdef _H3API_CPLUSPLUS11_
+		H3Vector(H3Vector<_Elem>&& other);
+		H3Vector<_Elem>& operator=(H3Vector<_Elem>&& other);
+#endif
+
+		void swap(H3Vector<_Elem>& other);
+
 		// * this is used in combination of C++11 'for :' range-based for loop iterator operations
 		_Elem* begin();
 		// * this is used in combination of C++11 'for :' range-based for loop iterator operations
 		_Elem* end();
+		// * this is used in combination of C++11 'for :' range-based for loop iterator operations
+		_Elem* begin() const;
+		// * this is used in combination of C++11 'for :' range-based for loop iterator operations
+		_Elem* end() const;
 
 		// * ~constructor
 		VOID Init();
@@ -59,13 +75,15 @@ namespace h3
 		// * If vector is full
 		BOOL IsFull() const;
 		// * the number of items
-		INT32 Count() const;
-		// * the maximum number of items
-		INT32 CountMax() const;
-		// * calculates size
 		UINT32 Size() const;
+		// * the number of items
+		UINT32 Count() const;
+		// * the maximum number of items
+		UINT32 CountMax() const;
+		// * calculates size
+		UINT32 RawSize() const;
 		// * calculates allocated size
-		UINT32 SizeAllocated() const;
+		UINT32 RawSizeAllocated() const;
 		// * removes the last item
 		VOID RemoveLast();
 		// * empties list
@@ -95,27 +113,33 @@ namespace h3
 		// * Removes last item and returns reference to it
 		_Elem* Pop();
 		// * Returns item at position, can be negative to get from end
-		_Elem* At(INT32 pos);
-		const _Elem* CAt(INT32 pos) const;
+		_Elem* At(UINT32 pos);
+		const _Elem* At(UINT32 pos) const;
 		// * returns reference to item at position
-		_Elem& RAt(INT32 pos);
-		const _Elem& CRAt(INT32 pos) const;
+		_Elem& RAt(UINT32 pos);
+		const _Elem& RAt(UINT32 pos) const;
 		// * remove one item, elements shift left
-		BOOL Remove(INT32 pos);
-		// * remove range, list shifts left
-		BOOL Remove(INT32 fromPos, INT32 toPos);
+		BOOL Remove(UINT32 pos);
+		// * remove range, elements shift left
+		BOOL Remove(UINT32 fromPos, UINT32 toPos);
+		// * removes elements [first, last) (that is, last is excluded)
+		BOOL Remove(_Elem* first, _Elem* last);
+		// * removes element and shifts remaining left
+		BOOL Remove(_Elem* elem);
 		// * reserves a number of elements, always greater than current
-		BOOL Reserve(INT number);
+		BOOL Reserve(UINT number);
+		// * Sets the current size to the specified number, smaller or greater
+		BOOL Resize(UINT number);
 
 		// * returns reference to element at pos, positive only
-		_Elem& operator[](INT32 pos);
-		_Elem& operator[](INT32 pos) const;
+		_Elem& operator[](UINT32 pos);
+		_Elem& operator[](UINT32 pos) const;
 		// * Adds item to end of list
 		_Elem* operator+=(_Elem & item);
-		// * Adds item to end of list
-		_Elem* operator<<(_Elem & item);
 
-#ifdef _CPLUSPLUS11_
+		BOOL Insert(_Elem* position, _Elem* first, _Elem* last);
+
+#ifdef _H3API_CPLUSPLUS11_
 		_Elem* Add(_Elem&& item);
 		_Elem* Push(_Elem&& item);
 		_Elem* AddOne(_Elem&& item);
@@ -124,6 +148,7 @@ namespace h3
 #endif
 
 	#ifdef _H3_STD_CONVERSIONS_
+		BOOL Insert(_Elem* position, typename std::vector<_Elem>::iterator first, typename std::vector<_Elem>::iterator last);
 		H3Vector(const std::vector<_Elem>& vec);
 		std::vector<_Elem> to_std_vector() const;
 		H3Vector<_Elem>& operator=(const std::vector<_Elem>& vec);

@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,7 +11,6 @@
 #ifndef _H3MEMORY_HPP_
 #define _H3MEMORY_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
 
 namespace h3
@@ -32,7 +30,7 @@ namespace h3
 
 	// * perform operations on loaded memory
 	namespace H3Patcher
-	{	
+	{
 		enum mnemonics
 		{
 			inc_eax    = 0x40,
@@ -116,7 +114,7 @@ namespace h3
 		};
 
 		_H3API_ PUCHAR Memmem(PUCHAR haystack, size_t hlen, PUCHAR needle, size_t nlen);
-		_H3API_ UINT32 FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset);		
+		_H3API_ UINT32 FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset);
 
 #ifndef _NAKED_FUNCTION_
 #define _NAKED_FUNCTION_ VOID __declspec(naked)
@@ -125,28 +123,52 @@ namespace h3
 		// * only works for opcode length 5, most basic hook there is
 		// * function should be of type _NAKED_FUNCTION_
 		// * you are also in charge of overwritten assembly
-		_H3API_ VOID NakedHook5(UINT32 start, VOID* function);
+		_H3API_ VOID NakedHook5(UINT32 whereTo, VOID* function);
+		// * requires at least 5 bytes
+		// * function should be of type _NAKED_FUNCTION_
+		// * you are also in charge of overwritten assembly
+		// * replaces bytes after the first 5 by NOP instructions
+		_H3API_ VOID NakedHook(UINT32 whereTo, VOID* function, INT totalBytes);
 
-		// * writes byte, word or dword
-		template<typename T> 
+		// * writes byte, word or dword, float, double...
+		template<typename T>
 		struct WriteValue
 		{
-			WriteValue(const UINT address, const T value);
+			WriteValue(const UINT whereTo, const T value);
 		};
-		// writes array of values of type T
-		template<typename T, size_t size> 
+		// * writes array of values of type T
+		template<typename T, size_t size>
 		struct WriteValues
 		{
-			WriteValues(const UINT address, const T(&value)[size]);
+			WriteValues(const UINT whereTo, const T(&value)[size]);
 		};
-		
-		typedef WriteValue<BYTE> BytePatch;
-		typedef WriteValue<WORD> WordPatch;
-		typedef WriteValue<DWORD> DwordPatch;
-		typedef WriteValue<FLOAT> FloatPatch;
+
+		// * writes pointer of data type (its address)
+		// * to the specified location
+		// * data can be of any type
+		template<typename T>
+		VOID AddressOfPatch(const UINT whereTo, const T& data);
+
+		// * writes pointer of data type (its address)
+		// * to the specified locations
+		// * data can be of any type
+		template<typename Address, typename Type, size_t size>
+		typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
+		AddressOfPatch(const Address(&whereTo)[size], const Type& data);
+
+		// * writes an array of bytes to the specified location
 		template<size_t size>
-		static VOID HexPatch(const UINT address, const BYTE(&value)[size]);
-}
+		VOID HexPatch(const UINT whereTo, const BYTE(&value)[size]);
+
+		typedef WriteValue<BYTE>   BytePatch;
+		typedef WriteValue<INT8>   CharPatch;
+		typedef WriteValue<WORD>   WordPatch;
+		typedef WriteValue<INT16>  ShortPatch;
+		typedef WriteValue<DWORD>  DwordPatch;
+		typedef WriteValue<INT32>  IntPatch;
+		typedef WriteValue<FLOAT>  FloatPatch;
+		typedef WriteValue<DOUBLE> DoublePatch;
+	}
 
 	// * get information about loaded dll
 	struct H3DLL
@@ -174,7 +196,7 @@ namespace h3
 		// searches around the needle for a piece of code, needle2
 		_H3API_ UINT32 NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 radius, PUINT8 needle2, INT32 needleSize2);
 		// to find subsequent instances of a needle, based on NeedleSearch result
-		_H3API_ UINT32 NeedleSearchAfter(UINT32 after, PUINT8 needle, INT32 needleSize, INT32 offset) const;
+		_H3API_ UINT32 NeedleSearchAfter(UINT32 after, const PUINT8 needle, INT32 needleSize, INT32 offset) const;
 		// performs NeedleSearch and checks checks location for expectedCode
 		_H3API_ UINT32 NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 offset, PUINT8 expectedCode, INT32 expectedSize);
 		// needleSearch in rdata
@@ -183,17 +205,17 @@ namespace h3
 		_H3API_ UINT32 NeedleSearchData(PUINT8 needle, INT32 needleSize) const;
 
 		// find the first instance of needle
-		template <INT32 sz> UINT32 NeedleSearch(UINT8(&needle)[sz], INT32 offset);
+		template <INT32 sz> UINT32 NeedleSearch(const UINT8(&needle)[sz], INT32 offset);
 		// searches around the needle for a piece of code, needle2
-		template <INT32 sz, INT32 sz2> UINT32 NeedleSearchAround(UINT8(&needle)[sz], INT32 radius, UINT8(&needle2)[sz2]);
+		template <INT32 sz, INT32 sz2> UINT32 NeedleSearchAround(const UINT8(&needle)[sz], INT32 radius, const UINT8(&needle2)[sz2]);
 		// to find subsequent instances of a needle, based on NeedleSearch result
-		template <INT32 sz> UINT32 NeedleSearchAfter(UINT32 after, UINT8(&needle)[sz], INT32 offset);
+		template <INT32 sz> UINT32 NeedleSearchAfter(UINT32 after, const UINT8(&needle)[sz], INT32 offset);
 		// performs NeedleSearch and checks checks location for expectedCode
-		template <INT32 sz, INT32 sz2> UINT32 NeedleSearchConfirm(UINT8(&needle)[sz], INT32 offset, UINT8(&expectedCode)[sz2]);
+		template <INT32 sz, INT32 sz2> UINT32 NeedleSearchConfirm(const UINT8(&needle)[sz], INT32 offset, const UINT8(&expectedCode)[sz2]);
 		// needleSearch in rdata
-		template <INT32 sz> UINT32 NeedleSearchRData(UINT8(&needle)[sz]);
+		template <INT32 sz> UINT32 NeedleSearchRData(const UINT8(&needle)[sz]);
 		// needleSearch in data
-		template <INT32 sz> UINT32 NeedleSearchData(UINT8(&needle)[sz]);
+		template <INT32 sz> UINT32 NeedleSearchData(const UINT8(&needle)[sz]);
 	};
 }
 

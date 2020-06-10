@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-22                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,24 +11,40 @@
 #ifndef _H3RMG_HPP_
 #define _H3RMG_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
-#include "../H3_Vector.hpp"
 #include "../H3_String.hpp"
-#include "../H3_StreamBuf.hpp"
+#include "../H3_Vector.hpp"
 #include "../H3_Functions.hpp"
+#include "../H3_Structures.hpp"
 
 namespace h3
 {
 	// * forward declarations
 
-	struct RMG_Object;
-	struct RMG_Zone;
-	struct RMG_Main;
+	_H3API_DECLARE_(RMG_Coordinates);
+	_H3API_DECLARE_(RMG_GroundTile);
+	_H3API_DECLARE_(RMG_GroundTileData);
+	_H3API_DECLARE_(RMG_MovementCost);
+	_H3API_DECLARE_(RMG_ZoneData);
+	_H3API_DECLARE_(RMG_MapItem);
+	_H3API_DECLARE_(RMG_ObjectProps);
+	_H3API_DECLARE_(RMG_ObjectPropsRef);
+	_H3API_DECLARE_(RMG_ObjectGenerator);
+	_H3API_DECLARE_(RMG_ZoneGenerator);
+	_H3API_DECLARE_(RMG_ZoneConnection);
+	_H3API_DECLARE_(RMG_Zone);
+	_H3API_DECLARE_(RMG_Template);
+	_H3API_DECLARE_(RMG_Object);
+	_H3API_DECLARE_(RMG_ObjectMonster);
+	_H3API_DECLARE_(RMG_ObjectTown);
+	_H3API_DECLARE_(RMG_Map);
+	_H3API_DECLARE_(RMG_Parameters);
+	_H3API_DECLARE_(RMG_MapInfo);
+	_H3API_DECLARE_(RMG_Main);
 
 #pragma pack(push, 1)
 	struct RMG_Coordinates : H3Point
-	{		
+	{
 	};
 
 	struct RMG_GroundTile
@@ -63,7 +78,7 @@ namespace h3
 		unsigned _b25           : 1;	// bit 25 [0x0100 0000]
 		unsigned  mustBeBlocked : 1;	// bit 26 [0x0200 0000] checks if not rock after 0x537F10
 		unsigned  isEntrance    : 1;	// bit 27 [0x0400 0000] set when yellow entrance tile
-		unsigned  isBlocked     : 1; // bit 28 [0x0800 0000] ~ if this is not set, roads are allowed to go everywhere!
+		unsigned  isBlocked     : 1;    // bit 28 [0x0800 0000] ~ if this is not set, roads are allowed to go everywhere!
 		unsigned _b29           : 1;	// bit 29 [0x1000 0000] ~ water related ?
 		unsigned _b30           : 1;	// bit 30 [0x2000 0000]
 		unsigned _b31           : 1;	// bit 31 [0x4000 0000]
@@ -331,6 +346,8 @@ namespace h3
 		// * +10
 		INT32 z;
 		h3unk _f_14[8];
+
+		_H3API_ h3func GetVTable() const;
 	};
 
 	struct RMG_ObjectMonster : public RMG_Object
@@ -498,7 +515,7 @@ namespace h3
 		_H3API_ RMG_Main(RMG_Parameters& p, PVOID progress);
 		_H3API_ ~RMG_Main();
 		_H3API_ BOOL8 GenerateMap();
-		_H3API_ BOOL8 WriteMap(H3Streambuf& stream);
+		_H3API_ BOOL8 WriteMap(H3ZStream& stream);
 	};
 #pragma pack(pop)
 }

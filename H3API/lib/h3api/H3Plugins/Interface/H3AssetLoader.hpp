@@ -23,7 +23,7 @@ namespace h3
 
 				// * @filePath - the complete path to the PCX you are looking to load
 				// * @h3name - the name of the PCX to load
-				virtual H3LoadedPCX* LoadPcxFromFile(LPCSTR const filePath, LPCSTR const h3name) = 0;
+				virtual H3LoadedPcx* LoadPcxFromFile(LPCSTR const filePath, LPCSTR const h3name) = 0;
 
 				// * @filePath - the complete path to the WAV you are looking to load
 				// * @h3name - the name of the WAV to load
@@ -31,7 +31,7 @@ namespace h3
 
 				// * @filePath - the complete path to the DEF you are looking to load
 				// * @h3name - the name of the DEF to load
-				virtual H3LoadedDEF* LoadDefFromFile(LPCSTR const filePath, LPCSTR const h3name) = 0;
+				virtual H3LoadedDef* LoadDefFromFile(LPCSTR const filePath, LPCSTR const h3name) = 0;
 			};
 
 			inline H3AssetLoader* GetAssetLoader()

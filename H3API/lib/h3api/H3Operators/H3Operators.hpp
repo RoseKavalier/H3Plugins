@@ -3,7 +3,6 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-15                        //
-//                      Last edit: 2019-12-15                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
@@ -12,7 +11,6 @@
 #ifndef _H3OPERATORS_HPP_
 #define _H3OPERATORS_HPP_
 
-#include "../H3_Core.hpp"
 #include "../H3_Base.hpp"
 
 // * The new, new[], delete and delete[] operators are

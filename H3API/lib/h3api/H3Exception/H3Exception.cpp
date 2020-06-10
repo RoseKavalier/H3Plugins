@@ -3,13 +3,13 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2019-12-06                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3Exception.hpp"
+#include "H3Exception.inl"
 #include "../H3_Functions.hpp"
 
 namespace h3
@@ -26,13 +26,13 @@ namespace h3
 	{
 		switch (opcode)
 		{
-		case 0: 
+		case 0:
 			return "read";
-		case 1: 
+		case 1:
 			return "write";
-		case 8: 
+		case 8:
 			return "user-mode data execution prevention (DEP) violation";
-		default: 
+		default:
 			return "unknown";
 		}
 	}
@@ -94,13 +94,13 @@ namespace h3
 	{
 		HMODULE hm;
 		GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCSTR)(ep->ExceptionRecord->ExceptionAddress), &hm);
-		char module_name[MAX_PATH];
 
 		IMAGE_DOS_HEADER* pDOSHeader = (IMAGE_DOS_HEADER*)hm;
 		IMAGE_NT_HEADERS* pNTHeaders = (IMAGE_NT_HEADERS*)((BYTE*)pDOSHeader + pDOSHeader->e_lfanew);
 		DWORD base_of_code = ((DWORD)hm + pNTHeaders->OptionalHeader.BaseOfCode);
 
-		DWORD mn_len = GetModuleFileNameA(hm, module_name, MAX_PATH);
+		char module_name[MAX_PATH];
+		DWORD mn_len = F_GetModuleFileNameA(hm, module_name, MAX_PATH);
 		// null terminate for XP
 		module_name[mn_len] = 0;
 
@@ -135,11 +135,16 @@ namespace h3
 			ctx->Eax, ctx->Ecx, ctx->Edx, ctx->Ebx, ctx->Esp, ctx->Ebp, ctx->Esi, ctx->Edi, ctx->ContextFlags);
 
 		if (log_error)
-			error.Append(OfferToLog);	
+			error.AppendA(OfferToLog);
 	}
 
-	_H3API_ H3Exception::H3Exception(LPCSTR message) : 
+	_H3API_ H3Exception::H3Exception(LPCSTR message) :
 		exception(message)
+	{
+	}
+
+	H3Exception::H3Exception(const H3String & message) :
+		exception(message.String())
 	{
 	}
 
@@ -171,8 +176,12 @@ namespace h3
 		F_fwrite(what(), 1, strlen(what()) - sizeof(NH3Error::OfferToLog), f);
 		F_fclose(f);
 	}
+	_H3API_ VOID H3Exception::LogError(const H3String & path)
+	{
+		LogError(path.String());
+	}
 
-	_H3API_ H3SEHandler::H3SEHandler() : 
+	_H3API_ H3SEHandler::H3SEHandler() :
 		old_SE_translator(_set_se_translator(NH3Error::h3_trans_func))
 	{
 	}

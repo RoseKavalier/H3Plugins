@@ -13,9 +13,8 @@ BOOL OpenFileFromDataDir(LPCSTR name, h3::H3File& file)
 {
 	if (!name)
 		return FALSE;
-	h3::H3String path(h3::h3_DataPath());
-	path += name;
-	if (!file.Open(path))
+	h3::H3String path(*h3::P_DataPath() + name);
+	if (!file.Open(path.String()))
 		return FALSE;
 	return TRUE;
 }
@@ -46,7 +45,7 @@ _LHF_(DefFromDataFolder)
 		return EXEC_DEFAULT;
 
 	PBYTE buffer = file.ReleaseBuffer();
-	c->ref_local_n(8) = int(buffer);
+	c->Local<PBYTE>(8) = buffer;
 	c->edi = int(buffer);
 	c->return_address = 0x55CB64;
 	return NO_EXEC_DEFAULT;
@@ -60,7 +59,7 @@ _LHF_(MskFromDataFolder_NewGame) // 55D160
 		return EXEC_DEFAULT;
 
 	h3::H3Msk::Msk passability, entrances;
-	h3::H3Streambuf& strm = *(h3::H3Streambuf*)c->arg_n(1);
+	h3::H3ZStream& strm = c->Arg<h3::H3ZStream>(1);
 	if (!strm.Read(passability) || !strm.Read(entrances))
 	{
 		c->return_address = 0x5040A6; // failed to read

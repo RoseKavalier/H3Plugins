@@ -61,8 +61,8 @@ _LHF_(changeCursor)
 int __stdcall _HH_CheckShift(HiHook *h, H3AdventureManager* This, H3Msg *msg, int a3, int a4, int a5)
 {
 	POINT p;
-	if (msg->KeyPressed() == H3VK_SHIFT && !shiftPressed && P_Executive->last_mgr == P_AdventureMgr
-		&& P_AdventureMgr->dlg->IsTopDialog())
+	if (msg->KeyPressed() == H3VK_SHIFT && !shiftPressed && P_Executive()->last_mgr == P_AdventureMgr()
+		&& P_AdventureMgr()->dlg->IsTopDialog())
 	{
 		shiftPressed = TRUE;
 		F_GetCursorPosition(p);
@@ -88,8 +88,8 @@ _LHF_(ShiftOff)
 	{
 		shiftPressed = FALSE;
 		F_GetCursorPosition(p);
-		P_AdventureMgr->previousMousePosition.x = -1;
-		P_AdventureMgr->SimulateMouseOver(p);
+		P_AdventureMgr()->previousMousePosition.x = -1;
+		P_AdventureMgr()->SimulateMouseOver(p);
 	}
 	return EXEC_DEFAULT;
 }

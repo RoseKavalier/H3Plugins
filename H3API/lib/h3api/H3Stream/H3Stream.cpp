@@ -3,15 +3,14 @@
 //                     Created by RoseKavalier:                     //
 //                     rosekavalierhc@gmail.com                     //
 //                       Created: 2019-12-06                        //
-//                      Last edit: 2020-04-27                       //
 //        ***You may use or distribute these files freely           //
 //            so long as this notice remains present.***            //
 //                                                                  //
 //////////////////////////////////////////////////////////////////////
 
 #include "H3Stream.hpp"
+#include "H3Stream.inl"
 #include "../H3_Functions.hpp"
-#include "../H3_Allocator.hpp"
 
 namespace h3
 {
@@ -199,14 +198,17 @@ namespace h3
 			return Copy(destination.String());
 		return FALSE;
 	}
-#ifndef _CPLUSPLUS11_
+#ifndef _H3API_CPLUSPLUS11_
 	_H3API_	H3Stream& H3Stream::Write(LPCSTR format, ...)
 	{
 		if (IsReady() && CanWrite())
 		{
 			va_list args;
 			va_start(args, format);
+#pragma warning(push)
+#pragma warning(disable : 4996)
 			int len = _snprintf(nullptr, 0, format, args);
+#pragma warning(pop)
 			H3String buffer;
 			if (len > 0 && buffer.Reserve(len + 1))
 			{
@@ -216,7 +218,7 @@ namespace h3
 			}
 			va_end(args);
 			WriteNewLine();
-		}
+	}
 		return *this;
 	}
 #endif
@@ -301,6 +303,14 @@ namespace h3
 
 		if (IsReady() && m_buffer && m_buffer_position < m_buffer_size)
 		{
+			if (m_buffer_position == 0 && m_buffer_size >= 3)
+			{
+				if (m_buffer[0] == 0xEF && m_buffer[1] == 0xBB && m_buffer[2] == 0xBF)
+				{
+					m_buffer_position += 3;
+				}
+			}
+
 			int len = 0;
 			BYTE* start = m_buffer + m_buffer_position;
 			BYTE* current = start;
@@ -419,12 +429,12 @@ namespace h3
 	{
 		if (m_handle)
 		{
-			F_CloseHandle(m_handle);
+			CloseHandle(m_handle);
 			m_handle = NULL;
 		}
 		if (m_save)
 		{
-			F_CloseHandle(m_save);
+			CloseHandle(m_save);
 			m_save = NULL;
 		}
 	}
@@ -457,7 +467,7 @@ namespace h3
 	}
 	_H3API_ BOOL H3File::Open(LPCSTR const file)
 	{
-		if (!Exists(file))
+		if (!exists(file))
 			return FALSE;
 		getSize();
 		return TRUE;
@@ -521,12 +531,37 @@ namespace h3
 	{
 		return m_buffer + m_fileSize;
 	}
+	_H3API_ void H3File::Close()
+	{
+		close();
+	}
+	_H3API_ BOOL H3File::Read(PVOID data, size_t data_len)
+	{
+		return read(data, data_len);
+	}
+	_H3API_ BOOL H3File::Write(PVOID data, size_t data_len)
+	{
+		return write(data, data_len);
+	}
+	_H3API_ BOOL H3File::Write(const H3String & string)
+	{
+		return write(PVOID(string.String()), string.Length());
+	}
+
 	_H3API_ H3String H3File::GetLine()
 	{
 		H3String line;
 		if (m_pointer < m_fileSize)
 		{
-			int len = 0;
+			if (m_pointer == 0 && m_fileSize >= 3)
+			{
+				if (m_buffer[0] == 0xEF && m_buffer[1] == 0xBB && m_buffer[2] == 0xBF)
+				{
+					m_pointer += 3;
+				}
+			}
+
+			UINT len = 0;
 			PCHAR start = reinterpret_cast<PCHAR>(m_buffer + m_pointer);
 			PCHAR current = start;
 			while (m_pointer < m_fileSize && *current)
@@ -550,7 +585,7 @@ namespace h3
 		}
 		return line;
 	}
-	_H3API_ H3Vector<H3String> H3File::GetLines()
+	_H3API_ H3Vector<H3String> H3File::GetLines(BOOL includeEmptyLines)
 	{
 		H3Vector<H3String> result;
 
@@ -558,13 +593,13 @@ namespace h3
 		while (m_pointer < m_fileSize)
 		{
 			H3String line = GetLine();
-			if (!line.Empty())
+			if (includeEmptyLines || !line.Empty())
 				result += line;
 		}
 
 		return result;
 	}
-	_H3API_ BOOL H3File::Exists(LPCSTR filepath)
+	_H3API_ BOOL H3File::exists(LPCSTR filepath)
 	{
 		m_handle = F_CreateFile(filepath, TRUE);
 		if (m_handle == INVALID_HANDLE_VALUE)
