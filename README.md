@@ -62,6 +62,9 @@ All necessary files for building using _Visual Studio_ are available in the repo
 
 In the spirit of transparency and contributing to the Heroes 3 modding community, I am releasing portions of the SoD_SP source code. You will not be able to build it with the released files and you will most likely see missing files, definitions and functions when inspecting them.
 
+### Customization
+Almost every option in SoD_SP can be modified to users' taste. While in game, press `F12` to see the list of options that can modified; these can be toggled or saved to the external ini options in [`SoD_SP.ini`](https://github.com/RoseKavalier/H3Plugins/blob/master/SoD_SP_Public/Next%20Version/SoD_SP.ini). This ini file will be installed in the same folder as SoD_SP if you wish to modify it by hand, all of its options have descriptions to indicate what is affected by it. The [language] and [other] sections of the ini may only be modified manually and require a game restart to take effect.
+
 #### Quick SoD_SP F.A.Q.
 **So why not all of the code?**
 >SoD_SP is still an ongoing project and I would like to maintain control on some of its aspects. Over time, more should be made public and existing code will be updated periodically.
