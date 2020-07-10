@@ -111,7 +111,7 @@ _LHF_(AI_NecromancyFix)
  * It restores deletion of loser's army which was skipped by @AI_NecromancyFix
  *
  */
-void _HH_AI_NecromancyFix(HiHook *h, H3AIQuickBattle *winner, H3AIQuickBattle *loser, int town)
+void __stdcall _HH_AI_NecromancyFix(HiHook *h, H3AiFastBattle *winner, H3AiFastBattle *loser, int town)
 {
 	LOG_HIHOOK;
 	THISCALL_3(void, h->GetDefaultFunc(), winner, loser, town);
@@ -125,7 +125,7 @@ void _HH_AI_NecromancyFix(HiHook *h, H3AIQuickBattle *winner, H3AIQuickBattle *l
  * when having a large army. This caps damage to 2^31 - 1.
  *
  */
-int __stdcall _HH_AI_QB_GetDamage(HiHook *h, H3AIQuickBattle *This, int a1, int a2)
+int __stdcall _HH_AI_QB_GetDamage(HiHook *h, H3AiFastBattle *This, int a1, int a2)
 {
 	LOG_HIHOOK;
 	int r = THISCALL_3(int, h->GetDefaultFunc(), This, a1, a2);
@@ -141,7 +141,7 @@ int __stdcall _HH_AI_QB_GetDamage(HiHook *h, H3AIQuickBattle *This, int a1, int 
  * This caps power to 2^31 - 1.
  *
  */
-void __stdcall _HH_AI_QB_hugeArmy(HiHook *h, H3AIQuickBattle *This, int a1, int a2, int a3)
+void __stdcall _HH_AI_QB_hugeArmy(HiHook *h, H3AiFastBattle *This, int a1, int a2, int a3)
 {
 	LOG_HIHOOK;
 	if (FOptions.quickbattle_overflow && This->armyStrength < 0)
@@ -156,7 +156,7 @@ void __stdcall _HH_AI_QB_hugeArmy(HiHook *h, H3AIQuickBattle *This, int a1, int 
  * This hook is applied before @AI_NecromancyFix.
  *
  */
-void __stdcall _HH_AI_PreventCreatureSpawning(HiHook *h, H3AIQuickBattle *This, int a2)
+void __stdcall _HH_AI_PreventCreatureSpawning(HiHook *h, H3AiFastBattle *This, int a2)
 {
 	LOG_HIHOOK;
 	const BOOL valid = (!F_Multiplayer() && FOptions.quickbattle_overflow);
@@ -216,7 +216,7 @@ _LHF_(AI_DeathKnightsAmplifier)
  * A much simpler fix exists but this was simplest for SoD_SP's scope.
  *
  */
-_NAKED_FUNCTION_ TurretBug1(void)
+_H3API_NAKED_FUNCTION_ TurretBug1(void)
 {
 	static naked_t return_turret1 = (naked_t)0x41E3A6;
 
@@ -242,7 +242,7 @@ _NAKED_FUNCTION_ TurretBug1(void)
 	__asm JMP return_turret1
 }
 
-_NAKED_FUNCTION_ TurretBug2(void)
+_H3API_NAKED_FUNCTION_ TurretBug2(void)
 {
 	static naked_t return_turret2 = (naked_t)0x41E4E2;
 	__asm PUSHFD
@@ -266,7 +266,7 @@ _NAKED_FUNCTION_ TurretBug2(void)
 	__asm JMP return_turret2
 }
 
-_NAKED_FUNCTION_ turret_bug3(void)
+_H3API_NAKED_FUNCTION_ turret_bug3(void)
 {
 	static naked_t return_turret3 = (naked_t)0x465946;
 
@@ -464,7 +464,7 @@ _LHF_(EarthquakeBug)
 	LOG_LOHOOK;
 	if (!F_Multiplayer() && FOptions.earthquake_bug)
 	{
-		const auto mon = reinterpret_cast<H3CombatMonster *>(c->eax - 0x84); // offset is to creature flags
+		const auto mon = reinterpret_cast<H3CombatMonster *>(c->eax - offsetof(H3CombatMonster, info.flags));
 		if (mon->sideIndex == 0)
 			return NO_EXEC_DEFAULT;
 	}
@@ -548,7 +548,6 @@ _LHF_(DefType1)
 _LHF_(FixDimensionDoorSpellCost)
 {
 	LOG_LOHOOK;
-	PH3Hero hero = PH3Hero(c->esi);
 	c->eax = P_Spell()(H3Spell::DIMENSION_DOOR)->mana_cost[c->Arg(1)];
 	c->return_address = 0x41D444;
 	return NO_EXEC_DEFAULT;
@@ -571,6 +570,20 @@ _LHF_(SkipOldTownPortalSpellCost)
 	LOG_LOHOOK;
 	c->return_address = 0x41DA2B;
 	return NO_EXEC_DEFAULT;
+}
+
+/*
+ *
+ * When preparing the text string to calculate damage done by shooters
+ * no check was done on the creature being affected by Forgetfulness
+ *
+ */
+_LHF_(DamageOutputForgetfulness)
+{
+	LOG_LOHOOK;
+	if (PH3CombatMonster(c->esi)->activeSpellsDuration[H3Spell::FORGETFULNESS] > 0 && c->eax > 1)
+		c->eax >>= 1; // reduce count by half
+	return EXEC_DEFAULT;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -651,7 +664,7 @@ void UpdateHeroesMaxMvmtInWater()
 	H3Main *main = P_Main();
 	for (auto hero_id : me->heroIDs)
 	{
-		if (((hero = main->GetHero(hero_id))) && hero->flags.in_boat)
+		if (((hero = main->GetHero(hero_id))) && hero->flags.inBoat)
 			hero->maxMovement = hero->MaxWaterMovement();
 	}
 }
@@ -818,6 +831,7 @@ void fixes_init(PatcherInstance * pi)
 	//todo written as lohook for now, pondering whether I should make this optional
 	// alternative is simply pi->WriteJmp(0x41DA12, 0x41DA2B);
 	pi->WriteLoHook(0x41DA12, SkipOldTownPortalSpellCost);                    // [1.19.0] skip the old Town Portal spell cost procedure
+	pi->WriteLoHook(0x492F78, DamageOutputForgetfulness);                     // [1.19.0.7] when showing damage output on mouse hover, forgetfulness was not considered for damage reduction
 
 	///////////////////////////////////////////
 	// Hero hireability

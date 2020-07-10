@@ -128,9 +128,9 @@ int __stdcall _HH_ArtifactMerchantSell_OF(HiHook *h, H3Dlg *This, H3Msg *msg)
 int __stdcall _HH_StartupLevelUpPrimaryFlag(HiHook *h, int This)
 {
 	LOG_HIHOOK;
-	GGameFlags.game_start = TRUE;
+	GGameFlags.gameStart = TRUE;
 	int r = THISCALL_1(int, h->GetDefaultFunc(),This);
-	GGameFlags.game_start = FALSE;
+	GGameFlags.gameStart = FALSE;
 	return r;
 }
 
@@ -143,7 +143,7 @@ int __stdcall _HH_StartupLevelUpPrimaryFlag(HiHook *h, int This)
 _LHF_(LevelUpPrimary_OF) // for level up
 {
 	LOG_LOHOOK;
-	if (!F_Multiplayer() && FOptions.primary_overflow && !GGameFlags.game_start)
+	if (!F_Multiplayer() && FOptions.primary_overflow && !GGameFlags.gameStart)
 	{
 		BYTE primary = c->AL();
 		if (primary == 0x80) // only activate when going from +127 to -128
@@ -600,7 +600,7 @@ _LHF_(CarnivorousPlantPrimary_OF)
 
 static naked_t bridge_creatureOF1;
 
-_NAKED_FUNCTION_ CreatureOF1(void)
+_H3API_NAKED_FUNCTION_ CreatureOF1(void)
 {
 	static naked_t return_creatureOF1 = reinterpret_cast<naked_t>(0x44AA5F);
 
@@ -633,7 +633,7 @@ _NAKED_FUNCTION_ CreatureOF1(void)
 }
 
 static naked_t bridge_creatureOF2;
-_NAKED_FUNCTION_ CreatureOF2(void)
+_H3API_NAKED_FUNCTION_ CreatureOF2(void)
 {
 	static naked_t return_creatureOF2 = reinterpret_cast<naked_t>(0x42D92D);
 
@@ -667,7 +667,7 @@ _NAKED_FUNCTION_ CreatureOF2(void)
 
 static naked_t bridge_creatureOF3;
 
-_NAKED_FUNCTION_ CreatureOF3(void)
+_H3API_NAKED_FUNCTION_ CreatureOF3(void)
 {
 	static naked_t return_creatureOF3 = reinterpret_cast<naked_t>(0x42DA3E);
 
@@ -696,7 +696,7 @@ _NAKED_FUNCTION_ CreatureOF3(void)
 }
 
 static naked_t bridge_creatureOF4;
-_NAKED_FUNCTION_ CreatureOF4(void)
+_H3API_NAKED_FUNCTION_ CreatureOF4(void)
 {
 	static naked_t return_creatureOF4 = reinterpret_cast<naked_t>(0x42DADE);
 
@@ -820,16 +820,16 @@ void overflow_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////
 	// creature overflow at 32767
 	//////////////////////////////////////////////////
-	if (ByteAt(0x44AA4F) == H3Patcher::mnemonics::jmp)
+	if (ByteAt(0x44AA4F) == H3Patcher::mnemonics::JMP)
 		bridge_creatureOF1 = (naked_t)FuncAt(0x44AA4F);
 	H3Patcher::NakedHook5(0x44AA4F, CreatureOF1);
-	if (ByteAt(0x42D922) == H3Patcher::mnemonics::jmp)
+	if (ByteAt(0x42D922) == H3Patcher::mnemonics::JMP)
 		bridge_creatureOF2 = (naked_t)FuncAt(0x42D922);
 	H3Patcher::NakedHook5(0x42D922, CreatureOF2);
-	if (ByteAt(0x42DA39) == H3Patcher::mnemonics::jmp)
+	if (ByteAt(0x42DA39) == H3Patcher::mnemonics::JMP)
 		bridge_creatureOF3 = (naked_t)FuncAt(0x42DA39);
 	H3Patcher::NakedHook5(0x42DA39, CreatureOF3);
-	if (ByteAt(0x42DAD9) == H3Patcher::mnemonics::jmp)
+	if (ByteAt(0x42DAD9) == H3Patcher::mnemonics::JMP)
 		bridge_creatureOF4 = (naked_t)FuncAt(0x42DAD9);
 	H3Patcher::NakedHook5(0x42DAD9, CreatureOF4);
 

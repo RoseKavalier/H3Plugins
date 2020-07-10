@@ -114,7 +114,7 @@ void AdvancedCombatInfo(const int hex)
 				F_sprintf("{x}%d", sd->length);
 				// _y + 36 means below the spell DEF
 				// 20 is for the height of text
-				P_SmallFont()->TextDraw(pcx, h3_TextBuffer, _x, _y + 36, x_spacing, 20, TextColor::REGULAR, TextAlignment::HCenter);
+				P_SmallFont()->TextDraw(pcx, h3_TextBuffer, _x, _y + 36, x_spacing, 20, TextColor::REGULAR, TextAlignment::HCENTER);
 			}
 		}
 
@@ -148,11 +148,11 @@ void AdvancedCombatInfo(const int hex)
 		{
 			LPCSTR status = TCombat()->Active();
 			H3CreatureFlags& flags = mon->info.flags;
-			if (flags.WAITING)
+			if (flags.waiting)
 				status = TCombat()->Waiting();
-			if (flags.DONE)
+			if (flags.done)
 				status = TCombat()->Moved();
-			if (flags.DEFENDING)
+			if (flags.defending)
 				status = TCombat()->Defending();
 
 			F_sprintf("{%s:} %s      {%s:} %d      {%s:} %d", TCombat()->Status(), status,

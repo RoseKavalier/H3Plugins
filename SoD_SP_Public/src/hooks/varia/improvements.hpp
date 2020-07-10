@@ -1,10 +1,7 @@
-#ifndef _IMPROVEMENTS_H_
-#define _IMPROVEMENTS_H_
+#ifndef _IMPROVEMENTS_HPP_
+#define _IMPROVEMENTS_HPP_
 
-#pragma once
+void BattleRng(int& seed);
+void improvements_init(class PatcherInstance *pi);
 
-#include "patcher_x86.hpp"
-
-void improvements_init(PatcherInstance *pi);
-
-#endif /* #define _IMPROVEMENTS_H_ */
+#endif /* #define _IMPROVEMENTS_HPP_ */

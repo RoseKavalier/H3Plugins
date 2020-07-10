@@ -54,7 +54,7 @@ void SkipOriginalSpeedButtonCreation()
 	constexpr BYTE deltaSpeedButtonCreation =
 		endSpeedButtonCreation - skipSpeedButtonCreation - 5;
 	constexpr BYTE skipSpeedButtonPatch[]   =
-		{ jmp , deltaSpeedButtonCreation, 0, 0, 0, nop, nop };
+		{ JMP , deltaSpeedButtonCreation, 0, 0, 0, NOP, NOP };
 	HexPatch(skipSpeedButtonCreation, skipSpeedButtonPatch);
 }
 
@@ -67,7 +67,7 @@ void SkipOriginalSpeedButtonInit()
 	constexpr BYTE deltaSpeedButtonInit   =
 		endSpeedButtonInit - skipSpeedButtonInit - 2;
 	constexpr BYTE skipSpeedButtonPatch[] =
-		{ short_jmp , deltaSpeedButtonInit, nop, nop, nop };
+		{ SHORT_JMP , deltaSpeedButtonInit, NOP, NOP, NOP };
 	HexPatch(skipSpeedButtonInit, skipSpeedButtonPatch);
 }
 

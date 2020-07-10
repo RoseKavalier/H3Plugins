@@ -46,11 +46,11 @@ _LHF_(ShowMoraleLuckBonus) // 0x5F3C43 combat
 		INT32 luck = mon->spellsData.luck;
 		H3Vector<H3DlgText*> *list = (H3Vector<H3DlgText*>*)c->ebx;
 		F_sprintf(morale < 1 ? "%d" : "+%d", morale);
-		H3DlgText *mrl = H3DlgText::Create(48, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::MoraleText, TextAlignment::BottomRight);
+		H3DlgText *mrl = H3DlgText::Create(48, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::MoraleText, TextAlignment::BOTTOM_RIGHT);
 		if (mrl)
 			list->AddSize4(mrl);
 		F_sprintf(luck < 1 ? "%d" : "+%d", luck);
-		H3DlgText *lck = H3DlgText::Create(101, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::LuckText, TextAlignment::BottomRight);
+		H3DlgText *lck = H3DlgText::Create(101, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::LuckText, TextAlignment::BOTTOM_RIGHT);
 		if (lck)
 			list->AddSize4(lck);
 	}
@@ -71,11 +71,11 @@ _LHF_(MapMoraleLuckBonus) // 0x5F439B
 		INT32 morale = IntAt(c->ebx + 0x68);
 		INT32 luck = IntAt(c->ebx + 0x7C);
 		F_sprintf(morale < 1 ? "%d" : "+%d", morale);
-		H3DlgText *mrl = H3DlgText::Create(48, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::MoraleText, TextAlignment::BottomRight);
+		H3DlgText *mrl = H3DlgText::Create(48, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::MoraleText, TextAlignment::BOTTOM_RIGHT);
 		if (mrl)
 			dlg->GetList().AddSize4(mrl);
 		F_sprintf(luck < 1 ? "%d" : "+%d", luck);
-		H3DlgText *lck = H3DlgText::Create(101, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::LuckText, TextAlignment::BottomRight);
+		H3DlgText *lck = H3DlgText::Create(101, 209, 20, 20, h3_TextBuffer, Text::TINY, 4, lb::LuckText, TextAlignment::BOTTOM_RIGHT);
 		if (lck)
 			dlg->GetList().AddSize4(lck);
 	}
@@ -98,7 +98,7 @@ _LHF_(ShowMonsterSpells)
 			H3Dlg *dlg = c->Local<PH3Dlg>(10);
 			INT32 length = IntAt(c->esi + 12);
 			F_sprintf("x%d", length);
-			H3DlgText *spl = H3DlgText::Create(c->Local(7), 202, 46, 20, h3_TextBuffer, Text::TINY, 4, lb::SpellLength - c->Local(8), TextAlignment::BottomRight);
+			H3DlgText *spl = H3DlgText::Create(c->Local(7), 202, 46, 20, h3_TextBuffer, Text::TINY, 4, lb::SpellLength - c->Local(8), TextAlignment::BOTTOM_RIGHT);
 			if (spl)
 				dlg->GetList().AddSize4(spl);
 		}

@@ -83,6 +83,38 @@ _LHF_(CombatObstacles) // actually RNG
 
 /*
  *
+ * This hook prevents hdmod from modifying the random seed at the start of certain battles.
+ * Some battles have a random seed determined from rand(1, 1000) which gets skipped if seed != -1
+ *
+ */
+INT __stdcall _HH_BattleRNG(HiHook* h, INT This, INT a2, INT a3, INT a4, INT a5, INT a6, INT a7, INT a8, INT seed, INT a10, INT a11)
+{
+	LOG_HIHOOK;
+	if (FOptions.rng && seed == -1)
+	{
+		sodsp::gen::GGameFlags.gameStart = TRUE;
+		seed = 0xBAD4D;
+	}
+	return THISCALL_11(INT, h->GetDefaultFunc(), This, a2, a3, a4, a5, a6, a7, a8, seed, a10, a11);
+}
+
+/*
+ *
+ * This function is called later in the process after _HH_BattleRNG
+ * and restores the original rand() call, resulting in original rng.
+ *
+ */
+void BattleRng(int& seed)
+{
+	if (sodsp::gen::GGameFlags.gameStart)
+	{
+		sodsp::gen::GGameFlags.gameStart = FALSE;
+		seed = -1;
+	}
+}
+
+/*
+ *
  * This hook restores original wandering monster split seed.
  *
  */
@@ -668,7 +700,7 @@ VOID __stdcall _HH_CastSpell_AI_MagicMirror(HiHook* h, H3CombatManager* This, in
 					if (index < 0)
 						break;
 					H3CombatMonster* new_mon = &This->stacks[side][index];
-					if (!new_mon->info.flags.CANNOT_MOVE && new_mon->type != NH3Creatures::ARROW_TOWER)
+					if (!new_mon->info.flags.cannotMove && new_mon->type != NH3Creatures::ARROW_TOWER)
 					{
 						newHex = new_mon->position;
 						break;
@@ -695,9 +727,9 @@ _LHF_(GetDamage)
 	LOG_LOHOOK;
 
 	H3CombatMonster *our_mon = (H3CombatMonster *)c->esi;
-	if (our_mon->info.flags.DOUBLE_ATTACK)
+	if (our_mon->info.flags.doubleAttack)
 	{
-		if ((P_CombatMgr()->move_type == H3MouseManager::BFC_Shooting || P_CombatMgr()->move_type == H3MouseManager::BFC_Half_Damage)) // if ranged, double min damage
+		if ((P_CombatMgr()->moveType == H3MouseManager::BFC_SHOOTING || P_CombatMgr()->moveType == H3MouseManager::BFC_HALF_DAMAGE)) // if ranged, double min damage
 			c->edi += c->edi;
 		c->eax += c->eax; // always double max damage, it's technically possible
 		// ballista and arrow turrets?
@@ -869,7 +901,7 @@ void __stdcall _HH_CombatStatus_ShowKills(HiHook *h, H3Dlg *This, PCHAR buffer, 
 	{
 		H3CombatManager *combat = P_CombatMgr();
 		H3CombatMonster *our_mon;
-		const INT32 mouse_coord = combat->mouse_coord;
+		const INT32 mouse_coord = combat->mouseCoord;
 		const INT32 column = mouse_coord % 17;
 		const INT32 row = mouse_coord / 17 + 'A';
 
@@ -965,10 +997,11 @@ void __stdcall _HH_CombatStatus_ShowKills(HiHook *h, H3Dlg *This, PCHAR buffer, 
 		{
 			if (column > 0 && column < 16 && row < (12 + 'A'))  // we don't care about off-grid coordinates
 			{
-				INT32 attacking_coordinates = combat->attacker_coord;
-				if (combat->move_type == 7)  // melee attack, show destination of attacker as well as defender's location
+				INT32 attacking_coordinates = combat->attackerCoord;
+
+				if (combat->moveType == 7)  // melee attack, show destination of attacker as well as defender's location
 				{
-					if (combat->activeStack->info.flags.DOUBLE_WIDE)
+					if (combat->activeStack->info.flags.doubleWide)
 						attacking_coordinates += (combat->currentActiveSide == 0) ? 1 : -1;
 					const INT32 attacker_column = attacking_coordinates % 17;
 					const INT32 attacker_row = attacking_coordinates / 17 + 'A';
@@ -1198,10 +1231,10 @@ int __stdcall _HH_FastSummonAnimation(HiHook* h, H3WindowManager* This, int x, i
  */
 int __stdcall _HH_Cheat_flag(HiHook *h, int _this, int a1, int a2, int a3) // 0x004025F5
 {
-	GGameFlags.levelup_cheats = TRUE;
+	GGameFlags.levelupCheats = TRUE;
 	LOG_HIHOOK;
 	int r = THISCALL_4(int, h->GetDefaultFunc(), _this, a1, a2, a3);
-	GGameFlags.levelup_cheats = FALSE;
+	GGameFlags.levelupCheats = FALSE;
 	return r;
 }
 
@@ -1212,10 +1245,10 @@ int __stdcall _HH_Cheat_flag(HiHook *h, int _this, int a1, int a2, int a3) // 0x
  */
 int __stdcall _HH_TreeKnowledge_flag(HiHook *h, int _this, int a1, int a2, int a3) // 0x4A65FF
 {
-	GGameFlags.levelup_treeknowledge = TRUE;
+	GGameFlags.levelupTreeKnowledge = TRUE;
 	LOG_HIHOOK;
 	int r = THISCALL_4(int, h->GetDefaultFunc(), _this, a1, a2, a3);
-	GGameFlags.levelup_treeknowledge = FALSE;
+	GGameFlags.levelupTreeKnowledge = FALSE;
 	return r;
 }
 
@@ -1233,14 +1266,14 @@ _LHF_(FixExperience)
 	LOG_LOHOOK;
 	const INT32 experience = c->ecx; // the hero's total experience after the gained ~ not yet applied to hero
 
-	if (GGameFlags.game_start)
+	if (GGameFlags.gameStart)
 		return EXEC_DEFAULT;
 
 	auto hero = reinterpret_cast<H3Hero*>(c->edi);
 	const INT32 hero_level = hero->level;
 
 	// logic for gaining experience normally
-	if (!GGameFlags.levelup_cheats && !GGameFlags.levelup_treeknowledge)
+	if (!GGameFlags.levelupCheats && !GGameFlags.levelupTreeKnowledge)
 	{
 		// don't change logic if we're not going to level 868.
 		if (experience < NH3Levels::LEVEL_868)
@@ -1295,7 +1328,7 @@ _LHF_(FixExperience)
 	// normally experience overflows out of bounds
 	// so let's control it instead
 	// will not level you up after level 100
-	else if (GGameFlags.levelup_treeknowledge)
+	else if (GGameFlags.levelupTreeKnowledge)
 	{
 		switch (hero_level)
 		{
@@ -1415,7 +1448,7 @@ _LHF_(AIberserk1)
 	return NO_EXEC_DEFAULT;
 }
 
-_NAKED_FUNCTION_ AIberserk2(void)
+_H3API_NAKED_FUNCTION_ AIberserk2(void)
 {
 	static naked_t return_berserk2a = reinterpret_cast<naked_t>(0x4B37AA);
 	static naked_t return_berserk2b = reinterpret_cast<naked_t>(0x4B37BF);
@@ -1445,7 +1478,7 @@ _NAKED_FUNCTION_ AIberserk2(void)
 
 static naked_t bridge_berserk3;
 
-_NAKED_FUNCTION_ AIberserk3(void)
+_H3API_NAKED_FUNCTION_ AIberserk3(void)
 {
 	static naked_t return_berserk3 = reinterpret_cast<naked_t>(0x422447);
 
@@ -1474,11 +1507,11 @@ _NAKED_FUNCTION_ AIberserk3(void)
  */
 void RestoreBerserk(PatcherInstance *pi)
 {
-	if (ByteAt(0x4B352F) == H3Patcher::mnemonics::jmp)
+	if (ByteAt(0x4B352F) == H3Patcher::mnemonics::JMP)
 		pi->WriteLoHook(0x4B352F, AIberserk1);
 	if (PtrAt(0x4B37A5) == 0x90909090)
 		H3Patcher::NakedHook5(0x4B37A5, AIberserk2);
-	if (ByteAt(0x422440) == H3Patcher::mnemonics::jmp)
+	if (ByteAt(0x422440) == H3Patcher::mnemonics::JMP)
 	{
 		bridge_berserk3 = reinterpret_cast<naked_t>(FuncAt(0x422440));
 		H3Patcher::NakedHook5(0x422440, AIberserk3);
@@ -1697,7 +1730,7 @@ _LHF_(ViewSelfArmyCatapult)
  */
 void __stdcall _HH_HeroRmbBiography(HiHook*h, H3AdventureManager* This, int id, int x, int y, bool a5)
 {
-	if (sodsp::gen::GMessageFlags & H3Msg::MF_Ctrl)
+	if (sodsp::gen::GMessageFlags & H3Msg::MF_CTRL)
 	{
 		H3Hero* hero = P_Main()->GetHero(id);
 		if (hero == nullptr)
@@ -1725,10 +1758,11 @@ void improvements_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////
 	// RNG functions
 	//////////////////////////////////////////////////
-	pi->WriteHiHook(0x4C848E, CALL_, FASTCALL_, _HH_WeekOfTheRNG);
-	pi->WriteHiHook(0x4AC2D6, CALL_, THISCALL_, _HH_CreatureSplit);
-	pi->WriteHiHook(0x4ABBA9, CALL_, THISCALL_, _HH_creatureBankSeed);
-	pi->WriteHiHook(0x4C8C1E, CALL_, FASTCALL_, _HH_MonthOfTheRng);
+	pi->WriteHiHook(0x4C848E, CALL_,   FASTCALL_, _HH_WeekOfTheRNG);
+	pi->WriteHiHook(0x4AC2D6, CALL_,   THISCALL_, _HH_CreatureSplit);
+	pi->WriteHiHook(0x4ABBA9, CALL_,   THISCALL_, _HH_creatureBankSeed);
+	pi->WriteHiHook(0x4C8C1E, CALL_,   FASTCALL_, _HH_MonthOfTheRng);
+	pi->WriteHiHook(0x4AD160, SPLICE_, THISCALL_, _HH_BattleRNG);
 	pi->WriteLoHook(0x61842C, OriginalRng);
 	pi->WriteLoHook(0x50C7C0, CombatObstacles);
 
@@ -1741,7 +1775,7 @@ void improvements_init(PatcherInstance * pi)
 	//////////////////////////////////////////////////
 	// Misc.
 	//////////////////////////////////////////////////
-	pi->WriteHiHook(0x476445, CALL_, THISCALL_, _HH_CombatRmbTextbox);
+	pi->WriteHiHook(0x476445, CALL_,   THISCALL_, _HH_CombatRmbTextbox);
 	pi->WriteHiHook(0x5A0140, SPLICE_, THISCALL_, _HH_CastSpell_AI_MagicMirror); // [1.18.0 -> 1.19.0]
 	pi->WriteLoHook(0x40D0DB, MapHintCoordinates);
 	pi->WriteLoHook(0x5A36A5, ForcefieldShadow);
@@ -1757,7 +1791,7 @@ void improvements_init(PatcherInstance * pi)
 	// Faster spell animations
 	//////////////////////////////
 	pi->WriteHiHook(0x496590, SPLICE_, THISCALL_, _HH_FastSpellAnimation); // targeted spells
-	pi->WriteHiHook(0x479BED, CALL_, THISCALL_, _HH_FastSummonAnimation);  // summon spells
+	pi->WriteHiHook(0x479BED, CALL_,   THISCALL_, _HH_FastSummonAnimation);  // summon spells
 
 	//////////////////////////////////////////////////
 	// Faster leveling and no overflow
