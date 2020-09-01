@@ -17,14 +17,14 @@ namespace h3
 	_H3API_ VOID H3RGB888::Darken20()
 	{
 		r = ((r & 0xFE) >> 1) | (r & 0x80);
-		g = ((r & 0xFE) >> 1) | (r & 0x80);
-		b = ((r & 0xFE) >> 1) | (r & 0x80);
+		g = ((g & 0xFE) >> 1) | (g & 0x80);
+		b = ((b & 0xFE) >> 1) | (b & 0x80);
 	}
 	_H3API_ VOID H3RGB888::Darken50()
 	{
 		r = ((r & 0xFE) >> 1);
-		g = ((r & 0xFE) >> 1);
-		b = ((r & 0xFE) >> 1);
+		g = ((g & 0xFE) >> 1);
+		b = ((b & 0xFE) >> 1);
 	}
 	_H3API_ VOID H3RGB888::GrayScale()
 	{
@@ -103,22 +103,19 @@ namespace h3
 	{
 		return 0xFF000000 + blue + (green << 8) + (red << 16);
 	}
-	_H3API_ H3RGB888::H3RGB888() :
-		b(),
-		g(),
-		r()
+	_H3API_ H3RGB888::H3RGB888()
 	{
 	}
 	_H3API_ H3RGB888::H3RGB888(DWORD color) :
-		b(color & 0xFF),
+		r((color >> 16) & 0xFF),
 		g((color >> 8) & 0xFF),
-		r((color >> 16) & 0xFF)
+		b(color & 0xFF)
 	{
 	}
 	_H3API_ H3RGB888::H3RGB888(UINT8 r, UINT8 g, UINT8 b) :
-		b(b),
+		r(r),
 		g(g),
-		r(r)
+		b(b)
 	{
 	}
 	_H3API_ H3RGB888::H3RGB888(const H3RGB565& rgb) :
@@ -133,34 +130,31 @@ namespace h3
 		b(rgb.b)
 	{
 	}
-	_H3API_ H3RGB888 & H3RGB888::operator=(const H3RGB565 & col)
+	_H3API_ VOID H3RGB888::operator=(const H3RGB565 & col)
 	{
 		r = col.GetRed8();
 		g = col.GetGreen8();
 		b = col.GetBlue8();
-		return *this;
 	}
-	_H3API_ H3RGB888 & H3RGB888::operator=(const H3RGB888 & col)
+	_H3API_ VOID H3RGB888::operator=(const H3RGB888 & col)
 	{
 		r = col.r;
 		g = col.g;
 		b = col.b;
-		return *this;
 	}
-	_H3API_ H3RGB888 & H3RGB888::operator=(const H3ARGB888 & col)
+	_H3API_ VOID H3RGB888::operator=(const H3ARGB888 & col)
 	{
 		r = col.r;
 		g = col.g;
 		b = col.b;
-		return *this;
 	}
-	_H3API_ H3RGB888 & H3RGB888::operator=(const UINT16 col)
+	_H3API_ VOID H3RGB888::operator=(const UINT16 col)
 	{
-		return operator=(H3RGB565(col));
+		operator=(H3RGB565(col));
 	}
-	_H3API_ H3RGB888 & H3RGB888::operator=(const UINT32 col)
+	_H3API_ VOID H3RGB888::operator=(const UINT32 col)
 	{
-		return operator=(H3ARGB888(col));
+		operator=(H3ARGB888(col));
 	}
 	_H3API_ BOOL H3RGB888::operator==(const H3RGB888 & col)
 	{
@@ -205,34 +199,37 @@ namespace h3
 		b = g;
 		g = tmp;
 	}
+	_H3API_ H3ARGB888::H3ARGB888()
+	{
+	}
 	_H3API_ H3ARGB888::H3ARGB888(DWORD col)
 	{
 		*AsDword() = col;
 	}
 	_H3API_ H3ARGB888::H3ARGB888(const H3RGB565 & col) :
-		r(col.GetRed8()),
-		g(col.GetGreen8()),
 		b(col.GetBlue8()),
+		g(col.GetGreen8()),
+		r(col.GetRed8()),
 		a(0xFF)
 	{
 	}
 	_H3API_ H3ARGB888::H3ARGB888(const H3RGB888 & col) :
-		r(col.r),
-		g(col.g),
 		b(col.b),
+		g(col.g),
+		r(col.r),
 		a(0xFF)
 	{
 	}
 	_H3API_ H3ARGB888::H3ARGB888(const H3ARGB888 & col) :
-		r(col.r),
-		g(col.g),
 		b(col.b),
+		g(col.g),
+		r(col.r),
 		a(col.a)
 	{
 	}
-	_H3API_ H3ARGB888::H3ARGB888(UINT8 red, UINT8 blue, UINT8 green) :
-		g(green),
+	_H3API_ H3ARGB888::H3ARGB888(UINT8 red, UINT8 green, UINT8 blue) :
 		b(blue),
+		g(green),
 		r(red),
 		a(0xFF)
 	{
@@ -241,40 +238,47 @@ namespace h3
 	{
 		return *AsDword();
 	}
-	_H3API_ H3ARGB888 & H3ARGB888::operator=(const H3RGB565 & col)
+	_H3API_ VOID H3ARGB888::operator=(const H3RGB565 & col)
 	{
 		r = col.GetRed8();
 		g = col.GetGreen8();
 		b = col.GetBlue8();
 		a = 0xFF;
-		return *this;
 	}
-	_H3API_ H3ARGB888 & H3ARGB888::operator=(const H3RGB888 & col)
+	_H3API_ VOID H3ARGB888::operator=(const H3RGB888 & col)
 	{
 		r = col.r;
 		g = col.g;
 		b = col.b;
 		a = 0xFF;
-		return *this;
 	}
-	_H3API_ H3ARGB888 & H3ARGB888::operator=(const H3ARGB888 & col)
+	_H3API_ VOID H3ARGB888::operator=(const H3ARGB888 & col)
 	{
 		*AsDword() = col.Value();
-		return *this;
 	}
-	_H3API_ H3ARGB888 & H3ARGB888::operator=(UINT16 col)
+	_H3API_ VOID H3ARGB888::operator=(UINT16 col)
 	{
 		*this = H3RGB565(col);
-		return *this;
 	}
-	_H3API_ H3ARGB888 & H3ARGB888::operator=(UINT32 col)
+	_H3API_ VOID H3ARGB888::operator=(UINT32 col)
 	{
 		*AsDword() = col;
-		return *this;
 	}
 	_H3API_ BOOL H3ARGB888::operator==(const H3ARGB888 & col)
 	{
 		return r == col.r && g == col.g && b == col.b && a == col.a;
+	}
+	_H3API_ VOID H3ARGB888::LightShadow()
+	{
+		*AsDword() = ((*AsDword() >> 1) & 0x7F7F7F) | ((*AsDword() >> 2) & 0x3F3F3F);
+	}
+	_H3API_ VOID H3ARGB888::DarkShadow()
+	{
+		*AsDword() = (*AsDword() >> 1) & 0x7F7F7F;
+	}
+	_H3API_ VOID H3ARGB888::Blend(const H3ARGB888& col)
+	{
+		*AsDword() = ((*AsDword() >> 1) & 0x7F7F7F) | ((*col.AsDword() >> 1) & 0x7F7F7F);
 	}
 	_H3API_ PDWORD H3ARGB888::AsDword()
 	{
@@ -372,29 +376,25 @@ namespace h3
 	{
 		PackRGB565(color.r, color.g, color.b);
 	}
-	_H3API_ H3RGB565 & H3RGB565::operator=(const H3RGB565 & col)
+	_H3API_ VOID H3RGB565::operator=(const H3RGB565 & col)
 	{
 		bits = col.bits;
-		return *this;
 	}
-	_H3API_ H3RGB565 & H3RGB565::operator=(const H3RGB888 & col)
+	_H3API_ VOID H3RGB565::operator=(const H3RGB888 & col)
 	{
 		bits = Pack(col.r, col.g, col.b);
-		return *this;
 	}
-	_H3API_ H3RGB565 & H3RGB565::operator=(const H3ARGB888 & col)
+	_H3API_ VOID H3RGB565::operator=(const H3ARGB888 & col)
 	{
 		bits = Pack(col.r, col.g, col.b);
-		return *this;
 	}
-	_H3API_ H3RGB565 & H3RGB565::operator=(const UINT16 col)
+	_H3API_ VOID H3RGB565::operator=(const UINT16 col)
 	{
 		bits = col;
-		return *this;
 	}
-	_H3API_ H3RGB565 & H3RGB565::operator=(const UINT32 col)
+	_H3API_ VOID H3RGB565::operator=(const UINT32 col)
 	{
-		return operator=(H3ARGB888(col));
+		operator=(H3ARGB888(col));
 	}
 	_H3API_ BOOL H3RGB565::operator==(const H3RGB565 & col)
 	{
@@ -445,6 +445,30 @@ namespace h3
 		H3RGB888 rgb(*this);
 		rgb.GrayScale();
 		Pack(rgb);
+	}
+	_H3API_ VOID H3RGB565::LightShadow()
+	{
+		LightShadow(H3Internal::_RGB565Mask50(), H3Internal::_RGB565Mask25());
+	}
+	_H3API_ VOID H3RGB565::LightShadow(RGB565 mask50, RGB565 mask25)
+	{
+		bits = ((bits >> 1) & mask50) | ((bits >> 2) & mask25);
+	}
+	_H3API_ VOID H3RGB565::DarkShadow()
+	{
+		DarkShadow(H3Internal::_RGB565Mask50());
+	}
+	_H3API_ VOID H3RGB565::DarkShadow(RGB565 mask50)
+	{
+		bits = (bits >> 1) & mask50;
+	}
+	_H3API_ VOID H3RGB565::Blend(const H3RGB565& col)
+	{
+		Blend(col, H3Internal::_RGB565Mask50());
+	}
+	_H3API_ VOID H3RGB565::Blend(const H3RGB565& col, RGB565 mask)
+	{
+		bits = ((bits >> 1) & mask) | ((col.bits >> 1) & mask);
 	}
 	_H3API_ H3HSV::H3HSV() :
 		h(),
@@ -554,126 +578,45 @@ namespace h3
 		v = std::max(0, v - value);
 	}
 
-	_H3API_ H3ResourceManager::iterator::iterator(H3ResourceManagerNode* data) :
-		m_data(data)
+	_H3API_ H3ResourceManager::Node* H3ResourceManager::FindItem(LPCSTR name)
 	{
-	}
-
-	_H3API_ H3ResourceManagerNode& H3ResourceManager::iterator::operator*()
-	{
-		return *m_data;
-	}
-
-	_H3API_ H3ResourceManagerNode* H3ResourceManager::iterator::operator->()
-	{
-		return m_data;
-	}
-
-	_H3API_ BOOL H3ResourceManager::iterator::operator==(const iterator& other)
-	{
-		return m_data == other.m_data;
-	}
-
-	_H3API_ BOOL H3ResourceManager::iterator::operator!=(const iterator& other)
-	{
-		return m_data != other.m_data;
-	}
-
-	_H3API_ H3ResourceManager::iterator& H3ResourceManager::iterator::operator++()
-	{
-		H3ResourceManagerNode* end = *(H3ResourceManagerNode**)0x69E604;
-		if (m_data == ((H3ResourceManager*)0x69E560)->root->rightNode)
-		{
-			m_data = end;
-			return *this;
-		}
-
-		H3ResourceManagerNode* node = m_data->rightNode;
-		if (node != end)
-		{
-			while (node->leftNode != end)
-				node = node->leftNode;
-			m_data = node;
-		}
-		else
-		{
-			node = m_data;
-			H3ResourceManagerNode* parent = m_data->parent;
-			while (parent->leftNode != node)
-			{
-				node = parent;
-				parent = node->parent;
-			}
-			m_data = parent;
-		}
-
-		return *this;
-	}
-
-	_H3API_ H3ResourceManager::iterator H3ResourceManager::iterator::operator++(int)
-	{
-		iterator it(m_data);
-		operator++();
-		return it;
-	}
-
-
-
-	_H3API_ H3ResourceManagerNode* H3ResourceManager::FindItem(LPCSTR name)
-	{
-		H3ResourceManagerNode* node = THISCALL_2(H3ResourceManagerNode*, 0x55EE00, this, name);
-		if (node == root)
+		iterator it = Find(name);
+		if (it == end())
 			return nullptr;
-		if (F_strcmpi(node->data.name, name))
-			return nullptr;
-		return node;
+		return it.Get();
 	}
 	_H3API_ VOID H3ResourceManager::AddItem(H3ResourceItem* item)
 	{
-		H3ResourceManagerNode::BinaryItemData base;
-		for (int i = 0; i < sizeof(base.name); ++i)
-			base.name[i] = item->name[i];
-		base.nameEnd = 0;
-		base.item = item;
+		H3ResourceItemData res(item->GetName());
 		struct returnValues
 		{
-			H3ResourceManagerNode* node;
-			INT refCount;
+			Node* node;
+			BOOL8 inserted;
 		}retValues;
 
-		THISCALL_3(returnValues*, 0x55DDF0, this, &retValues, &base);
+		THISCALL_3(returnValues&, 0x55DDF0, this, &retValues, &res);
 	}
-	_H3API_ VOID H3ResourceManager::RemoveItem(H3ResourceManagerNode* node)
+	_H3API_ VOID H3ResourceManager::RemoveItem(Node* node)
 	{
-		H3ResourceManagerNode* temp;
+		Node* temp;
 		THISCALL_3(VOID, 0x55DF20, this, &temp, node);
 	}
 	_H3API_ VOID H3ResourceManager::RemoveItem(LPCSTR name)
 	{
 		if (!name)
 			return;
-		H3ResourceManagerNode* node = FindItem(name);
-		if (node == root)
+		Node* node = FindItem(name);
+		if (node == m_root)
 			return;
-		if (F_strcmpi(node->data.name, name))
+		if (F_strcmpi(node->data.m_name, name))
 			return;
 		RemoveItem(node);
 	}
-	_H3API_ H3ResourceManager::iterator H3ResourceManager::begin()
+
+	_H3API_ VOID H3ResourceManager::RemoveItem(const iterator& iter)
 	{
-		return iterator(root->leftNode);
-	}
-	_H3API_ H3ResourceManager::iterator H3ResourceManager::end()
-	{
-		return iterator(*(H3ResourceManagerNode**)0x69E604);
-	}
-	_H3API_ H3ResourceItem* H3ResourceManagerNode::GetResourceItem() const
-	{
-		return data.item;
-	}
-	_H3API_ H3ResourceItem* H3ResourceManagerNode::operator->()
-	{
-		return data.item;
+		if (iter != end())
+			RemoveItem(iter.Get());
 	}
 
 	_H3API_ H3ResourceItem* H3ResourceItem::InitiateResource(LPCSTR name, INT type)
@@ -741,7 +684,7 @@ namespace h3
 		return THISCALL_1(H3WavFile*, 0x55C930, name);
 	}
 	_H3API_ H3WavFile::H3WavFile(LPCSTR name) :
-		_f_1C(0),
+		hSample(0),
 		buffer(),
 		bufferSize(),
 		lockSemaphore(HANDLE(0)),
@@ -752,7 +695,7 @@ namespace h3
 		PtrAt(this) = 0x6416E0;
 	}
 	_H3API_ H3WavFile::H3WavFile(LPCSTR name, PUINT8 buffer, DWORD bufferSize) :
-		_f_1C(0),
+		hSample(0),
 		buffer(buffer),
 		bufferSize(bufferSize),
 		lockSemaphore(HANDLE(0)),
@@ -794,27 +737,38 @@ namespace h3
 	{
 		return THISCALL_1(H3Palette565*, 0x522B40, this);
 	}
-	_H3API_ H3ARGB888* H3Palette565::Get32bitColors()
+	_H3API_ H3Palette32* H3Palette565::Get32bitColors()
 	{
 		if (type == 0x61)
-			return reinterpret_cast<H3ARGB888*>(PtrAt(&color[254]));
+			return palette32;
 		return nullptr;
 	}
-	_H3API_ VOID H3Palette565::CopyPalette(H3Palette565& source)
+	_H3API_ VOID H3Palette565::CopyPalette(const H3Palette565& source)
 	{
-		if (type == 0x61)
-		{
-			F_memcpy(color, source.color, sizeof(color) - 4);
-			PDWORD dest = reinterpret_cast<PDWORD>(PtrAt(&color[254]));
-			PDWORD src = reinterpret_cast<PDWORD>(PtrAt(&source.color[254]));
-			F_memcpy(dest, src, 256 * sizeof(DWORD));
-		}
-		else
-			F_memcpy(color, source.color, sizeof(color));
+		THISCALL_2(VOID, 0x522DD0, this, &source);
 	}
-	_H3API_ VOID H3Palette565::CopyPalette(H3BasePalette565& source)
+	_H3API_ VOID H3Palette565::CopyPalette(const H3BasePalette565& source)
 	{
 		CopyPalette(*PH3Palette565(&source));
+	}
+
+	_H3API_ H3RGB565& H3Palette565::operator[](UINT index)
+	{
+		return color[index];
+	}
+
+	_H3API_ H3RGB565 H3Palette565::operator[](UINT index) const
+	{
+		return color[index];
+	}
+	_H3API_ H3Palette32 H3Palette565::Convert() const
+	{
+		H3Palette32 p;
+
+		for (UINT i = 0; i < 256; ++i)
+			p.colors[i] = color[i];
+
+		return p;
 	}
 
 	_H3API_ VOID H3Palette565::Init(const H3BasePalette565& palette)
@@ -829,10 +783,28 @@ namespace h3
 	{
 		return THISCALL_1(H3Palette888*, 0x523320, this);
 	}
+	_H3API_	H3RGB888& H3Palette888::operator[](UINT index)
+	{
+		return color[index];
+	}
+	_H3API_ const H3RGB888& H3Palette888::operator[](UINT index) const
+	{
+		return color[index];
+	}
 	_H3API_ VOID H3Palette888::Init(const H3BasePalette888& palette)
 	{
 		THISCALL_2(void, 0x5233F0, this, &palette);
 	}
+	_H3API_ H3Palette32 H3Palette888::Convert() const
+	{
+		H3Palette32 p;
+
+		for (UINT i = 0; i < 256; ++i)
+			p.colors[i] = color[i];
+
+		return p;
+	}
+
 	_H3API_ INT32 H3Font::GetLinesCountInText(LPCSTR str, INT32 width)
 	{
 		return THISCALL_3(INT32, 0x4B5580, this, str, width);
@@ -1206,7 +1178,6 @@ namespace h3
 	_H3API_ VOID H3LoadedPcx16::AdjustHueSaturation(INT x, INT y, INT w, INT h, FLOAT hue, FLOAT saturation)
 	{
 		THISCALL_7(VOID, 0x44E610, this, x, y, w, h, hue, saturation);
-		//THISCALL_7(VOID, 0x44E610, this, x, y, w, h, DwordAt(&hue), DwordAt(&saturation));
 	}
 	_H3API_ BOOL H3LoadedPcx16::BackgroundRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL is_blue)
 	{
@@ -1362,7 +1333,7 @@ namespace h3
 		H3Palette565* pal;
 		if (!is_blue)
 		{
-			F_memcpy(&pal565, box->palette565, sizeof(pal565));
+			pal565.CopyPalette(*box->palette565);
 			pal565.ColorToPlayer(colorIndex);
 			pal = PH3Palette565(&pal565);
 		}
@@ -1411,7 +1382,7 @@ namespace h3
 		box->GetGroupFrame(0, f_bl)->DrawToPcx16(0, 0, 64, 64, this, x, y + h - 64, pal);
 		box->GetGroupFrame(0, f_br)->DrawToPcx16(0, 0, 64, 64, this, x + w - 64, y + h - 64, pal);
 
-		return 0;
+		return TRUE;
 	}
 	_H3API_ VOID H3LoadedPcx16::SinkArea(INT32 x, INT32 y, INT32 w, INT32 h)
 	{
@@ -1575,6 +1546,10 @@ namespace h3
 	_H3API_ VOID H3LoadedDef::Init(LPCSTR name, UINT type, UINT width, UINT height)
 	{
 		THISCALL_5(void, 0x47B240, this, name, type, width, height);
+	}
+	_H3API_ H3DefGroup& H3LoadedDef::operator[](UINT index)
+	{
+		return *groups[index];
 	}
 	_H3API_ H3RGB888 H3RGB888::Regular()
 	{
@@ -2204,6 +2179,636 @@ namespace h3
 	{
 		return H3RGB888(154, 205, 50);
 	}
+
+	_H3API_ H3ARGB888 H3ARGB888::Regular()
+	{
+		return H3ARGB888(248, 240, 216);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Highlight()
+	{
+		return H3ARGB888(232, 212, 120);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Red()
+	{
+		return H3ARGB888(248, 0, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Cyan()
+	{
+		return H3ARGB888(0, 252, 248);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Green()
+	{
+		return H3ARGB888(0, 252, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Blue()
+	{
+		return H3ARGB888(0, 0, 248);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Yellow()
+	{
+		return H3ARGB888(248, 252, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Orange()
+	{
+		return H3ARGB888(248, 128, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Purple()
+	{
+		return H3ARGB888(248, 0, 248);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::H3Pink()
+	{
+		return H3ARGB888(192, 120, 136);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::AliceBlue()
+	{
+		return H3ARGB888(240, 248, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::AntiqueWhite()
+	{
+		return H3ARGB888(250, 235, 215);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Aqua()
+	{
+		return H3ARGB888(0, 255, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Aquamarine()
+	{
+		return H3ARGB888(127, 255, 212);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Azure()
+	{
+		return H3ARGB888(240, 255, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Beige()
+	{
+		return H3ARGB888(245, 245, 220);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Bisque()
+	{
+		return H3ARGB888(255, 228, 196);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Black()
+	{
+		return H3ARGB888(0, 0, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::BlanchedAlmond()
+	{
+		return H3ARGB888(255, 235, 205);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Blue()
+	{
+		return H3ARGB888(0, 0, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::BlueViolet()
+	{
+		return H3ARGB888(138, 43, 226);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Brown()
+	{
+		return H3ARGB888(165, 42, 42);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::BurlyWood()
+	{
+		return H3ARGB888(222, 184, 135);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::CadetBlue()
+	{
+		return H3ARGB888(95, 158, 160);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Chartreuse()
+	{
+		return H3ARGB888(127, 255, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Chocolate()
+	{
+		return H3ARGB888(210, 105, 30);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Coral()
+	{
+		return H3ARGB888(255, 127, 80);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::CornflowerBlue()
+	{
+		return H3ARGB888(100, 149, 237);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Cornsilk()
+	{
+		return H3ARGB888(255, 248, 220);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Crimson()
+	{
+		return H3ARGB888(220, 20, 60);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Cyan()
+	{
+		return H3ARGB888(0, 255, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkBlue()
+	{
+		return H3ARGB888(0, 0, 139);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkCyan()
+	{
+		return H3ARGB888(0, 139, 139);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkGoldenRod()
+	{
+		return H3ARGB888(184, 134, 11);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkGray()
+	{
+		return H3ARGB888(169, 169, 169);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkGrey()
+	{
+		return H3ARGB888(169, 169, 169);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkGreen()
+	{
+		return H3ARGB888(0, 100, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkKhaki()
+	{
+		return H3ARGB888(189, 183, 107);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkMagenta()
+	{
+		return H3ARGB888(139, 0, 139);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkOliveGreen()
+	{
+		return H3ARGB888(85, 107, 47);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Darkorange()
+	{
+		return H3ARGB888(255, 140, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkOrchid()
+	{
+		return H3ARGB888(153, 50, 204);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkRed()
+	{
+		return H3ARGB888(139, 0, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkSalmon()
+	{
+		return H3ARGB888(233, 150, 122);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkSeaGreen()
+	{
+		return H3ARGB888(143, 188, 143);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkSlateBlue()
+	{
+		return H3ARGB888(72, 61, 139);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkSlateGray()
+	{
+		return H3ARGB888(47, 79, 79);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkSlateGrey()
+	{
+		return H3ARGB888(47, 79, 79);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkTurquoise()
+	{
+		return H3ARGB888(0, 206, 209);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DarkViolet()
+	{
+		return H3ARGB888(148, 0, 211);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DeepPink()
+	{
+		return H3ARGB888(255, 20, 147);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DeepSkyBlue()
+	{
+		return H3ARGB888(0, 191, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DimGray()
+	{
+		return H3ARGB888(105, 105, 105);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DimGrey()
+	{
+		return H3ARGB888(105, 105, 105);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::DodgerBlue()
+	{
+		return H3ARGB888(30, 144, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::FireBrick()
+	{
+		return H3ARGB888(178, 34, 34);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::FloralWhite()
+	{
+		return H3ARGB888(255, 250, 240);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::ForestGreen()
+	{
+		return H3ARGB888(34, 139, 34);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Fuchsia()
+	{
+		return H3ARGB888(255, 0, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Gainsboro()
+	{
+		return H3ARGB888(220, 220, 220);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::GhostWhite()
+	{
+		return H3ARGB888(248, 248, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Gold()
+	{
+		return H3ARGB888(255, 215, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::GoldenRod()
+	{
+		return H3ARGB888(218, 165, 32);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Gray()
+	{
+		return H3ARGB888(128, 128, 128);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Grey()
+	{
+		return H3ARGB888(128, 128, 128);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Green()
+	{
+		return H3ARGB888(0, 128, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::GreenYellow()
+	{
+		return H3ARGB888(173, 255, 47);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::HoneyDew()
+	{
+		return H3ARGB888(240, 255, 240);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::HotPink()
+	{
+		return H3ARGB888(255, 105, 180);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::IndianRed()
+	{
+		return H3ARGB888(205, 92, 92);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Indigo()
+	{
+		return H3ARGB888(75, 0, 130);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Ivory()
+	{
+		return H3ARGB888(255, 255, 240);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Khaki()
+	{
+		return H3ARGB888(240, 230, 140);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Lavender()
+	{
+		return H3ARGB888(230, 230, 250);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LavenderBlush()
+	{
+		return H3ARGB888(255, 240, 245);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LawnGreen()
+	{
+		return H3ARGB888(124, 252, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LemonChiffon()
+	{
+		return H3ARGB888(255, 250, 205);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightBlue()
+	{
+		return H3ARGB888(173, 216, 230);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightCoral()
+	{
+		return H3ARGB888(240, 128, 128);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightCyan()
+	{
+		return H3ARGB888(224, 255, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightGoldenRodYellow()
+	{
+		return H3ARGB888(250, 250, 210);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightGray()
+	{
+		return H3ARGB888(211, 211, 211);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightGrey()
+	{
+		return H3ARGB888(211, 211, 211);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightGreen()
+	{
+		return H3ARGB888(144, 238, 144);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightPink()
+	{
+		return H3ARGB888(255, 182, 193);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightSalmon()
+	{
+		return H3ARGB888(255, 160, 122);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightSeaGreen()
+	{
+		return H3ARGB888(32, 178, 170);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightSkyBlue()
+	{
+		return H3ARGB888(135, 206, 250);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightSlateGray()
+	{
+		return H3ARGB888(119, 136, 153);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightSlateGrey()
+	{
+		return H3ARGB888(119, 136, 153);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightSteelBlue()
+	{
+		return H3ARGB888(176, 196, 222);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LightYellow()
+	{
+		return H3ARGB888(255, 255, 224);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Lime()
+	{
+		return H3ARGB888(0, 255, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::LimeGreen()
+	{
+		return H3ARGB888(50, 205, 50);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Linen()
+	{
+		return H3ARGB888(250, 240, 230);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Magenta()
+	{
+		return H3ARGB888(255, 0, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Maroon()
+	{
+		return H3ARGB888(128, 0, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumAquaMarine()
+	{
+		return H3ARGB888(102, 205, 170);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumBlue()
+	{
+		return H3ARGB888(0, 0, 205);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumOrchid()
+	{
+		return H3ARGB888(186, 85, 211);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumPurple()
+	{
+		return H3ARGB888(147, 112, 216);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumSeaGreen()
+	{
+		return H3ARGB888(60, 179, 113);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumSlateBlue()
+	{
+		return H3ARGB888(123, 104, 238);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumSpringGreen()
+	{
+		return H3ARGB888(0, 250, 154);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumTurquoise()
+	{
+		return H3ARGB888(72, 209, 204);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MediumVioletRed()
+	{
+		return H3ARGB888(199, 21, 133);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MidnightBlue()
+	{
+		return H3ARGB888(25, 25, 112);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MintCream()
+	{
+		return H3ARGB888(245, 255, 250);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::MistyRose()
+	{
+		return H3ARGB888(255, 228, 225);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Moccasin()
+	{
+		return H3ARGB888(255, 228, 181);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::NavajoWhite()
+	{
+		return H3ARGB888(255, 222, 173);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Navy()
+	{
+		return H3ARGB888(0, 128, 128);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::OldLace()
+	{
+		return H3ARGB888(253, 245, 230);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Olive()
+	{
+		return H3ARGB888(128, 128, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::OliveDrab()
+	{
+		return H3ARGB888(107, 142, 35);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Orange()
+	{
+		return H3ARGB888(255, 165, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::OrangeRed()
+	{
+		return H3ARGB888(255, 69, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Orchid()
+	{
+		return H3ARGB888(218, 112, 214);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PaleGoldenRod()
+	{
+		return H3ARGB888(238, 232, 170);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PaleGreen()
+	{
+		return H3ARGB888(152, 251, 152);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PaleTurquoise()
+	{
+		return H3ARGB888(175, 238, 238);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PaleVioletRed()
+	{
+		return H3ARGB888(216, 112, 147);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PapayaWhip()
+	{
+		return H3ARGB888(255, 239, 213);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PeachPuff()
+	{
+		return H3ARGB888(255, 218, 185);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Peru()
+	{
+		return H3ARGB888(205, 133, 63);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Pink()
+	{
+		return H3ARGB888(255, 192, 203);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Plum()
+	{
+		return H3ARGB888(221, 160, 221);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::PowderBlue()
+	{
+		return H3ARGB888(176, 224, 230);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Purple()
+	{
+		return H3ARGB888(128, 0, 128);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Red()
+	{
+		return H3ARGB888(255, 0, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::RosyBrown()
+	{
+		return H3ARGB888(188, 143, 143);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::RoyalBlue()
+	{
+		return H3ARGB888(65, 105, 225);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SaddleBrown()
+	{
+		return H3ARGB888(139, 69, 19);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Salmon()
+	{
+		return H3ARGB888(250, 128, 114);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SandyBrown()
+	{
+		return H3ARGB888(244, 164, 96);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SeaGreen()
+	{
+		return H3ARGB888(46, 139, 87);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SeaShell()
+	{
+		return H3ARGB888(255, 245, 238);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Sienna()
+	{
+		return H3ARGB888(160, 82, 45);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Silver()
+	{
+		return H3ARGB888(192, 192, 192);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SkyBlue()
+	{
+		return H3ARGB888(135, 206, 235);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SlateBlue()
+	{
+		return H3ARGB888(106, 90, 205);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SlateGray()
+	{
+		return H3ARGB888(112, 128, 144);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SlateGrey()
+	{
+		return H3ARGB888(112, 128, 144);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Snow()
+	{
+		return H3ARGB888(255, 250, 250);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SpringGreen()
+	{
+		return H3ARGB888(0, 255, 127);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::SteelBlue()
+	{
+		return H3ARGB888(70, 130, 180);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Tan()
+	{
+		return H3ARGB888(210, 180, 140);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Teal()
+	{
+		return H3ARGB888(0, 128, 128);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Thistle()
+	{
+		return H3ARGB888(216, 191, 216);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Tomato()
+	{
+		return H3ARGB888(255, 99, 71);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Turquoise()
+	{
+		return H3ARGB888(64, 224, 208);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Violet()
+	{
+		return H3ARGB888(238, 130, 238);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Wheat()
+	{
+		return H3ARGB888(245, 222, 179);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::White()
+	{
+		return H3ARGB888(255, 255, 255);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::WhiteSmoke()
+	{
+		return H3ARGB888(245, 245, 245);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::Yellow()
+	{
+		return H3ARGB888(255, 255, 0);
+	}
+	_H3API_ H3ARGB888 H3ARGB888::YellowGreen()
+	{
+		return H3ARGB888(154, 205, 50);
+	}
+
 	_H3API_ RGB565 H3RGB565::Regular()
 	{
 		return 0xFF9B;
@@ -2876,8 +3481,6 @@ namespace h3
 		return data != other.data;
 	}
 
-
-
 	_H3API_ VOID H3BasePalette565::ColorToPlayer(INT id)
 	{
 		FASTCALL_2(VOID, 0x6003E0, color, id);
@@ -2888,7 +3491,7 @@ namespace h3
 		THISCALL_4(VOID, 0x522E40, this, min_index, max_index, count);
 	}
 
-	_H3API_ H3ARGB888* H3BasePalette565::Get32bitColors()
+	_H3API_ H3Palette32* H3BasePalette565::Get32bitColors()
 	{
 		return PH3Palette565(this)->Get32bitColors();
 	}
@@ -2908,6 +3511,14 @@ namespace h3
 		THISCALL_8(void, 0x522BC0, this, &palette, IntAt(0x69E5DC), IntAt(0x69E5E4), IntAt(0x69E5D0), IntAt(0x69E5E0), IntAt(0x69E5F0), IntAt(0x69E5D8));
 	}
 
+	_H3API_	H3RGB565& H3BasePalette565::operator[](UINT index)
+	{
+		return color[index];
+	}
+	_H3API_ H3RGB565 H3BasePalette565::operator[](UINT index) const
+	{
+		return color[index];
+	}
 	_H3API_ H3BasePalette565::H3BasePalette565()
 	{
 	}
@@ -2926,6 +3537,35 @@ namespace h3
 	{
 		THISCALL_1(void, 0x522E30, this);
 	}
+	_H3API_ H3Palette32 H3BasePalette565::Convert() const
+	{
+		return PH3Palette565(this)->Convert();
+	}
+#ifdef _H3API_CPLUSPLUS11_
+	_H3API_ H3BasePalette565::H3BasePalette565(H3BasePalette565&& other)
+	{
+		F_memcpy(this, &other, sizeof(*this));
+		other.palette32 = nullptr; // for safety
+	}
+
+	_H3API_ H3BasePalette565& H3BasePalette565::operator=(H3BasePalette565&& other)
+	{
+		F_memcpy(this, &other, sizeof(*this));
+		other.palette32 = nullptr; // for safety
+		return *this;
+	}
+	_H3API_ H3BasePalette888::H3BasePalette888(H3BasePalette888&& other)
+	{
+		F_memcpy(this, &other, sizeof(*this));
+	}
+
+	_H3API_ H3BasePalette888& H3BasePalette888::operator=(H3BasePalette888&& other)
+	{
+		F_memcpy(this, &other, sizeof(*this));
+		return *this;
+	}
+
+#endif
 
 	_H3API_ VOID H3BasePalette888::ColorToPlayer(INT id)
 	{
@@ -2937,4 +3577,60 @@ namespace h3
 		THISCALL_1(void, 0x523450, this);
 	}
 
+	_H3API_ H3BasePalette888::H3BasePalette888()
+	{
+	}
+
+	_H3API_ H3RGB888& H3BasePalette888::operator[](UINT index)
+	{
+		return color[index];
+	}
+
+	_H3API_ const H3RGB888& H3BasePalette888::operator[](UINT index) const
+	{
+		return color[index];
+	}
+	_H3API_ H3Palette32 H3BasePalette888::Convert() const
+	{
+		return PH3Palette888(this)->Convert();
+	}
+
+	_H3API_ H3DefFrame& H3DefGroup::operator[](UINT index)
+	{
+		return *frames[index];
+	}
+
+	_H3API_ H3ARGB888& H3Palette32::operator[](UINT index)
+	{
+		return colors[index];
+	}
+	_H3API_ H3ARGB888 H3Palette32::operator[](UINT index) const
+	{
+		return colors[index];
+	}
+	_H3API_ H3ResourceItemData::H3ResourceItemData(LPCSTR name) :
+		m_nameEnd(),
+		m_item()
+	{
+		for (size_t i = 0; i < std::min(sizeof(m_name), strlen(name)); ++i)
+			m_name[i] = name[i];
+	}
+
+	_H3API_ BOOL8 H3ResourceItemData::operator<(const H3ResourceItemData& other) const
+	{
+		return F_strcmpi(m_name, other.m_name) < 0;
+	}
+
+	namespace H3Internal
+	{
+		_H3API_ H3RGB565 _RGB565Mask50()
+		{
+			return WordAt(0x6968F4);
+		}
+		_H3API_ H3RGB565 _RGB565Mask25()
+		{
+			return WordAt(0x6968FA);
+		}
+	}
 }
+

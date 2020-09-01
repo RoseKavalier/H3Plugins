@@ -15,150 +15,227 @@
 
 namespace h3
 {
-	// * raii virtual protect
+	/**
+	 * @brief raii virtual protection to enable writing
+	 *
+	 */
 	class H3Protect
 	{
 		UINT32 m_address;
 		UINT32 m_size;
-		DWORD m_old_protect;
-		BOOL m_protect_edited;
+		DWORD  m_oldProtect;
+		BOOL   m_protectEdited;
 	public:
+		/**
+		 * @brief enables writing at memory location
+		 *
+		 * @param address where you wish to write
+		 * @param size how many bytes should be unprotected
+		 */
 		_H3API_ H3Protect(UINT32 address, UINT32 size);
 		_H3API_ ~H3Protect();
+		/**
+		 * @brief checks if virtual protect was successful
+		 *
+		 * @return BOOL whether virtual protect operation enabled writing
+		 */
 		_H3API_ BOOL CanWrite();
 	};
 
-	// * perform operations on loaded memory
+	/**
+	 * @brief perform operations on loaded memory
+	 *
+	 */
 	namespace H3Patcher
 	{
 		enum mnemonics
 		{
-			inc_eax    = 0x40,
-			inc_ecx    = 0x41,
-			inc_edx    = 0x42,
-			inc_ebx    = 0x43,
-			inc_esp    = 0x44,
-			inc_ebp    = 0x45,
-			inc_esi    = 0x46,
-			inc_edi    = 0x47,
-			dec_eax    = 0x48,
-			dec_ecx    = 0x49,
-			dec_edx    = 0x4A,
-			dec_ebx    = 0x4B,
-			dec_esp    = 0x4C,
-			dec_ebp    = 0x4D,
-			dec_esi    = 0x4E,
-			dec_edi    = 0x4F,
-			push_eax   = 0x50,
-			push_ecx   = 0x51,
-			push_edx   = 0x52,
-			push_ebx   = 0x53,
-			push_esp   = 0x54,
-			push_ebp   = 0x55,
-			push_esi   = 0x56,
-			push_edi   = 0x57,
-			pop_eax    = 0x58,
-			pop_ecx    = 0x59,
-			pop_edx    = 0x5A,
-			pop_ebx    = 0x5B,
-			pop_esp    = 0x5C,
-			pop_ebp    = 0x5D,
-			pop_esi    = 0x5E,
-			pop_edi    = 0x5F,
-			pushad     = 0x60,
-			popad      = 0x61,
-			push_dword = 0x68,
-			push_byte  = 0x6A,
-			short_jo   = 0x70,
-			short_jno  = 0x71,
-			short_jb   = 0x72,
-			short_jnb  = 0x73,
-			short_jz   = 0x74,
-			short_jnz  = 0x75,
-			short_jna  = 0x76,
-			short_ja   = 0x77,
-			short_js   = 0x78,
-			short_jns  = 0x79,
-			short_jp   = 0x7A,
-			short_jnp  = 0x7B,
-			short_jl   = 0x7C,
-			short_jge  = 0x7D, // jnl
-			short_jng  = 0x7E,
-			short_jg   = 0x7F,
-			nop        = 0x90,
-			pushfd     = 0x9C,
-			popfd      = 0x9D,
-			call       = 0xE8,
-			jmp        = 0xE9,
-			short_jmp  = 0xEB,
-			_retn_     = 0xC3,
-			_retnX_    = 0xC2,
+			INC_EAX    = 0x40,
+			INC_ECX    = 0x41,
+			INC_EDX    = 0x42,
+			INC_EBX    = 0x43,
+			INC_ESP    = 0x44,
+			INC_EBP    = 0x45,
+			INC_ESI    = 0x46,
+			INC_EDI    = 0x47,
+			DEC_EAX    = 0x48,
+			DEC_ECX    = 0x49,
+			DEC_EDX    = 0x4A,
+			DEC_EBX    = 0x4B,
+			DEC_ESP    = 0x4C,
+			DEC_EBP    = 0x4D,
+			DEC_ESI    = 0x4E,
+			DEC_EDI    = 0x4F,
+			PUSH_EAX   = 0x50,
+			PUSH_ECX   = 0x51,
+			PUSH_EDX   = 0x52,
+			PUSH_EBX   = 0x53,
+			PUSH_ESP   = 0x54,
+			PUSH_EBP   = 0x55,
+			PUSH_ESI   = 0x56,
+			PUSH_EDI   = 0x57,
+			POP_EAX    = 0x58,
+			POP_ECX    = 0x59,
+			POP_EDX    = 0x5A,
+			POP_EBX    = 0x5B,
+			POP_ESP    = 0x5C,
+			POP_EBP    = 0x5D,
+			POP_ESI    = 0x5E,
+			POP_EDI    = 0x5F,
+			PUSHAD     = 0x60,
+			POPAD      = 0x61,
+			PUSH_DWORD = 0x68,
+			PUSH_BYTE  = 0x6A,
+			SHORT_JO   = 0x70,
+			SHORT_JNO  = 0x71,
+			SHORT_JB   = 0x72,
+			SHORT_JNB  = 0x73,
+			SHORT_JZ   = 0x74,
+			SHORT_JNZ  = 0x75,
+			SHORT_JNA  = 0x76,
+			SHORT_JA   = 0x77,
+			SHORT_JS   = 0x78,
+			SHORT_JNS  = 0x79,
+			SHORT_JP   = 0x7A,
+			SHORT_JNP  = 0x7B,
+			SHORT_JL   = 0x7C,
+			SHORT_JGE  = 0x7D, // JNL
+			SHORT_JNG  = 0x7E,
+			SHORT_JG   = 0x7F,
+			NOP        = 0x90,
+			PUSHFD     = 0x9C,
+			POPFD      = 0x9D,
+			CALL       = 0xE8,
+			JMP        = 0xE9,
+			SHORT_JMP  = 0xEB,
+			_RETN_     = 0xC3,
+			_RETNX_    = 0xC2,
 
-			far_jo     = 0x0F80,
-			far_jno    = 0x0F81,
-			far_jb     = 0x0F82,
-			far_jnb    = 0x0F83,
-			far_jz     = 0x0F84,
-			far_jnz    = 0x0F85,
-			far_jna    = 0x0F86,
-			far_ja     = 0x0F87,
-			far_js     = 0x0F88,
-			far_jns    = 0x0F89,
-			far_jp     = 0x0F8A,
-			far_jnp    = 0x0F8B,
-			far_jl     = 0x0F8C,
-			far_jnl    = 0x0F8D,
-			far_jng    = 0x0F8E,
-			far_jg     = 0x0F8F,
-			call_dword = 0x15FF
+			FAR_JO     = 0x0F80,
+			FAR_JNO    = 0x0F81,
+			FAR_JB     = 0x0F82,
+			FAR_JNB    = 0x0F83,
+			FAR_JZ     = 0x0F84,
+			FAR_JNZ    = 0x0F85,
+			FAR_JNA    = 0x0F86,
+			FAR_JA     = 0x0F87,
+			FAR_JS     = 0x0F88,
+			FAR_JNS    = 0x0F89,
+			FAR_JP     = 0x0F8A,
+			FAR_JNP    = 0x0F8B,
+			FAR_JL     = 0x0F8C,
+			FAR_JNL    = 0x0F8D,
+			FAR_JNG    = 0x0F8E,
+			FAR_JG     = 0x0F8F,
+			CALL_DWORD = 0x15FF,
 		};
 
+		/**
+		 * @brief finds the first byte sequence in a specified region
+		 *
+		 * @param haystack region in which to look for
+		 * @param hlen the length of the memory region to search
+		 * @param needle byte sequence to search for
+		 * @param nlen how many bytes are in the needle
+		 * @return PUCHAR address that matches needle, as a pointer. nullptr if not found
+		 */
 		_H3API_ PUCHAR Memmem(PUCHAR haystack, size_t hlen, PUCHAR needle, size_t nlen);
+		/**
+		 * @brief performs Memmem operation to find first byte sequence in a specified region
+		 *
+		 * @param address starting search point
+		 * @param max_search_length maximum bytes to search through
+		 * @param needle byte sequence to search for
+		 * @param needle_length how many bytes are in the needle
+		 * @param offset how many bytes to shift the found needle location by
+		 * @return UINT32 location in the region, matching the needle and shifted by \p offset. nullptr if not found
+		 */
 		_H3API_ UINT32 FindByNeedle(PUINT8 address, UINT32 max_search_length, PUINT8 needle, INT32 needle_length, INT32 offset);
 
-#ifndef _NAKED_FUNCTION_
-#define _NAKED_FUNCTION_ VOID __declspec(naked)
+#ifndef _H3API_NAKED_FUNCTION_
+#define _H3API_NAKED_FUNCTION_ VOID __declspec(naked)
 #endif
 
-		// * only works for opcode length 5, most basic hook there is
-		// * function should be of type _NAKED_FUNCTION_
-		// * you are also in charge of overwritten assembly
-		_H3API_ VOID NakedHook5(UINT32 whereTo, VOID* function);
-		// * requires at least 5 bytes
-		// * function should be of type _NAKED_FUNCTION_
-		// * you are also in charge of overwritten assembly
-		// * replaces bytes after the first 5 by NOP instructions
-		_H3API_ VOID NakedHook(UINT32 whereTo, VOID* function, INT totalBytes);
-
-		// * writes byte, word or dword, float, double...
+		/**
+		 * @brief only works for opcode length 5, most basic hook there is.
+		 * you are also in charge of overwritten assembly
+		 * @param address where to place hook
+		 * @param function _H3API_NAKED_FUNCTION_ hook
+		 */
+		_H3API_ VOID NakedHook5(UINT32 address, VOID* function);
+		/**
+		 * @brief same as NakedHook5, but replaces bytes after the first 5 by NOP instructions
+		 *
+		 * @param address where to place hook
+		 * @param function _H3API_NAKED_FUNCTION_ hook
+		 * @param totalBytes how many bytes should be overwritten, minimum 5
+		 */
+		_H3API_ VOID NakedHook(UINT32 address, VOID* function, INT totalBytes);
+		/**
+		 * @brief write data at specific location
+		 *
+		 * @tparam T byte, word or dword, float, double...
+		 * @param address where to write data
+		 * @param value data to write
+		 */
 		template<typename T>
 		struct WriteValue
 		{
-			WriteValue(const UINT whereTo, const T value);
+			WriteValue(const UINT address, const T value);
 		};
-		// * writes array of values of type T
+		/**
+		 * @brief write data at specific locations
+		 *
+		 * @tparam T byte, word or dword, float, double...
+		 * @tparam size how many locations will be written to
+		 * @param address where to write data
+		 * @param value data to write
+		 */
 		template<typename T, size_t size>
 		struct WriteValues
 		{
-			WriteValues(const UINT whereTo, const T(&value)[size]);
+			WriteValues(const UINT address, const T(&value)[size]);
 		};
-
-		// * writes pointer of data type (its address)
-		// * to the specified location
-		// * data can be of any type
+		/**
+		 * @brief writes pointer of data type (its address)
+		 *
+		 * @tparam T any data type
+		 * @param address address to write to
+		 * @param data a global or constexpr array, double or other value to be written as a pointer
+		 */
 		template<typename T>
-		VOID AddressOfPatch(const UINT whereTo, const T& data);
-
-		// * writes pointer of data type (its address)
-		// * to the specified locations
-		// * data can be of any type
+		VOID AddressOfPatch(const UINT address, const T& data);
+		/**
+		 * @brief writes pointer of data type (its address) to multiple locations
+		 *
+		 * @tparam Address primitive numerical type (int, unsigned int...)
+		 * @tparam Type any data type
+		 * @tparam size number of items in \p address array
+		 * @param address addresses to write to
+		 * @param data a global or constexpr array, double or other value to be written as a pointer
+		 * @return H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
+		 */
 		template<typename Address, typename Type, size_t size>
 		typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
-		AddressOfPatch(const Address(&whereTo)[size], const Type& data);
-
-		// * writes an array of bytes to the specified location
+		AddressOfPatch(const Address(&address)[size], const Type& data);
+		/**
+		 * @brief writes data type to an object reference without having to dereference to obtain their address
+		 *
+		 * @tparam T type of the object
+		 * @param reference data member of the object
+		 * @param data replacement value
+		 */
+		template<typename T>
+		VOID ObjectPatch(T& reference, T data);
+		/**
+		 * @brief writes an array of bytes to the specified location
+		 *
+		 * @tparam size how many bytes are to be written
+		 * @param address starting location to write patch
+		 * @param value an array of bytes representing a patch
+		 */
 		template<size_t size>
-		VOID HexPatch(const UINT whereTo, const BYTE(&value)[size]);
+		VOID HexPatch(const UINT address, const BYTE(&value)[size]);
 
 		typedef WriteValue<BYTE>   BytePatch;
 		typedef WriteValue<INT8>   CharPatch;
@@ -170,7 +247,10 @@ namespace h3
 		typedef WriteValue<DOUBLE> DoublePatch;
 	}
 
-	// * get information about loaded dll
+	/**
+	 * @brief get information about loaded dll or process through its name
+	 *
+	 */
 	struct H3DLL
 	{
 		PUINT8 code;
@@ -182,40 +262,144 @@ namespace h3
 		UINT32 dataSize;
 
 		_H3API_ H3DLL();
+		/**
+		 * @brief constructs the object and performs GetDllInfo()
+		 *
+		 * @param dll_name name of the process to inspect
+		 */
 		_H3API_ H3DLL(LPCSTR dll_name);
 
-		// for debug purposes
-		_H3API_ VOID NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode = TRUE) const;
-		_H3API_ VOID NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize) const;
-		_H3API_ VOID DLLNotFound() const;
-
-		// get DLL code start and DLL size
+	protected:
+		_H3API_ VOID needleNotFound(PUINT8 needle, INT32 needle_size, BOOL in_code = TRUE) const;
+		_H3API_ VOID needleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needle_size, PUINT8 expected_code, INT32 expected_size) const;
+		_H3API_ VOID processNotFound() const;
+	public:
+		/**
+		 * @brief get process memory layout and size
+		 *
+		 * @param name name of the process
+		 */
 		_H3API_ VOID GetDLLInfo(LPCSTR name);
-		// find the first instance of needle
-		_H3API_ UINT32 NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset);
-		// searches around the needle for a piece of code, needle2
-		_H3API_ UINT32 NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 radius, PUINT8 needle2, INT32 needleSize2);
-		// to find subsequent instances of a needle, based on NeedleSearch result
-		_H3API_ UINT32 NeedleSearchAfter(UINT32 after, const PUINT8 needle, INT32 needleSize, INT32 offset) const;
-		// performs NeedleSearch and checks checks location for expectedCode
-		_H3API_ UINT32 NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 offset, PUINT8 expectedCode, INT32 expectedSize);
-		// needleSearch in rdata
-		_H3API_ UINT32 NeedleSearchRData(PUINT8 needle, INT32 needleSize) const;
-		// needleSearch in data
-		_H3API_ UINT32 NeedleSearchData(PUINT8 needle, INT32 needleSize) const;
-
-		// find the first instance of needle
-		template <INT32 sz> UINT32 NeedleSearch(const UINT8(&needle)[sz], INT32 offset);
-		// searches around the needle for a piece of code, needle2
-		template <INT32 sz, INT32 sz2> UINT32 NeedleSearchAround(const UINT8(&needle)[sz], INT32 radius, const UINT8(&needle2)[sz2]);
-		// to find subsequent instances of a needle, based on NeedleSearch result
-		template <INT32 sz> UINT32 NeedleSearchAfter(UINT32 after, const UINT8(&needle)[sz], INT32 offset);
-		// performs NeedleSearch and checks checks location for expectedCode
-		template <INT32 sz, INT32 sz2> UINT32 NeedleSearchConfirm(const UINT8(&needle)[sz], INT32 offset, const UINT8(&expectedCode)[sz2]);
-		// needleSearch in rdata
-		template <INT32 sz> UINT32 NeedleSearchRData(const UINT8(&needle)[sz]);
-		// needleSearch in data
-		template <INT32 sz> UINT32 NeedleSearchData(const UINT8(&needle)[sz]);
+		/**
+		 * @brief find the first instance of needle
+		 *
+		 * @param needle byte sequence to look for
+		 * @param needle_size number of bytes in needle
+		 * @param offset number of bytes by which to shift the result
+		 * @return UINT32 address of the needle modified by \p offset, 0 if needle was not found
+		 */
+		_H3API_ UINT32 NeedleSearch(PUINT8 needle, INT32 needle_size, INT32 offset);
+		/**
+		 * @brief find the location of a secondary needle in the vicinity of primary needle
+		 *
+		 * @param needle primary byte sequence to look for
+		 * @param needle_size size of primary needle
+		 * @param radius search length around primary needle
+		 * @param needle2 secondary byte sequence to look for
+		 * @param needle_size2 size of secondary needle
+		 * @return UINT32 address of the secondary needle, 0 if not found
+		 */
+		_H3API_ UINT32 NeedleSearchAround(PUINT8 needle, INT32 needle_size, INT32 radius, PUINT8 needle2, INT32 needle_size2);
+		/**
+		 * @brief used to perform subsequent searches of a needle based on previous results
+		 *
+		 * @param after starting search location
+		 * @param needle byte sequence to look for
+		 * @param needle_size number of bytes in needle
+		 * @param offset number of bytes by which to shift the result
+		 * @return UINT32 address of the needle modified by \p offset, 0 if needle was not found
+		 */
+		_H3API_ UINT32 NeedleSearchAfter(UINT32 after, const PUINT8 needle, INT32 needle_size, INT32 offset) const;
+		/**
+		 * @brief performs NeedleSearch and checks checks location for expectedCode
+		 *
+		 * @param needle byte sequence to look for
+		 * @param needle_size number of bytes in needle
+		 * @param offset number of bytes by which to shift the result
+		 * @param expected_code byte sequence expected to be found at destination
+		 * @param expected_size size of expected byte sequence
+		 * @return UINT32 address of the needle modified by \p offset, 0 if needle was not found or expected sequence is not confirmed
+		 */
+		_H3API_ UINT32 NeedleSearchConfirm(PUINT8 needle, INT32 needle_size, INT32 offset, PUINT8 expected_code, INT32 expected_size);
+		/**
+		 * @brief performs NeedleSearch in RDATA section
+		 *
+		 * @param needle byte sequence to look for
+		 * @param needle_size number of bytes in needle
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		_H3API_ UINT32 NeedleSearchRData(PUINT8 needle, INT32 needle_size) const;
+		/**
+		 * @brief performs NeedleSearch in DATA section
+		 *
+		 * @param needle byte sequence to look for
+		 * @param needle_size number of bytes in needle
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		_H3API_ UINT32 NeedleSearchData(PUINT8 needle, INT32 needle_size) const;
+		/**
+		 * @brief find the first instance of needle
+		 *
+		 * @tparam sz number of bytes in needle
+		 * @param needle byte sequence to look for
+		 * @param offset number of bytes by which to shift the result
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		template <INT32 sz>
+		UINT32 NeedleSearch(const UINT8(&needle)[sz], INT32 offset);
+		/**
+		 * @brief find the location of a secondary needle in the vicinity of primary needle
+		 *
+		 * @tparam sz number of bytes in primary needle
+		 * @tparam sz2 number of bytes in secondary needle
+		 * @param needle primary byte sequence to look for
+		 * @param radius search length around primary needle
+		 * @param needle2 secondary byte sequence to look for
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		template <INT32 sz, INT32 sz2>
+		UINT32 NeedleSearchAround(const UINT8(&needle)[sz], INT32 radius, const UINT8(&needle2)[sz2]);
+		/**
+		 * @brief used to perform subsequent searches of a needle based on previous results
+		 *
+		 * @tparam sz number of bytes in needle
+		 * @param after starting search location
+		 * @param needle byte sequence to look for
+		 * @param offset number of bytes by which to shift the result
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		template <INT32 sz>
+		UINT32 NeedleSearchAfter(UINT32 after, const UINT8(&needle)[sz], INT32 offset);
+		/**
+		 * @brief performs NeedleSearch and checks checks location for expectedCode
+		 *
+		 * @tparam sz number of bytes in primary needle
+		 * @tparam sz2 number of bytes in confirmation needle
+		 * @param needle byte sequence to look for
+		 * @param offset number of bytes by which to shift the result
+		 * @param expected_code byte sequence expected to be found at destination
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		template <INT32 sz, INT32 sz2>
+		UINT32 NeedleSearchConfirm(const UINT8(&needle)[sz], INT32 offset, const UINT8(&expected_code)[sz2]);
+		/**
+		 * @brief performs NeedleSearch in RDATA section
+		 *
+		 * @tparam sz number of bytes in needle
+		 * @param needle byte sequence to look for
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		template <INT32 sz>
+		UINT32 NeedleSearchRData(const UINT8(&needle)[sz]);
+		/**
+		 * @brief performs NeedleSearch in DATA section
+		 *
+		 * @tparam sz number of bytes in needle
+		 * @param needle byte sequence to look for
+		 * @return UINT32 address of the needle, 0 if needle was not found
+		 */
+		template <INT32 sz>
+		UINT32 NeedleSearchData(const UINT8(&needle)[sz]);
 	};
 }
 

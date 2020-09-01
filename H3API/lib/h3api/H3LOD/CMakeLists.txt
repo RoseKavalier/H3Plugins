@@ -1,0 +1,6 @@
+target_sources(H3API PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/H3LOD.cpp")
+
+target_sources(H3API PUBLIC 
+    "${CMAKE_CURRENT_SOURCE_DIR}/H3LOD.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/H3LOD.inl"
+)

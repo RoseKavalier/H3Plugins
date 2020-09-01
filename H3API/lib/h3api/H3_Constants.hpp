@@ -12,16 +12,263 @@
 #define _H3_CONSTANTS_HPP_
 
 #include "H3_Base.hpp"
+#include "H3_Config.hpp"
 
 namespace h3
 {
 #pragma warning(push)
 #pragma warning(disable:4146) // disable unary minus operator unsigned type warning
 
-	namespace NH3Constants
+	namespace NH3Artifacts
 	{
-		constexpr INT COMBATSQUARE_WIDTH  = 44;
-		constexpr INT COMBATSQUARE_HEIGHT = 42;
+		enum eArtifacts
+		{
+			SPELLBOOK                      = 0,
+			SPELL_SCROLL                   = 1,
+			GRAIL                          = 2,
+			CATAPULT                       = 3,
+			BALLISTA                       = 4,
+			AMMO_CART                      = 5,
+			FIRST_AID_TENT                 = 6,
+			CENTAUR_AXE                    = 7,
+			BLACKSHARD_OF_THE_DEAD_KNIGHT  = 8,
+			GREATER_GNOLLS_FLAIL           = 9,
+			OGRES_CLUB_OF_HAVOC            = 10,
+			SWORD_OF_HELLFIRE              = 11,
+			TITANS_GLADIUS                 = 12,
+			SHIELD_OF_THE_DWARVEN_LORDS    = 13,
+			SHIELD_OF_THE_YAWNING_DEAD     = 14,
+			BUCKLER_OF_THE_GNOLL_KING      = 15,
+			TARG_OF_THE_RAMPAGING_OGRE     = 16,
+			SHIELD_OF_THE_DAMNED           = 17,
+			SENTINELS_SHIELD               = 18,
+			HELM_OF_THE_ALABASTER_UNICORN  = 19,
+			SKULL_HELMET                   = 20,
+			HELM_OF_CHAOS                  = 21,
+			CROWN_OF_THE_SUPREME_MAGI      = 22,
+			HELLSTORM_HELMET               = 23,
+			THUNDER_HELMET                 = 24,
+			BREASTPLATE_OF_PETRIFIED_WOOD  = 25,
+			RIB_CAGE                       = 26,
+			SCALES_OF_THE_GREATER_BASILISK = 27,
+			TUNIC_OF_THE_CYCLOPS_KING      = 28,
+			BREASTPLATE_OF_BRIMSTONE       = 29,
+			TITANS_CUIRASS                 = 30,
+			ARMOR_OF_WONDER                = 31,
+			SANDALS_OF_THE_SAINT           = 32,
+			CELESTIAL_NECKLACE_OF_BLISS    = 33,
+			LIONS_SHIELD_OF_COURAGE        = 34,
+			SWORD_OF_JUDGEMENT             = 35,
+			HELM_OF_HEAVENLY_ENLIGHTENMENT = 36,
+			QUIET_EYE_OF_THE_DRAGON        = 37,
+			RED_DRAGON_FLAME_TONGUE        = 38,
+			DRAGON_SCALE_SHIELD            = 39,
+			DRAGON_SCALE_ARMOR             = 40,
+			DRAGONBONE_GREAVES             = 41,
+			DRAGON_WING_TABARD             = 42,
+			NECKLACE_OF_DRAGONTEETH        = 43,
+			CROWN_OF_DRAGONTOOTH           = 44,
+			STILL_EYE_OF_THE_DRAGON        = 45,
+			CLOVER_OF_FORTUNE              = 46,
+			CARDS_OF_PROPHECY              = 47,
+			LADYBIRD_OF_LUCK               = 48,
+			BADGE_OF_COURAGE               = 49,
+			CREST_OF_VALOR                 = 50,
+			GLYPH_OF_GALLANTRY             = 51,
+			SPECULUM                       = 52,
+			SPYGLASS                       = 53,
+			AMULET_OF_THE_UNDERTAKER       = 54,
+			VAMPIRES_COWL                  = 55,
+			DEAD_MANS_BOOTS                = 56,
+			GARNITURE_OF_INTERFERENCE      = 57,
+			SURCOAT_OF_COUNTERPOISE        = 58,
+			BOOTS_OF_POLARITY              = 59,
+			BOW_OF_ELVEN_CHERRYWOOD        = 60,
+			BOWSTRING_OF_THE_UNICORNS_MANE = 61,
+			ANGEL_FEATHER_ARROWS           = 62,
+			BIRD_OF_PERCEPTION             = 63,
+			STOIC_WATCHMAN                 = 64,
+			EMBLEM_OF_COGNIZANCE           = 65,
+			STATESMANS_MEDAL               = 66,
+			DIPLOMATS_RING                 = 67,
+			AMBASSADORS_SASH               = 68,
+			RING_OF_THE_WAYFARER           = 69,
+			EQUESTRIANS_GLOVES             = 70,
+			NECKLACE_OF_OCEAN_GUIDANCE     = 71,
+			ANGEL_WINGS                    = 72,
+			CHARM_OF_MANA                  = 73,
+			TALISMAN_OF_MANA               = 74,
+			MYSTIC_ORB_OF_MANA             = 75,
+			COLLAR_OF_CONJURING            = 76,
+			RING_OF_CONJURING              = 77,
+			CAPE_OF_CONJURING              = 78,
+			ORB_OF_THE_FIRMAMENT           = 79,
+			ORB_OF_SILT                    = 80,
+			ORB_OF_TEMPESTUOUS_FIRE        = 81,
+			ORB_OF_DRIVING_RAIN            = 82,
+			RECANTERS_CLOAK                = 83,
+			SPIRIT_OF_OPPRESSION           = 84,
+			HOURGLASS_OF_THE_EVIL_HOUR     = 85,
+			TOME_OF_FIRE_MAGIC             = 86,
+			TOME_OF_AIR_MAGIC              = 87,
+			TOME_OF_WATER_MAGIC            = 88,
+			TOME_OF_EARTH_MAGIC            = 89,
+			BOOTS_OF_LEVITATION            = 90,
+			GOLDEN_BOW                     = 91,
+			SPHERE_OF_PERMANENCE           = 92,
+			ORB_OF_VULNERABILITY           = 93,
+			RING_OF_VITALITY               = 94,
+			RING_OF_LIFE                   = 95,
+			VIAL_OF_LIFEBLOOD              = 96,
+			NECKLACE_OF_SWIFTNESS          = 97,
+			BOOTS_OF_SPEED                 = 98,
+			CAPE_OF_VELOCITY               = 99,
+			PENDANT_OF_DISPASSION          = 100,
+			PENDANT_OF_SECOND_SIGHT        = 101,
+			PENDANT_OF_HOLINESS            = 102,
+			PENDANT_OF_LIFE                = 103,
+			PENDANT_OF_DEATH               = 104,
+			PENDANT_OF_FREE_WILL           = 105,
+			PENDANT_OF_NEGATIVITY          = 106,
+			PENDANT_OF_TOTAL_RECALL        = 107,
+			PENDANT_OF_COURAGE             = 108,
+			EVERFLOWING_CRYSTAL_CLOAK      = 109,
+			RING_OF_INFINITE_GEMS          = 110,
+			EVERPOURING_VIAL_OF_MERCURY    = 111,
+			INEXHAUSTIBLE_CART_OF_ORE      = 112,
+			EVERSMOKING_RING_OF_SULFUR     = 113,
+			INEXHAUSTIBLE_CART_OF_LUMBER   = 114,
+			ENDLESS_SACK_OF_GOLD           = 115,
+			ENDLESS_BAG_OF_GOLD            = 116,
+			ENDLESS_PURSE_OF_GOLD          = 117,
+			LEGS_OF_LEGION                 = 118,
+			LOINS_OF_LEGION                = 119,
+			TORSO_OF_LEGION                = 120,
+			ARMS_OF_LEGION                 = 121,
+			HEAD_OF_LEGION                 = 122,
+			SEA_CAPTAINS_HAT               = 123,
+			SPELLBINDERS_HAT               = 124,
+			SHACKLES_OF_WAR                = 125,
+			ORB_OF_INHIBITION              = 126,
+			VIAL_OF_DRAGON_BLOOD           = 127,
+			ARMAGEDDONS_BLADE              = 128,
+			ANGELIC_ALLIANCE               = 129,
+			CLOAK_OF_THE_UNDEAD_KING       = 130,
+			ELIXIR_OF_LIFE                 = 131,
+			ARMOR_OF_THE_DAMNED            = 132,
+			STATUE_OF_LEGION               = 133,
+			POWER_OF_THE_DRAGON_FATHER     = 134,
+			TITANS_THUNDER                 = 135,
+			ADMIRALS_HAT                   = 136,
+			BOW_OF_THE_SHARPSHOOTER        = 137,
+			WIZARDS_WELL                   = 138,
+			RING_OF_THE_MAGI               = 139,
+			CORNUCOPIA                     = 140,
+		};
+
+		enum eArtifactSlots
+		{
+			sHEAD           = 0,
+			sSHOULDERS      = 1,
+			sNECK           = 2,
+			sRIGHT_HAND     = 3,
+			sLEFT_HAND      = 4,
+			sTORSO          = 5,
+			sRIGHT_RING     = 6,
+			sLEFT_RING      = 7,
+			sFEET           = 8,
+			sMISC1          = 9,
+			sMISC2          = 10,
+			sMISC3          = 11,
+			sMISC4          = 12,
+			sBALLISTA       = 13,
+			sAMMO_CART      = 14,
+			sFIRST_AID_TENT = 15,
+			sCATAPULT       = 16,
+			sSPELLBOOK      = 17,
+			sMISC5          = 18,
+		};
+
+		enum eArtifactType
+		{
+			ART_SPECIAL  = 1,
+			ART_TREASURE = 2,
+			ART_MINOR    = 4,
+			ART_MAJOR    = 8,
+			ART_RELIC    = 16,
+			ART_ALL      = 30 // never special!
+		};
+	}
+
+	namespace NH3Combat
+	{
+		enum eFortElements {
+			FE_DRAWBRIDGE      = 0,
+			FE_DRAWBRIDGE_ROPE = 1,
+			FE_MOAT            = 2,
+			FE_MOAT_LIP        = 3,
+			FE_BACK_WALL       = 4,
+			FE_UPPER_TOWER     = 5,  // valid catapult target ~0
+			FE_UPPER_WALL      = 6,  // valid catapult target ~1
+			FE_UPPER_BUTTRESS  = 7,
+			FE_MID_UPPER_WALL  = 8,  // valid catapult target ~2
+			FE_GATE            = 9,  // valid catapult target ~3
+			FE_MID_LOWER_WALL  = 10, // valid catapult target ~4
+			FE_LOWER_BUTTRESS  = 11,
+			FE_LOWER_WALL      = 12, // valid catapult target ~5
+			FE_LOWER_TOWER     = 13, // valid catapult target ~6
+			FE_KEEP            = 14, // valid catapult target ~7
+			FE_KEEP_CVR        = 15,
+			FE_LOWER_TWR_CVR   = 16,
+			FE_UPPER_TWR_CVR   = 17,
+		};
+
+		enum eMissiles
+		{
+			M_UPPER_RIGHT = 0,
+			M_RIGHT       = 1,
+			M_LOWER_RIGHT = 2,
+		};
+
+		enum eBattleAction : INT32
+		{
+			BA_CANCEL         = 0, // Cancel Action(the stack can do a different action now but it may still be impossible to force it to do most actions through ERM).
+			BA_CAST_SPELL     = 1, // Hero casts a spell
+			BA_WALK           = 2,
+			BA_DEFEND         = 3,
+			BA_RETREAT        = 4,
+			BA_SURRENDER      = 5,
+			BA_WALK_ATTACK    = 6,
+			BA_SHOOT          = 7,
+			BA_WAIT           = 8,
+			BA_CATAPULT       = 9,
+			BA_MONSTER_SPELL  = 10,
+			BA_FIRST_AID_TENT = 11,
+			BA_NOTHING        = 12, //No action(can be to disable stack for this round)
+		};
+
+		enum eRelativeOrientation : INT32
+		{
+			TOP_RIGHT      = 0,
+			RIGHT          = 1,
+			BOTTOM_RIGHT   = 2,
+			BOTTOM_LEFT    = 3,
+			LEFT           = 4,
+			TOP_LEFT       = 5,
+			REVERSE_TOP    = 6, // equivalent to 5 or 0 [attacker vs defender]
+			REVERSE_BOTTOM = 7, // equivalent to 3 or 2 [attacker vs defender]
+		};
+
+		enum eSquareAccess : UINT8
+		{
+			INACCESSIBLE = 0,
+			CAN_ATTACK   = 1,
+			CAN_REACH    = 2,
+			ACCESSIBLE   = CAN_ATTACK | CAN_REACH,
+		};
+
+		constexpr INT32 COMBATSQUARE_WIDTH  = 44;
+		constexpr INT32 COMBATSQUARE_HEIGHT = 42;
 	}
 
 	namespace NH3Creatures
@@ -183,25 +430,25 @@ namespace h3
 
 	namespace NH3Dispositions
 	{
-		constexpr INT COMPLIANT	 = 0;
-		constexpr INT FRIENDLY   = 1;
-		constexpr INT AGGRESSIVE = 2;
-		constexpr INT HOSTILE    = 3;
-		constexpr INT SAVAGE     = 4;
+		constexpr INT32 COMPLIANT  = 0;
+		constexpr INT32 FRIENDLY   = 1;
+		constexpr INT32 AGGRESSIVE = 2;
+		constexpr INT32 HOSTILE    = 3;
+		constexpr INT32 SAVAGE     = 4;
 	}
 
 	namespace NH3Formats
 	{
-		constexpr INT ROE = 0x0E;
-		constexpr INT AB  = 0x15;
-		constexpr INT SOD = 0x1C;
-		constexpr INT CHR = 0x1D;
-		constexpr INT WOG = 0x33;
+		constexpr INT32 ROE = 0x0E;
+		constexpr INT32 AB  = 0x15;
+		constexpr INT32 SOD = 0x1C;
+		constexpr INT32 CHR = 0x1D;
+		constexpr INT32 WOG = 0x33;
 	}
 
 	namespace NH3Heroes
 	{
-		enum eH3HeroClasses : INT32
+		enum eHeroClasses : INT32
 		{
 			KNIGHT       = 0,
 			CLERIC       = 1,
@@ -223,7 +470,19 @@ namespace h3
 			ELEMENTALIST = 17,
 		};
 
-		enum eH3Heroes : INT32
+		enum eHeroSpecialty : UINT32
+		{
+			ST_SKILL          = 0,
+			ST_CREATURELEVEL  = 1,
+			ST_RESOURCE       = 2,
+			ST_SPELL          = 3,
+			ST_STATICCREATURE = 4,
+			ST_SPEED          = 5,
+			ST_CONVERSION     = 6,
+			ST_DRAGON         = 7,
+		};
+
+		enum eHeroIdentity : INT32
 		{
 			/* Knight (Castle) */
 			ORRIN        = 0,
@@ -419,98 +678,199 @@ namespace h3
 			BORAGUS      = 154,
 			XERON        = 155,
 		};
+
+		enum eHeroRace : INT32
+		{
+			DEMON      = 0,
+			DWARF      = 1,
+			EFREET     = 2,
+			ELF        = 3,
+			GENIE      = 4,
+			GNOLL      = 5,
+			GOBLIN     = 6,
+			HUMAN      = 7,
+			LICH       = 8,
+			LIZARDMAN  = 9,
+			MINOTAUR   = 10,
+			OGRE       = 11,
+			TROGLODYTE = 12,
+			VAMPIRE    = 13,
+		};
 	}
 
 	namespace NH3Levels
 	{
-		constexpr INT LEVEL_0    = -2147483648;
-		constexpr INT LEVEL_1    = 0;
-		constexpr INT LEVEL_2    = 1000;
-		constexpr INT LEVEL_3    = 2000;
-		constexpr INT LEVEL_4    = 3200;
-		constexpr INT LEVEL_5    = 4600;
-		constexpr INT LEVEL_6    = 6200;
-		constexpr INT LEVEL_7    = 8000;
-		constexpr INT LEVEL_8    = 10000;
-		constexpr INT LEVEL_9    = 12200;
-		constexpr INT LEVEL_10   = 14700;
-		constexpr INT LEVEL_11   = 17500;
-		constexpr INT LEVEL_12   = 20600;
-		constexpr INT LEVEL_13   = 24320;
-		constexpr INT LEVEL_14   = 28784;
-		constexpr INT LEVEL_15   = 34140;
-		constexpr INT LEVEL_16   = 40567;
-		constexpr INT LEVEL_17   = 48279;
-		constexpr INT LEVEL_18   = 57533;
-		constexpr INT LEVEL_19   = 68637;
-		constexpr INT LEVEL_20   = 81961;
-		constexpr INT LEVEL_21   = 97949;
-		constexpr INT LEVEL_22   = 117134;
-		constexpr INT LEVEL_23   = 140156;
-		constexpr INT LEVEL_24   = 167782;
-		constexpr INT LEVEL_25   = 200933;
-		constexpr INT LEVEL_26   = 240714;
-		constexpr INT LEVEL_27   = 288451;
-		constexpr INT LEVEL_28   = 345735;
-		constexpr INT LEVEL_29   = 414475;
-		constexpr INT LEVEL_30   = 496963;
-		constexpr INT LEVEL_31   = 595948;
-		constexpr INT LEVEL_32   = 714730;
-		constexpr INT LEVEL_33   = 857268;
-		constexpr INT LEVEL_34   = 1028313;
-		constexpr INT LEVEL_35   = 1233567;
-		constexpr INT LEVEL_36   = 1479871;
-		constexpr INT LEVEL_37   = 1775435;
-		constexpr INT LEVEL_38   = 2130111;
-		constexpr INT LEVEL_39   = 2555722;
-		constexpr INT LEVEL_40   = 3066455;
-		constexpr INT LEVEL_41   = 3679334;
-		constexpr INT LEVEL_42   = 4414788;
-		constexpr INT LEVEL_43   = 5297332;
-		constexpr INT LEVEL_44   = 6356384;
-		constexpr INT LEVEL_45   = 7627246;
-		constexpr INT LEVEL_46   = 9152280;
-		constexpr INT LEVEL_47   = 10982320;
-		constexpr INT LEVEL_48   = 13178368;
-		constexpr INT LEVEL_49   = 15813625;
-		constexpr INT LEVEL_50   = 18975933;
-		constexpr INT LEVEL_51   = 22770702;
-		constexpr INT LEVEL_52   = 27324424;
-		constexpr INT LEVEL_53   = 32788890;
-		constexpr INT LEVEL_54   = 39346249;
-		constexpr INT LEVEL_55   = 47215079;
-		constexpr INT LEVEL_56   = 56657675;
-		constexpr INT LEVEL_57   = 67988790;
-		constexpr INT LEVEL_58   = 81586128;
-		constexpr INT LEVEL_59   = 97902933;
-		constexpr INT LEVEL_60   = 117483099;
-		constexpr INT LEVEL_61   = 140979298;
-		constexpr INT LEVEL_62   = 169174736;
-		constexpr INT LEVEL_63   = 203009261;
-		constexpr INT LEVEL_64   = 243610691;
-		constexpr INT LEVEL_65   = 292332407;
-		constexpr INT LEVEL_66   = 350798466;
-		constexpr INT LEVEL_67   = 420957736;
-		constexpr INT LEVEL_68   = 505148860;
-		constexpr INT LEVEL_69   = 606178208;
-		constexpr INT LEVEL_70   = 727413425;
-		constexpr INT LEVEL_71   = 872895685;
-		constexpr INT LEVEL_72   = 1047474397;
-		constexpr INT LEVEL_73   = 1256968851;
-		constexpr INT LEVEL_74   = 1508362195;
-		constexpr INT LEVEL_88   = 1810034207;
-		constexpr INT LEVEL_100  = 2073739175;
-		constexpr INT LEVEL_108  = 2099639276;
-		constexpr INT LEVEL_868  = 2144641867;
-		constexpr INT LEVEL_3732 = 2146553679;
-		constexpr INT LEVEL_5920 = 2146673313;
-		constexpr INT LEVEL_6424 = 2147293156;
-		constexpr INT LEVEL_MAX  = 2147400657;
+		constexpr INT32 LEVEL_0    = -2147483648;
+		constexpr INT32 LEVEL_1    = 0;
+		constexpr INT32 LEVEL_2    = 1000;
+		constexpr INT32 LEVEL_3    = 2000;
+		constexpr INT32 LEVEL_4    = 3200;
+		constexpr INT32 LEVEL_5    = 4600;
+		constexpr INT32 LEVEL_6    = 6200;
+		constexpr INT32 LEVEL_7    = 8000;
+		constexpr INT32 LEVEL_8    = 10000;
+		constexpr INT32 LEVEL_9    = 12200;
+		constexpr INT32 LEVEL_10   = 14700;
+		constexpr INT32 LEVEL_11   = 17500;
+		constexpr INT32 LEVEL_12   = 20600;
+		constexpr INT32 LEVEL_13   = 24320;
+		constexpr INT32 LEVEL_14   = 28784;
+		constexpr INT32 LEVEL_15   = 34140;
+		constexpr INT32 LEVEL_16   = 40567;
+		constexpr INT32 LEVEL_17   = 48279;
+		constexpr INT32 LEVEL_18   = 57533;
+		constexpr INT32 LEVEL_19   = 68637;
+		constexpr INT32 LEVEL_20   = 81961;
+		constexpr INT32 LEVEL_21   = 97949;
+		constexpr INT32 LEVEL_22   = 117134;
+		constexpr INT32 LEVEL_23   = 140156;
+		constexpr INT32 LEVEL_24   = 167782;
+		constexpr INT32 LEVEL_25   = 200933;
+		constexpr INT32 LEVEL_26   = 240714;
+		constexpr INT32 LEVEL_27   = 288451;
+		constexpr INT32 LEVEL_28   = 345735;
+		constexpr INT32 LEVEL_29   = 414475;
+		constexpr INT32 LEVEL_30   = 496963;
+		constexpr INT32 LEVEL_31   = 595948;
+		constexpr INT32 LEVEL_32   = 714730;
+		constexpr INT32 LEVEL_33   = 857268;
+		constexpr INT32 LEVEL_34   = 1028313;
+		constexpr INT32 LEVEL_35   = 1233567;
+		constexpr INT32 LEVEL_36   = 1479871;
+		constexpr INT32 LEVEL_37   = 1775435;
+		constexpr INT32 LEVEL_38   = 2130111;
+		constexpr INT32 LEVEL_39   = 2555722;
+		constexpr INT32 LEVEL_40   = 3066455;
+		constexpr INT32 LEVEL_41   = 3679334;
+		constexpr INT32 LEVEL_42   = 4414788;
+		constexpr INT32 LEVEL_43   = 5297332;
+		constexpr INT32 LEVEL_44   = 6356384;
+		constexpr INT32 LEVEL_45   = 7627246;
+		constexpr INT32 LEVEL_46   = 9152280;
+		constexpr INT32 LEVEL_47   = 10982320;
+		constexpr INT32 LEVEL_48   = 13178368;
+		constexpr INT32 LEVEL_49   = 15813625;
+		constexpr INT32 LEVEL_50   = 18975933;
+		constexpr INT32 LEVEL_51   = 22770702;
+		constexpr INT32 LEVEL_52   = 27324424;
+		constexpr INT32 LEVEL_53   = 32788890;
+		constexpr INT32 LEVEL_54   = 39346249;
+		constexpr INT32 LEVEL_55   = 47215079;
+		constexpr INT32 LEVEL_56   = 56657675;
+		constexpr INT32 LEVEL_57   = 67988790;
+		constexpr INT32 LEVEL_58   = 81586128;
+		constexpr INT32 LEVEL_59   = 97902933;
+		constexpr INT32 LEVEL_60   = 117483099;
+		constexpr INT32 LEVEL_61   = 140979298;
+		constexpr INT32 LEVEL_62   = 169174736;
+		constexpr INT32 LEVEL_63   = 203009261;
+		constexpr INT32 LEVEL_64   = 243610691;
+		constexpr INT32 LEVEL_65   = 292332407;
+		constexpr INT32 LEVEL_66   = 350798466;
+		constexpr INT32 LEVEL_67   = 420957736;
+		constexpr INT32 LEVEL_68   = 505148860;
+		constexpr INT32 LEVEL_69   = 606178208;
+		constexpr INT32 LEVEL_70   = 727413425;
+		constexpr INT32 LEVEL_71   = 872895685;
+		constexpr INT32 LEVEL_72   = 1047474397;
+		constexpr INT32 LEVEL_73   = 1256968851;
+		constexpr INT32 LEVEL_74   = 1508362195;
+		constexpr INT32 LEVEL_88   = 1810034207;
+		constexpr INT32 LEVEL_100  = 2073739175;
+		constexpr INT32 LEVEL_108  = 2099639276;
+		constexpr INT32 LEVEL_868  = 2144641867;
+		constexpr INT32 LEVEL_3732 = 2146553679;
+		constexpr INT32 LEVEL_5920 = 2146673313;
+		constexpr INT32 LEVEL_6424 = 2147293156;
+		constexpr INT32 LEVEL_MAX  = 2147400657;
+	}
+
+	namespace NH3Mouse
+	{
+		enum H3MouseCursorType : INT32
+		{
+			CURSOR_DEFAULT   = 0,
+			CURSOR_ADVENTURE = 1,
+			CURSOR_COMBAT    = 2,
+			CURSOR_SPELL     = 3,
+			CURSOR_ARTIFACT  = 4,
+		};
+
+		enum eAdventureMapCursorType
+		{
+			AMC_ARROWPOINTER         = 0,
+			AMC_BUSY_WAIT            = 1,
+			AMC_HERO                 = 2,
+			AMC_TOWN                 = 3,
+			AMC_HORSE                = 4,
+			AMC_ATTACK               = 5,
+			AMC_BOAT                 = 6,
+			AMC_ANCHOR               = 7,
+			AMC_HERO_MEETING         = 8,
+			AMC_REARING_HORSE        = 9,
+			AMC_HORSE2               = 10,
+			AMC_ATTACK2              = 11,
+			AMC_BOAT2                = 12,
+			AMC_ANCHOR2              = 13,
+			AMC_HERO_MEETING2        = 14,
+			AMC_REARING_HORSE2       = 15,
+			AMC_HORSE3               = 16,
+			AMC_ATTACK3              = 17,
+			AMC_BOAT3                = 18,
+			AMC_ANCHOR3              = 19,
+			AMC_HERO_MEETING3        = 20,
+			AMC_REARING_HORSE3       = 21,
+			AMC_HORSE4               = 22,
+			AMC_ATTACK4              = 23,
+			AMC_BOAT4                = 24,
+			AMC_ANCHOR4              = 25,
+			AMC_HERO_MEETING4        = 26,
+			AMC_REARING_HORSE4       = 27,
+			AMC_BOAT_1               = 28,
+			AMC_BOAT_2               = 29,
+			AMC_BOAT_3               = 30,
+			AMC_BOAT_4               = 31,
+			AMC_MAP_SCROLL_NORTH     = 32,
+			AMC_MAP_SCROLL_NORTHEAST = 33,
+			AMC_MAP_SCROLL_EAST      = 34,
+			AMC_MAP_SCROLL_SOUTHEAST = 35,
+			AMC_MAP_SCROLL_SOUTH     = 36,
+			AMC_MAP_SCROLL_SOUTHWEST = 37,
+			AMC_MAP_SCROLL_WEST      = 38,
+			AMC_MAP_SCROLL_NORTHWEST = 39,
+			AMC_ARROW_POINTER        = 40,
+			AMC_DIMENSION_DOOR       = 41,
+			AMC_SCUTTLE_BOAT         = 42,
+		};
+
+		enum eBattleFieldCursorType
+		{
+			BFC_NULL             = 0,
+			BFC_MOVE             = 1,
+			BFC_FLY              = 2,
+			BFC_SHOOTING         = 3,
+			BFC_HERO             = 4,
+			BFC_QUESTION_MARK    = 5,
+			BFC_ARROW_POINTER    = 6,
+			BFC_ATTACK_NORTHEAST = 7,
+			BFC_ATTACK_EAST      = 8,
+			BFC_ATTACK_SOUTHEAST = 9,
+			BFC_ATTACK_SOUTHWEST = 10,
+			BFC_ATTACK_WEST      = 11,
+			BFC_ATTACK_NORTHWEST = 12,
+			BFC_ATTACK_NORTH     = 13,
+			BFC_ATTACK_SOUTH     = 14,
+			BFC_HALF_DAMAGE      = 15,
+			BFC_ATTACK_WALL      = 16,
+			BFC_HEAL             = 17,
+			BFC_SACRIFICE        = 18,
+			BFC_TELEPORT         = 19,
+		};
 	}
 
 	namespace NH3Objects
 	{
-		enum eH3Objects : INT32
+		enum eObjectTypes : INT32
 		{
 			NO_OBJ                      = -1,
 			ALTAR_OF_SACRIFICE          = 2,
@@ -744,11 +1104,26 @@ namespace h3
 			MAGIC_PLAINS2               = 230,
 			ROCKLANDS                   = 231,
 		};
+
+		enum eCrBank
+		{
+			CB_CYCLOPS_STOCPILE     = 0,
+			CB_DWARVEN_TREASURY     = 1,
+			CB_GRIFFIN_CONSERVATORY = 2,
+			CB_IMP_CACHE            = 3,
+			CB_MEDUA_STORES         = 4,
+			CB_NAGA_BANK            = 5,
+			CB_DRAGON_FLY_HIVE      = 6,
+			CB_SHIPWRECK            = 7,
+			CB_DERELICT_SHIP        = 8,
+			CB_CRYPT                = 9,
+			CB_DRAGON_UTOPIA        = 10,
+		};
 	}
 
 	namespace NH3PlayerColors
 	{
-		enum eH3PlayerColors : INT32
+		enum ePlayerColors : INT32
 		{
 			RED    = 0,
 			BLUE   = 1,
@@ -761,9 +1136,41 @@ namespace h3
 		};
 	}
 
+	namespace NH3Quest
+	{
+		enum eQuestType
+		{
+			QT_NONE             = 0,
+			QT_EXPERIENCE_LEVEL = 1,
+			QT_PRIMARY_SKILL    = 2,
+			QT_DEFEAT_HERO      = 3,
+			QT_DEFEAT_MONSTER   = 4,
+			QT_BRING_ARTIFACTS  = 5,
+			QT_BRING_CREATURES  = 6,
+			QT_BRING_RESOURCES  = 7,
+			QT_BE_HERO          = 8,
+			QT_BE_PLAYER        = 9,
+		};
+
+		enum eSeerReward
+		{
+			SR_NONE            = 0,
+			SR_EXPERIENCE      = 1,
+			SR_SPELL_POINTS    = 2,
+			SR_MORALE          = 3,
+			SR_LUCK            = 4,
+			SR_RESOURCE        = 5,
+			SR_PRIMARY_SKILL   = 6,
+			SR_SECONDARY_SKILL = 7,
+			SR_ARTIFACT        = 8,
+			SR_SPELL           = 9,
+			SR_CREATURE        = 10,
+		};
+	}
+
 	namespace NH3Resources
 	{
-		enum eH3Resources : INT32
+		enum eResourceType : INT32
 		{
 			WOOD    = 0,
 			MERCURY = 1,
@@ -777,7 +1184,7 @@ namespace h3
 
 	namespace NH3Skills
 	{
-		enum eH3PrimarySkills : INT32
+		enum ePrimarySkills : INT32
 		{
 			ATTACK       = 0,
 			DEFENSE      = 1,
@@ -785,7 +1192,7 @@ namespace h3
 			KNOWLEDGE    = 3,
 		};
 
-		enum eH3SecondarySkills : INT32
+		enum eSecondarySkills : INT32
 		{
 			PATHFINDING  = 0,
 			ARCHERY      = 1,
@@ -816,11 +1223,124 @@ namespace h3
 			RESISTANCE   = 26,
 			FIRST_AID    = 27,
 		};
+
+		enum eSecSkillLevel : INT32
+		{
+			NONE     = 0,
+			BASIC    = 1,
+			ADVANCED = 2,
+			EXPERT   = 3,
+		};
+	}
+
+	namespace NH3Spells
+	{
+		enum eSchool : INT32
+		{
+			AIR   = 1,
+			FIRE  = 2,
+			WATER = 4,
+			EARTH = 8,
+			ALL   = AIR | FIRE | WATER | EARTH,
+		};
+
+		enum eTargetType : INT32
+		{
+			ENEMY    = -1,
+			AREA     = 0,
+			FRIENDLY = 1,
+		};
+
+		enum eSpells
+		{
+			SUMMON_BOAT           = 0,
+			SCUTTLE_BOAT          = 1,
+			VISIONS               = 2,
+			VIEW_EARTH            = 3,
+			DISGUISE              = 4,
+			VIEW_AIR              = 5,
+			FLY                   = 6,
+			WATER_WALK            = 7,
+			DIMENSION_DOOR        = 8,
+			TOWN_PORTAL           = 9,
+			QUICK_SAND            = 10,
+			LAND_MINE             = 11,
+			FORCE_FIELD           = 12,
+			FIRE_WALL             = 13,
+			EARTHQUAKE            = 14,
+			MAGIC_ARROW           = 15,
+			ICE_BOLT              = 16,
+			LIGHTNING_BOLT        = 17,
+			IMPLOSION             = 18,
+			CHAIN_LIGHTNING       = 19,
+			FROST_RING            = 20,
+			FIREBALL              = 21,
+			INFERNO               = 22,
+			METEOR_SHOWER         = 23,
+			DEATH_RIPPLE          = 24,
+			DESTROY_UNDEAD        = 25,
+			ARMAGEDDON            = 26,
+			SHIELD                = 27,
+			AIR_SHIELD            = 28,
+			FIRE_SHIELD           = 29,
+			PROTECTION_FROM_AIR   = 30,
+			PROTECTION_FROM_FIRE  = 31,
+			PROTECTION_FROM_WATER = 32,
+			PROTECTION_FROM_EARTH = 33,
+			ANTI_MAGIC            = 34,
+			DISPEL                = 35,
+			MAGIC_MIRROR          = 36,
+			CURE                  = 37,
+			RESURRECTION          = 38,
+			ANIMATE_DEAD          = 39,
+			SACRIFICE             = 40,
+			BLESS                 = 41,
+			CURSE                 = 42,
+			BLOODLUST             = 43,
+			PRECISION             = 44,
+			WEAKNESS              = 45,
+			STONE_SKIN            = 46,
+			DISRUPTING_RAY        = 47,
+			PRAYER                = 48,
+			MIRTH                 = 49,
+			SORROW                = 50,
+			FORTUNE               = 51,
+			MISFORTUNE            = 52,
+			HASTE                 = 53,
+			SLOW                  = 54,
+			SLAYER                = 55,
+			FRENZY                = 56,
+			TITANS_LIGHTNING_BOLT = 57,
+			COUNTERSTRIKE         = 58,
+			BERSERK               = 59,
+			HYPNOTIZE             = 60,
+			FORGETFULNESS         = 61,
+			BLIND                 = 62,
+			TELEPORT              = 63,
+			REMOVE_OBSTACLE       = 64,
+			CLONE                 = 65,
+			FIRE_ELEMENTAL        = 66,
+			EARTH_ELEMENTAL       = 67,
+			WATER_ELEMENTAL       = 68,
+			AIR_ELEMENTAL         = 69,
+			/* These abilities are not available to heroes */
+			STONE                 = 70,
+			POISON                = 71,
+			BIND                  = 72,
+			DISEASE               = 73,
+			PARALYZE              = 74,
+			AGING                 = 75,
+			DEATH_CLOUD           = 76,
+			THUNDERBOLT           = 77,
+			DRAGONFLY_DISPEL      = 78,
+			DEATH_STARE           = 79,
+			ACID_BREATH           = 80,
+		};
 	}
 
 	namespace NH3Terrains
 	{
-		enum eH3Terrain : INT32
+		enum eTerrainType : INT32
 		{
 			DIRT         = 0,
 			SAND         = 1,
@@ -835,9 +1355,305 @@ namespace h3
 		};
 	}
 
+	namespace NH3Towns
+	{
+		enum eTownType
+		{
+			NEUTRAL    = -1,
+			CASTLE     = 0,
+			RAMPART    = 1,
+			TOWER      = 2,
+			INFERNO    = 3,
+			NECROPOLIS = 4,
+			DUNGEON    = 5,
+			STRONGHOLD = 6,
+			FORTRESS   = 7,
+			CONFLUX    = 8,
+		};
+
+		enum eBuildings // from ERM help
+		{
+			B_MAGE_GUILD1              = 0,
+			B_MAGE_GUILD2              = 1,
+			B_MAGE_GUILD3              = 2,
+			B_MAGE_GUILD4              = 3,
+			B_MAGE_GUILD5              = 4,
+			B_TAVERN                   = 5,
+			B_WHARF                    = 6,
+			B_FORT                     = 7,
+			B_CITADEL                  = 8,
+			B_CASTLE                   = 9,
+			B_VILAGE_HALL              = 10,
+			B_TOWN_HALL                = 11,
+			B_CITY_HALL                = 12,
+			B_CAPITOL                  = 13,
+			B_MARKET                   = 14,
+			B_RESOURCE_SILO            = 15,
+			B_BLACKSMITH               = 16,
+			B_SPEC17                   = 17,
+			B_HORDE1                   = 18,
+			B_HORDE1U                  = 19,
+			B_WHARF2                   = 20,
+			B_SPEC21                   = 21,
+			B_SPEC22                   = 22,
+			B_SPEC23                   = 23,
+			B_HORDE2                   = 24,
+			B_HORDE2U                  = 25,
+			B_GRAIL                    = 26,
+			B_DECOR27                  = 27,
+			B_DECOR28                  = 28,
+			B_DECOR29                  = 29,
+			B_DWELL1                   = 30,
+			B_DWELL2                   = 31,
+			B_DWELL3                   = 32,
+			B_DWELL4                   = 33,
+			B_DWELL5                   = 34,
+			B_DWELL6                   = 35,
+			B_DWELL7                   = 36,
+			B_DWELL1U                  = 37,
+			B_DWELL2U                  = 38,
+			B_DWELL3U                  = 39,
+			B_DWELL4U                  = 40,
+			B_DWELL5U                  = 41,
+			B_DWELL6U                  = 42,
+			B_DWELL7U                  = 43,
+
+			/* CASTLE */
+			B_LIGHTHOUSE               = 17,
+			B_STABLES                  = 21,
+			B_BROTHERHOOD_OF_THE_SWORD = 22,
+
+			/* RAMPART */
+			B_MYSTIC_POND              = 17,
+			B_FOUNTAIN_OF_FORTUNE      = 21,
+			B_DWARVEN_TREASURY         = 22,
+
+			/* TOWER */
+			B_ARTIFACT_MERCHANT        = 17, // same for Dungeon and Conflux
+			B_LOOKOUT_TOWER            = 21,
+			B_LIBRARY                  = 22,
+			B_WALL_OF_KNOWLEDGE        = 23,
+
+			/* INFERNO */
+			B_BRIMSTONECLOUDS          = 21,
+			B_CASTLE_GATE              = 22,
+			B_ORDER_OF_FIRE            = 23,
+
+			/* NECROPOLIS */
+			B_VEIL_OF_DARKNESS         = 17,
+			B_NECROMANCY_AMPLIFIER     = 21,
+			B_SKELETON_TRANSFORMER     = 22,
+
+			/*  DUNGEON */
+			B_MANA_VORTEX              = 21,
+			B_PORTAL_OF_SUMMONING      = 22,
+			B_BATTLE_ACADEMY           = 23,
+
+			/* STRONGHOLD */
+			B_ESCAPE_TUNNEL            = 17,
+			B_FREELANCERS_GUILD        = 21,
+			B_BALLISTA_YARD            = 22,
+			B_HALL_OF_VALHALLA         = 23,
+
+			/* FORTRESS */
+			B_CAGE_OF_WARLORDS         = 17,
+			B_GLYPHS_OF_FEAR           = 21,
+			B_BLOOD_OBELISK            = 22,
+
+			/* CONFLUX */
+			B_MAGIC_UNIVERSITY         = 21
+		};
+
+		enum eNeutralBuildings
+		{
+			MAGE_GUILD       = 0,
+			MAGE_GUILD2      = 1,
+			MAGE_GUILD3      = 2,
+			MAGE_GUILD4      = 3,
+			MAGE_GUILD5      = 4,
+			TAVERN           = 5,
+			DOCK             = 6,
+			CASTLE_FORT      = 7,
+			CASTLE_CITADEL   = 8,
+			CASTLE_CASTLE    = 9,
+			HALL_VILLAGE     = 10,
+			HALL_TOWN        = 11,
+			HALL_CITY        = 12,
+			HALL_CAPITOL     = 13,
+			MARKETPLACE      = 14,
+			MARKETPLACE_SILO = 15,
+			BLACKSMITH       = 16,
+
+		};
+
+		enum eBuildingRequirements
+		{
+			BLD_REQ_MAGE1         = 0,
+			BLD_REQ_MAGE2         = 1,
+			BLD_REQ_MAGE3         = 2,
+			BLD_REQ_MAGE4         = 3,
+			BLD_REQ_MAGE5         = 4,
+			BLD_REQ_TAVERN        = 5,
+			BLD_REQ_WHARF         = 6,
+			BLD_REQ_FORT          = 7,
+			BLD_REQ_CITADEL       = 8,
+			BLD_REQ_CASTLE        = 9,
+			BLD_REQ_VILLAGE_HALL  = 10,
+			BLD_REQ_TOWN_HALL     = 11,
+			BLD_REQ_CITY_HALL     = 12,
+			BLD_REQ_CAPITOL       = 13,
+			BLD_REQ_MARKET        = 14,
+			BLD_REQ_RESOURCE_SILO = 15,
+			BLD_REQ_BLACKSMITH    = 16,
+			BLD_REQ_SPEC17        = 17,
+			BLD_REQ_HORDE1        = 18,
+			BLD_REQ_HORDE1U       = 19,
+			BLD_REQ_WHARF2        = 20,
+			BLD_REQ_SPEC21        = 21,
+			BLD_REQ_SPEC22        = 22,
+			BLD_REQ_SPEC23        = 23,
+			BLD_REQ_HORDE2        = 24,
+			BLD_REQ_HORDE2U       = 25,
+			BLD_REQ_GRAIL         = 26,
+			BLD_REQ_DECOR27       = 27,
+			BLD_REQ_DECOR28       = 28,
+			BLD_REQ_DECOR29       = 29,
+			BLD_REQ_DWELL1        = 30,
+			BLD_REQ_DWELL2        = 31,
+			BLD_REQ_DWELL3        = 32,
+			BLD_REQ_DWELL4        = 33,
+			BLD_REQ_DWELL5        = 34,
+			BLD_REQ_DWELL6        = 35,
+			BLD_REQ_DWELL7        = 36,
+			BLD_REQ_DWELL1U       = 37,
+			BLD_REQ_DWELL2U       = 38,
+			BLD_REQ_DWELL3U       = 39,
+			BLD_REQ_DWELL4U       = 40,
+			BLD_REQ_DWELL5U       = 41,
+			BLD_REQ_DWELL6U       = 42,
+			BLD_REQ_DWELL7U       = 43,
+		};
+
+		enum eSpecialBuildings
+		{
+			/* Castle */
+			LIGHTHOUSE = 0,
+			GRIFFIN_HORDE,
+			ROYAL_GRIFFIN_HORDE,
+			UNUSED_CASTLE1,
+			STABLES,
+			TAVERN_UPGRADE,
+			UNUSED_CASTLE2,
+			UNUSED_CASTLE3,
+			UNUSED_CASTLE4,
+
+			/* Rampart */
+			MYSTIC_GARDEN = 0,
+			DWARF_HORDE,
+			BATTLE_DWARF_HORDE,
+			UNUSED_RAMPART1,
+			RAINBOW,
+			TREASURY,
+			UNUSED_RAMPART2,
+			TREEFOLK_HORDE,
+			BRIAR_TREEFOLK_HORDE,
+
+			/* Tower */
+			ARTIFACT_MERCHANTS_TOWER = 0,
+			STONE_GARGOYLE_HORDE,
+			OBSIDIAN_GARGOYLE_HORDE,
+			UNUSED_TOWER1,
+			WATCHTOWER,
+			LIBRARY,
+			WALL_OF_GLYPHIC_KNOWLEDGE,
+			UNUSED_TOWER2,
+			UNUSED_TOWER3,
+
+			/* Inferno */
+			UNUSED_INFERNO1 = 0,
+			IMP_HORDE,
+			FAMILIAR_HORDE,
+			UNUSED_INFERNO2,
+			BRIMSTONE_STORMCLOUDS,
+			CASTLE_GATE,
+			ORDER_OF_FIRE,
+			HELL_HOUND_HORDE,
+			CERBERUS_HORDE,
+
+			/* Necropolis */
+			COVER_OF_DARKNESS = 0,
+			SKELETON_HORDE,
+			SKELETON_WARRIOR_HORDE,
+			UNUSED_NECROPOLIS1,
+			NECROMANCY_AMPLIFIER,
+			SKELETON_TRANSFORMER,
+			UNUSED_NECROPOLIS2,
+			UNUSED_NECROPOLIS3,
+			UNUSED_NECROPOLIS4,
+
+			/* Dungeon */
+			ARTIFACT_MERCHANTS_DUNGEON = 0,
+			TROGLODYTE_HORDE,
+			INFERNAL_TROGLODYTE_HORDE,
+			UNUSED_DUNGEON1,
+			MANA_VORTEX,
+			PORTAL_OF_SUMMONING,
+			ACADEMY_OF_BATTLE_SCHOLARS,
+			UNUSED_DUNGEON2,
+			UNUSED_DUNGEON3,
+
+			/* Stronghold */
+			ESCAPE_TUNNEL = 0,
+			GOBLIN_HORDE,
+			HOBGOBLIN_HORDE,
+			UNUSED_STRONGHOLD1,
+			FREELANCERS_GUILD,
+			BALLISTA_WORKS,
+			HALL_OF_VALHALLA,
+			UNUSED_STRONGHOLD2,
+			UNUSED_STRONGHOLD3,
+
+			/* Fortress */
+			DEFENSE_CAGE = 0,
+			GNOLL_HORDE,
+			GNOLL_MARAUDER_HORDE,
+			UNUSED_FORTRESS1,
+			SIEGE_DEFENSE,
+			SIEGE_ATTACK,
+			UNUSED_FORTRESS2,
+			UNUSED_FORTRESS3,
+			UNUSED_FORTRESS4,
+
+			/* Conflux */
+			ARTIFACT_MERCHANTS = 0,
+			PIXIE_HORDE,
+			SPRITE_HORDE,
+			UNUSED_CONFLUX1,
+			MAGIC_UNIVERSITY,
+			UNUSED_CONFLUX2,
+			UNUSED_CONFLUX3,
+			UNUSED_CONFLUX4,
+			UNUSED_CONFLUX5,
+		};
+	}
+
 	namespace NH3VKey
 	{
-		enum eH3VK : INT32
+		// * modifies equivalent WM_ messages into H3 messages
+		enum eMessageType
+		{
+			MT_KEY_DOWN       = 1,  // 0x100
+			MT_KEY_UP         = 2,  // 0x101
+			MT_MOUSE_MOVE     = 4,  // 0x200
+			MT_LBUTTON_DOWN   = 8,  // 0x201
+			MT_LBUTTON_UP     = 16, // 0x202
+			MT_LBUTTON_DBLCLK = 8,  // 0x203
+			MT_RBUTTON_DOWN   = 32, // 0x204
+			MT_RBUTTON_UP     = 64, // 0x205
+			MT_RBUTTON_DBLCLK = 32, // 0x206
+		};
+
+		enum eVirtualKeys : INT32
 		{
 			H3VK_ESCAPE        = 1,
 			H3VK_1             = 2,
@@ -933,6 +1749,12 @@ namespace h3
 
 	namespace NH3Dlg
 	{
+		enum eClickId
+		{
+			H3ID_OK     = 30725,
+			H3ID_CANCEL = 30726
+		};
+
 		namespace Text
 		{
 			LPCSTR const TINY    = (LPCSTR(0x660CB4)); // "tiny.fnt"
@@ -946,21 +1768,21 @@ namespace h3
 		{
 			enum eTextAlignment : INT32
 			{
-				HLeft        = 0,
-				HCenter      = 1,
-				HRight       = 2,
-				VTop         = 0,
-				VCenter      = 4,
-				VBottom      = 8,
-				BottomLeft   = HLeft   | VBottom,
-				BottomCenter = HCenter | VBottom,
-				BottomRight  = HRight  | VBottom,
-				MiddleLeft   = HLeft   | VCenter,
-				MiddleCenter = HCenter | VCenter,
-				MiddleRight  = HRight  | VCenter,
-				TopLeft      = HLeft   | VTop,
-				TopMiddle    = HCenter | VTop,
-				TopRight     = HRight  | VTop,
+				HLEFT         = 0,
+				HCENTER       = 1,
+				HRIGHT        = 2,
+				VTOP          = 0,
+				VCENTER       = 4,
+				VBOTTOM       = 8,
+				BOTTOM_LEFT   = HLEFT   | VBOTTOM,
+				BOTTOM_CENTER = HCENTER | VBOTTOM,
+				BOTTOM_RIGHT  = HRIGHT  | VBOTTOM,
+				MIDDLE_LEFT   = HLEFT   | VCENTER,
+				MIDDLE_CENTER = HCENTER | VCENTER,
+				MIDDLE_RIGHT  = HRIGHT  | VCENTER,
+				TOP_LEFT      = HLEFT   | VTOP,
+				TOP_MIDDLE    = HCENTER | VTOP,
+				TOP_RIGHT     = HRIGHT  | VTOP,
 			};
 		} // namespace TextAlignment
 
@@ -1073,42 +1895,42 @@ namespace h3
 		{
 			namespace MainMenu
 			{
-				constexpr INT VTABLE     = 0x63FF60;
-				constexpr INT NEW_GAME   = 101;
-				constexpr INT LOAD_GAME  = 102;
-				constexpr INT HIGH_SCORE = 103;
-				constexpr INT CREDITS    = 104;
-				constexpr INT QUIT       = 105;
+				constexpr INT32 VTABLE     = 0x63FF60;
+				constexpr INT32 NEW_GAME   = 101;
+				constexpr INT32 LOAD_GAME  = 102;
+				constexpr INT32 HIGH_SCORE = 103;
+				constexpr INT32 CREDITS    = 104;
+				constexpr INT32 QUIT       = 105;
 			} // namespace MainMenu
 
 			namespace HighScore
 			{
-				constexpr INT VTABLE   = 0x63EB98;
-				constexpr INT EXIT     = 30722;
-				constexpr INT CAMPAIGN = 1001;
-				constexpr INT STANDARD = 1002;
-				constexpr INT RESET    = 1003;
+				constexpr INT32 VTABLE   = 0x63EB98;
+				constexpr INT32 EXIT     = 30722;
+				constexpr INT32 CAMPAIGN = 1001;
+				constexpr INT32 STANDARD = 1002;
+				constexpr INT32 RESET    = 1003;
 				/* others range from 1004 to 1025 */
 			} // namespace HighScore
 
 			namespace LoadGame
 			{
-				constexpr INT VTABLE      = 0x63E6D8;
-				constexpr INT SINGLE      = 100;
-				constexpr INT MULTIPLAYER = 102;
-				constexpr INT CAMPAIGN    = 101;
-				constexpr INT TUTORIAL    = 103;
-				constexpr INT QUIT        = 104;
+				constexpr INT32 VTABLE      = 0x63E6D8;
+				constexpr INT32 SINGLE      = 100;
+				constexpr INT32 MULTIPLAYER = 102;
+				constexpr INT32 CAMPAIGN    = 101;
+				constexpr INT32 TUTORIAL    = 103;
+				constexpr INT32 QUIT        = 104;
 			} // namespace LoadGame
 
 			namespace NewGame
 			{
-				constexpr INT VTABLE      = 0x63E6D8;
-				constexpr INT SINGLE      = 100;
-				constexpr INT MULTIPLAYER = 102;
-				constexpr INT CAMPAIGN    = 101;
-				constexpr INT TUTORIAL    = 103;
-				constexpr INT QUIT        = 104;
+				constexpr INT32 VTABLE      = 0x63E6D8;
+				constexpr INT32 SINGLE      = 100;
+				constexpr INT32 MULTIPLAYER = 102;
+				constexpr INT32 CAMPAIGN    = 101;
+				constexpr INT32 TUTORIAL    = 103;
+				constexpr INT32 QUIT        = 104;
 			} // namespace NewGame
 		} // namespace ID
 	} // namespace NH3Dlg

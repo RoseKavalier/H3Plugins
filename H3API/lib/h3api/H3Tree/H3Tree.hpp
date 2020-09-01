@@ -26,11 +26,11 @@ namespace h3
 		{
 			friend class H3Tree;
 
+			H3Node*    m_left;
+			H3Node*    m_parent;
+			H3Node*    m_right;
 			T          m_data;
 			bool       m_black;
-			H3Node*    m_parent;
-			H3Node*    m_left;
-			H3Node*    m_right;
 
 			H3Node* Next();
 			H3Node* Previous();

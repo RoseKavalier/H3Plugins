@@ -27,7 +27,7 @@ namespace h3
 #pragma warning(disable:4482)
 	_H3API_ LPCSTR HDIniEntry::GetText()
 	{
-		if (entryType == eType::iniValue)
+		if (entryType == eType::INI_VALUE)
 			return h3_NullString;
 		return data.text;
 	}
@@ -43,7 +43,7 @@ namespace h3
 	{
 		for (iterator it = begin(); it != end(); it++)
 		{
-			if (it->entryType == HDIniEntry::eType::iniKey)
+			if (it->entryType == HDIniEntry::eType::INI_KEY)
 			{
 				if (F_strcmpi(key, it->data.text) == 0)
 					return it;
@@ -103,19 +103,19 @@ namespace h3
 
 	_H3API_ BOOL8 H3IniLine::write(H3String & new_ini)
 	{
-		switch (m_type & LineType::all)
+		switch (m_type & LineType::ALL)
 		{
-		case LineType::empty:
+		case LineType::EMPTY:
 			break;
-		case LineType::comment:
+		case LineType::COMMENT:
 			new_ini.Append(m_content);
 			break;
-		case LineType::section:
+		case LineType::SECTION:
 			new_ini.Append(SECTION_START);
 			new_ini.Append(m_content);
 			new_ini.Append(SECTION_END);
 			break;
-		case LineType::key:
+		case LineType::KEY:
 			new_ini.Append(m_content);
 			new_ini.AppendA(KEY_EQUALS);
 			new_ini.Append(m_value);
@@ -128,13 +128,13 @@ namespace h3
 	}
 
 	_H3API_ H3IniLine::H3IniLine() :
-		m_type(LineType::empty)
+		m_type(LineType::EMPTY)
 	{
 	}
 
 #ifdef _H3API_CPLUSPLUS11_
 	_H3API_ H3IniLine::H3IniLine(h3::H3String && content, h3::H3String && value) :
-		m_type(LineType::key), m_content(std::move(content)), m_value(std::move(value))
+		m_type(LineType::KEY), m_content(std::move(content)), m_value(std::move(value))
 	{
 	}
 	_H3API_ H3IniLine::H3IniLine(LineType type, h3::H3String && content) :
@@ -334,11 +334,11 @@ namespace h3
 		{
 			for (iterator it = begin(); it != end(); it++)
 			{
-				if (it->m_type & H3IniLine::LineType::searched)
+				if (it->m_type & H3IniLine::LineType::SEARCHED)
 					continue;
 				if (it->m_content.Compare(key) == 0)
 				{
-					it->m_type |= H3IniLine::LineType::searched;
+					it->m_type |= H3IniLine::LineType::SEARCHED;
 					return it;
 				}
 			}
@@ -519,9 +519,9 @@ namespace h3
 				{
 				case INI_COMMENT:
 #ifdef _H3API_CPLUSPLUS11_
-					m_lines.Add(H3IniLine(H3IniLine::LineType::comment, std::move(it)));
+					m_lines.Add(H3IniLine(H3IniLine::LineType::COMMENT, std::move(it)));
 #else
-					m_lines.Add(H3IniLine(H3IniLine::LineType::comment, it));
+					m_lines.Add(H3IniLine(H3IniLine::LineType::COMMENT, it));
 #endif
 					break;
 				case SECTION_START:
@@ -545,9 +545,9 @@ namespace h3
 						}
 					}
 #ifdef _H3API_CPLUSPLUS11_
-					H3IniLine* added = m_lines.Add(H3IniLine(H3IniLine::LineType::section, std::move(it)));
+					H3IniLine* added = m_lines.Add(H3IniLine(H3IniLine::LineType::SECTION, std::move(it)));
 #else
-					H3IniLine* added = m_lines.Add(H3IniLine(H3IniLine::LineType::section, it));
+					H3IniLine* added = m_lines.Add(H3IniLine(H3IniLine::LineType::SECTION, it));
 #endif
 					currentSection = m_sections.Add(H3IniSection(added));
 				}

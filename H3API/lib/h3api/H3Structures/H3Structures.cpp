@@ -16,10 +16,10 @@
 namespace h3
 {
 	_H3API_ H3NetworkData::H3NetworkData(int recipient_id, int msg_id, int data) :
-		recipient_id(recipient_id),
-		msg_id(msg_id),
-		buffer_size(sizeof(H3NetworkData)),
-		short_data(data)
+		recipientId(recipient_id),
+		msgId(msg_id),
+		bufferSize(sizeof(H3NetworkData)),
+		shortData(data)
 	{
 	}
 	_H3API_ INT32 H3NetworkData::SendData()
@@ -54,11 +54,11 @@ namespace h3
 	{
 		return pos;
 	}
-	_H3API_ UINT8 H3Position::GetX()
+	_H3API_ UINT H3Position::GetX()
 	{
 		return UnpackX(pos);
 	}
-	_H3API_ UINT8 H3Position::GetY()
+	_H3API_ UINT H3Position::GetY()
 	{
 		return UnpackY(pos);
 	}
@@ -93,21 +93,21 @@ namespace h3
 	{
 		return ((x & 0x3FF) | ((y & 0x3FF) << 0x10) | ((z & 1) << 0x1A));
 	}
-	_H3API_ VOID H3Position::UnpackXYZ(UINT& coord, INT& x, INT& y, INT& z)
+	_H3API_ VOID H3Position::UnpackXYZ(UINT coord, INT& x, INT& y, INT& z)
 	{
 		x = UnpackX(coord);
 		y = UnpackY(coord);
 		z = UnpackZ(coord);
 	}
-	_H3API_ UINT8 H3Position::UnpackX(UINT& coord)
+	_H3API_ UINT H3Position::UnpackX(UINT coord)
 	{
-		return coord & 0xFF;
+		return coord & 0x3FF;
 	}
-	_H3API_ UINT8 H3Position::UnpackY(UINT& coord)
+	_H3API_ UINT H3Position::UnpackY(UINT coord)
 	{
-		return (coord >> 16) & 0xFF;
+		return (coord >> 16) & 0x3FF;
 	}
-	_H3API_ UINT8 H3Position::UnpackZ(UINT& coord)
+	_H3API_ UINT8 H3Position::UnpackZ(UINT coord)
 	{
 		return (coord >> 26) & 1;
 	}
@@ -144,25 +144,21 @@ namespace h3
 	{
 		operator+=(gain);
 	}
-	_H3API_ INT& H3Resources::AsRef(int index)
-	{
-		return begin()[index];
-	}
 	_H3API_ INT H3Resources::Count() const
 	{
 		INT r = 0;
 		for (int i = 0; i < 7; ++i)
-			if (cbegin()[i] != 0)
+			if (asArray[i] != 0)
 				++r;
 		return r;
 	}
 	_H3API_ PINT H3Resources::begin()
 	{
-		return PINT(this);
+		return asArray;
 	}
 	_H3API_ PINT H3Resources::end()
 	{
-		return &begin()[7];
+		return &asArray[7];
 	}
 	_H3API_ PINT H3Resources::cbegin() const
 	{
@@ -170,70 +166,67 @@ namespace h3
 	}
 	_H3API_ PINT H3Resources::cend() const
 	{
-		return &cbegin()[7];
+		return PINT(&asArray[7]);
 	}
 	_H3API_ H3Resources& H3Resources::operator+=(const H3Resources& other)
 	{
 		for (int i = 0; i < 7; ++i)
-			if (AsRef(i) > 0) // positive
+			if (asArray[i] > 0) // positive
 			{
-				AsRef(i) += other.cbegin()[i]; // add resources
+				asArray[i] += other.asArray[i]; // add resources
 
-				if (other.cbegin()[i] > 0) // check if there was overflow
+				if (other.asArray[i] > 0) // check if there was overflow
 				{
-					if (AsRef(i) <= 0)
-						AsRef(i) = INT_MAX;
+					if (asArray[i] <= 0)
+						asArray[i] = INT_MAX;
 				}
-				else if (AsRef(i) < 0) // no negative resources from subtraction
-					AsRef(i) = 0;
+				else if (asArray[i] < 0) // no negative resources from subtraction
+					asArray[i] = 0;
 			}
 			else // gain normally
-				AsRef(i) += other.cbegin()[i];
+				asArray[i] += other.asArray[i];
 		return *this;
 	}
 	_H3API_ H3Resources& H3Resources::operator-=(const H3Resources& other)
 	{
 		for (int i = 0; i < 7; ++i)
 		{
-			if (AsRef(i) >= 0)
-				AsRef(i) = std::max(0, AsRef(i) - other.cbegin()[i]);
+			if (asArray[i] >= 0)
+				asArray[i] = std::max(0, asArray[i] - other.asArray[i]);
 			else
-				AsRef(i) -= other.cbegin()[i];
+				asArray[i] -= other.asArray[i];
 		}
 		return *this;
 	}
 	_H3API_ H3Resources& H3Resources::operator=(const H3Resources& other)
 	{
 		for (int i = 0; i < 7; ++i)
-			AsRef(i) = other.cbegin()[i];
+			asArray[i] = other.asArray[i];
 		return *this;
 
 	}
 	_H3API_ BOOL H3Resources::operator>=(const H3Resources & other) const
 	{
-		for (int i = 0; i < 7; ++i)
-			if (other.cbegin()[i] > cbegin()[i])
-				return FALSE;
-		return TRUE;
+		return !(*this < other);
 	}
 	_H3API_ BOOL H3Resources::operator>(const H3Resources & other) const
 	{
-		for (int i = 0; i < 7; ++i)
-			if (other.cbegin()[i] >= cbegin()[i])
-				return FALSE;
-		return TRUE;
+		return other < *this;
 	}
 	_H3API_ BOOL H3Resources::operator<(const H3Resources & other) const
 	{
-		return other >= *this;
+		for (int i = 0; i < 7; ++i)
+			if (other.asArray[i] > asArray[i])
+				return TRUE;
+		return FALSE;
 	}
 	_H3API_ BOOL H3Resources::operator<=(const H3Resources & other) const
 	{
-		return other > *this;
+		return !(*this > other);
 	}
 	_H3API_ INT & H3Resources::operator[](int index)
 	{
-		return begin()[index];
+		return asArray[index];
 	}
 
 	_H3API_ H3Army::iterator::iterator(INT32* type) :
@@ -436,7 +429,7 @@ namespace h3
 	}
 	_H3API_ BOOL H3Hero::HasSpell(INT32 spell)
 	{
-		return learned_spell[spell] | available_spell[spell];
+		return learnedSpells[spell] | availableSpells[spell];
 	}
 	_H3API_ VOID H3Hero::BuildCombinationArtifact(INT32 combo_id)
 	{
@@ -461,7 +454,7 @@ namespace h3
 	}
 	_H3API_ VOID H3Hero::RecalculateMovement()
 	{
-		H3AdventureManager* adv = H3Internal::AdventureManager();
+		H3AdventureManager* adv = H3Internal::_adventureManager();
 		adv->movementCalculated = 0;
 		adv->movementCalculated1 = 0;
 		if (dest_x != -1)
@@ -493,7 +486,7 @@ namespace h3
 		int skills_can_be_learned = 0;
 
 		int sslevel;
-		H3Main* main = H3Internal::Main();
+		H3Main* main = H3Internal::_main();
 
 		for (int i = 0; i < 28; i++)
 		{
@@ -560,12 +553,12 @@ namespace h3
 	}
 	_H3API_ VOID H3Hero::ShowCreatureDialog(int slot, BOOL rightClick)
 	{
-		THISCALL_9(VOID, 0x4C6910, H3Internal::Main(), &army, slot, this, 0, 119, 20, 0, rightClick);
+		THISCALL_9(VOID, 0x4C6910, H3Internal::_main(), &army, slot, this, 0, 119, 20, 0, rightClick);
 	}
 	_H3API_ VOID H3Hero::ShowSpellInfo(int spell, BOOL RMB)
 	{
 		int expertise = GetSpellExpertise(spell, GetSpecialSpellTerrain());
-		FASTCALL_12(VOID, 0x4F6C00, H3Internal::Spell()[spell].description[expertise],
+		FASTCALL_12(VOID, 0x4F6C00, H3Internal::_spell()[spell].description[expertise],
 					RMB ? 4 : 1, -1, -1, 9, spell, -1, 0, - 1, 0, - 1, 0);
 	}
 	_H3API_ VOID H3Hero::ShowSSkillInfo(int skill, BOOL RMB)
@@ -574,7 +567,7 @@ namespace h3
 		if (lvl == 0)
 			lvl = 1;
 		int frame = 3 * skill + 1 + lvl;
-		FASTCALL_12(VOID, 0x4F6C00, H3Internal::SecondarySkillsInfo(skill).description[lvl],
+		FASTCALL_12(VOID, 0x4F6C00, H3Internal::_secondarySkillsInfo(skill).description[lvl],
 			RMB ? 4 : 1, -1, -1, 20, frame, -1, 0, -1, 0, -1, 0);
 	}
 	_H3API_ VOID H3Hero::ShowPSkillInfo(int skill, BOOL RMB)
@@ -594,18 +587,18 @@ namespace h3
 		if (id == -1)
 			return FALSE;
 
-		int comboId = H3Internal::ArtifactSetup()[artId].comboID;
+		int comboId = H3Internal::_artifactSetup()[artId].comboID;
 		if (comboId != -1) // it's already a combination artifact
 			return FALSE;
-		comboId = H3Internal::ArtifactSetup()[artId].partOfCombo;
+		comboId = H3Internal::_artifactSetup()[artId].partOfCombo;
 		if (comboId == -1) // not part of a combination
 			return FALSE;
 
-		int numArts = H3Internal::ArtifactCount();
+		int numArts = H3Internal::_artifactCount();
 
 		for (int i = 0; i < numArts; ++i)
 		{
-			if (H3Internal::ArtifactSetup()[i].partOfCombo == comboId)
+			if (H3Internal::_artifactSetup()[i].partOfCombo == comboId)
 			{
 				if (!WearsArtifact(i))
 					return FALSE;
@@ -619,14 +612,14 @@ namespace h3
 		int artId = bodyArtifacts[slot].id;
 		if (artId == -1)
 			return;
-		int comboId = H3Internal::ArtifactSetup()[artId].comboID;
+		int comboId = H3Internal::_artifactSetup()[artId].comboID;
 		if (comboId == -1) // not a combo artifact
 			return;
 		RemoveArtifact(slot);
-		int numArts = H3Internal::ArtifactCount();
+		int numArts = H3Internal::_artifactCount();
 		for (int i = 0; i < numArts; ++i)
 		{
-			if (H3Internal::ArtifactSetup()[i].partOfCombo == comboId)
+			if (H3Internal::_artifactSetup()[i].partOfCombo == comboId)
 			{
 				H3Artifact art;
 				art.id = i;
@@ -646,6 +639,18 @@ namespace h3
 	_H3API_ VOID H3Hero::RemoveSpellPointsAndRefresh(UINT16 spellPoints)
 	{
 		THISCALL_2(VOID, 0x4D9540, this, spellPoints);
+	}
+	_H3API_ VOID H3Hero::UpdateAvailableSpells()
+	{
+		THISCALL_1(VOID, 0x4D9840, this);
+	}
+	_H3API_ VOID H3Hero::Hide()
+	{
+		THISCALL_1(VOID, 0x4D7950, this);
+	}
+	_H3API_ VOID H3Hero::Show()
+	{
+		THISCALL_3(VOID, 0x4D7840, this, NH3Objects::eObjectTypes::HERO, id);
 	}
 	_H3API_ UINT32 H3Date::CurrentDay() const
 	{
@@ -706,11 +711,11 @@ namespace h3
 	}
 	_H3API_ H3Hero* H3Town::GetGarrisonHero() const
 	{
-		return H3Internal::Main()->GetHero(garrisonHero);
+		return H3Internal::_main()->GetHero(garrisonHero);
 	}
 	_H3API_ H3Hero* H3Town::GetVisitingHero() const
 	{
-		return H3Internal::Main()->GetHero(visitingHero);
+		return H3Internal::_main()->GetHero(visitingHero);
 	}
 	_H3API_ BOOL8 H3Town::IsMageGuildBuilt(INT level) const
 	{
@@ -732,7 +737,7 @@ namespace h3
 	}
 	_H3API_ H3TownCreatureTypes& H3Town::GetCreatureTypes() const
 	{
-		return H3Internal::TownCreatureTypes()[type];
+		return H3Internal::_townCreatureTypes()[type];
 	}
 	_H3API_ BOOL H3Town::CanBeBuilt(eBuildings id) const
 	{
@@ -747,7 +752,7 @@ namespace h3
 	}
 	_H3API_ H3Hero* H3Player::GetActiveHero()
 	{
-		return H3Internal::Main()->GetHero(currentHero);
+		return H3Internal::_main()->GetHero(currentHero);
 	}
 	_H3API_ H3ObjectDraw::H3ObjectDraw(UINT16 sprite, UINT8 tile_id, UINT8 layer) :
 		sprite(sprite),
@@ -782,6 +787,24 @@ namespace h3
 	_H3API_ BOOL H3MapItem::CanDig() const
 	{
 		return access & 0x40;
+	}
+	_H3API_ INT H3MapItem::GetRealType() const
+	{
+		if (objectType != NH3Objects::HERO)
+			return objectType;
+		PH3Hero hero = H3Internal::_main()->GetHero(setup);
+		if (!hero || !hero->objectBelow)
+			return objectType;
+		return hero->objectTypeUnder;
+	}
+	_H3API_ UINT H3MapItem::GetRealSetup() const
+	{
+		if (objectType != NH3Objects::HERO)
+			return setup;
+		PH3Hero hero = H3Internal::_main()->GetHero(setup);
+		if (!hero || !hero->objectBelow)
+			return setup;
+		return hero->objectBelowSetup;
 	}
 	_H3API_ MapMonster* H3MapItem::CastMonster()
 	{
@@ -851,10 +874,6 @@ namespace h3
 	{
 		return (MapPyramid*)this;
 	}
-	_H3API_ MapSwanPond* H3MapItem::CastSwanPond()
-	{
-		return (MapSwanPond*)this;
-	}
 	_H3API_ MapMonolith* H3MapItem::CastMonolith()
 	{
 		return (MapMonolith*)this;
@@ -905,7 +924,7 @@ namespace h3
 	}
 	_H3API_ VOID H3CreatureBank::SetupBank(int type, int level)
 	{
-		H3CreatureBankState* cbs = &H3Internal::CreatureBankSetup()[type].states[level];
+		H3CreatureBankState* cbs = &H3Internal::_creatureBankSetup()[type].states[level];
 		guardians = cbs->guardians;
 		resources = cbs->resources;
 		creatureRewardType = cbs->creatureRewardType;
@@ -986,6 +1005,8 @@ namespace h3
 		H3Resources res;
 		res = upg->cost;
 		res.RemoveResources(cost);
+		for (PINT it = res.begin(); it != res.end(); ++it)
+			*it *= count;
 		return res;
 	}
 
@@ -1001,40 +1022,44 @@ namespace h3
 	{
 		return THISCALL_1(INT32, 0x4489F0, this);
 	}
+	_H3API_ INT32 H3CombatMonster::HexRelativePosition(INT32 considered_hex, INT32 relative_orientation)
+	{
+		return THISCALL_3(INT32, 0x524280, this, considered_hex, relative_orientation);
+	}
 
 	_H3API_ BOOL H3CombatMonster::IsDone()
 	{
-		return info.flags.DONE;
+		return info.flags.done;
 	}
 
 	_H3API_ BOOL H3CombatMonster::IsClone()
 	{
-		return info.flags.CLONE;
+		return info.flags.clone;
 	}
 
 	_H3API_ BOOL H3CombatMonster::IsSiege()
 	{
-		return info.flags.SIEGE_WEAPON;
+		return info.flags.siegeWeapon;
 	}
 
 	_H3API_ BOOL H3CombatMonster::IsSummon()
 	{
-		return info.flags.SUMMON;
+		return info.flags.summon;
 	}
 
 	_H3API_ BOOL H3CombatMonster::HadMorale()
 	{
-		return info.flags.MORALE;
+		return info.flags.morale;
 	}
 
 	_H3API_ BOOL H3CombatMonster::IsWaiting()
 	{
-		return info.flags.WAITING;
+		return info.flags.waiting;
 	}
 
 	_H3API_ BOOL H3CombatMonster::HasMoved()
 	{
-		return info.flags.DONE;
+		return info.flags.done;
 	}
 
 	_H3API_ INT32 H3CombatMonster::Index()
@@ -1044,7 +1069,7 @@ namespace h3
 
 	_H3API_ VOID H3CombatMonster::ShowStatsDialog(BOOL RightClick)
 	{
-		THISCALL_3(VOID, 0x468440, H3Internal::CombatManager(), this, RightClick);
+		THISCALL_3(VOID, 0x468440, H3Internal::_combatManager(), this, RightClick);
 	}
 
 	_H3API_ INT32 H3CombatMonster::GetSide()
@@ -1117,22 +1142,22 @@ namespace h3
 		return &PINT8(this)[4] ;
 	}
 
-	_H3API_ INT32 H3QuestVector::Count()
+	_H3API_ INT32 H3Quest::QuestVector::Count()
 	{
 		return last - first;
 	}
 
-	_H3API_ INT32 H3QuestVector::operator[](INT32 index)
+	_H3API_ INT32& H3Quest::QuestVector::operator[](INT32 index)
 	{
 		return first[index];
 	}
 
-	_H3API_ INT32* H3QuestVector::begin()
+	_H3API_ INT32* H3Quest::QuestVector::begin()
 	{
 		return first;
 	}
 
-	_H3API_ INT32* H3QuestVector::end()
+	_H3API_ INT32* H3Quest::QuestVector::end()
 	{
 		return last;
 	}
@@ -1149,7 +1174,7 @@ namespace h3
 
 	_H3API_ H3Quest::eQuestType H3QuestGuard::QuestType() const
 	{
-		return quest ? quest->GetQuestType() : H3Quest::eQuestType::QT_None;
+		return quest ? quest->GetQuestType() : H3Quest::eQuestType::QT_NONE;
 	}
 
 	_H3API_ WORD H3SeerHut::CreatureCount() const
@@ -1172,10 +1197,6 @@ namespace h3
 	{
 		return INT8(rewardValue2);
 	}
-	_H3API_ H3Quest::eQuestType H3SeerHut::QuestType() const
-	{
-		return quest ? quest->GetQuestType() : H3Quest::eQuestType::QT_None;
-	}
 
 	_H3API_ H3MapItem* H3MainSetup::GetMapItem(int x, int y, int z)
 	{
@@ -1195,10 +1216,26 @@ namespace h3
 
 	_H3API_ H3Point H3MainSetup::GetCoordinates(H3MapItem* item)
 	{
-		return F_ReverseCoordinates<H3MapItem>(item, mapitems, mapSize);
+		H3Point coordinates;
+		UINT delta = item - mapitems;
+		coordinates.x = delta % mapSize;
+		delta /= mapSize;
+		coordinates.y = delta % mapSize;
+		coordinates.z = delta / mapSize;
+		return coordinates;
 	}
 
-	_H3API_ VOID H3AIQuickBattle::DeleteCreatures()
+	H3Map_MapItem H3MainSetup::GetMap()
+	{
+		return H3Map_MapItem(mapitems, static_cast<UINT>(mapSize), hasUnderground);
+	}
+
+	H3FastMap_MapItem H3MainSetup::GetFastMap()
+	{
+		return H3FastMap_MapItem(mapitems, static_cast<UINT>(mapSize), hasUnderground);
+	}
+
+	_H3API_ VOID H3AiFastBattle::DeleteCreatures()
 	{
 		THISCALL_2(VOID, 0x424880, this, 1);
 	}
@@ -1225,12 +1262,22 @@ namespace h3
 
 	_H3API_ H3MapItem* H3TileMovement::GetMapItem()
 	{
-		return H3Internal::AdventureManager()->GetMapItem(*(int*)this);
+		return H3Internal::_adventureManager()->GetMapItem(*(int*)this);
 	}
 
 	_H3API_ H3TileMovement* H3MovementManager::GetMovementInfo(UINT32 mixed_position)
 	{
 		return THISCALL_3(H3TileMovement*, 0x42ECC0, this, mixed_position, 0);
+	}
+
+	_H3API_ H3Map_TileMovement H3MovementManager::GetMap()
+	{
+		return H3Map_TileMovement(movementInfo, H3Internal::_main()->mainSetup.mapSize, H3Internal::_main()->mainSetup.hasUnderground);
+	}
+
+	_H3API_ H3FastMap_TileMovement H3MovementManager::GetFastMap()
+	{
+		return H3FastMap_TileMovement(movementInfo, H3Internal::_main()->mainSetup.mapSize, H3Internal::_main()->mainSetup.hasUnderground);
 	}
 
 	_H3API_	H3MapItem* H3Main::GetMapItem(UINT32 mixedPosition)
@@ -1279,6 +1326,16 @@ namespace h3
 		return THISCALL_2(BOOL8, 0x4CE600, this, player_id);
 	}
 
+	_H3API_ H3Map_MapItem H3Main::GetMap()
+	{
+		return mainSetup.GetMap();
+	}
+
+	_H3API_ H3FastMap_MapItem H3Main::GetFastMap()
+	{
+		return mainSetup.GetFastMap();
+	}
+
 	_H3API_ VOID H3Manager::SetPreviousManager(H3Manager* prev)
 	{
 		parent = prev;
@@ -1289,12 +1346,12 @@ namespace h3
 		child = next;
 	}
 
-	_H3API_ VOID H3Executive::RemoveManager(H3Manager* mgr)
+	_H3API_ VOID H3ExecutiveMgr::RemoveManager(H3Manager* mgr)
 	{
 		THISCALL_2(VOID, 0x4B0950, this, mgr);
 	}
 
-	_H3API_ INT H3Executive::AddManager(H3Manager* mgr, int order)
+	_H3API_ INT H3ExecutiveMgr::AddManager(H3Manager* mgr, int order)
 	{
 		return THISCALL_3(INT, 0x4B0880, this, mgr, order);
 	}
@@ -1331,7 +1388,7 @@ namespace h3
 
 	_H3API_ VOID H3MouseManager::SetArtifactCursor(INT32 art_id)
 	{
-		SetCursor(art_id, int(H3MouseManager::H3MouseCursorType::Cursor_Artifact));
+		SetCursor(art_id, int(H3MouseManager::MouseCursorType::CURSOR_ARTIFACT));
 	}
 
 	_H3API_ VOID H3WindowManager::H3Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy)
@@ -1346,12 +1403,12 @@ namespace h3
 
 	_H3API_ BOOL H3WindowManager::ClickedOK() const
 	{
-		return resultItemID == int(H3WindowManager::H3ClickIDs::H3ID_OK);
+		return resultItemID == int(H3WindowManager::eClickId::H3ID_OK);
 	}
 
 	_H3API_ BOOL H3WindowManager::ClickedCancel() const
 	{
-		return resultItemID == int(H3WindowManager::H3ClickIDs::H3ID_CANCEL);
+		return resultItemID == int(H3WindowManager::eClickId::H3ID_CANCEL);
 	}
 
 	_H3API_ H3LoadedPcx16* H3WindowManager::GetDrawBuffer()
@@ -1361,26 +1418,38 @@ namespace h3
 
 	_H3API_ VOID H3SoundManager::ClickSound()
 	{
-		H3WavFile* buttonWav = (*(H3WavFile**)0x694DF4);
+		H3WavFile* button_wav = (*(H3WavFile**)0x694DF4);
 		INT32 backup = clickSoundVar;
-		buttonWav->spinCount = 64;
-		buttonWav->debugInfo = (PRTL_CRITICAL_SECTION_DEBUG)1;
-		buttonWav->lockSemaphore = (HANDLE)(HANDLE_FLAG_PROTECT_FROM_CLOSE | HANDLE_FLAG_INHERIT);
-		THISCALL_2(VOID, 0x59A510, this, buttonWav);
+		button_wav->spinCount = 64;
+		button_wav->debugInfo = PRTL_CRITICAL_SECTION_DEBUG(1);
+		button_wav->lockSemaphore = HANDLE(HANDLE_FLAG_PROTECT_FROM_CLOSE | HANDLE_FLAG_INHERIT);
+		THISCALL_2(VOID, 0x59A510, this, button_wav);
 		clickSoundVar = backup;
 	}
 
+#pragma push_macro("PlaySound")
+#ifdef PlaySound
+#undef PlaySound
+#endif
 	_H3API_ VOID H3SoundManager::PlaySound(H3WavFile * wav)
 	{
 		THISCALL_2(VOID, 0x59A510, this, wav);
 	}
-
-	_H3API_ VOID H3SoundManager::PlaySound(LPCSTR wavName)
+	_H3API_ VOID H3SoundManager::PlaySound(LPCSTR wav_name)
 	{
-		H3WavFile *wav = H3WavFile::Load(wavName);
-		PlaySound(H3WavFile::Load(wavName));
-		wav->Dereference();
+		H3WavLoader wav(wav_name);
+		if (wav)
+			PlaySound(*wav);
 	}
+	_H3API_ VOID H3SoundManager::PlaySoundAndWait(LPCSTR wav_name, INT milliseconds)
+	{
+		H3WavLoader wav(wav_name);
+		if (!wav)
+			return;
+		PlaySound(*wav);
+		THISCALL_3(VOID, 0x59A7C0, milliseconds, *wav, wav->hSample);
+	}
+#pragma pop_macro("PlaySound")
 
 	_H3API_ H3MapItem* H3AdventureManager::GetMapItem()
 	{
@@ -1424,7 +1493,7 @@ namespace h3
 
 	_H3API_ VOID H3AdventureManager::DemobilizeHero()
 	{
-		return THISCALL_3(VOID, 0x4175E0, this, 0, 0);
+		THISCALL_3(VOID, 0x4175E0, this, 0, 0);
 	}
 
 	_H3API_ VOID H3AdventureManager::MovementCalculationsMouse()
@@ -1442,13 +1511,18 @@ namespace h3
 		THISCALL_4(VOID, 0x418D30, this, 1, 1, 1);
 	}
 
-	_H3API_ VOID H3AdventureManager::ShowCoordinates(INT32 x, INT32 y, INT8 z)
+	_H3API_ VOID H3AdventureManager::ShowCoordinates(UINT32 x, UINT32 y, UINT8 z)
 	{
-		if (x >= 0 && x < H3Internal::_mapSize() && y >= 0 && y < H3Internal::_mapSize())
+		if (x < H3Internal::_mapSize() && y < H3Internal::_mapSize())
 		{
+			UINT edge_x = H3Internal::_gameEdgeHorizontal();
+			UINT edge_y = H3Internal::_gameEdgeVertical();
+			UINT dx = x - (screenPosition.GetX() - edge_x);
+			UINT dy = y - (screenPosition.GetY() - edge_y);
 			DemobilizeHero();
-			screenPosition.SetXYZ(H3Internal::_gameEdgeHorizontal() + x, H3Internal::_gameEdgeVertical() + y, z);
+			screenPosition.SetXYZ(edge_x + x, edge_y + y, z);
 			FullUpdate(); // force immediate redraw
+			mousePosition.SetXYZ(mousePosition.GetX() + dx, mousePosition.GetY() + dy, z); // update cursor position
 		}
 	}
 
@@ -1472,6 +1546,26 @@ namespace h3
 		return map->GetCoordinates(item);
 	}
 
+	_H3API_ H3Map_MapItem H3AdventureManager::GetMap()
+	{
+		return map->GetMap();
+	}
+
+	_H3API_ H3FastMap_MapItem H3AdventureManager::GetFastMap()
+	{
+		return map->GetFastMap();
+	}
+
+	_H3API_ H3Map_UINT16 H3AdventureManager::GetPathMap()
+	{
+		return H3Map_UINT16(arrowPathFrames, DwordAt(0x6783C7), H3Internal::_main()->mainSetup.hasUnderground);
+	}
+
+	_H3API_ H3FastMap_UINT16 H3AdventureManager::GetPathFastMap()
+	{
+		return H3FastMap_UINT16(arrowPathFrames, DwordAt(0x6783C7), H3Internal::_main()->mainSetup.hasUnderground);
+	}
+
 	_H3API_ VOID H3TownManager::Draw()
 	{
 		THISCALL_1(VOID, 0x5D5930, this);
@@ -1489,7 +1583,7 @@ namespace h3
 
 	_H3API_ H3InputManager::InputMessages& H3InputManager::GetCurrentMessage()
 	{
-		return messages[current_message];
+		return messages[currentMessage];
 	}
 
 	_H3API_ H3CombatMonster* H3CombatSquare::GetMonster()
@@ -1580,14 +1674,14 @@ namespace h3
 		THISCALL_4(VOID, 0x4729D0, dlg, message, permanent, 0);
 	}
 
-	_H3API_ VOID H3CombatManager::PlayMagicAnimation(INT32 id, H3CombatMonster* target, INT32 timeStep, BOOL8 showTargetBeingHit)
+	_H3API_ VOID H3CombatManager::PlayMagicAnimation(INT32 id, H3CombatMonster* target, INT32 timeStep, BOOL8 show_hit)
 	{
-		return THISCALL_5(VOID, 0x4963C0, this, id, target, timeStep, showTargetBeingHit);
+		return THISCALL_5(VOID, 0x4963C0, this, id, target, timeStep, show_hit);
 	}
 
-	_H3API_ VOID H3CombatManager::ReportDamageDone(H3Spell* spell, LPCSTR attackerName, INT32 damageDone, H3CombatMonster* target, INT32 killedCount)
+	_H3API_ VOID H3CombatManager::ReportDamageDone(H3Spell* spell, LPCSTR attacker, INT32 dmg, H3CombatMonster* target, INT32 killedCount)
 	{
-		return THISCALL_6(VOID, 0x469670, this, spell, attackerName, damageDone, target, killedCount);
+		return THISCALL_6(VOID, 0x469670, this, spell, attacker, dmg, target, killedCount);
 	}
 
 	_H3API_ BOOL8 H3CombatManager::ShouldCastSpellAfterHit(INT32 spellId, INT32 side, H3CombatMonster* target)
@@ -1615,6 +1709,11 @@ namespace h3
 		return THISCALL_3(VOID, 0x5A76A0, this, caster, target);
 	}
 
+	_H3API_ BOOL8 H3CombatManager::CanApplyCreatureSpell(INT32 spell_id, INT32 creature_side, H3CombatMonster* target)
+	{
+		return THISCALL_6(BOOL8, 0x5A8950, this, spell_id, creature_side, target, 1, 1); // the last 2 parameters are always 1 and 1
+	}
+
 	_H3API_ VOID H3CombatManager::DrawRay(BOOL redraw, INT startX, INT startY, INT dstX, INT dstY, INT allowBranches, INT randomnessRange, INT startThickness, INT endThickness, WORD color565, INT amplitude, INT arching, INT rayStraightness, INT smoothness, BOOL pathRandomness, INT timeDelay)
 	{
 		THISCALL_18(VOID, 0x5A5F30, this, redraw, startX, startY, dstX, dstY, allowBranches, randomnessRange, startThickness, endThickness, color565, amplitude, arching, rayStraightness, smoothness, pathRandomness, timeDelay, 0);
@@ -1627,120 +1726,120 @@ namespace h3
 
 	namespace H3Internal
 	{
-		_H3API_ H3MouseManager* MouseManager()
+		_H3API_ H3MouseManager* _mouseManager()
 		{
 			return *reinterpret_cast<H3MouseManager**>(0x6992B0);
 		}
 
-		_H3API_ H3WindowManager* WindowManager()
+		_H3API_ H3WindowManager* _windowManager()
 		{
 			return *reinterpret_cast<H3WindowManager**>(0x6992D0);
 		}
 
-		_H3API_ H3Executive* Executive()
+		_H3API_ H3ExecutiveMgr* _executiveMgr()
 		{
-			return *reinterpret_cast<H3Executive**>(0x699550);
+			return *reinterpret_cast<H3ExecutiveMgr**>(0x699550);
 		}
 
-		_H3API_ H3Main* Main()
+		_H3API_ H3Main* _main()
 		{
 			return *reinterpret_cast<H3Main**>(0x699538);
 		}
 
-		_H3API_ H3CombatManager* CombatManager()
+		_H3API_ H3CombatManager* _combatManager()
 		{
 			return *reinterpret_cast<H3CombatManager**>(0x699420);
 		}
 
-		_H3API_ H3TownManager* TownManager()
+		_H3API_ H3TownManager* _townManager()
 		{
 			return *reinterpret_cast<H3TownManager**>(0x69954C);
 		}
 
-		_H3API_ H3SoundManager* SoundManager()
+		_H3API_ H3SoundManager* _soundManager()
 		{
 			return *reinterpret_cast<H3SoundManager**>(0x699414);
 		}
 
-		_H3API_ H3InputManager* InputManager()
+		_H3API_ H3InputManager* _inputManager()
 		{
 			return *reinterpret_cast<H3InputManager**>(0x699530);
 		}
 
-		_H3API_ H3AdventureManager* AdventureManager()
+		_H3API_ H3AdventureManager* _adventureManager()
 		{
 			return *reinterpret_cast<H3AdventureManager**>(0x6992B8);
 		}
 
-		_H3API_ H3MovementManager* MovementManager()
+		_H3API_ H3MovementManager* _movementManager()
 		{
 			return *reinterpret_cast<H3MovementManager**>(0x6992D4);
 		}
 
-		_H3API_ H3GlobalObjectSettings* GlobalObjectSettings()
+		_H3API_ H3GlobalObjectSettings* _globalObjectSettings()
 		{
 			return *reinterpret_cast<H3GlobalObjectSettings**>(0x660428);
 		}
 
-		_H3API_ H3Spell* Spell()
+		_H3API_ H3Spell* _spell()
 		{
 			return *reinterpret_cast<H3Spell**>(0x687FA8);
 		}
 
-		_H3API_ H3CreatureBankSetup* CreatureBankSetup()
+		_H3API_ H3CreatureBankSetup* _creatureBankSetup()
 		{
 			return *reinterpret_cast<H3CreatureBankSetup**>(0x47A3C1 + 1);
 		}
 
-		_H3API_ H3ValidCatapultTargets* ValidCatapultTargets()
+		_H3API_ H3ValidCatapultTargets* _validCatapultTargets()
 		{
 			return *reinterpret_cast<H3ValidCatapultTargets**>(0x4929DD + 3);
 		}
 
-		_H3API_ H3ArtifactSetup* ArtifactSetup()
+		_H3API_ H3ArtifactSetup* _artifactSetup()
 		{
 			return *reinterpret_cast<H3ArtifactSetup**>(0x660B68);
 		}
 
-		_H3API_ INT ArtifactCount()
+		_H3API_ INT _artifactCount()
 		{
 			return IntAt(0x44D1A8 + 2);
 		}
 
-		_H3API_ H3CreatureInformation* CreatureInformation()
+		_H3API_ H3CreatureInformation* _creatureInformation()
 		{
 			return *reinterpret_cast<H3CreatureInformation**>(0x6747B0);
 		}
 
-		_H3API_ H3ObstacleInfo* ObstacleInfo()
+		_H3API_ H3ObstacleInfo* _obstacleInfo()
 		{
 			return *reinterpret_cast<H3ObstacleInfo**>(0x465C21);
 		}
 
-		_H3API_ H3Hero* DialogHero()
+		_H3API_ H3Hero* _dialogHero()
 		{
 			return *reinterpret_cast<H3Hero**>(0x698B70);
 		}
 
-		_H3API_ H3TurnTimer* TurnTimer()
+		_H3API_ H3TurnTimer* _turnTimer()
 		{
 			return *reinterpret_cast<H3TurnTimer**>(0x4AD194 + 1);
 		}
 
-		_H3API_ H3HeroSpecialty* HeroSpecialty()
+		_H3API_ H3HeroSpecialty* _heroSpecialty()
 		{
 			return *reinterpret_cast<H3HeroSpecialty**>(0x4B8AF1 + 1);
 		}
 
-		_H3API_ H3TownCreatureTypes* TownCreatureTypes()
+		_H3API_ H3TownCreatureTypes* _townCreatureTypes()
 		{
 			return *reinterpret_cast<H3TownCreatureTypes**>(0x47AB00 + 3);
 		}
-		_H3API_ H3SecondarySkillInfo& SecondarySkillsInfo(int skill)
+		_H3API_ H3SecondarySkillInfo& _secondarySkillsInfo(int skill)
 		{
 			return (*reinterpret_cast<H3SecondarySkillInfo**>(0x67DCF0))[skill];
 		}
-		_H3API_ H3ComboArtifactSetup * CombinationArtifacts()
+		_H3API_ H3ComboArtifactSetup * _combinationArtifacts()
 		{
 			return **(H3ComboArtifactSetup***)(0x4DDFF2 + 2);
 		}
@@ -1760,18 +1859,6 @@ namespace h3
 	_H3API_ INT H3IndexVector::InvalidIndex()
 	{
 		return m_minimum - 1;
-	}
-	_H3API_ VOID H3TownDependencies::Set(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend)
-	{
-		m_dependency[int(town)][int(building)] = UINT64(depend);
-	}
-	_H3API_ VOID H3TownDependencies::Add(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend)
-	{
-		m_dependency[int(town)][int(building)] |= UINT64(depend);
-	}
-	_H3API_ VOID H3TownDependencies::Remove(H3Town::eTown town, H3Town::eBuildings building, eBuildingDependency depend)
-	{
-		m_dependency[int(town)][int(building)] &= ~UINT64(depend);
 	}
 }
 

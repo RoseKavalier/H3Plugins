@@ -14,15 +14,15 @@
 
 namespace h3
 {
-	_H3API_ void NH3Error::h3_trans_func(UINT code, EXCEPTION_POINTERS* ep)
+	_H3API_ void H3Internal::_h3TransFunction(UINT code, EXCEPTION_POINTERS* ep)
 	{
 		H3String error;
 		// * change the last input to false if you do not wish to offer logging the SE error
-		information(error, ep, code, true);
+		_exInformation(error, ep, code, true);
 		throw H3Exception(error);
 	}
 
-	_H3API_ LPCSTR NH3Error::opDescription(const ULONG opcode)
+	_H3API_ LPCSTR H3Internal::_opDescription(const ULONG opcode)
 	{
 		switch (opcode)
 		{
@@ -37,7 +37,7 @@ namespace h3
 		}
 	}
 
-	_H3API_ LPCSTR NH3Error::seDescription(const UINT& code)
+	_H3API_ LPCSTR H3Internal::_seDescription(const UINT& code)
 	{
 		switch (code)
 		{
@@ -90,7 +90,7 @@ namespace h3
 		}
 	}
 
-	_H3API_ VOID NH3Error::information(H3String& error, _EXCEPTION_POINTERS* ep, UINT code, bool log_error)
+	_H3API_ VOID H3Internal::_exInformation(H3String& error, _EXCEPTION_POINTERS* ep, UINT code, bool log_error)
 	{
 		HMODULE hm;
 		GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCSTR)(ep->ExceptionRecord->ExceptionAddress), &hm);
@@ -101,8 +101,7 @@ namespace h3
 
 		char module_name[MAX_PATH];
 		DWORD mn_len = F_GetModuleFileNameA(hm, module_name, MAX_PATH);
-		// null terminate for XP
-		module_name[mn_len] = 0;
+		module_name[mn_len] = 0; // null terminate for XP
 
 		// find short name of module
 		PCHAR module_name_short = module_name + mn_len - 1;
@@ -114,14 +113,14 @@ namespace h3
 			}
 
 		error.Printf("SE %s at address offset 0x%08X inside %s.\n",
-			seDescription(code),
+			_seDescription(code),
 			(DWORD)ep->ExceptionRecord->ExceptionAddress - base_of_code,
 			module_name_short);
 
 		if (code == EXCEPTION_ACCESS_VIOLATION || code == EXCEPTION_IN_PAGE_ERROR)
 		{
 			error.PrintfAppend("Invalid operation: %s at address 0x%08X.\n",
-				opDescription(ep->ExceptionRecord->ExceptionInformation[0]),
+				_opDescription(ep->ExceptionRecord->ExceptionInformation[0]),
 				ep->ExceptionRecord->ExceptionInformation[1]);
 		}
 
@@ -173,7 +172,7 @@ namespace h3
 		FILE* f = F_fopen(path, "wb+");
 		if (!f)
 			return;
-		F_fwrite(what(), 1, strlen(what()) - sizeof(NH3Error::OfferToLog), f);
+		F_fwrite(what(), 1, strlen(what()) - sizeof(H3Internal::OfferToLog), f);
 		F_fclose(f);
 	}
 	_H3API_ VOID H3Exception::LogError(const H3String & path)
@@ -182,13 +181,13 @@ namespace h3
 	}
 
 	_H3API_ H3SEHandler::H3SEHandler() :
-		old_SE_translator(_set_se_translator(NH3Error::h3_trans_func))
+		m_oldTranslator(_set_se_translator(H3Internal::_h3TransFunction))
 	{
 	}
 
 	_H3API_ H3SEHandler::~H3SEHandler()
 	{
-		_set_se_translator(old_SE_translator);
+		_set_se_translator(m_oldTranslator);
 	}
 
 }

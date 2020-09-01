@@ -44,7 +44,7 @@ namespace h3
 	typedef INT32(__fastcall* H3DlgButton_proc)(H3MsgCustom*);
 	typedef VOID (__fastcall* H3DlgScrollbar_proc)(INT32, H3Dlg*);
 
-#pragma pack(push, 1)
+#pragma pack(push, 4)
 	struct H3Msg
 	{
 		INT32 command;
@@ -65,16 +65,17 @@ namespace h3
 
 		enum MessageCommand
 		{
-			MC_KeyDown       = 1,
-			MC_KeyUp         = 2,
-			MC_MouseOver     = 4,
-			MC_LClickOutside = 8,
-			MC_RClickOutside = 0x20,
-			MC_KeyHeld       = 0x100,
-			MC_MouseButton   = 0x200,
-			MC_WheelButton   = 0x309,
-			MC_MouseWheel    = 0x20A,
+			MC_KEY_DOWN       = 1,
+			MC_KEY_UP         = 2,
+			MC_MOUSE_OVER     = 4,
+			MC_LCLICK_OUTSIDE = 8,
+			MC_RCLICK_OUTSIDE = 0x20,
+			MC_KEY_HELD       = 0x100,
+			MC_MOUSE_BUTTON   = 0x200,
+			MC_WHEEL_BUTTON   = 0x309,
+			MC_MOUSE_WHEEL    = 0x20A,
 		};
+
 		enum MessageSubtype
 		{
 			MS_EndDialog            = 0xA,
@@ -83,12 +84,20 @@ namespace h3
 			MS_RButtonDown          = 0xE,
 			MS_MouseWheelButtonDown = 0x207,
 			MS_MouseWheelButtonUp   = 0x208,
+
+			MS_END_DIALOG              = 0xA,
+			MS_LBUTTON_DOWN            = 0xC,
+			MS_LBUTTON_CLICK           = 0xD,
+			MS_RBUTTON_DOWN            = 0xE,
+			MS_MOUSE_WHEEL_BUTTON_DOWN = 0x207,
+			MS_MOUSE_WHEEL_BUTTON_UP   = 0x208,
 		};
+
 		enum MessageFlag
 		{
-			MF_Shift = 1,
-			MF_Ctrl  = 4,
-			MF_Alt   = 32,
+			MF_SHIFT = 1,
+			MF_CTRL  = 4,
+			MF_ALT   = 32,
 		};
 
 		_H3API_ VOID       SetCommand(INT32 _command, INT32 _subtype, INT32 _item_id, INT32 _flags, INT32 x, INT32 y, INT32 param, INT32 _flags2);
@@ -107,18 +116,20 @@ namespace h3
 		_H3API_ INT32      CloseDialog();
 
 		_H3API_ MessageFlag    GetFlag()   const;
-		_H3API_ NH3VKey::eH3VK GetKey()    const;
+		_H3API_ NH3VKey::eVirtualKeys GetKey() const;
 		_H3API_ INT            GetX()      const;
 		_H3API_ INT            GetY()      const;
 		_H3API_ POINT          GetCoords() const;
+		/**
+		 * @brief Get the parent dialog for some custom items when calling their custom proc.
+		 *
+		 * @return H3Dlg* owning dialog of the current item
+		 */
+		_H3API_ H3Dlg*         GetDlg() const;
 
 		_H3API_ INT StopProcessing();
 	};
-
-	struct H3MsgCustom : public H3Msg
-	{
-		_H3API_ H3Dlg* GetDlg() const;
-	};
+	_H3API_ASSERT_SIZE_(H3Msg, 0x20);
 
 	struct H3DlgVTable
 	{
@@ -138,94 +149,57 @@ namespace h3
 		h3func clickRet;
 		h3func _nullsub3;
 		h3func closeDlg;
-
-		_H3API_ H3DlgVTable();
 	};
 
-	// * cannot be used except as a pointer or reference
+	/**
+	 * @brief cannot be used except as a pointer or reference
+	 *
+	 */
 	struct H3BaseDlg : H3Allocator
 	{
 	protected:
-		// * +0
-		//H3DlgVTable* vtable;
-		// +00
-		_H3API_ virtual H3BaseDlg* vDestroy() = 0;
-		// +04
-		_H3API_ virtual INT vShow(INT zorder, BOOL8 draw) = 0;
-		// +08
-		_H3API_ virtual INT vHide(BOOL8 redrawScreen) = 0;
-		// +0C
-		_H3API_ virtual INT vPreProcess(H3Msg& msg) = 0;
-		// +10
-		// always seems to be nullsub
-		_H3API_ virtual VOID vParentActivate_10(H3DlgItem* unknown) = 0;
-		// +14
-		_H3API_ virtual BOOL8 vRedraw(BOOL8 redrawScreen, INT32 minItemId, INT32 maxItemId) = 0;
-		// +18
-		_H3API_ virtual INT vShowAndRun(BOOL8 fadeIn) = 0;
-		// +1C
-		_H3API_ virtual INT vInitiateItems() = 0;
-		// +20
-		_H3API_ virtual INT vActivateItems(BOOL8 increase) = 0;
-		// +24
-		_H3API_ virtual INT vDialogProc(H3Msg& msg) = 0;
-		// +28
-		_H3API_ virtual BOOL8 vOnMouseMove(INT32 x, INT32 y) = 0;
-		// +2C
-		_H3API_ virtual BOOL8 vOnRightClick(INT32 id) = 0;
-		// +30
+		_H3API_ virtual H3BaseDlg* vDestroy() = 0;                                               /**< @ brief [v00]*/
+		_H3API_ virtual INT vShow(INT zorder, BOOL8 draw) = 0;                                   /**< @ brief [v04]*/
+		_H3API_ virtual INT vHide(BOOL8 redrawScreen) = 0;                                       /**< @ brief [v08]*/
+		_H3API_ virtual INT vPreProcess(H3Msg& msg) = 0;                                         /**< @ brief [v0C]*/
+		_H3API_ virtual VOID vParentActivate_10(H3DlgItem* unknown) = 0;                         /**< @ brief [v10] always seems to be nullsub*/
+		_H3API_ virtual BOOL8 vRedraw(BOOL8 redrawScreen, INT32 minItemId, INT32 maxItemId) = 0; /**< @ brief [v14]*/
+		_H3API_ virtual INT vShowAndRun(BOOL8 fadeIn) = 0;                                       /**< @ brief [v18]*/
+		_H3API_ virtual INT vInitiateItems() = 0;                                                /**< @ brief [v1C]*/
+		_H3API_ virtual INT vActivateItems(BOOL8 increase) = 0;                                  /**< @ brief [v20]*/
+		_H3API_ virtual INT vDialogProc(H3Msg& msg) = 0;                                         /**< @ brief [v24]*/
+		_H3API_ virtual BOOL8 vOnMouseMove(INT32 x, INT32 y) = 0;                                /**< @ brief [v28]*/
+		_H3API_ virtual BOOL8 vOnRightClick(INT32 id) = 0;                                       /**< @ brief [v2C]*/
+		/**
+		 * @brief [v30] if a status bar is provided, short tip text for H3DlgItem under cursor will be shown
+		*/
 		_H3API_ virtual BOOL8 vOnLeftClick(INT32 id, BOOL8& closeDialog) = 0;
-		// +34
-		// if a status bar is provided, short tip text for H3DlgItem under cursor will be shown
-		_H3API_ virtual H3DlgTextPcx* vGetStatusBar() = 0;
-		// +38
-		_H3API_ virtual INT vEndDialogOnTimeExpired(H3Msg& msg) = 0;
+		_H3API_ virtual H3DlgTextPcx* vGetStatusBar() = 0;                                       /**< @ brief [v34]*/
+		_H3API_ virtual INT vEndDialogOnTimeExpired(H3Msg& msg) = 0;                             /**< @ brief [v38]*/
 
-		// * +4
-		INT32 zOrder;
-		// * +8
-		H3Dlg* nextDialog;
-		// * +C
-		H3Dlg* lastDialog;
-		// * +10
-		INT32 flags;
-		// * +14
-		INT32 state;
-		// * +18
-		INT32 xDlg;
-		// * +1C
-		INT32 yDlg;
-		// * +20
-		INT32 widthDlg;
-		// * +24
-		INT32 heightDlg;
-		// * +28
-		H3DlgItem* lastItem;
-		// * +2C
-		H3DlgItem* firstItem;
-		// * +30
-		H3Vector<H3DlgItem*> dlgItems;
-		// * +40
-		INT32 focusedItemId;
-		// * +44
-		H3LoadedPcx16* pcx16;
-		// * +48
-		INT32 deactivatesCount;
-		// * +4C
-		INT32 lastHintShowed;
-		// * +50
-		INT32 messageCommand;
-		// * +54
-		INT32 messageSubtype;
-		// * +58
-		INT32 messageItemId;
-		// * +5C
-		BOOL8 networkGame;
-		h3align _f_5D[3];
-		h3unk _f_60[8];
-		// normal dialog size is 0x68 total
+		INT32                zOrder;           /**< @ brief [04]*/
+		H3Dlg*               nextDialog;       /**< @ brief [08]*/
+		H3Dlg*               lastDialog;       /**< @ brief [0C]*/
+		INT32                flags;            /**< @ brief [10]*/
+		INT32                state;            /**< @ brief [14]*/
+		INT32                xDlg;             /**< @ brief [18]*/
+		INT32                yDlg;             /**< @ brief [1C]*/
+		INT32                widthDlg;         /**< @ brief [20]*/
+		INT32                heightDlg;        /**< @ brief [24]*/
+		H3DlgItem*           lastItem;         /**< @ brief [28]*/
+		H3DlgItem*           firstItem;        /**< @ brief [2C]*/
+		H3Vector<H3DlgItem*> dlgItems;         /**< @ brief [30]*/
+		INT32                focusedItemId;    /**< @ brief [40]*/
+		H3LoadedPcx16*       pcx16;            /**< @ brief [44]*/
+		INT32                deactivatesCount; /**< @ brief [48]*/
+		INT32                lastHintShowed;   /**< @ brief [4C]*/
+		INT32                messageCommand;   /**< @ brief [50]*/
+		INT32                messageSubtype;   /**< @ brief [54]*/
+		INT32                messageItemId;    /**< @ brief [58]*/
+		BOOL8                networkGame;      /**< @ brief [5C]*/
+		h3unk32              _f_60[2];         /**< @ brief [60]*/
 
-		_H3API_ H3DlgItem* GetDlgItem(UINT16 id, h3func vtable) const;
+		_H3API_ H3DlgItem* getDlgItem(UINT16 id, h3func vtable) const;
 
 	public:
 
@@ -316,19 +290,23 @@ namespace h3
 		_H3API_ H3DlgPcx16*          CreatePcx16(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
 		_H3API_ H3DlgEdit*           CreateEdit(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text,
 			LPCSTR fontName = NH3Dlg::Text::MEDIUM, INT32 color = NH3Dlg::TextColor::REGULAR,
-			INT32 align = NH3Dlg::TextAlignment::MiddleCenter, LPCSTR pcxName = nullptr,
+			INT32 align = NH3Dlg::TextAlignment::MIDDLE_CENTER, LPCSTR pcxName = nullptr,
 			INT32 id = 0, INT32 hasBorder = FALSE, INT32 borderX = 0, INT32 borderY = 0);
 		_H3API_ H3DlgText*           CreateText(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName,
-			INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MiddleCenter, INT32 bkColor = 0);
+			INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MIDDLE_CENTER, INT32 bkColor = 0);
 		_H3API_ H3DlgTextPcx*        CreateTextPcx(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName,
-			LPCSTR pcxName, INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MiddleCenter);
+			LPCSTR pcxName, INT32 color, INT32 id, INT32 align = NH3Dlg::TextAlignment::MIDDLE_CENTER);
 		_H3API_ H3DlgScrollableText* CreateScrollableText(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height,
 			LPCSTR font, INT32 color, INT32 isBlue = FALSE);
 		_H3API_ H3DlgScrollbar*      CreateScrollbar(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount,
 			H3DlgScrollbar_proc scrollbarProc = nullptr, BOOL isBlue = FALSE, INT32 stepSize = 0, BOOL arrowsEnabled = TRUE);
 	};
+	_H3API_ASSERT_SIZE_(H3BaseDlg, 0x68);
 
-	// * Shows creature associated to current town
+	/**
+	 * @brief Shows creatures associated to current town
+	 *
+	 */
 	struct H3TownAlignmentDlg : H3Allocator
 	{
 	private:
@@ -351,46 +329,32 @@ namespace h3
 		// original virtual functions
 		// DO NOT OVERLOAD THESE!
 		//======================================
-		// +00
-		_H3API_ virtual H3Dlg* vDestroy() override;
-		// +04
-		_H3API_ virtual INT vShow(INT zorder, BOOL8 draw) override;
-		// +08
-		_H3API_ virtual INT vHide(BOOL8 redrawScreen) override;
-		// +0C
-		_H3API_ virtual INT vPreProcess(H3Msg& msg) override;
-		// +10
-		// always seems to be nullsub
-		_H3API_ virtual VOID vParentActivate_10(H3DlgItem* unknown) override;
-		// +14
-		_H3API_ virtual BOOL8 vRedraw(BOOL8 redrawScreen, INT32 minItemId, INT32 maxItemId) override;
-		// +18
-		_H3API_ virtual INT vShowAndRun(BOOL8 fadeIn) override;
-		// +1C
-		_H3API_ virtual INT vInitiateItems() override;
-		// +20
-		_H3API_ virtual INT vActivateItems(BOOL8 increase) override;
+
+		_H3API_ virtual H3Dlg* vDestroy() override;                                                   /**< @ brief [v00]*/
+		_H3API_ virtual INT vShow(INT zorder, BOOL8 draw) override;                                   /**< @ brief [v04]*/
+		_H3API_ virtual INT vHide(BOOL8 redrawScreen) override;                                       /**< @ brief [v08]*/
+		_H3API_ virtual INT vPreProcess(H3Msg& msg) override;                                         /**< @ brief [v0C]*/
+		_H3API_ virtual VOID vParentActivate_10(H3DlgItem* unknown) override;                         /**< @ brief [v10] always seems to be nullsub*/
+		_H3API_ virtual BOOL8 vRedraw(BOOL8 redrawScreen, INT32 minItemId, INT32 maxItemId) override; /**< @ brief [v14]*/
+		_H3API_ virtual INT vShowAndRun(BOOL8 fadeIn) override;                                       /**< @ brief [v18]*/
+		_H3API_ virtual INT vInitiateItems() override;                                                /**< @ brief [v1C]*/
+		_H3API_ virtual INT vActivateItems(BOOL8 increase) override;                                  /**< @ brief [v20]*/
 		//======================================
 		// custom overload of original virtual function
 		// OVERRIDE NOT RECOMMENDED!!
 		//======================================
-		// +24
-		_H3API_ virtual INT vDialogProc(H3Msg & msg) override;
+
+		_H3API_ virtual INT vDialogProc(H3Msg & msg) override; /**< @ brief [v24]*/
 		//======================================
 		// original virtual functions
 		// DO NOT OVERLOAD THESE!
 		//======================================
-		// +28
-		_H3API_ virtual BOOL8 vOnMouseMove(INT32 x, INT32 y) override;
-		// +2C
-		_H3API_ virtual BOOL8 vOnRightClick(INT32 id) override;
-		// +30
-		_H3API_ virtual BOOL8 vOnLeftClick(INT32 id, BOOL8& closeDialog) override;
-		// +34
-		// if a status bar is provided, short tip text for H3DlgItem under cursor will be shown
-		_H3API_ virtual H3DlgTextPcx* vGetStatusBar() override;
-		// +38
-		_H3API_ virtual INT vEndDialogOnTimeExpired(H3Msg& msg) override;
+
+		_H3API_ virtual BOOL8 vOnMouseMove(INT32 x, INT32 y) override;             /**< @ brief [v28]*/
+		_H3API_ virtual BOOL8 vOnRightClick(INT32 id) override;                    /**< @ brief [v2C]*/
+		_H3API_ virtual BOOL8 vOnLeftClick(INT32 id, BOOL8& closeDialog) override; /**< @ brief [v30]*/
+		_H3API_ virtual H3DlgTextPcx* vGetStatusBar() override;                    /**< @ brief [v34]*/
+		_H3API_ virtual INT vEndDialogOnTimeExpired(H3Msg& msg) override;          /**< @ brief [v38]*/
 
 	public:
 		//======================================
@@ -423,8 +387,8 @@ namespace h3
 		virtual _H3API_ BOOL OnWheelButton(H3DlgItem* it);
 		virtual _H3API_ BOOL OnMouseHover(INT32 x, INT32 y);
 		virtual _H3API_ BOOL OnMouseHover(H3DlgItem* it);
-		virtual _H3API_ BOOL OnKeyPress(NH3VKey::eH3VK key, H3Msg::MessageFlag flag);
-		virtual _H3API_ BOOL OnKeyHeld(NH3VKey::eH3VK key, H3Msg::MessageFlag flag);
+		virtual _H3API_ BOOL OnKeyPress(NH3VKey::eVirtualKeys key, H3Msg::MessageFlag flag);
+		virtual _H3API_ BOOL OnKeyHeld(NH3VKey::eVirtualKeys key, H3Msg::MessageFlag flag);
 
 		// * this message gets sent from individual H3DlgItems
 		// * that use customized virtual tables instead of default ones
@@ -489,43 +453,19 @@ namespace h3
 	};
 #pragma warning(pop)
 
-	// * follows HDmod's dlg format
-	// * WARNING! this structure should only be used to hook existing dialogs
+	/**
+	 * @brief follows HDmod's dlg format
+	 * WARNING! this structure should only be used to hook existing dialogs
+	 */
 	struct HDDlg : H3BaseDlg
 	{
-		typedef INT32(__stdcall* HDDlg_proc)(HDDlg*, H3Msg*);
+		typedef INT32(__stdcall* HDDlg_proc)(HDDlg*, const H3Msg&);
 	protected:
 		h3unk _f_68[8];
 		// * +70
 		HDDlg_proc hdProc;
 	public:
-		_H3API_ INT CallHDProc(H3Msg& msg);
-	};
-
-	struct H3DlgItemVTable // 0x63BA24
-	{
-		h3func deref; // +0
-		h3func init;  // +4
-		h3func processCommand; // +8 used to redraw
-		h3func _null1; // C
-		h3func draw; // +10
-		h3func getHeight;
-		h3func getWidth;
-		h3func showHint;
-		h3func drawShadow; // +20
-		h3func setEnabled;
-		h3func getFocus;
-		h3func loseFocus;
-		h3func _null5; // +30
-		h3func setText; // +34
-		////////////////////////////////////////////////
-		// not all H3DlgItems have the following:
-		////////////////////////////////////////////////
-		h3func setFocus; // H3DlgEdit has these // ScrollbarText has 3
-		h3func processKey;
-		h3func isDisallowedKey; // +40 disallowed key for H3DlgEdit, e.g. save game field 0x57D2F0
-		h3func loadPcx16;
-		h3func pcx16FromBuffer;
+		_H3API_ INT CallHDProc(const H3Msg& msg);
 	};
 
 	struct H3DlgItem : H3Allocator   // size 0x30
@@ -545,8 +485,6 @@ namespace h3
 			VT_DLGDEF           = 0x63EC48,
 			VT_DLGSCROLLBAR     = 0x641D60,
 
-			//VT_DEFScrollsmt     = 0x642CD8,
-
 			VT_DLGSCROLLTEXT    = 0x642D1C,
 			VT_DLGEDIT          = 0x642D50,
 			VT_DLGTEXT          = 0x642DC0,
@@ -558,65 +496,36 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x643CA0
 		//=================================================
-		// +[00]
-		_H3API_ virtual H3DlgItem* vDestroy(BOOL8 deallocate) = 0;
-		// +[04]
-		_H3API_ virtual BOOL vInitiate(INT16 zorder, H3BaseDlg* parent) = 0;
-		// +[08]
-		_H3API_ virtual INT vProcessMsg(H3Msg& msg) = 0;
-		// +[0C]
-		// no action for most dlg items except H3DlgPcx
-		_H3API_ virtual VOID vDrawPcx8(PWORD buffer, RGB565 color) = 0;
-		// +[10]
-		_H3API_ virtual VOID vDrawToWindow() = 0;
-		// +[14]
-		_H3API_ virtual INT vGetHeight() const = 0;
-		// +[18]
-		_H3API_ virtual INT vGetWidth() const = 0;
-		// +[1C]
-		_H3API_ virtual VOID vCallParent() const = 0;
-		// +[20]
-		_H3API_ virtual VOID vDarkenArea() const = 0;
-		// +[24]
-		_H3API_ virtual VOID vEnable(BOOL8 state) = 0;
-		// +[28]
-		_H3API_ virtual VOID vGetFocus() = 0;
-		// +[2C]
-		_H3API_ virtual VOID vLoseFocus() = 0;
-		// +[30]
-		_H3API_ virtual VOID vNullsub(INT unknown) const = 0;
 
-		// * +4
-		H3BaseDlg *parent;
-		// * +8
-		H3DlgItem *nextDlgItem;
-		// * +C
-		H3DlgItem *previousDlgItem;
-		// * +10
-		UINT16 id;
-		// * +12
-		INT16 zOrder;
-		// * +14
-		UINT16 flags;
-		// * +16
-		UINT16 state;
-		// * +18
-		INT16 xPos;
-		// * +1A
-		INT16 yPos;
-		// * +1C
-		UINT16 widthItem;
-		// * +1E
-		UINT16 heightItem;
-		// * +20
-		LPCSTR hint;
-		// * +24
-		LPCSTR rightClickHint;
-		// * +28
-		BOOL8 hintsAreAllocated;
-		h3unk _f_29[3];
-		// * +2C
-		INT32 deactivatesCount;
+		_H3API_ virtual H3DlgItem* vDestroy(BOOL8 deallocate) = 0;           /**< @ brief [v00]*/
+		_H3API_ virtual BOOL vInitiate(INT16 zorder, H3BaseDlg* parent) = 0; /**< @ brief [v04]*/
+		_H3API_ virtual INT vProcessMsg(H3Msg& msg) = 0;                     /**< @ brief [v08]*/
+		_H3API_ virtual VOID vDrawPcx8(PWORD buffer, RGB565 color) = 0;      /**< @ brief [v0C] no action except H3DlgPcx*/
+		_H3API_ virtual VOID vDrawToWindow() = 0;                            /**< @ brief [v10]*/
+		_H3API_ virtual INT vGetHeight() const = 0;                          /**< @ brief [v14]*/
+		_H3API_ virtual INT vGetWidth() const = 0;                           /**< @ brief [v18]*/
+		_H3API_ virtual VOID vCallParent() const = 0;                        /**< @ brief [v1C]*/
+		_H3API_ virtual VOID vDarkenArea() const = 0;                        /**< @ brief [v20]*/
+		_H3API_ virtual VOID vEnable(BOOL8 state) = 0;                       /**< @ brief [v24]*/
+		_H3API_ virtual VOID vGetFocus() = 0;                                /**< @ brief [v28]*/
+		_H3API_ virtual VOID vLoseFocus() = 0;                               /**< @ brief [v2C]*/
+		_H3API_ virtual VOID vNullsub(INT unknown) const = 0;                /**< @ brief [v30]*/
+
+		H3BaseDlg *parent;           /**< @ brief [04]*/
+		H3DlgItem *nextDlgItem;      /**< @ brief [08]*/
+		H3DlgItem *previousDlgItem;  /**< @ brief [0C]*/
+		UINT16    id;                /**< @ brief [10]*/
+		INT16     zOrder;            /**< @ brief [12]*/
+		UINT16    flags;             /**< @ brief [14]*/
+		UINT16    state;             /**< @ brief [16]*/
+		INT16     xPos;              /**< @ brief [18]*/
+		INT16     yPos;              /**< @ brief [1A]*/
+		UINT16    widthItem;         /**< @ brief [1C]*/
+		UINT16    heightItem;        /**< @ brief [1E]*/
+		LPCSTR    hint;              /**< @ brief [20]*/
+		LPCSTR    rightClickHint;    /**< @ brief [24]*/
+		BOOL8     hintsAreAllocated; /**< @ brief [28]*/
+		INT32     deactivatesCount;  /**< @ brief [2C]*/
 
 		_H3API_ BOOL NotifyParent(H3Msg& msg);
 		_H3API_ BOOL TranslateUnprocessedMessage(H3Msg& msg);
@@ -679,6 +588,7 @@ namespace h3
 		_H3API_ H3DlgScrollableText* CastScrollText();
 		_H3API_ H3DlgScrollbar*      CastScrollbar();
 	};
+	_H3API_ASSERT_SIZE_(H3DlgItem, 0x30);
 
 	struct H3DlgTransparentItem : H3DlgItem
 	{
@@ -695,25 +605,20 @@ namespace h3
 
 	// * a 1-pixel wide rectangular frame with the color
 	// * of your choice
-	struct H3DlgFrame : public H3DlgItem // size 0x38
+	struct H3DlgFrame : public H3DlgItem
 	{
 	protected:
 
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BA5C
 		//=================================================
-		// +[34]
-		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0;
+
+		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0; /**< @ brief [v34]*/
 
 	protected:
-		// * +30
-		// * RGB565 color
-		H3RGB565 color565;
-		h3unk _f_32[2];
-		// * +34
-		// * modifies hue within frame toward RGB565 color
-		BOOL8 change_hue; // see 0x44FEB4
-		h3unk _f_35[3];
+		H3RGB565 color565; /**< @ brief [30] RGB565 color*/
+		h3align _f_32[2];
+		BOOL8 changeHue;   /**< @ brief [34] modifies hue within frame toward RGB565 color, see 0x44FEB4*/
 	public:
 		_H3API_ static H3DlgFrame* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, RGB565 color);
 		_H3API_ static H3DlgFrame* Create(INT32 x, INT32 y, INT32 width, INT32 height, RGB565 color);
@@ -727,30 +632,25 @@ namespace h3
 		_H3API_ VOID      ToggleHue();
 		_H3API_ H3RGB565* GetColor();
 	};
+	_H3API_ASSERT_SIZE_(H3DlgFrame, 0x38);
 
-	struct H3DlgDef : public H3DlgItem // size 0x48
+	struct H3DlgDef : public H3DlgItem
 	{
 	protected:
 
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63EC48
 		//=================================================
-		// +[34]
-		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0;
+
+		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0; /**< @ brief [v34]*/
 
 	protected:
-		// * +30
-		H3LoadedDef* loadedDef;
-		// * +34
-		INT32 defFrame;
-		// * +38
-		INT32 secondFrame; // seems unused
-		// * +3C
-		INT32 mirror;
-		INT32 _f_40;
-		// * +44
-		INT16 closeDialog;
-		h3align _f_46[2];
+		H3LoadedDef* loadedDef;   /**< @ brief [30]*/
+		INT32        defFrame;    /**< @ brief [34]*/
+		INT32        secondFrame; /**< @ brief [38] seems unused*/
+		INT32        mirror;      /**< @ brief [3C]*/
+		INT32        _f_40;       /**< @ brief [40]*/
+		INT16        closeDialog; /**< @ brief [44]*/
 	public:
 
 		_H3API_ static H3DlgDef* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame = 0, INT32 group = 0, INT32 mirror = FALSE, BOOL closeDialog = FALSE);
@@ -764,6 +664,7 @@ namespace h3
 		_H3API_ VOID  ColorDefToPlayer(INT32 id);
 		_H3API_ H3LoadedDef* GetDef();
 	};
+	_H3API_ASSERT_SIZE_(H3DlgDef, 0x48);
 
 	struct H3DlgDefButton : public H3DlgItem // size 0x68 ~ although there is room for CustomProc, which is the same as H3DlgCustomButton, however it is not passed as an argument to the function
 	{
@@ -772,22 +673,15 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BB54
 		//=================================================
-		// * +30
-		H3LoadedDef* loadedDef;
-		// * +34
-		INT32 defFrame;
-		// * +38
-		INT32 defFrameOnClick;
-		// * +3C
-		INT32 mirror;
-		INT32 _f_40;
-		// * +44
-		INT16 closeDialog;
-		h3align _f_46[2];
-		// * +48
-		H3Vector<INT32> hotkeys; // ?
-		// * +58
-		H3String caption;
+
+		H3LoadedDef*    loadedDef;       /**< @brief [30]*/
+		INT32           defFrame;        /**< @brief [34]*/
+		INT32           defFrameOnClick; /**< @brief [38]*/
+		INT32           mirror;          /**< @brief [3C]*/
+		h3unk32         _f_40;           /**< @brief [40]*/
+		INT16           closeDialog;     /**< @brief [44]*/
+		H3Vector<INT32> hotkeys;         /**< @brief [48] ?*/
+		H3String        caption;         /**< @brief [58]*/
 
 	public:
 		_H3API_ static H3DlgDefButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey);
@@ -802,33 +696,32 @@ namespace h3
 		_H3API_ VOID  SetClickFrame(INT32 clickFrame);
 		_H3API_ H3LoadedDef* GetDef();
 	};
+	_H3API_ASSERT_SIZE_(H3DlgDefButton, 0x68);
 
-	struct H3DlgCaptionButton : public H3DlgDefButton // size 0x70
+	struct H3DlgCaptionButton : public H3DlgDefButton
 	{
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BB88
 		//=================================================
 
 	protected:
-		// * +68
-		H3Font* loadedFont;
-		// * +6C
-		INT32 color;
+		H3Font* loadedFont; /**< @brief [68]*/
+		INT32   color;      /**< @brief [6C]*/
 	public:
 
 		_H3API_ static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
 		_H3API_ static H3DlgCaptionButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, LPCSTR text, LPCSTR font, INT32 frame, INT32 group, BOOL closeDialog, INT32 a13, INT32 color);
 	};
+	_H3API_ASSERT_SIZE_(H3DlgCaptionButton, 0x70);
 
-	struct H3DlgCustomButton : public H3DlgDefButton // size 0x6C
+	struct H3DlgCustomButton : public H3DlgDefButton
 	{
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BBBC
 		//=================================================
 
 	protected:
-		// * +68
-		H3DlgButton_proc customButtonProc;
+		H3DlgButton_proc customButtonProc; /**< @brief [68]*/
 	public:
 
 		_H3API_ static H3DlgCustomButton* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
@@ -836,6 +729,7 @@ namespace h3
 		_H3API_ static H3DlgCustomButton* Create(INT32 x, INT32 y, LPCSTR defName, H3DlgButton_proc customProc, INT32 frame, INT32 clickFrame);
 		_H3API_ VOID ToggleFlag(BOOL& flag);
 	};
+	_H3API_ASSERT_SIZE_(H3DlgCustomButton, 0x6C);
 
 	struct H3DlgPcx : public H3DlgItem
 	{
@@ -843,12 +737,11 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BA94
 		//=================================================
-		// +[34]
-		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0;
+
+		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0; /**< @brief [v34]*/
 
 	protected:
-		// * +30
-		H3LoadedPcx* loadedPcx;
+		H3LoadedPcx* loadedPcx; /**< @brief [30]*/
 	public:
 		_H3API_ static H3DlgPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
 		_H3API_ static H3DlgPcx* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
@@ -858,6 +751,7 @@ namespace h3
 		H3LoadedPcx* GetPcx();
 		H3LoadedPcx* GetPcx() const;
 	};
+	_H3API_ASSERT_SIZE_(H3DlgPcx, 0x34);
 
 	struct H3DlgPcx16 : public H3DlgItem
 	{
@@ -865,11 +759,10 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BACC
 		//=================================================
-		// +[34]
-		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0;
+
+		_H3API_ virtual BOOL8 vNullSub2(INT unk1, INT unk2) = 0; /**< @brief [v34]*/
 	protected:
-		// * +30
-		H3LoadedPcx16* loadedPcx16;
+		H3LoadedPcx16* loadedPcx16; /**< @brief [30]*/
 	public:
 		_H3API_ static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, LPCSTR pcxName);
 		_H3API_ static H3DlgPcx16* Create(INT32 x, INT32 y, INT32 id, LPCSTR pcxName);
@@ -881,6 +774,7 @@ namespace h3
 		_H3API_ VOID SinkArea(H3DlgItem* it);
 		_H3API_ VOID BevelArea(H3DlgItem* it);
 	};
+	_H3API_ASSERT_SIZE_(H3DlgPcx16, 0x34);
 
 	struct H3DlgText : public H3DlgItem
 	{
@@ -889,71 +783,53 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x642DC0
 		//=================================================
-		// +[34]
-		_H3API_ virtual VOID vSetText(LPCSTR text) const = 0;
+
+		_H3API_ virtual VOID vSetText(LPCSTR text) const = 0; /**< @brief [v34]*/
 
 	protected:
-		// * +30
-		H3String text;
-		// * +40
-		H3Font* font;
-		// * +44
-		INT32 color;
-		// * +48
-		INT32 bkColor;
-		// * +4C
-		INT32 align;
+		H3String text;    /**< @brief [30]*/
+		H3Font*  font;    /**< @brief [40]*/
+		INT32    color;   /**< @brief [44]*/
+		INT32    bkColor; /**< @brief [48]*/
+		INT32    align;   /**< @brief [4C]*/
 	public:
-		_H3API_ static H3DlgText* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName = NH3Dlg::Text::SMALL, INT32 color = NH3Dlg::TextColor::REGULAR, INT32 id = 0, INT32 align = NH3Dlg::TextAlignment::MiddleCenter, INT32 bkColor = 0);
+		_H3API_ static H3DlgText* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName = NH3Dlg::Text::SMALL,
+			INT32 color = NH3Dlg::TextColor::REGULAR, INT32 id = 0, INT32 align = NH3Dlg::TextAlignment::MIDDLE_CENTER, INT32 bkColor = 0);
 		_H3API_ H3String& GetH3String();
 		_H3API_ VOID SetText(LPCSTR text);
 	};
+	_H3API_ASSERT_SIZE_(H3DlgText, 0x50);
 
-	struct H3DlgEdit : public H3DlgText // size 0x70
+	struct H3DlgEdit : public H3DlgText
 	{
 	protected:
 
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x642D50
 		//=================================================
-		// +[38]
-		_H3API_ virtual VOID vSetFocus(BOOL8 focused) const = 0;
-		// +[3C]
-		_H3API_ virtual INT vProcessKey(H3Msg &msg) = 0;
-		// +[40]
-		_H3API_ virtual BOOL8 vIsTabEscEnter(H3Msg &msg) const = 0;
-		// +[44]
-		_H3API_ virtual VOID vLoadPcx16Special(BOOL8 redraw) const = 0;
-		// +[48]
-		_H3API_ virtual VOID vPcx16FromBuffer() const = 0;
+
+		_H3API_ virtual VOID vSetFocus(BOOL8 focused) const = 0;        /**< @brief [v38]*/
+		_H3API_ virtual INT vProcessKey(H3Msg &msg) = 0;                /**< @brief [v3C]*/
+		_H3API_ virtual BOOL8 vIsTabEscEnter(H3Msg &msg) const = 0;     /**< @brief [v40]*/
+		_H3API_ virtual VOID vLoadPcx16Special(BOOL8 redraw) const = 0; /**< @brief [v44]*/
+		_H3API_ virtual VOID vPcx16FromBuffer() const = 0;              /**< @brief [v48]*/
 
 	protected:
-		// * +50
-		H3LoadedPcx* loadedPcx;
-		// * +54
-		H3LoadedPcx16* loadedPcx16;
-		// * +58
-		UINT16 caretPos;
-		// * +5A
-		UINT16 maxLength;
-		// * +5C
-		UINT16 fieldSizeX;
-		// * +5E
-		UINT16 fieldSizeY;
-		// * +60
-		UINT16 fieldX;
-		// * +62
-		UINT16 fieldY;
-		INT16 _f_64;
-		INT16 hasBorder;
-		INT16 _f_68;
-		INT16 _f_6A;
-		h3unk _f_6C;
-		// * +6D
-		BOOL8 focused;
-		// * +6E
-		BOOL8 autoRedraw;
-		h3align _f_6F;
+		H3LoadedPcx*   loadedPcx;   /**< @brief [50]*/
+		H3LoadedPcx16* loadedPcx16; /**< @brief [54]*/
+		UINT16         caretPos;    /**< @brief [58]*/
+		UINT16         maxLength;   /**< @brief [5A]*/
+		UINT16         fieldSizeX;  /**< @brief [5C]*/
+		UINT16         fieldSizeY;  /**< @brief [5E]*/
+		UINT16         fieldX;      /**< @brief [60]*/
+		UINT16         fieldY;      /**< @brief [62]*/
+		INT16          _f_64;       /**< @brief [64]*/
+		INT16          hasBorder;   /**< @brief [66]*/
+		INT16          _f_68;       /**< @brief [68]*/
+		INT16          _f_6A;       /**< @brief [6A]*/
+		h3unk          _f_6C;       /**< @brief [6C]*/
+		BOOL8          focused;     /**< @brief [6D]*/
+		BOOL8          autoRedraw;  /**< @brief [6E]*/
 	public:
 		_H3API_ static H3DlgEdit* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 maxLength, LPCSTR text, LPCSTR fontName, INT32 color, INT32 align, LPCSTR pcxName, INT32 id, INT32 hasBorder, INT32 borderX, INT32 borderY);
 		_H3API_ LPCSTR    GetText() const;
@@ -961,11 +837,18 @@ namespace h3
 		_H3API_ VOID      SetText(LPCSTR text);
 		_H3API_ VOID      DecreaseCaret();
 		_H3API_ VOID      IncreaseCaret();
-		_H3API_ UINT       GetCaret() const;
+		_H3API_ UINT      GetCaret() const;
 		_H3API_ BOOL      SetCaret(UINT pos);
 		_H3API_ VOID      SetAutoredraw(BOOL on);
 		_H3API_ VOID      SetFocus(BOOL on = TRUE);
 	};
+	_H3API_ASSERT_SIZE_(H3DlgEdit, 0x70);
+
+	struct H3ScreenlogEdit : H3DlgEdit
+	{
+		BOOL8 enteringText; /**< @brief [70]*/
+	};
+	_H3API_ASSERT_SIZE_(H3ScreenlogEdit, 0x74);
 
 	struct H3DlgTextPcx : public H3DlgText
 	{
@@ -978,7 +861,8 @@ namespace h3
 		H3LoadedPcx* loadedPcx;
 	public:
 
-		_H3API_ static H3DlgTextPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 id = 0, INT32 align = NH3Dlg::TextAlignment::MiddleCenter);
+		_H3API_ static H3DlgTextPcx* Create(INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR text, LPCSTR fontName, LPCSTR pcxName,
+			INT32 color, INT32 id = 0, INT32 align = NH3Dlg::TextAlignment::MIDDLE_CENTER);
 		_H3API_ static H3DlgTextPcx* Create(INT32 x, INT32 y, LPCSTR text, LPCSTR fontName, LPCSTR pcxName, INT32 color, INT32 align);
 	};
 
@@ -997,16 +881,12 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x63BA24
 		//=================================================
-		// * +30
-		LPCSTR font;
-		// * +34
-		H3Vector<H3String> textLines;
-		// * +44
-		H3Vector<H3DlgText*> textItems;
-		// * +54
-		H3DlgTextScrollbar* scrollBar;
-		// * +58
-		H3LoadedPcx16* canvas;
+
+		LPCSTR               font;      /**< @brief [30]*/
+		H3Vector<H3String>   textLines; /**< @brief [34]*/
+		H3Vector<H3DlgText*> textItems; /**< @brief [44]*/
+		H3DlgTextScrollbar*  scrollBar; /**< @brief [54]*/
+		H3LoadedPcx16*       canvas;    /**< @brief [58]*/
 	public:
 		_H3API_ static H3DlgScrollableText* Create(LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height, LPCSTR font, INT32 color, INT32 isBlue);
 	};
@@ -1018,47 +898,30 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x641D60
 		//=================================================
-		// +[34]
-		_H3API_ virtual VOID vSetTickCount(INT tick) const = 0;
-		// +[38]
-		_H3API_ virtual VOID vChangeTickPosition(INT change) = 0;
-		// +[3C]
-		_H3API_ virtual VOID vDecreaseTickPosition(INT change) = 0;
-		// +[40]
-		_H3API_ virtual VOID vScrollCallOwner() const = 0;
+
+		_H3API_ virtual VOID vSetTickCount(INT tick) const = 0;     /**< @brief [v34]*/
+		_H3API_ virtual VOID vChangeTickPosition(INT change) = 0;   /**< @brief [v38]*/
+		_H3API_ virtual VOID vDecreaseTickPosition(INT change) = 0; /**< @brief [v3C]*/
+		_H3API_ virtual VOID vScrollCallOwner() const = 0;          /**< @brief [v40]*/
 
 	protected:
-		// * +30
-		H3LoadedDef* loadedBtnDef;
-		// * +34
-		H3LoadedPcx* loadedPcx;
-		// * +38
-		INT32 previousTick;
-		// * +3C
-		INT32 tick;
-		// * +40
-		INT32 btnPosition;
-		// * +44
-		INT32 sizeFree;
-		// * +48
-		INT32 ticksCount;
-		// * +4C
-		INT32 sizeMax;
-		// * +50
-		INT32 bigStepSize;
-		// * +54
-		INT32 btnSize2;
-		h3unk _f_58[4];
-		// * +5C
-		BOOL8 catchKeys;
-		// * +5D
-		BOOL8 focused;
-		h3align _f_5E[2];
-		h3unk _f_60[4];
-		// * +64
-		H3DlgScrollbar_proc callBack;
+		H3LoadedDef*        loadedBtnDef; /**< @brief [30]*/
+		H3LoadedPcx*        loadedPcx;    /**< @brief [34]*/
+		INT32               previousTick; /**< @brief [38]*/
+		INT32               tick;         /**< @brief [3C]*/
+		INT32               btnPosition;  /**< @brief [40]*/
+		INT32               sizeFree;     /**< @brief [44]*/
+		INT32               ticksCount;   /**< @brief [48]*/
+		INT32               sizeMax;      /**< @brief [4C]*/
+		INT32               bigStepSize;  /**< @brief [50]*/
+		INT32               btnSize2;     /**< @brief [54]*/
+		h3unk32             _f_58;        /**< @brief [58]*/
+		BOOL8               catchKeys;    /**< @brief [5C]*/
+		BOOL8               focused;      /**< @brief [5D]*/
+		h3unk32             _f_60;        /**< @brief [60]*/
+		H3DlgScrollbar_proc callBack;     /**< @brief [64]*/
 
-		VOID LoadButton(LPCSTR buttonName);
+		VOID loadButton(LPCSTR buttonName);
 
 	public:
 		_H3API_ static H3DlgScrollbar* Create(INT32 x, INT32 y, INT32 width, INT32 height, INT32 id, INT32 ticksCount, H3DlgScrollbar_proc scrollbarProc, BOOL isBlue, INT32 stepSize, BOOL arrowsEnabled);
@@ -1082,8 +945,8 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 00642CD8
 		//=================================================
-		// * +68
-		H3DlgScrollableText* owner;
+
+		H3DlgScrollableText* owner; /**< @brief [68]*/
 
 	public:
 
@@ -1096,36 +959,24 @@ namespace h3
 		//=================================================
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0064235C
 		//=================================================
-		// * +[00]
-		_H3API_ virtual H3DlgBasePanel* vDestroy(BOOL8 deallocate) = 0;
-		// * +[04]
-		_H3API_ virtual VOID        vFunc04(INT unknown) = 0;
-		// * +[08]
-		_H3API_ virtual VOID        vFunc08(INT unknown1, INT unknown2) = 0;
-		// * +[0C]
-		_H3API_ virtual VOID        vDrawToWindow() = 0;
 
-		// * +4
-		INT                  x;
-		// * +8
-		INT                  y;
-		// * +C
-		INT                  width;
-		// * +10
-		INT                  height;
-		// * +14
-		H3Vector<H3DlgItem*> items;
-		// * +24
-		H3BaseDlg*           parent;
-		// * +28
-		INT                  largestId;
-		// * +2C
-		INT                  smallestId;
-		// * +30
-		H3LoadedPcx16*       backupPcx;
+		_H3API_ virtual H3DlgBasePanel* vDestroy(BOOL8 deallocate) = 0;          /**< @brief [v00]*/
+		_H3API_ virtual VOID            vFunc04(INT unknown) = 0;                /**< @brief [v04]*/
+		_H3API_ virtual VOID            vFunc08(INT unknown1, INT unknown2) = 0; /**< @brief [v08]*/
+		_H3API_ virtual VOID            vDrawToWindow() = 0;                     /**< @brief [v0C]*/
 
-		_H3API_ VOID BackupScreen();
-		_H3API_ VOID RestoreBackupScreen();
+		INT                  x;          /**< @brief [04]*/
+		INT                  y;          /**< @brief [08]*/
+		INT                  width;      /**< @brief [0C]*/
+		INT                  height;     /**< @brief [10]*/
+		H3Vector<H3DlgItem*> items;      /**< @brief [14]*/
+		H3BaseDlg*           parent;     /**< @brief [24]*/
+		INT                  largestId;  /**< @brief [28]*/
+		INT                  smallestId; /**< @brief [2C]*/
+		H3LoadedPcx16*       backupPcx;  /**< @brief [30]*/
+
+		_H3API_ VOID backupScreen();
+		_H3API_ VOID restoreBackupScreen();
 	public:
 		_H3API_ H3Vector<H3DlgItem*>& GetItems();
 
@@ -1145,12 +996,9 @@ namespace h3
 	struct H3CombatBottomPanel : H3DlgBasePanel
 	{
 	protected:
-		// * +34
-		H3DlgTextPcx*      commentBar;
-		// * +38
-		H3DlgCustomButton* commentUp;
-		// * +3C
-		H3DlgCustomButton* commentDown;
+		H3DlgTextPcx*      commentBar;  /**< @brief [34]*/
+		H3DlgCustomButton* commentUp;   /**< @brief [38]*/
+		H3DlgCustomButton* commentDown; /**< @brief [3C]*/
 	public:
 
 	};
@@ -1158,64 +1006,40 @@ namespace h3
 	struct H3CombatHeroPanel : H3DlgBasePanel
 	{
 	protected:
-		// * +34
-		H3DlgPcx*  background;
-		// * +38
-		H3DlgPcx*  hero;
-		// * +3C
-		H3DlgText* attack;
-		// * +40
-		H3DlgText* defense;
-		// * +44
-		H3DlgText* power;
-		// * +48
-		H3DlgText* knowledge;
-		// * +4C
-		H3DlgDef*  morale;
-		// * +50
-		H3DlgDef*  luck;
-		// * +54
-		H3DlgText* spellPoints;
-		// * +58
-		BOOL8      needsRedraw;
-		h3align    _f_59[3];
+		H3DlgPcx*  background;  /**< @brief [34]*/
+		H3DlgPcx*  hero;        /**< @brief [38]*/
+		H3DlgText* attack;      /**< @brief [3C]*/
+		H3DlgText* defense;     /**< @brief [40]*/
+		H3DlgText* power;       /**< @brief [44]*/
+		H3DlgText* knowledge;   /**< @brief [48]*/
+		H3DlgDef*  morale;      /**< @brief [4C]*/
+		H3DlgDef*  luck;        /**< @brief [50]*/
+		H3DlgText* spellPoints; /**< @brief [54]*/
+		BOOL8      needsRedraw; /**< @brief [58]*/
 	public:
 	};
+	_H3API_ASSERT_SIZE_(H3CombatHeroPanel, 0x5C);
 
 	struct H3CombatMonsterPanel : H3DlgBasePanel
 	{
 	protected:
-		// * +34
-		H3DlgPcx*  background;
-		// * +38
-		H3DlgDef*  creature;
-		// * +3C
-		H3DlgText* attack;
-		// * +40
-		H3DlgText* defense;
-		// * +44
-		H3DlgText* damage;
-		// * +48
-		H3DlgText* health;
-		// * +4C
-		H3DlgDef*  morale;
-		// * +50
-		H3DlgDef*  luck;
-		// * +54
-		H3DlgText* numberAlive;
-		// * +58
-		H3DlgDef*  spells[3];
-		// * +64
-		H3DlgText* noActiveSpell;
-		// * +68
-		BOOL8      needsRedraw;
-		h3align    _f_69[3];
-		// * +6C
-		// 1 or 2 ?
-		INT        type;
+		H3DlgPcx*  background;    /**< @brief [34]*/
+		H3DlgDef*  creature;      /**< @brief [38]*/
+		H3DlgText* attack;        /**< @brief [3C]*/
+		H3DlgText* defense;       /**< @brief [40]*/
+		H3DlgText* damage;        /**< @brief [44]*/
+		H3DlgText* health;        /**< @brief [48]*/
+		H3DlgDef*  morale;        /**< @brief [4C]*/
+		H3DlgDef*  luck;          /**< @brief [50]*/
+		H3DlgText* numberAlive;   /**< @brief [54]*/
+		H3DlgDef*  spells[3];     /**< @brief [58]*/
+		H3DlgText* noActiveSpell; /**< @brief [64]*/
+		BOOL8      needsRedraw;   /**< @brief [68]*/
+		INT        type;          /**< @brief [6C] 1 or 2 ?*/
 	public:
 
 	};
+	_H3API_ASSERT_SIZE_(H3CombatMonsterPanel, 0x70);
 
 	/////////////////////////////////////////////
 	// Specific dialogs from the game
@@ -1224,28 +1048,22 @@ namespace h3
 	struct H3CombatDlg : H3BaseDlg
 	{
 	protected:
-		h3unk _f_68[4];
-		// * +6C
-		UINT lastAnimTime;
+		h3unk32               _f_68;                   /**< @brief [68]*/
+		UINT                  lastAnimTime;            /**< @brief [6C]*/
 	public:
-		// * +70
-		H3CombatBottomPanel*  bottomPanel;
-		// * +74
-		H3CombatHeroPanel*    leftHeroPopup;
-		// * +78
-		H3CombatHeroPanel*    rightHeroPopup;
-		// * +7C
-		H3CombatMonsterPanel* leftMonsterPopup;
-		// * +80
-		H3CombatMonsterPanel* rightMonsterPopup;
-		// * +84
-		H3CombatMonsterPanel* bottomleftMonsterPopup;
-		// * +88
-		H3CombatMonsterPanel* bottomRightMonsterPopup;
+		H3CombatBottomPanel*  bottomPanel;             /**< @brief [70]*/
+		H3CombatHeroPanel*    leftHeroPopup;           /**< @brief [74]*/
+		H3CombatHeroPanel*    rightHeroPopup;          /**< @brief [78]*/
+		H3CombatMonsterPanel* leftMonsterPopup;        /**< @brief [7C]*/
+		H3CombatMonsterPanel* rightMonsterPopup;       /**< @brief [80]*/
+		H3CombatMonsterPanel* bottomleftMonsterPopup;  /**< @brief [84]*/
+		H3CombatMonsterPanel* bottomRightMonsterPopup; /**< @brief [88]*/
 
 		_H3API_ VOID ShowHint(LPCSTR hint, BOOL8 addToLog = FALSE);
 		_H3API_ H3Vector<H3String*>& GetCombatText();
 	};
+
+#pragma pack(pop)
 
 	/////////////////////////////////////////////
 	// Custom dialog functionality
@@ -1259,26 +1077,25 @@ namespace h3
 		struct H3Highlighter
 		{
 			H3DlgItem* m_item;
-			H3RGB888   m_highlight;
+			H3ARGB888  m_highlight;
 			UINT       m_thickness;
 			_H3API_ H3Highlighter();
-			_H3API_ H3Highlighter(H3DlgItem* item, const H3RGB888& color, UINT thickness);
+			_H3API_ H3Highlighter(H3DlgItem* item, const H3ARGB888& color, UINT thickness);
 			_H3API_ H3Highlighter(H3DlgItem* item, BYTE r, BYTE g, BYTE b, UINT thickness);
 		};
 
 		H3Vector<H3Highlighter> m_highlightableItems;
 		mutable H3DlgItem* m_currentHighlight;
-		_H3API_ BOOL UnhighlightSelection() const;
+		_H3API_ BOOL unhighlightSelection() const;
 	public:
 		_H3API_ H3DlgHighlightable();
 		_H3API_ VOID AddItem(H3DlgItem* dlgItem, BYTE red, BYTE green, BYTE blue, UINT frameThickness);
-		_H3API_ VOID AddItem(H3DlgItem* dlgItem, const H3RGB888& color, UINT frameThickness);
+		_H3API_ VOID AddItem(H3DlgItem* dlgItem, const H3ARGB888& color, UINT frameThickness);
 		_H3API_ BOOL HighlightItem(H3DlgItem* dlgItem) const;
 		_H3API_ BOOL HighlightItem(const H3Msg& msg) const;
 		_H3API_ VOID Clear();
 	};
 
-#pragma pack(pop)
 }
 
 #endif /* #define _H3DIALOGS_HPP_ */

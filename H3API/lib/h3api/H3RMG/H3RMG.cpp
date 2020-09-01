@@ -13,27 +13,27 @@
 
 namespace h3
 {
-	_H3API_ int RMG_MapItem::GetLand() const
+	_H3API_ INT RMG_MapItem::GetLand() const
 	{
 		return tile.landType;
 	}
-	_H3API_ int RMG_MapItem::GetLandSprite() const
+	_H3API_ INT RMG_MapItem::GetLandSprite() const
 	{
 		return tile.landSprite;
 	}
-	_H3API_ int RMG_MapItem::GetRiver() const
+	_H3API_ INT RMG_MapItem::GetRiver() const
 	{
 		return tile.riverType;
 	}
-	_H3API_ int RMG_MapItem::GetRiverSprite() const
+	_H3API_ INT RMG_MapItem::GetRiverSprite() const
 	{
 		return tile.riverSprite;
 	}
-	_H3API_ int RMG_MapItem::GetRoad() const
+	_H3API_ INT RMG_MapItem::GetRoad() const
 	{
 		return tile.roadType;
 	}
-	_H3API_ int RMG_MapItem::GetRoadSprite() const
+	_H3API_ INT RMG_MapItem::GetRoadSprite() const
 	{
 		return tileData.roadSprite;
 	}
@@ -51,31 +51,45 @@ namespace h3
 	}
 	_H3API_ H3Point RMG_Map::GetCoordinates(RMG_MapItem* item)
 	{
-		return F_ReverseCoordinates<RMG_MapItem>(item, mapItems, mapWidth);
+		H3Point coordinates;
+		UINT delta = item - mapItems;
+		coordinates.x = delta % mapWidth;
+		delta /= mapWidth;
+		coordinates.y = delta % mapWidth;
+		coordinates.z = delta / mapWidth;
+		return coordinates;
+	}
+	_H3API_ H3Map_RMG_MapItem RMG_Map::GetMap()
+	{
+		return H3Map_RMG_MapItem(mapItems, static_cast<UINT>(mapWidth), numberLevels - 1);
+	}
+	_H3API_ H3FastMap_RMG_MapItem RMG_Map::GetFastMap()
+	{
+		return H3FastMap_RMG_MapItem(mapItems, static_cast<UINT>(mapWidth), numberLevels - 1);
 	}
 	_H3API_ VOID RMG_Parameters::Validate()
 	{
-		monster_strength += 3;
-		if (monster_strength < 1)
-			monster_strength = 1;
-		else if (monster_strength > 5)
-			monster_strength = 5;
+		monsterStrength += 3;
+		if (monsterStrength < 1)
+			monsterStrength = 1;
+		else if (monsterStrength > 5)
+			monsterStrength = 5;
 
-		if (computer_count + human_count < 2)
+		if (computerCount + humanCount < 2)
 		{
-			computer_count = 1;
-			human_count = 1;
+			computerCount = 1;
+			humanCount = 1;
 		}
 	}
 	_H3API_ RMG_MapInfo::RMG_MapInfo(RMG_Main* main, BOOL underground) :
 		vTable((h3func*)0x6409DC),
-		has_map(0),
-		underground_map(nullptr),
+		hasMap(0),
+		undergroundMap(nullptr),
 		width(main->map.mapWidth),
 		height(main->map.mapHeight),
 		underground(underground)
 	{
-		underground_map = &main->map.mapItems[width * height];
+		undergroundMap = &main->map.mapItems[width * height];
 	}
 	_H3API_ RMG_MapInfo::~RMG_MapInfo()
 	{
@@ -83,13 +97,13 @@ namespace h3
 	_H3API_ RMG_Main::RMG_Main(RMG_Parameters& p, PVOID progress)
 	{
 		p.Validate();
-		THISCALL_12(RMG_Main*, 0x538000, this, p.width, p.height, p.has_underground, p.human_count, p.human_teams,
-			p.computer_count, p.computer_teams, p.water_amount, p.monster_strength, progress, p.game_version);
-		for (int i = 0; i < 8; ++i)
+		THISCALL_12(RMG_Main*, 0x538000, this, p.width, p.height, p.hasUnderground, p.humanCount, p.humanTeams,
+			p.computerCount, p.computerTeams, p.waterAmount, p.monsterStrength, progress, p.gameVersion);
+		for (INT i = 0; i < 8; ++i)
 		{
-			if (p.is_human[i])
+			if (p.isHuman[i])
 				isHuman[i] = TRUE;
-			playerTown[i] = p.town_id[i];
+			playerTown[i] = p.townId[i];
 		}
 	}
 	_H3API_ RMG_Main::~RMG_Main()

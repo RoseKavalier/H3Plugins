@@ -13,19 +13,18 @@
 
 #include "../H3_Base.hpp"
 
-#ifdef _H3_STD_CONVERSIONS_
+#ifdef _H3API_STD_CONVERSIONS_
 #include <string>
 #endif
 
 namespace h3
 {
-#pragma pack(push, 1)
+#pragma pack(push, 4)
 	// * a string following the H3 format
 	struct H3String
 	{
 	protected:
-		BOOL8 _init; // useless
-		h3align _f_01[3];
+		h3unk8 _allocator; // useless
 		PCHAR  m_string;
 		UINT32 m_length;
 		UINT32 m_capacity;
@@ -166,7 +165,7 @@ namespace h3
 		// * memcmp ~ case sensitive
 		_H3API_ BOOL Equals(LPCSTR msg, UINT len) const;
 		_H3API_ BOOL Equals(LPCSTR msg) const;
-		_H3API_ BOOL Equals(H3String& other) const;
+		_H3API_ BOOL Equals(const H3String& other) const;
 
 		// * strcmpi ~ not case-sensitive
 		_H3API_ BOOL Equals_i(LPCSTR msg, UINT len) const;
@@ -220,8 +219,8 @@ namespace h3
 		_H3API_ BOOL operator!=(LPCSTR str) const;
 
 		// * Returns char at offset
-		_H3API_ CHAR& operator[](INT32 pos) const;
-		_H3API_ CHAR& operator[](INT32 pos);
+		_H3API_ CHAR& operator[](UINT32 pos) const;
+		_H3API_ CHAR& operator[](UINT32 pos);
 
 		// * The number of times this string is referenced - avoids deletion from destructor in references
 		_H3API_ INT8 References() const;
@@ -256,7 +255,7 @@ namespace h3
 		_H3API_ H3String& PrintfAppend(LPCSTR format, ...);
 	#endif
 
-	#ifdef _H3_STD_CONVERSIONS_
+	#ifdef _H3API_STD_CONVERSIONS_
 		_H3API_ H3String(const std::string& str);
 		_H3API_ INT operator==(const std::string& str) const;
 		_H3API_ H3String& operator+=(const std::string& str);
@@ -264,7 +263,7 @@ namespace h3
 		_H3API_ H3String& Assign(const std::string& str);
 		_H3API_ H3String& Append(const std::string& str);
 		_H3API_ std::string to_std_string() const;
-	#endif /* _H3_STD_CONVERSIONS_ */
+	#endif /* _H3API_STD_CONVERSIONS_ */
 
 		/*
 		*
@@ -283,12 +282,14 @@ namespace h3
 		// * Adds one char* and H3String into one H3String
 		friend inline H3String operator+(LPCSTR lhs, H3String& rhs);
 
+		// * these enum values follow std::string naming convention
 		enum eH3String : UINT
 		{
 			max_len     = static_cast<UINT>(-3),
 			npos        = static_cast<UINT>(-1),
 		};
 	};
+	_H3API_ASSERT_SIZE_(H3String, 16);
 #pragma pack(pop)
 }
 

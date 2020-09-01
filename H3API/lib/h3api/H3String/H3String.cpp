@@ -213,8 +213,9 @@ namespace h3
 
 	_H3API_ H3String& H3String::Assign(INT32 number)
 	{
-		const int len = F_sprintf("%d", number);
-		Assign(h3_TextBuffer, len);
+		char buffer[16]; // more than enough considering number can only be 12 digits [-1234567890\0]
+		int len = F_sprintfbuffer(buffer, "%d", number);
+		Assign(buffer, UINT(len));
 		return *this;
 	}
 
@@ -262,14 +263,17 @@ namespace h3
 
 	_H3API_ H3String& H3String::Append(int number)
 	{
-		int len = F_sprintf("%d", number);
-		return Append(PCHAR(0x697428), UINT(len));
+		char buffer[16]; // more than enough considering number can only be 12 digits [-1234567890\0]
+		const int len = F_sprintfbuffer(buffer, "%d", number);
+		Assign(buffer, len);
+		return Append(buffer, UINT(len));
 	}
 
 	_H3API_ H3String& H3String::Append(unsigned int number)
 	{
-		int len = F_sprintf("0x%X", number);
-		return Append(PCHAR(0x697428), UINT(len));
+		char buffer[16]; // more than enough considering number can only be 13 digits [0x1234567890\0]
+		const int len = F_sprintfbuffer(buffer, "0x%X", number);
+		return Append(buffer, UINT(len));
 	}
 
 	_H3API_ H3String& H3String::Append(LPCSTR mes)
@@ -418,26 +422,7 @@ namespace h3
 
 	_H3API_ H3String& H3String::Remove(CHAR ch)
 	{
-		if (Empty())
-			return *this;
-
-		const UINT len = Length();
-		UINT l = Length() + 1;
-
-		char* dst;
-		for (char* src = dst = m_string; *src && --l; src++)
-		{
-			if (*src == ch) // skip over this char
-			{
-				--m_length;
-				continue;
-			}
-			*dst = *src;
-			++dst;
-		}
-		*dst = 0; // place end character
-
-		return *this;
+		return Remove(&ch, 1);
 	}
 
 	_H3API_ H3String& H3String::Remove(LPCSTR substr)
@@ -541,7 +526,7 @@ namespace h3
 		return Equals(msg, strlen(msg));
 	}
 
-	_H3API_ BOOL H3String::Equals(H3String& other) const
+	_H3API_ BOOL H3String::Equals(const H3String& other) const
 	{
 		return Equals(other.String(), other.Length());
 	}
@@ -729,11 +714,11 @@ namespace h3
 		return Compare(str) != 0;
 	}
 
-	_H3API_ CHAR& H3String::operator[](INT32 pos) const
+	_H3API_ CHAR& H3String::operator[](UINT32 pos) const
 	{
 		return m_string[pos];
 	}
-	_H3API_ CHAR& H3String::operator[](INT32 pos)
+	_H3API_ CHAR& H3String::operator[](UINT32 pos)
 	{
 		return m_string[pos];
 	}
@@ -824,7 +809,7 @@ namespace h3
 	}
 #endif
 
-#ifdef _H3_STD_CONVERSIONS_
+#ifdef _H3API_STD_CONVERSIONS_
 	_H3API_ H3String::H3String(const std::string& str) :
 		m_string(nullptr),
 		m_length(0),
@@ -858,5 +843,5 @@ namespace h3
 	{
 		return std::string(String(), Length());
 	}
-#endif
+#endif /* _H3API_STD_CONVERSIONS_ */
 }

@@ -167,13 +167,13 @@ namespace h3
 	}
 
 	template<typename T>
-	inline typename const T& H3Tree<T>::const_iterator::operator*() const
+	inline const T& H3Tree<T>::const_iterator::operator*() const
 	{
 		return m_ptr->m_data;
 	}
 
 	template<typename T>
-	inline typename const T* H3Tree<T>::const_iterator::operator->() const
+	inline const T* H3Tree<T>::const_iterator::operator->() const
 	{
 		return &m_ptr->m_data;
 	}
@@ -254,7 +254,7 @@ namespace h3
 			it = it->Next();
 			delete curr;
 		}
-		
+
 		m_size = 0;
 		m_begin = m_end;
 		m_end = &m_anchor;
@@ -395,18 +395,18 @@ namespace h3
 		if (is_smaller) // left
 		{
 			if (node == m_end) // tree is empty, set new root
-			{				
+			{
 				H3Node* new_node = new H3Node(data);
 				++m_size;
 				m_begin = new_node;
 				m_end->m_left = new_node;
 				m_end->m_right = new_node;
-				new_node->m_parent = m_end;				
+				new_node->m_parent = m_end;
 				insertionBalance(new_node);
 				return true;
 			}
-			else if (node == m_begin) 
-			{				
+			else if (node == m_begin)
+			{
 				H3Node* new_node = new H3Node(data);
 				++m_size;
 
@@ -417,10 +417,10 @@ namespace h3
 				insertionBalance(new_node);
 				return true;
 			}
-			else 
-			{				
+			else
+			{
 				H3Node* parent = right->m_parent;
-				while (right != parent->m_right) 
+				while (right != parent->m_right)
 				{
 					right = parent;
 					parent = right->m_parent;
@@ -439,10 +439,10 @@ namespace h3
 					return true;
 				}
 				// * duplicate
-				return false;				
+				return false;
 			}
 		}
-		
+
 		if (right->m_data < data)
 		{
 			H3Node* new_node = new H3Node(data);
@@ -463,13 +463,13 @@ namespace h3
 
 		node->m_black = false;
 
-		while (!node->m_parent->m_black) 
+		while (!node->m_parent->m_black)
 		{
-			if (node->m_parent == node->m_parent->m_parent->m_left) 
+			if (node->m_parent == node->m_parent->m_parent->m_left)
 			{
 				uncle = node->m_parent->m_parent->m_right;
 
-				if (uncle && !uncle->m_black) 
+				if (uncle && !uncle->m_black)
 				{
 					node->m_parent->m_black = true;
 					uncle->m_black = true;
@@ -477,7 +477,7 @@ namespace h3
 					node = node->m_parent->m_parent;
 				}
 				else {
-					if (node == node->m_parent->m_right) 
+					if (node == node->m_parent->m_right)
 					{
 						node = node->m_parent;
 						rotateLeft(node);
@@ -490,16 +490,16 @@ namespace h3
 			}
 			else {
 				uncle = node->m_parent->m_parent->m_left;
-				if (uncle && !uncle->m_black) 
+				if (uncle && !uncle->m_black)
 				{
 					node->m_parent->m_black = true;
 					uncle->m_black = true;
 					node->m_parent->m_parent->m_black = false;
 					node = node->m_parent->m_parent;
 				}
-				else 
+				else
 				{
-					if (node == node->m_parent->m_left) 
+					if (node == node->m_parent->m_left)
 					{
 						node = node->m_parent;
 						rotateRight(node);
@@ -517,9 +517,9 @@ namespace h3
 	template<typename T>
 	inline void H3Tree<T>::erasureBalance(H3Node* node, H3Node* parent)
 	{
-		while (node != m_end->m_left && (!node || node->m_black)) 
+		while (node != m_end->m_left && (!node || node->m_black))
 		{
-			if (node == parent->m_left) 
+			if (node == parent->m_left)
 			{
 				H3Node* sibling = parent->m_right;
 				if (!sibling->m_black)
@@ -529,7 +529,7 @@ namespace h3
 					rotateLeft(parent);
 					sibling = parent->m_right;
 				}
-				if ((!sibling->m_left || sibling->m_left->m_black) && (!sibling->m_right || sibling->m_right->m_black)) 
+				if ((!sibling->m_left || sibling->m_left->m_black) && (!sibling->m_right || sibling->m_right->m_black))
 				{
 					sibling->m_black = false;
 					node = parent;
@@ -554,22 +554,22 @@ namespace h3
 			}
 			else {
 				H3Node* sibling = parent->m_left;
-				if (!sibling->m_black) 
+				if (!sibling->m_black)
 				{
 					sibling->m_black = true;
 					parent->m_black = false;
 					rotateRight(parent);
 					sibling = parent->m_left;
 				}
-				if ((!sibling->m_left || sibling->m_left->m_black) && (!sibling->m_right || sibling->m_right->m_black)) 
+				if ((!sibling->m_left || sibling->m_left->m_black) && (!sibling->m_right || sibling->m_right->m_black))
 				{
 					sibling->m_black = false;
 					node = parent;
 					parent = parent->m_parent;
 				}
-				else 
+				else
 				{
-					if (!sibling->m_left || sibling->m_left->m_black) 
+					if (!sibling->m_left || sibling->m_left->m_black)
 					{
 						if (sibling->m_right)
 							sibling->m_right->m_black = true;
@@ -601,16 +601,16 @@ namespace h3
 
 		tmp->m_parent = node->m_parent;
 
-		if (node->m_parent == m_end) 
+		if (node->m_parent == m_end)
 		{
 			m_end->m_left = tmp;
 			m_end->m_right = tmp;
-			tmp->m_parent = m_end;			
+			tmp->m_parent = m_end;
 		}
-		else if (node == node->m_parent->m_left) 
-			node->m_parent->m_left = tmp;		
-		else 
-			node->m_parent->m_right = tmp;		
+		else if (node == node->m_parent->m_left)
+			node->m_parent->m_left = tmp;
+		else
+			node->m_parent->m_right = tmp;
 
 		tmp->m_left = node;
 		node->m_parent = tmp;
@@ -625,16 +625,16 @@ namespace h3
 			tmp->m_right->m_parent = node;
 
 		tmp->m_parent = node->m_parent;
-		if (node->m_parent == m_end) 
+		if (node->m_parent == m_end)
 		{
 			m_end->m_left = tmp;
 			m_end->m_right = tmp;
-			tmp->m_parent = m_end;			
+			tmp->m_parent = m_end;
 		}
-		else if (node == node->m_parent->m_right) 
-			node->m_parent->m_right = tmp;		
-		else 
-			node->m_parent->m_left = tmp;		
+		else if (node == node->m_parent->m_right)
+			node->m_parent->m_right = tmp;
+		else
+			node->m_parent->m_left = tmp;
 
 		tmp->m_right = node;
 		node->m_parent = tmp;
@@ -643,14 +643,14 @@ namespace h3
 	template<typename T>
 	inline void H3Tree<T>::insertAt(H3Node* dst, H3Node* node)
 	{
-		if (dst->m_parent == m_end) 
-		{			
+		if (dst->m_parent == m_end)
+		{
 			m_end->m_left = node;
 			m_end->m_right = node;
 		}
-		else if (dst == dst->m_parent->m_left) 
-			dst->m_parent->m_left = node;		
-		else 
+		else if (dst == dst->m_parent->m_left)
+			dst->m_parent->m_left = node;
+		else
 			dst->m_parent->m_right = node;
 
 		if (node)

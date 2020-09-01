@@ -24,7 +24,7 @@ namespace h3
 	}
 
 	template<typename T, size_t size>
-	inline h3::H3Patcher::WriteValues<T, size>::WriteValues(const UINT whereTo, const T(&value)[size])
+	inline H3Patcher::WriteValues<T, size>::WriteValues(const UINT whereTo, const T(&value)[size])
 	{
 		H3Protect protect(whereTo, sizeof(T) * size);
 		if (protect.CanWrite())
@@ -43,15 +43,21 @@ namespace h3
 	// * data can be of any type
 	// * Address should be <int> or <long> derived
 	template<typename Address, typename Type, size_t size>
-	typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type 
-	/* VOID */ h3::H3Patcher::AddressOfPatch(const Address(&whereTo)[size], const Type & data)
+	typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
+	H3Patcher::AddressOfPatch(const Address(&whereTo)[size], const Type & data)
 	{
 		for (size_t i = 0; i < size; ++i)
 			DwordPatch(whereTo[i], reinterpret_cast<DWORD>(&data));
 	}
 
+	template<typename T>
+	VOID H3Patcher::ObjectPatch(T & reference, T data)
+	{
+		WriteValue<T>(UINT(&reference), data);
+	}
+
 	template<size_t size>
-	inline VOID h3::H3Patcher::HexPatch(const UINT whereTo, const BYTE(&value)[size])
+	inline VOID H3Patcher::HexPatch(const UINT whereTo, const BYTE(&value)[size])
 	{
 		WriteValues<BYTE, size>(whereTo, value);
 	}

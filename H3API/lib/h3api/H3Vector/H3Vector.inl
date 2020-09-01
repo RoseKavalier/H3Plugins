@@ -56,25 +56,25 @@ namespace h3
 		return Reserve(EXPAND_NUMBER(number));
 	}
 	template<typename _Elem>
-	inline INT H3Vector<_Elem>::EXPAND_NUMBER(INT minimumNeeded)
+	inline UINT H3Vector<_Elem>::EXPAND_NUMBER(UINT minimumNeeded)
 	{
-		INT32 cap = CountMax();
-		int num = std::max(cap * GROWTH_MULTIPLIER(), MIN_ELEMENTS());
+		UINT cap = CountMax();
+		UINT num = std::max(cap * GROWTH_MULTIPLIER(), MIN_ELEMENTS());
 		return std::max(num, minimumNeeded);
 	}
 	template<typename _Elem>
-	inline INT H3Vector<_Elem>::MIN_ELEMENTS() const
+	inline UINT H3Vector<_Elem>::MIN_ELEMENTS() const
 	{
 		return 10;
 	}
 	template<typename _Elem>
-	inline INT H3Vector<_Elem>::GROWTH_MULTIPLIER() const
+	inline UINT H3Vector<_Elem>::GROWTH_MULTIPLIER() const
 	{
 		return 2;
 	}
 
 	template<typename _Elem>
-	inline H3Vector<_Elem>::H3Vector(const int number_elements) :
+	inline H3Vector<_Elem>::H3Vector(UINT number_elements) :
 		m_first(nullptr),
 		m_end(nullptr),
 		m_capacity(nullptr)
@@ -246,7 +246,7 @@ namespace h3
 		m_end = m_first;
 	}
 	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Add(_Elem& item)
+	inline _Elem* H3Vector<_Elem>::Add(const _Elem& item)
 	{
 		if (!m_first || IsFull())
 		{
@@ -258,7 +258,7 @@ namespace h3
 		return m_end - 1;  // returns position where it was added
 	}
 	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::AddOne(_Elem& item)
+	inline _Elem* H3Vector<_Elem>::AddOne(const _Elem& item)
 	{
 		if (!m_first)
 		{
@@ -327,12 +327,12 @@ namespace h3
 		return *CLast();
 	}
 	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Append(_Elem& item)
+	inline _Elem* H3Vector<_Elem>::Append(const _Elem& item)
 	{
 		return Add(item);
 	}
 	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::Push(_Elem& item)
+	inline _Elem* H3Vector<_Elem>::Push(const _Elem& item)
 	{
 		return Add(item);
 	}
@@ -375,25 +375,6 @@ namespace h3
 	inline BOOL H3Vector<_Elem>::Remove(UINT32 fromPos, UINT32 toPos)
 	{
 		return Remove(begin() + fromPos, begin() + toPos);
-
-		//UINT num = Count();
-		//if (fromPos >= num)
-		//	return FALSE;
-		//toPos = std::min(toPos, num);
-		//if (toPos <= fromPos)
-		//	return FALSE;
-		//
-		//Destruct(begin() + fromPos, begin() + toPos);
-		//
-		//_Elem* rem     = m_first + fromPos;
-		//_Elem* remEnd  = rem + toPos;
-		//size_t copyLen = size_t(m_end) - size_t(remEnd);
-
-		////* move any elements from the end
-		//memmove(PVOID(rem), PVOID(remEnd), copyLen);
-		//
-		//m_end -= toPos - fromPos;
-		//return TRUE;
 	}
 	template<typename _Elem>
 	inline BOOL H3Vector<_Elem>::Remove(_Elem * first, _Elem * last)
@@ -511,7 +492,7 @@ namespace h3
 		return m_first[pos];
 	}
 	template<typename _Elem>
-	inline _Elem* H3Vector<_Elem>::operator+=(_Elem& item)
+	inline _Elem* H3Vector<_Elem>::operator+=(const _Elem& item)
 	{
 		return Add(item);
 	}
@@ -563,6 +544,7 @@ namespace h3
 	{
 		return Add(std::move(item));
 	}
+#endif /* _H3API_CPLUSPLUS11_ */
 
 	template<typename _Elem>
 	inline BOOL H3Vector<_Elem>::Insert(_Elem * position, _Elem * first, _Elem * last)
@@ -615,8 +597,15 @@ namespace h3
 		return TRUE;
 	}
 
-#endif
-#ifdef _H3_STD_CONVERSIONS_
+	template<typename _Elem>
+	inline BOOL H3Vector<_Elem>::Insert(_Elem* position, const _Elem& elem)
+	{
+		_Elem* first = const_cast<_Elem*>(&elem);
+		_Elem* last = first + 1;
+		return Insert(position, first, last);
+	}
+
+#ifdef _H3API_STD_CONVERSIONS_
 	template<typename _Elem>
 	inline BOOL H3Vector<_Elem>::Insert(_Elem * position, typename std::vector<_Elem>::iterator first, typename std::vector<_Elem>::iterator last)
 	{
@@ -652,7 +641,7 @@ namespace h3
 				*newEnd-- = std::move(*oldEnd--);
 #else
 				*newEnd-- = *oldEnd--;
-#endif
+#endif /* _H3API_CPLUSPLUS11_ */
 			}
 		}
 
@@ -696,7 +685,7 @@ namespace h3
 			Add(const_cast<_Elem&>(vec[i]));
 		return *this;
 	}
-#endif
+#endif /* _H3API_STD_CONVERSIONS_ */
 }
 
 #endif /* #define _H3VECTOR_INL_ */

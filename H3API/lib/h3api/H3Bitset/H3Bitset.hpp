@@ -16,10 +16,20 @@
 
 namespace h3
 {
-#pragma pack(push, 1)
+#pragma pack(push, 4)
+	/**
+	 * @brief alternative for std::bitset matching C++98 alignment
+	 *
+	 * @tparam size the number of bits to be used
+	 */
 	template<UINT size>
 	struct H3Bitset
 	{
+		/**
+		 * @brief total bytes used by the bitset
+		 *
+		 * @return constexpr UINT occupied memory, including alignment
+		 */
 		static constexpr UINT RawSize();
 	protected:
 		static constexpr UINT m_length = (size - 1) / 32 + 1;
@@ -33,61 +43,246 @@ namespace h3
 		UINT   endMask();
 
 	public:
+		/**
+		 * @brief incrementable iterator to inspect bitset's span
+		 * modeled after Bitfield::reference but with known end
+		 */
 		struct iterator
 		{
 		protected:
 			H3Bitset* m_bitset;
 			UINT      m_position;
 		public:
+			/**
+			 * @brief Construct a new iterator from start of bitset
+			 *
+			 * @param bitset bitset to use for iteration
+			 */
 			iterator(H3Bitset* bitset);
+			/**
+			 * @brief Construct a new iterator from specified position
+			 *
+			 * @param bitset bitset to use for iteration
+			 * @param position 0..size-1
+			 */
 			iterator(H3Bitset* bitset, UINT position);
-
+			/**
+			 * @brief pre-increment
+			 *
+			 * @return itself
+			 */
 			iterator& operator++();
+			/**
+			 * @brief post-increment
+			 *
+			 * @return copy of itself before increment
+			 */
 			iterator  operator++(int);
+			/**
+			 * @brief required for range-based loop
+			 *
+			 * @return itself
+			 */
 			iterator& operator*();
+			/**
+			 * @brief
+			 *
+			 * @return iterator*
+			 */
 			iterator* operator->();
-			iterator& operator~(); // flips bit
-			operator BOOL();         // if bit is set
-			BOOL operator!();        // if bit is not set
+			/**
+			 * @brief flips current bit
+			 *
+			 * @return itself
+			 */
+			iterator& operator~();
+			/**
+			 * @brief allows if (iterator) condition
+			 *
+			 * @return BOOL whether current bit is set
+			 */
+			operator BOOL();
+			/**
+			 * @brief allows if (!iterator) condition
+			 *
+			 * @return BOOL whether current bit is not set
+			 */
+			BOOL operator!();
+			/**
+			 * @brief iterator equality check
+			 *
+			 * @param other another iterator
+			 * @return BOOL whether both iterators point to the same bit
+			 */
 			BOOL operator==(const iterator& other);
+			/**
+			 * @brief iterator inequality check
+			 *
+			 * @param other another iterator
+			 * @return BOOL whether both iterators point to a different bit
+			 */
 			BOOL operator!=(const iterator& other);
+			/**
+			 * @brief Set the state of the current bit
+			 *
+			 * @param state true or false
+			 */
 			VOID operator=(BOOL state);
+			/**
+			 * @brief set the current bit as ON/true
+			 */
 			VOID Set();
+			/**
+			 * @brief set the current bit as OFF/false
+			 */
 			VOID Reset();
+			/**
+			 * @brief change the state of the current bit to on from off and vice-versa
+			 */
 			VOID Flip();
 		};
-
+		/**
+		 * @brief Construct with all bits as off
+		 */
 		H3Bitset();
+		/**
+		 * @brief Construct with specified first 32 bits
+		 *
+		 * @param value the state of the first 32 bits
+		 */
 		H3Bitset(UINT value);
+		/**
+		 * @brief Construct with specified first 64 bits
+		 *
+		 * @param value the state of the first 64 bits
+		 */
 		H3Bitset(UINT64 value);
+		/**
+		 * @brief Construct from a string
+		 * if the string contains other characters than 0 or 1, they are considered as 1 / true
+		 * @param value a string of 0 (false) and 1s (false)
+		 */
 		H3Bitset(const H3String& value);
 		H3Bitset(const H3Bitset<size>& other);
-
+		/**
+		 * @brief transform the current state to a readable string
+		 *
+		 * @return H3String string of 0s and 1s (off / on)
+		 */
 		H3String ToString() const;
+		/**
+		 * @brief transform the current hexadecimal state to a readable string
+		 *
+		 * @return H3String string of 0..9A..F as it appears in memory
+		 */
 		H3String ToHexString() const;
+		/**
+		 * @brief extract first 32 bits
+		 *
+		 * @return UINT state of the first 32 bits
+		 */
 		UINT     ToUINT() const;
+		/**
+		 * @brief extract first 64 bits
+		 *
+		 * @return UINT64 state of the first 64 bits
+		 */
 		UINT64   ToUINT64() const;
-
-		VOID Set();               // set all bits to true
-		VOID Reset();             // set all bits to false
-		BOOL All();               // if all bits are set
-		BOOL Any();               // if any bit is set
-		BOOL None();              // if no bits are set
-		VOID Flip();              // flip all bits
-		UINT Count();             // the number of bits set
-		BOOL Test(UINT position); // the state of bool at position
-		UINT Size();              // returns size of bitset
-		UINT Length();            // the number of elements in the bitset array
-
+		/**
+		 * @brief set all bits to true
+		 */
+		VOID Set();
+		/**
+		 * @brief set all bits to false
+		 */
+		VOID Reset();
+		/**
+		 * @brief checks if all bits are set
+		 *
+		 * @return BOOL true if all bits are on, false otherwise
+		 */
+		BOOL All();
+		/**
+		 * @brief checks if at least 1 bit is set
+		 *
+		 * @return BOOL true if at least one bit is on, false otherwise
+		 */
+		BOOL Any();
+		/**
+		 * @brief checks if there are no bits set
+		 *
+		 * @return BOOL true if all bits are off, false otherwie
+		 */
+		BOOL None();
+		/**
+		 * @brief flip all bits state
+		 */
+		VOID Flip();
+		/**
+		 * @brief counts how many bits are set
+		 *
+		 * @return UINT 0..size bits that are on
+		 */
+		UINT Count();
+		/**
+		 * @brief inspect state of any bit
+		 *
+		 * @param position 0..size-1
+		 * @return BOOL the state of specified bit
+		 */
+		BOOL Test(UINT position);
+		/**
+		 * @brief number of bits in the bitset
+		 *
+		 * @return UINT size
+		 */
+		UINT Size() const;
+		/**
+		 * @brief number of DWORD used in memory
+		 *
+		 * @return UINT raw size of the bitset divided by 4
+		 */
+		UINT Length();
 		H3Bitset& operator=(const H3Bitset<size>& other);
 		BOOL operator!=(const H3Bitset<size>& other);
 		BOOL operator==(const H3Bitset<size>& other);
-		BOOL operator!();  // checks if none are set
-		BOOL operator()(); // if any is set
-		BOOL operator()(UINT position); // checks state of position
-
+		/**
+		 * @brief allows if (!bitset) condition, same as if (bitset.None())
+		 *
+		 * @return BOOL whether all bits are off
+		 */
+		BOOL operator!();
+		/**
+		 * @brief allows if (bitset()) condition, same as if (bitset.Any())
+		 *
+		 * @return BOOL whether any bool is set
+		 */
+		BOOL operator()();
+		/**
+		 * @brief checks state of bit at specified index
+		 *
+		 * @param position 0..size-1
+		 * @return BOOL true if the bit is set, false otherwise
+		 */
+		BOOL operator()(UINT position);
+		/**
+		 * @brief iterator at first position of bitset
+		 *
+		 * @return iterator at position 0
+		 */
 		iterator begin();
+		/**
+		 * @brief iterator beyond last position of bitset
+		 *
+		 * @return iterator at position size
+		 */
 		iterator end();
+		/**
+		 * @brief access bit state at specified index through iterator
+		 *
+		 * @param position 0..size-1
+		 * @return iterator for the specified position allowing additional access
+		 */
 		iterator operator[](UINT position);
 	};
 #pragma pack(pop)

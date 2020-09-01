@@ -23,13 +23,13 @@ namespace h3
 {
 	// * Only available if stack unwinding is enabled (enable C++ exceptions).
 	// * you should use /EHa compiler flag when using this file
-	namespace NH3Error
+	namespace H3Internal
 	{
 		CHAR const OfferToLog[] = "\nWould you like to save this error to file ?";
-		_H3API_ void   h3_trans_func(UINT code, EXCEPTION_POINTERS* ep);
-		_H3API_ LPCSTR opDescription(const ULONG opcode);
-		_H3API_ LPCSTR seDescription(const UINT& code);
-		_H3API_ VOID   information(H3String& error, _EXCEPTION_POINTERS* ep, UINT code = 0, bool log_error = true);
+		_H3API_ void   _h3TransFunction(UINT code, EXCEPTION_POINTERS* ep);
+		_H3API_ LPCSTR _opDescription(const ULONG opcode);
+		_H3API_ LPCSTR _seDescription(const UINT& code);
+		_H3API_ VOID   _exInformation(H3String& error, _EXCEPTION_POINTERS* ep, UINT code = 0, bool log_error = true);
 	}
 
 	// * Catches std::exception and SEH errors
@@ -66,7 +66,7 @@ namespace h3
 	// * }
 	class H3SEHandler
 	{
-		const _se_translator_function old_SE_translator;
+		const _se_translator_function m_oldTranslator;
 	public:
 		_H3API_ H3SEHandler();
 		_H3API_ ~H3SEHandler();

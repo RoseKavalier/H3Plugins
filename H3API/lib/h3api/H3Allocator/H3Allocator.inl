@@ -30,6 +30,11 @@ namespace h3
 		F_delete(reinterpret_cast<PVOID>(block));
 	}
 	template<typename T>
+	inline VOID H3ObjectAllocator<T>::deallocate(T* block, size_t number) const noexcept
+	{
+		F_delete(reinterpret_cast<PVOID>(block));
+	}
+	template<typename T>
 	inline VOID H3ObjectAllocator<T>::construct(T * block) const noexcept
 	{
 		new(reinterpret_cast<PVOID>(block)) T();
@@ -60,14 +65,14 @@ namespace h3
 #endif
 
 	template<typename T>
-	inline size_t * H3ArrayAllocator<T>::GetArrayBase(T * block) const noexcept
+	inline size_t * H3ArrayAllocator<T>::getArrayBase(T * block) const noexcept
 	{
 		return reinterpret_cast<size_t*>(block) - 1;
 	}
 	template<typename T>
-	inline size_t H3ArrayAllocator<T>::GetArraySize(T * block) const noexcept
+	inline size_t H3ArrayAllocator<T>::getArraySize(T * block) const noexcept
 	{
-		return *GetArrayBase(block);
+		return *getArrayBase(block);
 	}
 	template<typename T>
 	inline H3ArrayAllocator<T>::H3ArrayAllocator() noexcept
@@ -83,12 +88,12 @@ namespace h3
 	template<typename T>
 	inline VOID H3ArrayAllocator<T>::deallocate(T * block) const noexcept
 	{
-		F_delete(reinterpret_cast<PVOID>(GetArrayBase(block)));
+		F_delete(reinterpret_cast<PVOID>(getArrayBase(block)));
 	}
 	template<typename T>
 	inline VOID H3ArrayAllocator<T>::construct(T * block) const noexcept
 	{
-		size_t number = GetArraySize(block);
+		size_t number = getArraySize(block);
 		for (size_t i = 0; i < number; ++i)
 		{
 			new(reinterpret_cast<PVOID>(block)) T();
@@ -98,7 +103,7 @@ namespace h3
 	template<typename T>
 	inline VOID H3ArrayAllocator<T>::construct(T * block, const T & value) const noexcept
 	{
-		size_t number = GetArraySize(block);
+		size_t number = getArraySize(block);
 		for (size_t i = 0; i < number; ++i)
 		{
 			new(reinterpret_cast<PVOID>(block)) T(value);
@@ -109,7 +114,7 @@ namespace h3
 	template<typename U>
 	inline VOID H3ArrayAllocator<T>::construct(T * block, const U & arg) const noexcept
 	{
-		size_t number = GetArraySize(block);
+		size_t number = getArraySize(block);
 		for (size_t i = 0; i < number; ++i)
 		{
 			new(reinterpret_cast<PVOID>(block)) T(arg);
@@ -119,7 +124,7 @@ namespace h3
 	template<typename T>
 	inline VOID H3ArrayAllocator<T>::destroy(T * block) const noexcept
 	{
-		size_t number = GetArraySize(block);
+		size_t number = getArraySize(block);
 		for (size_t i = 0; i < number; ++i)
 		{
 			block->~T();
@@ -167,7 +172,7 @@ namespace h3
 	template<typename ...Args>
 	inline VOID H3ArrayAllocator<T>::construct(T * block, Args && ...args)
 	{
-		size_t number = GetArraySize(block);
+		size_t number = getArraySize(block);
 		for (size_t i = 0; i < number; ++i)
 		{
 			new(reinterpret_cast<PVOID>(block)) T(std::forward<Args>(args)...);
@@ -239,6 +244,11 @@ namespace h3
 	{
 		return data == nullptr;
 	}
+	template<typename T, typename Allocator>
+	inline H3UniquePtr<T, Allocator>::operator BOOL() const
+	{
+		return data != nullptr;
+	}
 #ifdef _H3API_CPLUSPLUS11_
 	template<typename T, typename Allocator>
 	inline H3UniquePtr<T, Allocator>::H3UniquePtr(H3UniquePtr<T, Allocator>&& other) :
@@ -257,6 +267,69 @@ namespace h3
 		return *this;
 	}
 #endif
+
+	template<typename T>
+	inline H3AutoPtr<T>::H3AutoPtr(T* _Ptr) :
+		m_used(_Ptr != 0),
+		m_data(_Ptr)
+	{
+	}
+
+	template<typename T>
+	inline H3AutoPtr<T>::~H3AutoPtr()
+	{
+		if (m_used)
+		{
+			delete m_data;
+			m_used = FALSE;
+		}
+	}
+
+	template<typename T>
+	inline T* H3AutoPtr<T>::Get()
+	{
+		return m_data;
+	}
+
+	template<typename T>
+	inline T* H3AutoPtr<T>::operator->()
+	{
+		return m_data;
+	}
+
+	template<typename T>
+	inline T* H3AutoPtr<T>::Release()
+	{
+		T* ptr = m_data;
+		m_used = FALSE;
+		m_data = nullptr;
+		return ptr;
+	}
+
+	template<typename T>
+	inline BOOL8 H3AutoPtr<T>::Exists() const
+	{
+		return m_used;
+	}
+
+	template<typename T>
+	inline H3AutoPtr<T>::operator BOOL() const
+	{
+		return m_used != FALSE;
+	}
+
+	template<typename T>
+	inline BOOL H3AutoPtr<T>::operator!() const
+	{
+		return m_used == FALSE;
+	}
+
+	template<typename T>
+	inline T& H3AutoPtr<T>::operator*() const
+	{
+		return *m_data;
+	}
+
 }
 
 #endif /* #define _H3ObjectAllocator_INL_ */

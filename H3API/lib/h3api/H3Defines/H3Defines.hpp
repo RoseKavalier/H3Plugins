@@ -34,7 +34,7 @@ namespace h3
 		typedef H3DataPointer<H3TextFile,                   0x696A68,     true >  H3AdveventText_ptr;
 		typedef H3DataPointer<H3MouseManager,               0x6992B0,     true >  H3MouseMgr_ptr;
 		typedef H3DataPointer<H3WindowManager,              0x6992D0,     true >  H3WindowMgr_ptr;
-		typedef H3DataPointer<H3Executive,                  0x699550,     true >  H3Executive_ptr;
+		typedef H3DataPointer<H3ExecutiveMgr,               0x699550,     true >  H3Executive_ptr;
 		typedef H3DataPointer<H3Main,                       0x699538,     true >  H3Main_ptr;
 		typedef H3DataPointer<H3CombatManager,              0x699420,     true >  H3CombatMgr_ptr;
 		typedef H3DataPointer<H3TownManager,                0x69954C,     true >  H3TownMgr_ptr;
@@ -165,7 +165,7 @@ namespace h3
 	typedef H3Internal::H3AdveventText_ptr               P_AdveventText;
 	typedef H3Internal::H3MouseMgr_ptr                   P_MouseMgr;
 	typedef H3Internal::H3WindowMgr_ptr                  P_WindowMgr;
-	typedef H3Internal::H3Executive_ptr                  P_Executive;
+	typedef H3Internal::H3Executive_ptr                  P_ExecutiveMgr;
 	typedef H3Internal::H3Main_ptr                       P_Main;
 	typedef H3Internal::H3CombatMgr_ptr                  P_CombatMgr;
 	typedef H3Internal::H3TownMgr_ptr                    P_TownMgr;
@@ -261,7 +261,7 @@ namespace h3
 #define P_AdveventText               h3::H3Internal::H3AdveventText_ptr()
 #define P_MouseMgr                   h3::H3Internal::H3MouseMgr_ptr()
 #define P_WindowMgr                  h3::H3Internal::H3WindowMgr_ptr()
-#define P_Executive                  h3::H3Internal::H3Executive_ptr()
+#define P_ExecutiveMgr               h3::H3Internal::H3Executive_ptr()
 #define P_Main                       h3::H3Internal::H3Main_ptr()
 #define P_CombatMgr                  h3::H3Internal::H3CombatMgr_ptr()
 #define P_TownMgr                    h3::H3Internal::H3TownMgr_ptr()
@@ -312,60 +312,6 @@ namespace h3
 #define P_TownCreatureTypes          h3::H3Internal::H3TownCreatureTypes_ptr()
 
 #endif
-
-_H3API_DEPRECATED_("See original definition to get its replacement.") inline void H3DeprecatedFunctionMessage(LPCSTR newFunction) {}
-
-#define h3_MagicSchoolName(...)        H3DeprecatedFunctionMessage("Use P_SpellbookText")
-#define h3_PrimarySkillName(...)       H3DeprecatedFunctionMessage("Use P_PrimarySkillName")
-#define h3_ObjectName(...)             H3DeprecatedFunctionMessage("Use P_ObjectName")
-#define h3_MineNames(...)              H3DeprecatedFunctionMessage("Use P_MineNames")
-#define h3_TentColors(...)             H3DeprecatedFunctionMessage("Use P_TentColors")
-#define h3_CastleName(...)             H3DeprecatedFunctionMessage("Use P_CastleName")
-#define h3_TerrainName(...)            H3DeprecatedFunctionMessage("Use P_TerrainName")
-#define h3_ResourceName(...)           H3DeprecatedFunctionMessage("Use P_ResourceName")
-#define h3_RandomSignText(...)         H3DeprecatedFunctionMessage("Use P_RandomSignText")
-#define h3_PlayerColor(...)            H3DeprecatedFunctionMessage("Use P_PlayerColor")
-#define h3_DwellingNames1(...)         H3DeprecatedFunctionMessage("Use P_DwellingNames1")
-#define h3_DwellingNames4(...)         H3DeprecatedFunctionMessage("Use P_DwellingNames4")
-#define h3_SpecialBuildingCosts(...)   H3DeprecatedFunctionMessage("Use P_SpecialBuildingCosts")
-#define h3_DwellingBuildingCosts(...)  H3DeprecatedFunctionMessage("Use P_DwellingBuildingCosts")
-#define h3_SecondarySkillsInfo(...)    H3DeprecatedFunctionMessage("Use P_SecondarySkillsInfo")
-#define h3_DataPath                    H3DeprecatedFunctionMessage("Use P_DataPath")
-#define h3_ActivePlayer                H3DeprecatedFunctionMessage("Use P_ActivePlayer")
-#define h3_HWND                        H3DeprecatedFunctionMessage("Use P_HWND")
-#define h3_ArtifactCount               H3DeprecatedFunctionMessage("Use P_ArtifactCount")
-#define h3_CreatureCount               H3DeprecatedFunctionMessage("Use P_CreatureCount")
-#define h3_HeroCount                   H3DeprecatedFunctionMessage("Use P_HeroCount")
-#define h3_TownCount                   H3DeprecatedFunctionMessage("Use P_TownCount")
-#define h3_SpellCount                  H3DeprecatedFunctionMessage("Use P_SpellCount")
-#define gameWidth                      H3DeprecatedFunctionMessage("Use P_GameWidth")
-#define gameHeight                     H3DeprecatedFunctionMessage("Use P_GameHeight")
-#define gameMaxWidth                   H3DeprecatedFunctionMessage("Use P_TextDlgMaxWidth")
-#define gameMaxHeight                  H3DeprecatedFunctionMessage("Use P_TextDlgMaxHeight")
-#define h3_CurrentPlayerID             H3DeprecatedFunctionMessage("Use P_CurrentPlayerID")
-#define h3_CurrentAnimationSpeed       H3DeprecatedFunctionMessage("Use P_CurrentAnimationSpeed")
-#define h3_IsCampaignGame              H3DeprecatedFunctionMessage("Use P_IsCampaignGame")
-#define h3_AnimationSpeed              H3DeprecatedFunctionMessage("Use P_AnimationSpeed")
-#define h3_BattleShadowHexes           H3DeprecatedFunctionMessage("Use P_BattleShadowHexes")
-#define h3_Instance                    H3DeprecatedFunctionMessage("Use P_Instance")
-#define SPEED_BONUS_BOOTS              H3DeprecatedFunctionMessage("Use P_BootsOfSpeedBonus")
-#define SPEED_BONUS_GLOVES             H3DeprecatedFunctionMessage("Use P_EquestriansGlovesBonus")
-#define WATER_BONUS_NECKLACE           H3DeprecatedFunctionMessage("Use P_NecklaceOceanGuidanceBonus")
-#define WATER_BONUS_SEA_CAPTAIN        H3DeprecatedFunctionMessage("Use P_SeaCaptainsHatBonus")
-#define SPEED_BONUS_STABLES            H3DeprecatedFunctionMessage("Use P_StablesBonus")
-#define WATER_BONUS_LIGHTHOUSE         H3DeprecatedFunctionMessage("Use P_LighthouseBonus")
-#define h3_HeroRetreated               H3DeprecatedFunctionMessage("Use P_HeroRetreated")
-#define h3_HeroSurrendered             H3DeprecatedFunctionMessage("Use P_HeroSurrendered")
-#define h3_AutoSolo                    H3DeprecatedFunctionMessage("Use P_AutoSolo")
-#define h3_HumanID                     H3DeprecatedFunctionMessage("Use P_HumanID")
-#define h3_ActivePlayerBitset          H3DeprecatedFunctionMessage("Use P_ActivePlayerBitset")
-#define h3_ColorMode                   H3DeprecatedFunctionMessage("Use P_GreenMask")
-#define h3_QuestsText                  H3DeprecatedFunctionMessage("Use P_QuestsText")
-#define h3_SeersText                   H3DeprecatedFunctionMessage("Use P_SeersText")
-#define h3_TownDependencies            H3DeprecatedFunctionMessage("Use P_TownDependencies")
-#define P_BinaryTree                   H3DeprecatedFunctionMessage("Use P_ResourceManager")
-#define C_ButtonWav                    H3DeprecatedFunctionMessage("Use P_ButtonWav")
-
 }
 
 #endif /* #define _H3DEFINES_HPP_ */

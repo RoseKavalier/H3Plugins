@@ -16,14 +16,14 @@
 namespace h3
 {
 	template<typename T>
-	H3Point F_ReverseCoordinates(T * current_point, T * base_point, INT map_size)
+	H3Point F_ReverseCoordinates(T * current_point, T * base_point, UINT map_size)
 	{
 		H3Point coordinates;
 		UINT delta = current_point - base_point;
-		coordinates.x = INT(delta % map_size);
+		coordinates.x = delta % map_size;
 		delta /= map_size;
-		coordinates.y = INT(delta % map_size);
-		coordinates.z = INT(delta / map_size);
+		coordinates.y = delta % map_size;
+		coordinates.z = delta / map_size;
 		return coordinates;
 	}
 }

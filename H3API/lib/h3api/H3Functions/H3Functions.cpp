@@ -14,10 +14,6 @@
 
 namespace h3
 {
-	_H3API_DEPRECATED_("Use F_utf8_to_unicode, or F_ansi_to_unicode") _H3API_ LPCWSTR F_MultiByteToWideChar(LPCSTR text, INT textLength, WCHAR * buffer)
-	{
-		return nullptr;
-	}
 	_H3API_ VOID F_Breakpoint()
 	{
 		if (IsDebuggerPresent())
@@ -85,7 +81,7 @@ namespace h3
 	_H3API_ BOOL F_MessageBoxChoice(LPCSTR text)
 	{
 		FASTCALL_12(VOID, 0x4F6C00, text, 2, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
-		return H3Internal::WindowManager()->ClickedOK();
+		return H3Internal::_windowManager()->ClickedOK();
 	}
 	_H3API_ VOID F_PrintScreenText(LPCSTR text)
 	{
@@ -98,6 +94,14 @@ namespace h3
 	_H3API_ H3TileVision* F_GetTileVision(INT x, INT y, INT z)
 	{
 		return FASTCALL_3(H3TileVision*, 0x4F8070, x, y, z);
+	}
+	_H3API_ H3Map_TileVision F_GetTileVisionMap()
+	{
+		return H3Map_TileVision(PH3TileVision(PtrAt(0x698A48)), IntAt(0x6783C8), H3Internal::_main()->mainSetup.hasUnderground);
+	}
+	_H3API_ H3FastMap_TileVision F_GetTileVisionFastMap()
+	{
+		return H3FastMap_TileVision(PH3TileVision(PtrAt(0x698A48)), IntAt(0x6783C8), H3Internal::_main()->mainSetup.hasUnderground);
 	}
 	_H3API_ VOID F_ReveaTile(INT x, INT y, INT z)
 	{
@@ -171,11 +175,13 @@ namespace h3
 	{
 		return FASTCALL_2(INT, 0x50B3C0, min_value, max_value);
 	}
-	_H3API_ INT F_GetLocalTime()
+	_H3API_ H3String F_GetLocalTime()
 	{
 		SYSTEMTIME time;
 		STDCALL_1(VOID, PtrAt(0x63A248), &time);
-		return F_sprintf("%04d.%02d.%02d - %02dh%02dm%02ds", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+		H3String str;
+		str.Printf("%04d.%02d.%02d - %02dh%02dm%02ds", time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+		return str;
 	}
 	_H3API_ FILE* F_fopen(LPCSTR filename, LPCSTR mode)
 	{
@@ -286,7 +292,7 @@ namespace h3
 			return FALSE;
 		return szWritten == bytesToWrite;
 	}
-	_H3API_ H3UniquePtr<WCHAR> F_utf8_to_unicode(LPCSTR utf8)
+	_H3API_ H3UniquePtr<WCHAR> F_utf8ToUnicode(LPCSTR utf8)
 	{
 		H3UniquePtr<WCHAR> ptr;
 		if (!utf8)
@@ -303,7 +309,7 @@ namespace h3
 
 		return ptr;
 	}
-	_H3API_ H3UniquePtr<WCHAR> F_ansi_to_unicode(LPCSTR ansi)
+	_H3API_ H3UniquePtr<WCHAR> F_AnsiToUnicode(LPCSTR ansi)
 	{
 		H3UniquePtr<WCHAR> ptr;
 		if (!ansi)

@@ -66,7 +66,7 @@
 // * in which case all you are required to do is:
 // * #include "[relative_path]/H3API.hpp"
 // *
-// * It it now possible as well to complie H3API into a
+// * It it now possible as well to compile H3API into a
 // * static library, in this case you need to write:
 // * #define _H3API_LIBRARY_
 // * #include "[relative_path]/H3API.hpp"
@@ -86,10 +86,15 @@
 // * by the game's own operators.
 // * be mindful of hooking too early in the launch process when using this.
 
-// * _H3_STD_CONVERSIONS_
+// * _H3API_STD_CONVERSIONS_
 // * allows conversion between the following formats
 // * std::string <<==>> h3::H3String
 // * std::vector <<==>> h3::H3Vector
+
+// * _H3API_STD_VECTOR_
+// * If you are using Visual Studio 2013 or more recent you can
+// * define this preprocessor to use H3StdVector<> which acts as std::vector<>
+// * with correct padding and uses H3ObjectAllocator<>
 
 // * _H3API_EXCEPTION_
 // * tells the library to include the H3Exception exception handler within your project

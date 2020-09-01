@@ -1,4 +1,92 @@
 #====================
+#   Version 1.3.0
+#====================
+[code]
+* Conditionally added H3StdVector, a H3Vector equivalent derived from std::vector
+    Define _H3API_STD_VECTOR_ to enable this class
+    Requires Visual Studio 2013 or more recent (may be revised if inconsistencies or other libraries conform to the format)
+* Fixed colorization issues with H3Palette565
+* Added LightShadow(), DarkShadow() and Blend() to H3RGB565 and H3ARGB888 emulating h3's equivalent algorithms
+* Added operator BOOL() to H3UniquePtr<>
+* Fixed H3ResourceManager::iterator++
+* Added H3WavLoader
+* Defined H3WavFile::hSample and H3SoundMgr::hsamples, ::PlaySoundAndWait
+* Renamed H3Executive to H3ExecutiveMgr without deprecation (and P_Executive -> P_ExecutiveMgr)
+* Added a few member functions to H3CombatMgr with descriptions
+* Modified H3Tree::H3Node member order to be more efficient
+* H3String and H3Vector changed some remaining signed integers to UINT
+* Added more details to H3HeroInfo
+* H3ObjectAllocator<> should now have std::allocator conformance
+* Added H3SpreadSheet class, allowing you to write h3 text tables
+* Primitive type declaration are moved to H3Types.hpp.
+    This light header can be included in you .h or .hpp file with basic forward declarations to lighten include load
+* H3Vector now takes const& input
+* Added H3Set, a light version of std::set as it appears within heroes3
+    H3ResourceManager converted to H3Set
+* H3ObjectMask access improved with an iterator and (x, y) probing
+* H3TownDependencies has been reworked to be more descriptive using bitfields
+* H3MapItem's mirror and access now have bitfields as unions for easier use
+* H3CombatMonster received some more field details, protected pending some verifications
+* Added basic H3API.natvis to facilitate debug visualization of H3 containers
+
+[maintenance]
+* Latest 1.2 branch archived in a separate branch for some time
+* _H3_STD_CONVERSIONS_ renamed _H3API_STD_CONVERSIONS_
+* H3Palette565::Get32bitColors() now returns H3Palette32* instead of H3ARGB888*
+* Added CMake filtering and added BINARY_CUSTOM_DIR option to set your own output directory
+* 'QuickBattle' related structures re-branded as 'FastBattle' to better distinguish it from the Quick Combat option
+* ArraySize is removed; use std::size in its place
+* The library is converted to 4-bytes alignment which will remove most h3align padding fields
+    Some structures are not 4-byte aligned (e.g. H3Hero) and will remain unaligned (1-byte)
+    More structures now have their sizes statically verified
+* Several enums renamed to follow coding style.
+* Internal functions now all start with an underscore and follow _camelCase
+* H3SmartPointer renamed H3AutoPtr<> as a stand-in for std::auto_ptr<>
+* All struct enums are being moved to NH3Constants, structures will receive a typedef
+    As a bonus, more structures will have access to relevant NH3Constants
+    However this requires 'strong' typing to access the enum values
+    e.g. H3Spell::eSpells::DIMENSION_DOOR instead of H3Spell::DIMENSION_DOOR
+* Comments style revisited for headers
+* Better documentation of code continues
+* No deprecated items have been removed, removal will be done in 1.4.0
+
+#====================
+#   Version 1.2.0
+#====================
+[code]
+* Added H3Bitmap, a class to convert H3LoadedPcx16 to a bitmap which may be saved externally
+* Added H3Map<> and H3FastMap<>, helper classes to navigate [x][y][z] maps declared as 1-d array
+
+[maintenance]
+* Version 1.1.0 archived in a separate branch for some time
+* Modified bitfield style to follow struct member style
+* Standardized most of the library to the coding style
+* F_GetLocalTime() now returns H3String instead of printing to h3_TextBuffer
+* Removed H3Functions as a dependency within the library
+
+#====================
+#   Version 1.1.0
+#====================
+[code]
+* Removed all deprecated items from Version 1.0.0
+* Fixed reversed AI fields within H3Hero
+* Added information to H3CombatMonster regarding contour highlight
+* Changed H3String integer assignment to use a temporary h3_TextBuffer
+* Added width information to H3Font
+* H3Palette565 colors now defined as union to easily capture HDmod 32bit palette
+* Fixed rgb order issues in H3RGB formats
+* Added named colors to H3ARGB888
+* H3TownManager is more fleshed out
+* Added operator[] access to H3LoadedDef and H3DefGroup
+* H3BinaryLoader now casts to BOOL to verify its contents were successfully acquired
+* Added H3Patcher::ObjectPatch to easily patch memory structure's members
+
+[maintenance]
+* Version 1.0.0 archived in a separate branch for some time
+* Continuing conformance of code to established guidelines
+* Next version will propose new deprecations
+
+#====================
 #   Version 1.0.0
 #====================
 [code]
@@ -20,8 +108,8 @@
 * H3DlgItems have also had their virtual functions explicitly written out
   Still a work in progress, H3Dlg does not provide a direct way of creating them yet
 * H3Vector indices now are all unsigned
-	Added Remove(_Elem*) and Remove(_Elem*, _Elem*) that act like erase()
-	Size() now behaves like std::vector::size(), the existing Size() was renamed RawSize()
+    Added Remove(_Elem*) and Remove(_Elem*, _Elem*) that act like erase()
+    Size() now behaves like std::vector::size(), the existing Size() was renamed RawSize()
 * H3String now uses UINT everywhere for length of the string
   Added Erase(first, last) and variants to erase characters between to mean [first, last)
   Remove(first, last) now uses Erase()
@@ -39,8 +127,24 @@
     patcher_x86 has equivalent PatcherInstance::WriteAddressOf() if you prefer that method
 * H3UniquePtr is a weak form of std::unique_ptr using H3Allocator specifically to free memory
 * Many minor improvements and bug fixes
+* H3Defines now use uniform typedef of template classes across macro and non-macro option setting
+  this makes it much easier to maintain both styles, switch back and forth between both,
+  and also using them will help show intent over the old style of macros/functions.
+  * H3DataPointer
+    * to get the held data as reference, dereference it with operator *
+    * to get the held data as pointer, take its address with operator operator &
+    * to access regularly, use operator `->`
+    * cannot be copied or assigned from (constructor(const &), operator=(const &))
+    * however has operator cast to its template type as pointer
+  * H3DataArrayPointer same as H3DataArrayPointer but for table-style data, plus:
+    * operator[index] access as reference
+    * operator(index) access as pointer
+    * operator cast is through its address to allow operator[] use
+  * H3PrimitivePointer same as H3DataPointer but for primitive types only (e.g. char, char*, bool, int, ...)
+  * H3PrimitiveArrayPointer same as H3PrimitivePointer but with the same additions from H3DataArrayPointer
 
 [maintenance]
+* reworked library structure, all setup and configurations are now done through H3_Config.hpp
 * added deprecated message to _H3API_DEPRECATED_
 * deprecated functions and macros will be removed entirely after a certain period of time
 * added _H3API_STATIC_ASSERT_ to perform compile-time assertion

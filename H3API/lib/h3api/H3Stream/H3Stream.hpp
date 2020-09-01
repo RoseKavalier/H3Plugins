@@ -139,12 +139,12 @@ namespace h3
 		DWORD        m_buffer_size;
 		DWORD        m_buffer_position;
 
-		_H3API_ LPCSTR GetModeFormat();
+		_H3API_ LPCSTR getModeFormat();
 		template<typename T>
-		inline VOID Printf(LPCSTR format, T value);
-		_H3API_ VOID WriteNewLine();
-		_H3API_ BOOL CanWrite();
-		_H3API_ BOOL CanRead();
+		inline VOID printf(LPCSTR format, T value);
+		_H3API_ VOID writeNewLine();
+		_H3API_ BOOL canWrite();
+		_H3API_ BOOL canRead();
 	};
 
 	// * read/write using CreateFile (not h3 CreateFile due to HDmod hooks)
@@ -166,7 +166,7 @@ namespace h3
 	public:
 		_H3API_ H3File();
 		_H3API_ ~H3File();
-		_H3API_ void Close();
+		_H3API_ VOID Close();
 
 		// * to read
 		_H3API_ BOOL Open(LPCSTR const file);
@@ -192,6 +192,81 @@ namespace h3
 		_H3API_ BOOL Write(const H3String& string);
 		template<typename T>
 		inline BOOL Write(const T& data);
+	};
+
+	/**
+	 * @brief writes a text file following h3 format (viewable with TxtEdit).
+	 * The '\r' and '\t' characters are reserved for cell / line delimitations, avoid their use whenever possible
+	 */
+	class H3SpreadSheet
+	{
+	public:
+		/**
+		 * @brief clears the contents of the spreadsheet
+		 */
+		_H3API_ VOID Clear();
+		/**
+		 * @brief inserts the current text and adds a new line
+		 */
+		_H3API_ VOID NewLine();
+		/**
+		 * @brief insert an empty column at current location
+		 */
+		_H3API_ VOID NewColumn();
+		/**
+		 * @brief unsigned integers will be printed in hexadecimal format
+		 */
+		_H3API_ H3SpreadSheet& Hex();
+		/**
+		 * @brief unsigned integers will be printed in decimal format
+		 */
+		_H3API_ H3SpreadSheet& Dec();
+		/**
+		 * @brief save the spreadsheet's contents to specifield file name. The contents are then cleared
+		 */
+		_H3API_ BOOL Save(LPCSTR const file);
+		/**
+		 * @brief insert a line at specified row
+		 */
+		_H3API_ BOOL InsertLine(const H3String& line, UINT row = static_cast<UINT>(-1));
+		/**
+		 * @brief passing a H3SpreadSheet does nothing, only useful to modify Hex/Dec modes in a << chain
+		 */
+		_H3API_ H3SpreadSheet& operator<<(const H3SpreadSheet&);
+		/**
+		 * @brief insert text and start a new column
+		 */
+		_H3API_ H3SpreadSheet& operator<<(LPCSTR text);
+		/**
+		 * @brief insert an integer and start a new column
+		 */
+		_H3API_ H3SpreadSheet& operator<<(INT32 value);
+		/**
+		 * @brief insert an unsigned integer and start a new column. May be hexadecimal with Hex() method
+		 */
+		_H3API_ H3SpreadSheet& operator<<(UINT32 value);
+		/**
+		 * @brief insert a floating integer and start a new column
+		 */
+		_H3API_ H3SpreadSheet& operator<<(FLOAT value);
+		/**
+		 * @brief insert a double value and start a new column
+		 */
+		_H3API_ H3SpreadSheet& operator<<(DOUBLE value);
+		/**
+		 * @brief insert a single character and start a new column
+		 */
+		_H3API_ H3SpreadSheet& operator<<(CHAR ch);
+		/**
+		 * @brief insert a string and start a new column
+		 */
+		_H3API_ H3SpreadSheet& operator<<(const H3String& line);
+	private:
+		_H3API_ VOID addTab();
+
+		H3String           m_currentLine;
+		H3Vector<H3String> m_lines;
+		BOOL               m_hexMode;
 	};
 }
 

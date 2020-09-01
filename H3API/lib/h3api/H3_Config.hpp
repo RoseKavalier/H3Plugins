@@ -33,6 +33,9 @@
 #undef max
 #endif
 
+// * all H3API specific types
+#include "../H3Types.hpp"
+
 // * use STL functions instead of C-style
 #include <algorithm>
 // * Input / output functions
@@ -43,23 +46,31 @@
 #endif
 
 #if (__cplusplus >= 199711L || (_MSC_VER && _MSC_VER >= 1500))
-// * true if your compiler is C++98 compatible
+/**
+ * @brief indicates your compiler is C++98 compatible
+ */
 #define _H3API_CPLUSPLUS98_
 #endif
 
 #if (__cplusplus >= 201103L || (_MSC_VER && _MSC_VER >= 1900))
-// * true if your compiler is C++11 compatible
-// * this checks for C++11 standard or Visual Studio 2015+ because VS2013 is not fully compliant
+/**
+ * @brief indicates your compiler is C++11 compatible
+ * this checks for C++11 standard or Visual Studio 2015+ because VS2013 is not fully compliant
+ */
 #define _H3API_CPLUSPLUS11_
 #endif
 
 #if (__cplusplus >= 201402L || (_MSC_VER && _MSC_VER >= 1900))
-// * true if your compiler is C++14 compatible
+/**
+ * @brief indicates your compiler is C++14 compatible
+ */
 #define _H3API_CPLUSPLUS14_
 #endif
 
 #if (__cplusplus >= 201703L || (_MSC_VER && _MSC_VER >= 1910))
-// * true if your compiler is C++14 compatible
+/**
+ * @brief indicates your compiler is C++17 compatible
+ */
 #define _H3API_CPLUSPLUS17_
 #endif
 
@@ -90,196 +101,204 @@
 #endif
 #else
 #ifndef _H3API_ENUM_
-// * enum class
+/**
+ * @brief enum class
+ */
 #define _H3API_ENUM_ enum class
 #endif
 #endif
 
 #if _MSC_VER && _MSC_VER >= 1900
 #ifndef _H3API_DEPRECATED_
-// * indicates this content is deprecated
-// * and replaced by equivalent expressions
+/**
+ * @brief indicates this content is deprecated and replaced by equivalent expressions
+ */
 #define _H3API_DEPRECATED_(msg) [[deprecated(msg)]]
 #endif
 #elif _MSC_VER
 #ifndef _H3API_DEPRECATED_
-// * indicates this content is deprecated
-// * and replaced by equivalent expressions
+/**
+ * @brief indicates this content is deprecated and replaced by equivalent expressions
+ */
 #define _H3API_DEPRECATED_(msg) __declspec(deprecated(msg))
 #endif
 #elif defined(__GNUC__) || defined(__clang__)
 #ifndef _H3API_DEPRECATED_
-// * indicates this content is deprecated
-// * and replaced by equivalent expressions
+/**
+ * @brief indicates this content is deprecated and replaced by equivalent expressions
+ */
 #define _H3API_DEPRECATED_(msg) __attribute__((deprecated(msg)))
 #endif
 #else
 #pragma message("WARNING: _H3API_DEPRECATED_ is not implemented for this compiler.")
 #ifndef _H3API_DEPRECATED_
-// * indicates this content is deprecated
-// * and replaced by equivalent expressions
-#define _H3API_DEPRECATED_
+/**
+ * @brief indicates this content is deprecated and replaced by equivalent expressions
+ */
+#define _H3API_DEPRECATED_(msg)
 #endif
 #endif
 
+// * used to deprecate macros
+namespace h3
+{
+	namespace H3Internal
+	{
+		_H3API_DEPRECATED_("See original definition to get its replacement.") inline void H3DeprecatedFunctionMessage(LPCSTR newFunction) {}
+	} // namespace H3Internal
+} // namespace h3
+
 #ifdef _MSC_VER
-#ifndef __H3API_FORCEINLINE_
-// * used to force function to be inline
-#define __H3API_FORCEINLINE_ __forceinline
+#ifndef _H3API_FORCEINLINE_
+/**
+ * @brief used to force function to be inline
+ */
+#define _H3API_FORCEINLINE_ __forceinline
 #endif
 #elif defined(__GNUC__)
-#ifndef __H3API_FORCEINLINE_
-// * used to force function to be inline
-#define __H3API_FORCEINLINE_ inline __attribute__((__always_inline__))
+#ifndef _H3API_FORCEINLINE_
+ /**
+ * @brief used to force function to be inline
+ */
+#define _H3API_FORCEINLINE_ inline __attribute__((__always_inline__))
 #endif
 #elif defined(__CLANG__)
 #if __has_attribute(__always_inline__)
-#ifndef __H3API_FORCEINLINE_
-// * used to force function to be inline
-#define __H3API_FORCEINLINE_ inline __attribute__((__always_inline__))
+#ifndef _H3API_FORCEINLINE_
+/**
+ * @brief used to force function to be inline
+ */
+#define _H3API_FORCEINLINE_ inline __attribute__((__always_inline__))
 #endif
 #else
-#ifndef __H3API_FORCEINLINE_
-// * used to force function to be inline
-#define __H3API_FORCEINLINE_ inline
+#ifndef _H3API_FORCEINLINE_
+/**
+ * @brief used to force function to be inline
+ */
+#define _H3API_FORCEINLINE_ inline
 #endif
 #endif
 #else
-#ifndef __H3API_FORCEINLINE_
-// * used to force function to be inline
-#define __H3API_FORCEINLINE_ inline
+#ifndef _H3API_FORCEINLINE_
+/**
+ * @brief used to force function to be inline
+ */
+#define _H3API_FORCEINLINE_ inline
 #endif
 #endif
-
-// * Slaps top of car
-// * This bad boy can hold just about anything
-typedef void(*naked_t)();
-// * generic typedef to indicate this is a h3 function
-typedef unsigned long h3func;
-// * 1-byte sized boolean
-typedef char          BOOL8;
-// * Used for unknown structure members
-typedef char          h3unk;
-// * Used for alignment structure members
-typedef char          h3align;
-
-// * for uniformity's sake
-#ifdef VOID
-#undef VOID
-// * void type
-typedef void VOID;
-#else
-// * void type
-typedef void VOID;
-#endif
-
-// * typedef safety declarations
-// * no checks are needed here based on C++03 Standard 7.1.3 typedef specifier
-// * https://stackoverflow.com/questions/8594954/repeated-typedefs-invalid-in-c-but-valid-in-c?answertab=votes#tab-top
-typedef int              INT, *PINT;
-typedef unsigned int     UINT, *PUINT;
-typedef signed char      INT8, *PINT8;
-typedef signed short     INT16, *PINT16;
-typedef signed int       INT32, *PINT32;
-typedef signed __int64   INT64, *PINT64;
-typedef unsigned char    UINT8, *PUINT8;
-typedef unsigned short   UINT16, *PUINT16;
-typedef unsigned int     UINT32, *PUINT32;
-typedef unsigned __int64 UINT64, *PUINT64;
-typedef float            FLOAT;
-typedef FLOAT                    *PFLOAT;
-typedef double           DOUBLE;
-typedef DOUBLE                   *PDOUBLE;
-typedef char             CHAR;
-typedef CHAR                     *PCHAR;
-typedef unsigned char    UCHAR;
-typedef UCHAR                    *PUCHAR;
-typedef unsigned char    BYTE;
-typedef BYTE                     *PBYTE;
-typedef unsigned short   WORD;
-typedef WORD                     *PWORD;
-typedef unsigned long    DWORD;
-typedef DWORD                    *PDWORD;
-typedef const char               *LPCSTR;
-typedef void                     *PVOID;
 
 #ifndef _H3API_DECLARE_
-// * forward-defines a struct, pointer to struct and reference to struct
+/**
+ * @brief forward-defines a struct, pointer to struct and reference to struct
+ */
 #define _H3API_DECLARE_(NAME) struct NAME; typedef struct NAME *P ## NAME; typedef struct NAME &R ## NAME;
 #endif
 
+#ifndef _H3API_CDECLARE_
+/**
+ * @brief forward-defines a class, pointer to class and reference to class
+ */
+#define _H3API_CDECLARE_(NAME) class NAME; typedef class NAME *P ## NAME; typedef class NAME &R ## NAME;
+#endif
+
 #ifndef _H3API_EXPORT_
-// * exports a function without name mangling
-// * to use, type the following within a function's definition:
-// * #pragma _H3API_EXPORT_
+/**
+ * @brief exports a function without name mangling
+ * to use, type the following within a function's definition:
+ * #pragma _H3API_EXPORT_
+ */
 #define _H3API_EXPORT_ comment(linker, "/EXPORT:" __FUNCTION__ "=" __FUNCDNAME__)
 #endif
 
-#ifndef ArraySize
-// * returns number of elements in an array
-#define ArraySize(arr) (sizeof(arr) / sizeof((arr)[0]))
-#endif
-
 #ifndef Abs
-// * returns absolute value of number
+/**
+ * @brief returns absolute value of number
+ */
 #define Abs(num) (((num) >= 0) ? (num) : (-(num)))
 #endif
 
 #pragma region Access Macros
 #ifndef StrAt
-// * returns c-string at address
+/**
+ * @brief returns c-string at address
+ */
 #define StrAt(address) (*(LPCSTR*)(address))
 #endif
 #ifndef PtrAt
-// * returns unsigned int at address
+/**
+ * @brief returns unsigned int at address
+ */
 #define PtrAt(address) (*(UINT*)(address))
 #endif
 #ifndef DwordAt
-// * returns unsigned int at address
+/**
+ * @brief returns unsigned int at address
+ */
 #define DwordAt(address) (*(UINT*)(address))
 #endif
 #ifndef IntAt
-// * returns signed int at address
+/**
+ * @brief returns signed int at address
+ */
 #define IntAt(address) (*(INT32*)(address))
 #endif
 #ifndef WordAt
-// * returns unsigned short at address
+/**
+ * @brief returns unsigned short at address
+ */
 #define WordAt(address) (*(UINT16*)(address))
 #endif
 #ifndef ShortAt
-// * returns signed short at address
+/**
+ * @brief returns signed short at address
+ */
 #define ShortAt(address) (*(INT16*)(address))
 #endif
 #ifndef ByteAt
-// * returns unsigned char at address
+/**
+ * @brief returns unsigned char at address
+ */
 #define ByteAt(address) (*(UINT8*)(address))
 #endif
 #ifndef CharAt
-// * returns signed char at address
+/**
+ * @brief returns igned char at address
+ */
 #define CharAt(address) (*(INT8*)(address))
 #endif
 #ifndef FloatAt
-// * returns float at address
+/**
+ * @brief returns float at address
+ */
 #define FloatAt(address) (*(FLOAT*)(address))
 #endif
 #ifndef FuncAt
-// * returns address of function at call
-// * can also be used to return destination of JMP
+/**
+ * @brief returns address of function at call
+ * can also be used to get destination of JMP
+ */
 #define FuncAt(address) (DwordAt((address) + 1) + (address) + 5)
 #endif
 #ifndef ValueAsDword
-// * used to get the hexadecimal value of a type T instead of getting a casted value
+/**
+ * @brief used to get the hexadecimal value of a type T instead of getting a casted value
+ * useful to convert a FLOAT to DWORD, e.g. 0.25f is returned as 0x3E800000h instead of 0h
+ */
 #define ValueAsDword(value) (DwordAt(&(value)))
 #endif
 #pragma endregion Access Macros
 
 #ifndef _H3API_STR_EXPAND_
-// * inserts text representation of macro
+/**
+ * @brief inserts text representation of macro
+ */
 #define _H3API_STR_EXPAND_(x) #x
 #endif
 
 #ifndef _H3API_STR_
-// * expands a macro into its actual text
+/**
+ * @brief expands a macro into its actual text
+ */
 #define _H3API_STR_(x) _H3API_STR_EXPAND_(x)
 #endif
 
@@ -288,14 +307,17 @@ namespace h3
 	// * based on https://stackoverflow.com/a/1980156 by Gregory Pakosz
 #ifndef _H3API_STATIC_ASSERT_
 #ifdef _H3API_NO_VALIDATION_
-	// * disabled compilation-time assertion
-	// * undefine _H3API_NO_VALIDATION_ to enable these checks
+	/**
+	 * @brief disabled compilation-time assertion
+	 * undefine _H3API_NO_VALIDATION_ to enable these checks
+	 */
 #define _H3API_STATIC_ASSERT_(condition, message)
 #else /* !_H3API_NO_VALIDATION_ */
 #ifdef _H3API_CPLUSPLUS11_
-
-	// * a compile-time assertion to ensure integrity of structure size and use of some templates
-	// * define _H3API_NO_VALIDATION_ to remove these checks
+	/**
+	 * @brief compile-time assertion to ensure integrity of structure size and use of some templates
+	 * define _H3API_NO_VALIDATION_ to remove these checks
+	 */
 #define _H3API_STATIC_ASSERT_(condition, message) static_assert(condition, message)
 #else /* !_H3API_CPLUSPLUS11_ */
 	namespace H3Internal
@@ -311,9 +333,11 @@ namespace h3
 
 	// * ugly but it should get the job done...
 
-	// * a compile-time assertion to ensure integrity of structure size and use of some templates
-	// * $message is not used and is simply a placeholder for static_assert
-	// * define _H3API_NO_VALIDATION_ to remove these checks
+	/**
+	 * @brief compile-time assertion to ensure integrity of structure size and use of some templates
+	 * $message is not used and is simply a placeholder for static_assert
+	 * define _H3API_NO_VALIDATION_ to remove these checks
+	 */
 #define _H3API_STATIC_ASSERT_(condition, message)\
 	struct _H3API_CONCATENATE_(H3StaticAssertion_at_line_, __LINE__)\
 	{\
@@ -325,6 +349,18 @@ namespace h3
 #endif /* _H3API_NO_VALIDATION_ */
 #endif /* _H3API_STATIC_ASSERT_ */
 
+#ifndef _H3API_ASSERT_SIZE_
+/**
+ * @brief Performs sizeof() static_assert on the named structure to guarantee library integrity
+ */
+#define _H3API_ASSERT_SIZE_(name, size) _H3API_STATIC_ASSERT_(sizeof(name) == size, #name " size is incorrect")
+#endif
+
+#ifndef _H3API_ASSERT_OFFSET_
+
+#define _H3API_ASSERT_OFFSET_(name, member, offset) _H3API_STATIC_ASSERT_(offsetof(name, member) == offset, #name "::" #member " offset invalid")
+#endif
+
 	namespace H3Internal
 	{
 		// * std::enable_if is only available as of C++11
@@ -335,7 +371,7 @@ namespace h3
 		struct enable_if<true, T> { typedef T type; };
 	}
 
-	// * this region declares a number of template functions to be used to call H3 functions;
+// * this region declares a number of template functions to be used to call H3 functions;
 // * template functions are superior to the old macro-style as there is no forced conversion
 // * of arguments to a specific type; there is no longer complicated logic required to
 // * pass a float or double to a function, it is done implicitly;
@@ -1088,8 +1124,9 @@ namespace h3
 
 #pragma endregion
 #pragma endregion Model Functions macros
-
-	// * objects marked with this should not be transferable
+	/**
+	 * @brief objects marked with this should not be directly transferable
+	 */
 	class H3Uncopyable
 	{
 	public:
@@ -1098,37 +1135,68 @@ namespace h3
 		H3Uncopyable(const H3Uncopyable&);
 		H3Uncopyable& operator=(const H3Uncopyable&);
 	};
-
-	// * template model to access data structures within h3 memory
-	// * is_pointer indicates that the address is a pointer
+	/**
+	 * @brief template model to access data structures within h3 memory
+	 * DataPointer is not copyable and cannot be assigned to other variables.
+	 * There is an operator cast to data type as well as operator& and operator*
+	 * to achieve this task, so that your intentions may be clear.
+	 * @tparam type indicates which type of data is pointed to
+	 * @tparam address indicates the physical address to access the data from
+	 * @tparam is_pointer indicates that data has **pointer format
+	 */
 	template<class type, UINT address, bool is_pointer>
 	class H3DataPointer : public H3Uncopyable
 	{
 	public:
 		typedef type* pointer;
 		typedef type& reference;
-
-		__H3API_FORCEINLINE_ H3DataPointer() :
+		/**
+		 * @brief constructor is forced inline to avoid unnecessary slowdown
+		 */
+		_H3API_FORCEINLINE_ H3DataPointer() :
 			m_address(getAddress())
 		{
 		}
+		/**
+		 * @brief dereferences pointer
+		 *
+		 * @return reference to data
+		 */
 		reference operator*()
 		{
 			return *reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief access data methods and contents directly
+		 */
 		pointer operator->()
 		{
 			return reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief grants a pointer to data which may be needed for some methods
+		 *
+		 * @return pointer to data
+		 */
 		pointer operator&()
 		{
 			return reinterpret_cast<pointer>(m_address);
 		}
-		// * returns itself as a way to switch between macro and typedef mode
+		/**
+		 * @brief returns itself as a way to switch between macro and typedef mode
+		 * DataPointer-> as a macro is valid but not as typedef.
+		 * DataPointer()-> is always valid
+		 * @return itself without any modification
+		 */
 		H3DataPointer<type, address, is_pointer>& operator()()
 		{
 			return *this;
 		}
+		/**
+		 * @brief automatic cast to data type
+		 *
+		 * @return pointer
+		 */
 		operator pointer()
 		{
 			return reinterpret_cast<pointer>(m_address);
@@ -1136,7 +1204,7 @@ namespace h3
 	private:
 		UINT m_address;
 
-		__H3API_FORCEINLINE_ UINT getAddress()
+		_H3API_FORCEINLINE_ UINT getAddress()
 		{
 			return get<UINT>();
 		}
@@ -1152,52 +1220,109 @@ namespace h3
 		}
 	};
 
-	// * template model to access data structures that are arrays within h3 memory
+	/**
+	 * @brief template model to access data structures that are arrays within h3 memory
+	 * DataArrayPointer is not copyable and cannot be assigned to other variables.
+	 * There is an operator cast to data type as well as operator& and operator*
+	 * to achieve this task, so that your intentions may be clear.
+	 * @tparam type indicates which type of data is pointed to
+	 * @tparam address indicates the physical address to access the data from
+	 * @tparam is_pointer indicates that data has **pointer format
+	 */
 	template<class type, UINT address, bool is_pointer>
 	class H3DataArrayPointer : public H3Uncopyable
 	{
 	public:
 		typedef type* pointer;
 		typedef type& reference;
-
-		__H3API_FORCEINLINE_ H3DataArrayPointer() :
+		/**
+		 * @brief constructor is forced inline to avoid unnecessary slowdown
+		 */
+		_H3API_FORCEINLINE_ H3DataArrayPointer() :
 			m_address(getAddress())
 		{
 		}
+		/**
+		 * @brief dereferences pointer
+		 *
+		 * @return reference to data
+		 */
 		reference operator*()
 		{
 			return *reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief access data methods and contents directly
+		 */
 		pointer operator->()
 		{
 			return reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief grants a pointer to data which may be needed for some methods
+		 *
+		 * @return pointer to data
+		 */
 		pointer operator&()
 		{
 			return reinterpret_cast<pointer>(m_address);
 		}
-		// * returns itself as a way to switch between macro and typedef mode
+		/**
+		 * @brief returns itself as a way to switch between macro and typedef mode
+		 * DataPointer-> as a macro is valid but not as typedef.
+		 * DataPointer()-> is always valid
+		 * @return itself without any modification
+		 */
 		H3DataArrayPointer<type, address, is_pointer>& operator()()
 		{
 			return *this;
 		}
-		// * m_address is essentially data cast as UINT
-		// * this is done so operator[] can be used in the case of pointer-type data like char*
-		operator UINT()
+		/**
+		 * @brief automatic cast to start of data array
+		 *
+		 * @return pointer*
+		 */
+		operator pointer*()
 		{
-			return m_address;
+			return reinterpret_cast<pointer*>(m_address);
 		}
+		/**
+		 * @brief access to array items as reference
+		 * beware that there is no boundary check performed on the data
+		 * @param index unsigned position of the data to access
+		 * @return reference to data at the given index
+		 */
 		reference operator[](UINT index)
 		{
 			return reinterpret_cast<pointer>(m_address)[index];
 		}
+		/**
+		 * @brief access to array items as reference
+		 * beware that there is no boundary check performed on the data
+		 * @param index signed position of the data to access, is converted to unsigned value
+		 * @return reference to data at the given index
+		 */
+		reference operator[](INT index)
+		{
+			return reinterpret_cast<pointer>(m_address)[static_cast<UINT>(index)];
+		}
+		/**
+		 * @brief access to array items as pointer
+		 * beware that there is no boundary check performed on the data
+		 * @param index unsigned position of the data to access
+		 * @return pointer to data at the given index
+		 */
 		pointer operator()(UINT index)
 		{
 			return &reinterpret_cast<pointer>(m_address)[index];
 		}
 
 #ifdef _H3API_CPLUSPLUS11_
-		// * access with static_cast<type*>()
+		/**
+		 * @brief automatic-cast to pointer type is possible with c++11
+		 * used through static_cast<type*>(DataPointer)
+		 * @return pointer type matching start of array
+		 */
 		explicit operator pointer()
 		{
 			return *reinterpret_cast<pointer>(m_address);
@@ -1207,7 +1332,7 @@ namespace h3
 	private:
 		UINT m_address;
 
-		__H3API_FORCEINLINE_ UINT getAddress()
+		_H3API_FORCEINLINE_ UINT getAddress()
 		{
 			return get<UINT>();
 		}
@@ -1223,35 +1348,67 @@ namespace h3
 		}
 	};
 
-	// * template model to access primitive data within h3 memory
+	/**
+	 * @brief template model to access data values within h3 memory
+	 * PrimitivePointer is not copyable and cannot be assigned to other variables.
+	 * There is an operator cast to data type as well as operator& and operator*
+	 * to achieve this task, so that your intentions may be clear.
+	 * @tparam type indicates which type of data is pointed to
+	 * @tparam address indicates the physical address to access the data from
+	 * @tparam is_pointer indicates that data has **pointer format
+	 */
 	template<class type, UINT address, bool is_pointer>
 	class H3PrimitivePointer : public H3Uncopyable
 	{
 	public:
 		typedef type* pointer;
 		typedef type& reference;
-
-		__H3API_FORCEINLINE_ H3PrimitivePointer() :
+		/**
+		 * @brief constructor is forced inline to avoid unnecessary slowdown
+		 */
+		_H3API_FORCEINLINE_ H3PrimitivePointer() :
 			m_address(getAddress())
 		{
 		}
+		/**
+		 * @brief dereferences pointer
+		 * @return reference to data
+		 */
 		reference operator*()
 		{
 			return *reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief grants a pointer to data which may be needed for some methods
+		 * @return pointer to data
+		 */
 		pointer operator&()
 		{
 			return reinterpret_cast<pointer>(m_address);
 		}
-		// * returns itself as a way to switch between macro and typedef mode
+		/**
+		 * @brief returns itself as a way to switch between macro and typedef mode
+		 * DataPointer-> as a macro is valid but not as typedef.
+		 * DataPointer()-> is always valid
+		 * @return itself without any modification
+		 */
 		H3PrimitivePointer<type, address, is_pointer>& operator()()
 		{
 			return *this;
 		}
+		/**
+		 * @brief automatic cast to data
+		 * @return a copy of the primitive data
+		 */
 		operator type()
 		{
 			return *reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief allows assignment of values to data
+		 * beware that you may need to allow write with VirtualProtect first
+		 * @param new_data new content to be inserted
+		 */
 		void operator=(type new_data)
 		{
 			*reinterpret_cast<pointer>(m_address) = new_data;
@@ -1259,7 +1416,7 @@ namespace h3
 	private:
 		UINT m_address;
 
-		__H3API_FORCEINLINE_ UINT getAddress()
+		_H3API_FORCEINLINE_ UINT getAddress()
 		{
 			return get<UINT>();
 		}
@@ -1276,6 +1433,15 @@ namespace h3
 	};
 
 	// * template model to access primitive data arrays within h3 memory
+	/**
+	 * @brief template model to access primitive data as arrays within h3 memory
+	 * PrimitiveArrayPointer is not copyable and cannot be assigned to other variables.
+	 * There is an operator cast to data type as well as operator& and operator*
+	 * to achieve this task, so that your intentions may be clear.
+	 * @tparam type indicates which type of data is pointed to
+	 * @tparam address indicates the physical address to access the data from
+	 * @tparam is_pointer indicates that data has **pointer format
+	 */
 	template<typename type, UINT address, bool is_pointer>
 	class H3PrimitiveArrayPointer : public H3Uncopyable
 	{
@@ -1283,39 +1449,86 @@ namespace h3
 		typedef type* pointer;
 		typedef type& reference;
 
-		__H3API_FORCEINLINE_ H3PrimitiveArrayPointer() :
+		/**
+		 * @brief constructor is forced inline to avoid unnecessary slowdown
+		 */
+		_H3API_FORCEINLINE_ H3PrimitiveArrayPointer() :
 			m_address(getAddress())
 		{
 		}
+		/**
+		 * @brief dereferences pointer
+		 *
+		 * @return reference to data
+		 */
 		reference operator*()
 		{
 			return *reinterpret_cast<pointer>(m_address);
 		}
+		/**
+		 * @brief grants a pointer to data which may be needed for some methods
+		 *
+		 * @return pointer to data
+		 */
 		pointer operator&()
 		{
 			return reinterpret_cast<pointer>(m_address);
 		}
-		// * returns itself as a way to switch between macro and typedef mode
+		/**
+		 * @brief returns itself as a way to switch between macro and typedef mode
+		 * DataPointer-> as a macro is valid but not as typedef.
+		 * DataPointer()-> is always valid
+		 * @return itself without any modification
+		 */
 		H3PrimitiveArrayPointer<type, address, is_pointer>& operator()()
 		{
 			return *this;
 		}
-		// * m_address is essentially data cast as UINT
-		// * this is done so operator[] can be used in the case of pointer-type data like char*
-		operator UINT()
+		/**
+		 * @brief automatic cast to start of data array
+		 *
+		 * @return pointer* to array start
+		 */
+		operator pointer*()
 		{
-			return m_address;
+			return reinterpret_cast<pointer*>(m_address);
 		}
+		/**
+		 * @brief access to array items as reference
+		 * beware that there is no boundary check performed on the data
+		 * @param index unsigned position of the data to access
+		 * @return reference to data at the given index
+		 */
 		reference operator[](UINT index)
 		{
 			return reinterpret_cast<pointer>(m_address)[index];
 		}
+		/**
+		 * @brief access to array items as reference
+		 * beware that there is no boundary check performed on the data
+		 * @param index signed position of the data to access, is converted to unsigned value
+		 * @return reference to data at the given index
+		 */
+		reference operator[](INT index)
+		{
+			return reinterpret_cast<pointer>(m_address)[static_cast<UINT>(index)];
+		}
+		/**
+		 * @brief access to array items as pointer
+		 * beware that there is no boundary check performed on the data
+		 * @param index unsigned position of the data to access
+		 * @return pointer to data at the given index
+		 */
 		type operator()(UINT index)
 		{
 			return reinterpret_cast<pointer>(m_address)[index];
 		}
 #ifdef _H3API_CPLUSPLUS11_
-		// * access with static_cast<type*>()
+		/**
+		 * @brief automatic-cast to pointer type is possible with c++11
+		 * used through static_cast<type*>(DataPointer)
+		 * @return pointer type matching start of array
+		 */
 		explicit operator pointer()
 		{
 			return *reinterpret_cast<pointer>(m_address);
@@ -1324,7 +1537,7 @@ namespace h3
 	private:
 		UINT m_address;
 
-		__H3API_FORCEINLINE_ UINT getAddress()
+		_H3API_FORCEINLINE_ UINT getAddress()
 		{
 			return get<UINT>();
 		}
@@ -1339,6 +1552,7 @@ namespace h3
 			return address;
 		}
 	};
+
 } /* namespace h3 */
 
 #endif /* #define _H3_CONFIG_HPP_ */

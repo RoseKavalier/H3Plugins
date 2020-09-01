@@ -39,7 +39,7 @@ int __stdcall _HH_CheckDoubleClick(HiHook* h, H3InputManager* This, int* a2)
 		GDoubleClicked = false;
 	else
 	{
-		msg.message = H3InputManager::MT_LBUTTONDBLCLK; // reset to h3 default value
+		msg.message = H3InputManager::eMessageType::MT_LBUTTON_DBLCLK; // reset to h3 default value
 		GDoubleClicked = true;
 		F_MessageBox("Double-click detected!");
 	}

@@ -1,0 +1,53 @@
+add_subdirectory(H3Allocator)
+add_subdirectory(H3Base)
+add_subdirectory(H3BinaryItems)
+add_subdirectory(H3Bitmap)
+add_subdirectory(H3Bitset)
+add_subdirectory(H3Defines)
+add_subdirectory(H3Dialogs)
+add_subdirectory(H3Exception)
+add_subdirectory(H3Functions)
+add_subdirectory(H3Ini)
+add_subdirectory(H3LOD)
+add_subdirectory(H3MapItems)
+add_subdirectory(H3Memory)
+add_subdirectory(H3Operators)
+add_subdirectory(H3Path)
+add_subdirectory(H3Plugins)
+add_subdirectory(H3RMG)
+add_subdirectory(H3Set)
+add_subdirectory(H3Stream)
+add_subdirectory(H3String)
+add_subdirectory(H3Structures)
+add_subdirectory(H3Tree)
+add_subdirectory(H3Vector)
+
+target_sources(H3API PUBLIC
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Allocator.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Base.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_BinaryItems.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Bitmap.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Bitset.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Config.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Constants.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Core.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Defines.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Dialogs.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Exception.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Functions.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Ini.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_LOD.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_MapItems.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Memory.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Operators.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Path.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Plugins.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_RMG.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Set.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Stream.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_String.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Structures.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Tree.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Vector.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Version.hpp"
+)

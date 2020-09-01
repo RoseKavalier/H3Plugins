@@ -183,29 +183,6 @@ struct HookContext
 	{
 		return *(_dword_*)(ebp + 4);
 	}
-	// to be deprecated
-	_dword_ _retn()
-	{
-		return *(_dword_*)(ebp + 4);
-	}
-	// to be deprecated
-	// gives the return address from 2 calls ago [WEAK]
-	_dword_ _retn2()
-	{
-		return *(_dword_*)(*(_dword_*)(ebp)+4);
-	}
-	// to be deprecated
-	// gives the return address from 3 calls ago [WEAK]
-	_dword_ _retn3()
-	{
-		return *(_dword_*)(*(_dword_*)*(_dword_*)(ebp)+4);
-	}
-	
-	// to be deprecated
-	int& arg_n(_dword_ n)
-	{
-		return *reinterpret_cast<int*>(ebp + 4 + 4 * n);
-	}
 
 	// gives the nth argument used in the last call as int reference
 	// use Arg<> if you wish to cast to something else
@@ -220,12 +197,6 @@ struct HookContext
 	T& Arg(_dword_ n)
 	{
 		return *reinterpret_cast<T*>(ebp + 4 + 4 * n);
-	}
-
-	// to be deprecated
-	int& local_n(_dword_ n)
-	{
-		return *reinterpret_cast<int*>(ebp - 4 * n);
 	}
 
 	// gives the nth local variable value used
@@ -243,7 +214,7 @@ struct HookContext
 	{
 		return *reinterpret_cast<T*>(ebp - 4 * n);
 	}
-		
+
 	// gives the nth local variable address
 	// Should be >= 1
 	_ptr_ LocalStack(_dword_ n)
@@ -258,12 +229,6 @@ struct HookContext
 	T* LocalStack(_dword_ n)
 	{
 		return reinterpret_cast<T*>(ebp - 4 * n);
-	}
-
-	// to be deprecated
-	_ptr_ local_stack(_dword_ n)
-	{
-		return (ebp - 4 * n);
 	}
 
 	_byte_& AL()
@@ -658,9 +623,10 @@ public:
 	// @@@subtype@@@
 	// defaulted to EXTENDED_
 	// if you wish to use another subtype, use regular virtual function
-	HiHook* WriteHiHook(_ptr_ address, int hooktype, int calltype, void* new_func)
+	template<typename T>
+	HiHook* WriteHiHook(_ptr_ address, int hooktype, int calltype, T new_func)
 	{
-		return WriteHiHook(address, hooktype, EXTENDED_, calltype, new_func);
+		return WriteHiHook(address, hooktype, EXTENDED_, calltype, reinterpret_cast<void*>(new_func));
 	}
 	// @@@calltype@@@
 	// STDCALL_ for __stdcall

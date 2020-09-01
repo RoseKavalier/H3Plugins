@@ -24,16 +24,33 @@
 #pragma warning(push)
 #pragma warning(disable:4595) /* disable 'operator new': non-member operator new or delete functions may not be declared inline warning */
 
-//* new operator using h3 assets
+/**
+ * @brief new operator using h3 assets
+ *
+ * @param size number of bytes to allocate
+ * @return PVOID block of memory of specified size
+*/
 _H3API_ PVOID operator new(const size_t size);
-
-// * delete operator using h3 assets
+/**
+ * @brief delete operator using h3 assets
+ *
+ * @param block region of memory to release
+*/
 _H3API_ VOID operator delete(PVOID block);
 
-// * new[] operator using h3 assets
+/**
+ * @brief new[] operator using h3 assets
+ *
+ * @param size number of bytes to allocate
+ * @return PVOID block of memory of specified size
+*/
 _H3API_ PVOID operator new[](const size_t size);
 
-// * delete[] operator using h3 assets
+/**
+ * @brief delete[] operator using h3 assets
+ *
+ * @param block region of memory to release
+*/
 _H3API_ VOID operator delete[](PVOID block);
 
 #pragma warning(pop) /* #pragma warning(disable:4595) */

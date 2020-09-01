@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+  <Type Name="h3::H3Vector&lt;*&gt;">
+    <DisplayString>{{ size={m_end-m_first} }}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">m_end-m_first</Item>
+      <Item Name="[capacity]" ExcludeView="simple">m_capacity-m_first</Item>
+      <ArrayItems>
+        <Size>m_end-m_first</Size>
+        <ValuePointer>m_first</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="h3::H3String">
+    <DisplayString>{m_string,na}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">m_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+      <ArrayItems>
+        <Size>m_length</Size>
+        <ValuePointer>m_string</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+  <Type Name="h3::H3Set&lt;*,*,*&gt;">
+    <DisplayString>{{ size={m_count} nilNode={$T2} head={m_root->parent->data}}}</DisplayString>
+    <Expand>
+      <Item Name="Count">m_count</Item>
+      <Item Name="root">m_root->parent->data</Item>
+      <TreeItems>
+        <Size>m_count</Size>
+        <HeadPointer>m_root->parent</HeadPointer>
+        <LeftPointer>left</LeftPointer>
+        <RightPointer>right</RightPointer>
+        <ValueNode>data</ValueNode>
+      </TreeItems>
+    </Expand>
+  </Type>
+  <Type Name="h3::H3Position">
+    <DisplayString>{{ ({pos &amp; 255},{(pos &gt;&gt; 16) &amp; 255},{(pos &gt;&gt; 26) &amp; 1}) }}</DisplayString>
+    <Expand>
+      <Item Name="[x]" ExcludeView="simple">pos &amp; 255</Item>
+      <Item Name="[y]" ExcludeView="simple">(pos &gt;&gt; 16) &amp; 255</Item>
+      <Item Name="[z]" ExcludeView="simple">(pos &gt;&gt; 26) &amp; 1</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>

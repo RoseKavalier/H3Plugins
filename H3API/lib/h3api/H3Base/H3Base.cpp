@@ -308,19 +308,19 @@ namespace h3
 	}
 
 	// * From https://stackoverflow.com/questions/2509679/how-to-generate-a-random-integer-number-from-within-a-range?answertab=active#tab-top
-	_H3API_ INT H3Random::Random(INT high)
+	_H3API_ INT32 H3Random::Random(INT32 high)
 	{
-		const INT num_bins = high + 1;
-		const INT num_rand = RAND_MAX + 1;
-		const INT bin_size = num_rand / num_bins;
-		const INT defect = num_rand % num_bins;
+		const INT32 num_bins = high + 1;
+		const INT32 num_rand = RAND_MAX + 1;
+		const INT32 bin_size = num_rand / num_bins;
+		const INT32 defect   = num_rand % num_bins;
 
-		INT x;
+		INT32 x;
 		do { x = rand(); } while (num_rand - defect <= x);
 
 		return x / bin_size;
 	}
-	_H3API_ INT H3Random::RandBetween(INT low, INT high)
+	_H3API_ INT32 H3Random::RandBetween(INT32 low, INT32 high)
 	{
 		return H3Random::Random(high - low) + low;
 	}
@@ -343,8 +343,11 @@ namespace h3
 	}
 	_H3API_ VOID H3ObjectMask::operator=(const H3ObjectMask & other)
 	{
-		m_bits[0].Set(other[0].Get());
-		m_bits[1].Set(other[1].Get());
+		m_bitsPacked = other.m_bitsPacked;
+	}
+	_H3API_ VOID H3ObjectMask::operator=(UINT64 value)
+	{
+		m_bitsPacked = value;
 	}
 	_H3API_ H3Bitfield & H3ObjectMask::operator[](UINT index)
 	{
@@ -353,6 +356,22 @@ namespace h3
 	_H3API_ const H3Bitfield & H3ObjectMask::operator[](UINT index) const
 	{
 		return m_bits[index];
+	}
+	_H3API_ H3ObjectMask::iterator H3ObjectMask::begin()
+	{
+		return iterator(this, 0);
+	}
+	_H3API_ H3ObjectMask::iterator H3ObjectMask::end()
+	{
+		return iterator(this, 48);
+	}
+	_H3API_ H3ObjectMask::iterator H3ObjectMask::operator()(UINT8 index)
+	{
+		return iterator(this, index);
+	}
+	_H3API_ H3ObjectMask::iterator H3ObjectMask::operator()(UINT8 column, UINT8 row)
+	{
+		return iterator(this, (row << 3) + column); // row * 8 + column
 	}
 	_H3API_ H3Bitfield::reference::reference(H3Bitfield* bitfield) :
 		m_bitfield(bitfield), m_position()
@@ -402,6 +421,100 @@ namespace h3
 	{
 		m_bitfield->Flip(m_position);
 	}
+	_H3API_ H3Point::H3Point()
+	{
+	}
+	_H3API_ H3Point::H3Point(UINT32 x, UINT32 y, UINT32 z) :
+		x(x), y(y), z(z)
+	{
+	}
+	_H3API_ H3Point::H3Point(const H3Point& pt) :
+		x(pt.x), y(pt.y), z(pt.z)
+	{
+	}
+	_H3API_ H3Point& H3Point::operator=(const H3Point& pt)
+	{
+		x = pt.x;
+		y = pt.y;
+		z = pt.z;
+		return *this;
+	}
+	_H3API_ BOOL H3Point::operator==(const H3Point& pt)
+	{
+		return x == pt.x && y == pt.y && z == pt.z;
+	}
+	_H3API_ BOOL H3Point::operator!=(const H3Point& pt)
+	{
+		return !(*this == pt);
+	}
+	_H3API_ H3ObjectMask::iterator::iterator(const iterator& it) :
+		m_mask(it.m_mask), m_position(it.m_position)
+	{
+	}
+	_H3API_ H3ObjectMask::iterator::iterator(H3ObjectMask* mask) :
+		m_mask(mask), m_position(0)
+	{
+	}
+	_H3API_ H3ObjectMask::iterator::iterator(H3ObjectMask* mask, UINT32 index) :
+		m_mask(mask), m_position(index)
+	{
+	}
+	_H3API_ H3ObjectMask::iterator& H3ObjectMask::iterator::operator++()
+	{
+		++m_position;
+		return *this;
+	}
+	_H3API_ H3ObjectMask::iterator H3ObjectMask::iterator::operator++(int)
+	{
+		iterator it(*this);
+		++(*this);
+		return it;
+	}
+	_H3API_ H3ObjectMask::iterator& H3ObjectMask::iterator::operator~()
+	{
+		Flip();
+		return *this;
+	}
+	_H3API_ H3ObjectMask::iterator::operator BOOL() const
+	{
+		return GetState();
+	}
+	_H3API_ BOOL H3ObjectMask::iterator::operator!() const
+	{
+		return GetState() == FALSE;
+	}
+	_H3API_ VOID H3ObjectMask::iterator::operator=(BOOL state)
+	{
+		SetState(state);
+	}
+	_H3API_ BOOL H3ObjectMask::iterator::GetState() const
+	{
+		return m_mask->m_bits->GetState(m_position);
+	}
+	_H3API_ VOID H3ObjectMask::iterator::SetState(BOOL state)
+	{
+		m_mask->m_bits->SetState(m_position, state);
+	}
+	_H3API_ VOID H3ObjectMask::iterator::Set()
+	{
+		SetState(TRUE);
+	}
+	_H3API_ VOID H3ObjectMask::iterator::Reset()
+	{
+		SetState(FALSE);
+	}
+	_H3API_ VOID H3ObjectMask::iterator::Flip()
+	{
+		m_mask->m_bits->Flip(m_position);
+	}
+	_H3API_ BOOL H3ObjectMask::iterator::operator==(const iterator& it)
+	{
+		return m_position == it.m_position;
+	}
+	_H3API_ BOOL H3ObjectMask::iterator::operator!=(const iterator& it)
+	{
+		return m_position != it.m_position;
+	}
 }
 
 namespace h3
@@ -424,9 +537,9 @@ namespace h3
 		{
 			return CharAt(0x4A8FC5);
 		}
-		_H3API_ INT _mapSize()
+		_H3API_ UINT _mapSize()
 		{
-			return IntAt(0x6783C8);
+			return DwordAt(0x6783C8);
 		}
 		_H3API_ UINT8 _bitMode()
 		{

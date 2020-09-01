@@ -25,7 +25,7 @@ namespace h3
 		m_buffer_size(0),
 		m_buffer_position(0)
 	{
-		LPCSTR mode = GetModeFormat();
+		LPCSTR mode = getModeFormat();
 		if (mode)
 		{
 			if ((m_file = F_fopen(filename, mode)))
@@ -33,7 +33,7 @@ namespace h3
 				m_status = StreamStatus::SS_OK;
 				m_size = F_GetFileSize(m_file);
 			}
-			if (read_to_buffer && m_size && CanRead())
+			if (read_to_buffer && m_size && canRead())
 				ReadFile(m_size);
 		}
 	}
@@ -121,7 +121,7 @@ namespace h3
 				m_status = StreamStatus::SS_OK;
 				m_size = F_GetFileSize(m_file);
 			}
-			if (read_to_buffer && m_size && CanRead())
+			if (read_to_buffer && m_size && canRead())
 				ReadFile(m_size);
 		}
 	}
@@ -160,7 +160,7 @@ namespace h3
 	}
 	_H3API_ H3Stream& H3Stream::endl()
 	{
-		if (IsReady() && CanWrite())
+		if (IsReady() && canWrite())
 			CDECL_3(int, 0x61A031, m_file, "%s", "\r\n");
 		return *this;
 	}
@@ -225,13 +225,13 @@ namespace h3
 
 	_H3API_	H3Stream& H3Stream::operator<<(const int number)
 	{
-		if (IsReady() && CanWrite())
+		if (IsReady() && canWrite())
 		{
 			if (m_write_hex)
 				CDECL_3(int, 0x61A031, m_file, "0x%X", number);
 			else
 				CDECL_3(int, 0x61A031, m_file, "%d", number);
-			WriteNewLine();
+			writeNewLine();
 		}
 		return *this;
 	}
@@ -243,7 +243,7 @@ namespace h3
 				CDECL_3(int, 0x61A031, m_file, "0x%X", number);
 			else
 				CDECL_3(int, 0x61A031, m_file, "%u", number);
-			WriteNewLine();
+			writeNewLine();
 		}
 		return *this;
 	}
@@ -252,7 +252,7 @@ namespace h3
 		if (IsReady())
 		{
 			CDECL_3(int, 0x61A031, m_file, "%f", number);
-			WriteNewLine();
+			writeNewLine();
 		}
 
 		return *this;
@@ -262,17 +262,17 @@ namespace h3
 		if (IsReady())
 		{
 			CDECL_3(int, 0x61A031, m_file, "%f", number);
-			WriteNewLine();
+			writeNewLine();
 		}
 
 		return *this;
 	}
 	_H3API_	H3Stream& H3Stream::operator<<(const CHAR character)
 	{
-		if (IsReady() && CanWrite())
+		if (IsReady() && canWrite())
 		{
 			F_fputc(character, m_file);
-			WriteNewLine();
+			writeNewLine();
 		}
 
 		return *this;
@@ -282,7 +282,7 @@ namespace h3
 		if (IsReady())
 		{
 			CDECL_3(int, 0x61A031, m_file, "%s", text);
-			WriteNewLine();
+			writeNewLine();
 		}
 
 		return *this;
@@ -292,7 +292,7 @@ namespace h3
 		if (IsReady() && str.String() && str.Length())
 		{
 			F_fwrite(str.String(), 1, str.Length(), m_file);
-			WriteNewLine();
+			writeNewLine();
 		}
 
 		return *this;
@@ -352,14 +352,14 @@ namespace h3
 	}
 	_H3API_	BOOL H3Stream::ReadFile(DWORD size_to_read)
 	{
-		if (!IsReady() || !CanRead())
+		if (!IsReady() || !canRead())
 			return FALSE;
 
 		const DWORD sz = std::min(m_size, size_to_read);
 
 		if (m_buffer_size < sz)
 		{
-			delete m_buffer;
+			F_delete(m_buffer);
 			m_buffer_size = sz;
 			m_buffer = static_cast<PBYTE>(F_calloc(m_buffer_size));
 		}
@@ -368,7 +368,7 @@ namespace h3
 
 		return F_fread(m_buffer, 1, m_buffer_size, m_file) == m_buffer_size;
 	}
-	_H3API_	LPCSTR H3Stream::GetModeFormat()
+	_H3API_	LPCSTR H3Stream::getModeFormat()
 	{
 		switch (m_mode)
 		{
@@ -400,16 +400,16 @@ namespace h3
 			return nullptr;
 		}
 	}
-	_H3API_	VOID H3Stream::WriteNewLine()
+	_H3API_	VOID H3Stream::writeNewLine()
 	{
 		if (m_write_new_lines)
 			endl();
 	}
-	_H3API_	BOOL H3Stream::CanWrite()
+	_H3API_	BOOL H3Stream::canWrite()
 	{
 		return int(m_mode) & (MV_WRITE | MV_APPEND | MV_UPDATE);
 	}
-	_H3API_	BOOL H3Stream::CanRead()
+	_H3API_	BOOL H3Stream::canRead()
 	{
 		return int(m_mode) & (MV_READ | MV_UPDATE);
 	}
@@ -531,7 +531,7 @@ namespace h3
 	{
 		return m_buffer + m_fileSize;
 	}
-	_H3API_ void H3File::Close()
+	_H3API_ VOID H3File::Close()
 	{
 		close();
 	}
@@ -605,5 +605,116 @@ namespace h3
 		if (m_handle == INVALID_HANDLE_VALUE)
 			return FALSE;
 		return TRUE;
+	}
+	_H3API_ VOID H3SpreadSheet::Clear()
+	{
+		m_lines.RemoveAll();
+	}
+	VOID H3SpreadSheet::NewLine()
+	{
+		m_currentLine.AppendA("\r\n");
+		m_lines += m_currentLine;
+		m_currentLine.Erase();
+	}
+	_H3API_ VOID H3SpreadSheet::NewColumn()
+	{
+		m_currentLine.Append('\t');
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::Hex()
+	{
+		m_hexMode = TRUE;
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::Dec()
+	{
+		m_hexMode = FALSE;
+		return *this;
+	}
+	_H3API_ BOOL H3SpreadSheet::Save(LPCSTR const file)
+	{
+		H3File f;
+		if (!f.Save(file))
+			return FALSE;
+		for (UINT i = 0; i < m_lines.Size(); ++i)
+		{
+			if (!f.Write(m_lines[i]))
+				return FALSE;
+		}
+		return TRUE;
+	}
+	BOOL H3SpreadSheet::InsertLine(const H3String& line, UINT row)
+	{
+		if (row == static_cast<UINT>(-1))
+		{
+			H3String* l = m_lines.Append(line);
+			if (!l)
+				return FALSE;
+			l->AppendA("\r\n");
+			return TRUE;
+		}
+		else
+		{
+			H3String l = line;
+			l.AppendA("\r\n");
+			return m_lines.Insert(m_lines.begin() + row, l);
+		}
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(const H3SpreadSheet&)
+	{
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(LPCSTR text)
+	{
+		addTab();
+		m_currentLine += text;
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(INT32 value)
+	{
+		addTab();
+		m_currentLine.Append(value);
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(UINT32 value)
+	{
+		addTab();
+		if (!m_hexMode)
+		{
+			m_currentLine.PrintfAppend("%u", value);
+		}
+		else
+		{
+			m_currentLine.PrintfAppend("%X", value);
+		}
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(FLOAT value)
+	{
+		addTab();
+		m_currentLine.PrintfAppend("%f", value);
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(DOUBLE value)
+	{
+		addTab();
+		m_currentLine.PrintfAppend("%f", value);
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(CHAR ch)
+	{
+		addTab();
+		m_currentLine += ch;
+		return *this;
+	}
+	_H3API_ H3SpreadSheet& H3SpreadSheet::operator<<(const H3String& line)
+	{
+		addTab();
+		m_currentLine += line;
+		return *this;
+	}
+	_H3API_ VOID H3SpreadSheet::addTab()
+	{
+		if (!m_currentLine.Empty())
+			m_currentLine += '\t';
 	}
 }

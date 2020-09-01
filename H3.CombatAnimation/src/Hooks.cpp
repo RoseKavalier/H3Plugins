@@ -38,10 +38,10 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 			auto mon = &combat->stacks[side][i];
 			// under these conditions, a creature should not be animated
 			if (mon->type == NH3Creatures::ARROW_TOWER
-				|| mon->info.flags.CANNOT_MOVE
-				|| mon->activeSpellsDuration[H3Spell::BLIND]
-				|| mon->activeSpellsDuration[H3Spell::PARALYZE]
-				|| mon->activeSpellsDuration[H3Spell::STONE]
+				|| mon->info.flags.cannotMove
+				|| mon->activeSpellsDuration[H3Spell::eSpells::BLIND]
+				|| mon->activeSpellsDuration[H3Spell::eSpells::PARALYZE]
+				|| mon->activeSpellsDuration[H3Spell::eSpells::STONE]
 				|| mon->numberAlive == 0
 				)
 				continue;
@@ -71,7 +71,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 				continue;
 
 			// indicate that this creature's frame should be redrawn
-			combat->RedrawCreatureFrame[side][i] = TRUE;
+			combat->redrawCreatureFrame[side][i] = TRUE;
 			// increase this creature's current frame animation
 			++mon->animationFrame %= standing->count;
 			// add a bit of randomness for the next animation time reference
@@ -89,7 +89,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook *h, H3CombatManager *combat)
 _LHF_(ResetDrawingRequest)
 {
 	auto& cmb = P_CombatMgr();
-	F_memset(cmb->RedrawCreatureFrame, 0, sizeof(cmb->RedrawCreatureFrame) + sizeof(cmb->heroAnimation) + sizeof(cmb->heroFlagAnimation));
+	F_memset(cmb->redrawCreatureFrame, 0, sizeof(cmb->redrawCreatureFrame) + sizeof(cmb->heroAnimation) + sizeof(cmb->heroFlagAnimation));
 	return EXEC_DEFAULT;
 }
 

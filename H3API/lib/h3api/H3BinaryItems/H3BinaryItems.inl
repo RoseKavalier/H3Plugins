@@ -42,6 +42,13 @@ namespace h3
 		return m_binary;
 	}
 	template<typename T>
+	inline T* H3BinaryLoader<T>::Release()
+	{
+		T* b = m_binary;
+		m_binary = nullptr;
+		return b;
+	}
+	template<typename T>
 	inline T* H3BinaryLoader<T>::operator->()
 	{
 		return m_binary;
@@ -55,6 +62,16 @@ namespace h3
 	inline BOOL H3BinaryLoader<T>::operator!()
 	{
 		return m_binary == nullptr;
+	}
+	template<typename T>
+	inline H3BinaryLoader<T>::operator BOOL()
+	{
+		return m_binary != nullptr;
+	}
+
+	inline H3DefLoader::H3DefLoader(H3LoadedDef* def) :
+		H3BinaryLoader(def)
+	{
 	}
 
 	inline H3DefLoader::H3DefLoader(LPCSTR name)
@@ -74,13 +91,17 @@ namespace h3
 	{
 		m_binary = H3Font::Load(name);
 	}
-	inline h3::H3TextFileLoader::H3TextFileLoader(LPCSTR name)
+	inline H3TextFileLoader::H3TextFileLoader(LPCSTR name)
 	{
 		m_binary = H3TextFile::Load(name);
 	}
-	inline h3::H3TextTableLoader::H3TextTableLoader(LPCSTR name)
+	inline H3TextTableLoader::H3TextTableLoader(LPCSTR name)
 	{
 		m_binary = H3TextTable::Load(name);
+	}
+	inline H3WavLoader::H3WavLoader(LPCSTR name)
+	{
+		m_binary = H3WavFile::Load(name);
 	}
 }
 

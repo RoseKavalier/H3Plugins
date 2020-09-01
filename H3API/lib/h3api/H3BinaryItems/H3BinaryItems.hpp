@@ -11,8 +11,8 @@
 #ifndef _H3BINARYITEMS_HPP_
 #define _H3BINARYITEMS_HPP_
 
-#include "../H3_Base.hpp"
 #include "../H3_Vector.hpp"
+#include "../H3_Set.hpp"
 #include "../H3_String.hpp"
 #include "../H3_Constants.hpp"
 
@@ -20,26 +20,11 @@
  * This file contains many references to "Binary"
  * which is an artefact from the conversion from WoG source.
  * In fact, these are all GUI assets stored within h3's ResourceManager
- * which is likely a std::set implemented as a red-black tree (hence the binary term)
+ * which is a std::set implemented as a red-black tree (hence the binary term)
  */
 
 namespace h3
 {
-	struct _H3API_DEPRECATED_("Renamed H3TextFile; old H3TextFile renamed H3TextTable") H3ColumnTextFile;
-	struct _H3API_DEPRECATED_("Use H3ResourceManager instead.") H3BinTreeList;
-	struct _H3API_DEPRECATED_("Use H3ResourceManagerNode instead.") H3BinaryTreeNode;
-	struct _H3API_DEPRECATED_("Use H3ResourceItem instead.") H3BinaryItem;
-	struct _H3API_DEPRECATED_("Use H3LoadedPcx instead.") H3LoadedPCX;
-	struct _H3API_DEPRECATED_("Use H3LoadedPcx16 instead.") H3LoadedPCX16;
-	struct _H3API_DEPRECATED_("Use H3LoadedPcx24 instead.") H3LoadedPCX24;
-	struct _H3API_DEPRECATED_("Use H3LoadedDef instead.") H3LoadedDEF;
-
-	struct _H3API_DEPRECATED_("Use H3BinaryLoader instead.") BinaryLoader;
-	struct _H3API_DEPRECATED_("Use H3DefLoader instead.") DefLoader;
-	struct _H3API_DEPRECATED_("Use H3PcxLoader instead.") PcxLoader;
-	struct _H3API_DEPRECATED_("Use H3Pcx16Loader instead.") Pcx16Loader;
-	struct _H3API_DEPRECATED_("Use H3FontLoader instead.") FontLoader;
-
 	// * forward declarations
 	_H3API_DECLARE_(H3ARGB888);
 	_H3API_DECLARE_(H3RGB888);
@@ -54,6 +39,7 @@ namespace h3
 	_H3API_DECLARE_(H3TextTable);
 	_H3API_DECLARE_(H3Palette565);
 	_H3API_DECLARE_(H3Palette888);
+	_H3API_DECLARE_(H3Palette32);
 	_H3API_DECLARE_(H3BasePalette565);
 	_H3API_DECLARE_(H3BasePalette888);
 	_H3API_DECLARE_(H3Font);
@@ -67,7 +53,7 @@ namespace h3
 	typedef UINT16 RGB555;
 	typedef UINT16 RGB565;
 
-#pragma pack(push, 1)
+#pragma pack(push, 4)
 
 	struct H3RGB888
 	{
@@ -93,13 +79,13 @@ namespace h3
 		_H3API_ H3RGB888(UINT8 r, UINT8 g, UINT8 b);
 		_H3API_ H3RGB888(const H3RGB565& rgb);
 		_H3API_ H3RGB888(const H3ARGB888& rgb);
-		_H3API_ H3RGB888& operator=(const H3RGB565& col);
-		_H3API_ H3RGB888& operator=(const H3RGB888& col);
-		_H3API_ H3RGB888& operator=(const H3ARGB888& col);
-		_H3API_ H3RGB888& operator=(const UINT16 col);
-		_H3API_ H3RGB888& operator=(const UINT32 col);
+		_H3API_ VOID operator=(const H3RGB565& col);
+		_H3API_ VOID operator=(const H3RGB888& col);
+		_H3API_ VOID operator=(const H3ARGB888& col);
+		_H3API_ VOID operator=(const UINT16 col);
+		_H3API_ VOID operator=(const UINT32 col);
 		_H3API_ BOOL operator==(const H3RGB888& col);
-
+#pragma region NamedColors
 		_H3API_ static H3RGB888 Regular();
 		_H3API_ static H3RGB888 Highlight();
 		_H3API_ static H3RGB888 H3Red();
@@ -257,19 +243,15 @@ namespace h3
 		_H3API_ static H3RGB888 WhiteSmoke();
 		_H3API_ static H3RGB888 Yellow();
 		_H3API_ static H3RGB888 YellowGreen();
+#pragma endregion
 	};
+	_H3API_ASSERT_SIZE_(H3RGB888, 3);
 
 	// * argb pixel in HD mod
 	struct H3ARGB888
 	{
-		// * legacy order pre - HDmod 5.0RC63
-		//UINT8 a; // alpha - unused in H3
-		//UINT8 g;
-		//UINT8 r;
-		//UINT8 b;
-
-		UINT8 g;
 		UINT8 b;
+		UINT8 g;
 		UINT8 r;
 		UINT8 a;
 
@@ -282,21 +264,194 @@ namespace h3
 		_H3API_ VOID GrayScale();
 		// * reorders pixels based on legacy drawing, pre - HDmod 5.0RC63
 		_H3API_ VOID Legacy();
+		_H3API_ H3ARGB888();
 		_H3API_ H3ARGB888(DWORD col);
 		_H3API_ H3ARGB888(const H3RGB565& col);
 		_H3API_ H3ARGB888(const H3RGB888& col);
 		_H3API_ H3ARGB888(const H3ARGB888& col);
 		_H3API_ H3ARGB888(UINT8 red, UINT8 blue, UINT8 green);
 		_H3API_ DWORD GetColor() const;
-		_H3API_ H3ARGB888& operator=(const H3RGB565& col);
-		_H3API_ H3ARGB888& operator=(const H3RGB888& col);
-		_H3API_ H3ARGB888& operator=(const H3ARGB888& col);
-		_H3API_ H3ARGB888& operator=(UINT16 col);
-		_H3API_ H3ARGB888& operator=(UINT32 col);
+		_H3API_ VOID operator=(const H3RGB565& col);
+		_H3API_ VOID operator=(const H3RGB888& col);
+		_H3API_ VOID operator=(const H3ARGB888& col);
+		_H3API_ VOID operator=(UINT16 col);
+		_H3API_ VOID operator=(UINT32 col);
 		_H3API_ BOOL operator==(const H3ARGB888& col);
+
+		_H3API_ VOID LightShadow(); // darkens by 25% as game does
+		_H3API_ VOID DarkShadow(); // darkens by 50% as game does
+		_H3API_ VOID Blend(const H3ARGB888& col); // blend col into the current pixel
+#pragma region NamedColors
+		_H3API_ static H3ARGB888 Regular();
+		_H3API_ static H3ARGB888 Highlight();
+		_H3API_ static H3ARGB888 H3Red();
+		_H3API_ static H3ARGB888 H3Cyan();
+		_H3API_ static H3ARGB888 H3Green();
+		_H3API_ static H3ARGB888 H3Blue();
+		_H3API_ static H3ARGB888 H3Yellow();
+		_H3API_ static H3ARGB888 H3Orange();
+		_H3API_ static H3ARGB888 H3Purple();
+		_H3API_ static H3ARGB888 H3Pink();
+		_H3API_ static H3ARGB888 AliceBlue();
+		_H3API_ static H3ARGB888 AntiqueWhite();
+		_H3API_ static H3ARGB888 Aqua();
+		_H3API_ static H3ARGB888 Aquamarine();
+		_H3API_ static H3ARGB888 Azure();
+		_H3API_ static H3ARGB888 Beige();
+		_H3API_ static H3ARGB888 Bisque();
+		_H3API_ static H3ARGB888 Black();
+		_H3API_ static H3ARGB888 BlanchedAlmond();
+		_H3API_ static H3ARGB888 Blue();
+		_H3API_ static H3ARGB888 BlueViolet();
+		_H3API_ static H3ARGB888 Brown();
+		_H3API_ static H3ARGB888 BurlyWood();
+		_H3API_ static H3ARGB888 CadetBlue();
+		_H3API_ static H3ARGB888 Chartreuse();
+		_H3API_ static H3ARGB888 Chocolate();
+		_H3API_ static H3ARGB888 Coral();
+		_H3API_ static H3ARGB888 CornflowerBlue();
+		_H3API_ static H3ARGB888 Cornsilk();
+		_H3API_ static H3ARGB888 Crimson();
+		_H3API_ static H3ARGB888 Cyan();
+		_H3API_ static H3ARGB888 DarkBlue();
+		_H3API_ static H3ARGB888 DarkCyan();
+		_H3API_ static H3ARGB888 DarkGoldenRod();
+		_H3API_ static H3ARGB888 DarkGray();
+		_H3API_ static H3ARGB888 DarkGrey();
+		_H3API_ static H3ARGB888 DarkGreen();
+		_H3API_ static H3ARGB888 DarkKhaki();
+		_H3API_ static H3ARGB888 DarkMagenta();
+		_H3API_ static H3ARGB888 DarkOliveGreen();
+		_H3API_ static H3ARGB888 Darkorange();
+		_H3API_ static H3ARGB888 DarkOrchid();
+		_H3API_ static H3ARGB888 DarkRed();
+		_H3API_ static H3ARGB888 DarkSalmon();
+		_H3API_ static H3ARGB888 DarkSeaGreen();
+		_H3API_ static H3ARGB888 DarkSlateBlue();
+		_H3API_ static H3ARGB888 DarkSlateGray();
+		_H3API_ static H3ARGB888 DarkSlateGrey();
+		_H3API_ static H3ARGB888 DarkTurquoise();
+		_H3API_ static H3ARGB888 DarkViolet();
+		_H3API_ static H3ARGB888 DeepPink();
+		_H3API_ static H3ARGB888 DeepSkyBlue();
+		_H3API_ static H3ARGB888 DimGray();
+		_H3API_ static H3ARGB888 DimGrey();
+		_H3API_ static H3ARGB888 DodgerBlue();
+		_H3API_ static H3ARGB888 FireBrick();
+		_H3API_ static H3ARGB888 FloralWhite();
+		_H3API_ static H3ARGB888 ForestGreen();
+		_H3API_ static H3ARGB888 Fuchsia();
+		_H3API_ static H3ARGB888 Gainsboro();
+		_H3API_ static H3ARGB888 GhostWhite();
+		_H3API_ static H3ARGB888 Gold();
+		_H3API_ static H3ARGB888 GoldenRod();
+		_H3API_ static H3ARGB888 Gray();
+		_H3API_ static H3ARGB888 Grey();
+		_H3API_ static H3ARGB888 Green();
+		_H3API_ static H3ARGB888 GreenYellow();
+		_H3API_ static H3ARGB888 HoneyDew();
+		_H3API_ static H3ARGB888 HotPink();
+		_H3API_ static H3ARGB888 IndianRed();
+		_H3API_ static H3ARGB888 Indigo();
+		_H3API_ static H3ARGB888 Ivory();
+		_H3API_ static H3ARGB888 Khaki();
+		_H3API_ static H3ARGB888 Lavender();
+		_H3API_ static H3ARGB888 LavenderBlush();
+		_H3API_ static H3ARGB888 LawnGreen();
+		_H3API_ static H3ARGB888 LemonChiffon();
+		_H3API_ static H3ARGB888 LightBlue();
+		_H3API_ static H3ARGB888 LightCoral();
+		_H3API_ static H3ARGB888 LightCyan();
+		_H3API_ static H3ARGB888 LightGoldenRodYellow();
+		_H3API_ static H3ARGB888 LightGray();
+		_H3API_ static H3ARGB888 LightGrey();
+		_H3API_ static H3ARGB888 LightGreen();
+		_H3API_ static H3ARGB888 LightPink();
+		_H3API_ static H3ARGB888 LightSalmon();
+		_H3API_ static H3ARGB888 LightSeaGreen();
+		_H3API_ static H3ARGB888 LightSkyBlue();
+		_H3API_ static H3ARGB888 LightSlateGray();
+		_H3API_ static H3ARGB888 LightSlateGrey();
+		_H3API_ static H3ARGB888 LightSteelBlue();
+		_H3API_ static H3ARGB888 LightYellow();
+		_H3API_ static H3ARGB888 Lime();
+		_H3API_ static H3ARGB888 LimeGreen();
+		_H3API_ static H3ARGB888 Linen();
+		_H3API_ static H3ARGB888 Magenta();
+		_H3API_ static H3ARGB888 Maroon();
+		_H3API_ static H3ARGB888 MediumAquaMarine();
+		_H3API_ static H3ARGB888 MediumBlue();
+		_H3API_ static H3ARGB888 MediumOrchid();
+		_H3API_ static H3ARGB888 MediumPurple();
+		_H3API_ static H3ARGB888 MediumSeaGreen();
+		_H3API_ static H3ARGB888 MediumSlateBlue();
+		_H3API_ static H3ARGB888 MediumSpringGreen();
+		_H3API_ static H3ARGB888 MediumTurquoise();
+		_H3API_ static H3ARGB888 MediumVioletRed();
+		_H3API_ static H3ARGB888 MidnightBlue();
+		_H3API_ static H3ARGB888 MintCream();
+		_H3API_ static H3ARGB888 MistyRose();
+		_H3API_ static H3ARGB888 Moccasin();
+		_H3API_ static H3ARGB888 NavajoWhite();
+		_H3API_ static H3ARGB888 Navy();
+		_H3API_ static H3ARGB888 OldLace();
+		_H3API_ static H3ARGB888 Olive();
+		_H3API_ static H3ARGB888 OliveDrab();
+		_H3API_ static H3ARGB888 Orange();
+		_H3API_ static H3ARGB888 OrangeRed();
+		_H3API_ static H3ARGB888 Orchid();
+		_H3API_ static H3ARGB888 PaleGoldenRod();
+		_H3API_ static H3ARGB888 PaleGreen();
+		_H3API_ static H3ARGB888 PaleTurquoise();
+		_H3API_ static H3ARGB888 PaleVioletRed();
+		_H3API_ static H3ARGB888 PapayaWhip();
+		_H3API_ static H3ARGB888 PeachPuff();
+		_H3API_ static H3ARGB888 Peru();
+		_H3API_ static H3ARGB888 Pink();
+		_H3API_ static H3ARGB888 Plum();
+		_H3API_ static H3ARGB888 PowderBlue();
+		_H3API_ static H3ARGB888 Purple();
+		_H3API_ static H3ARGB888 Red();
+		_H3API_ static H3ARGB888 RosyBrown();
+		_H3API_ static H3ARGB888 RoyalBlue();
+		_H3API_ static H3ARGB888 SaddleBrown();
+		_H3API_ static H3ARGB888 Salmon();
+		_H3API_ static H3ARGB888 SandyBrown();
+		_H3API_ static H3ARGB888 SeaGreen();
+		_H3API_ static H3ARGB888 SeaShell();
+		_H3API_ static H3ARGB888 Sienna();
+		_H3API_ static H3ARGB888 Silver();
+		_H3API_ static H3ARGB888 SkyBlue();
+		_H3API_ static H3ARGB888 SlateBlue();
+		_H3API_ static H3ARGB888 SlateGray();
+		_H3API_ static H3ARGB888 SlateGrey();
+		_H3API_ static H3ARGB888 Snow();
+		_H3API_ static H3ARGB888 SpringGreen();
+		_H3API_ static H3ARGB888 SteelBlue();
+		_H3API_ static H3ARGB888 Tan();
+		_H3API_ static H3ARGB888 Teal();
+		_H3API_ static H3ARGB888 Thistle();
+		_H3API_ static H3ARGB888 Tomato();
+		_H3API_ static H3ARGB888 Turquoise();
+		_H3API_ static H3ARGB888 Violet();
+		_H3API_ static H3ARGB888 Wheat();
+		_H3API_ static H3ARGB888 White();
+		_H3API_ static H3ARGB888 WhiteSmoke();
+		_H3API_ static H3ARGB888 Yellow();
+		_H3API_ static H3ARGB888 YellowGreen();
+#pragma endregion
 	protected:
 		_H3API_ PDWORD AsDword();
 		_H3API_ PDWORD AsDword() const;
+	};
+	_H3API_ASSERT_SIZE_(H3ARGB888, 4);
+
+	struct H3Palette32
+	{
+		H3ARGB888 colors[256];
+
+		_H3API_ H3ARGB888& operator[](UINT index);
+		_H3API_ H3ARGB888 operator[](UINT index) const;
 	};
 
 	struct H3RGB555 // https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
@@ -313,6 +468,7 @@ namespace h3
 		_H3API_ static DWORD Unpack(RGB555 rgb);
 		_H3API_ VOID PackRGB(UINT8 r, UINT8 g, UINT8 b);
 	};
+	_H3API_ASSERT_SIZE_(H3RGB555, 2);
 
 	struct H3RGB565 // https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
 	{
@@ -333,24 +489,31 @@ namespace h3
 		_H3API_ H3RGB565(DWORD color);
 		_H3API_ H3RGB565(const H3RGB888& color);
 		_H3API_ H3RGB565(const H3ARGB888& color);
-		_H3API_ H3RGB565& operator=(const H3RGB565& col);
-		_H3API_ H3RGB565& operator=(const H3RGB888& col);
-		_H3API_ H3RGB565& operator=(const H3ARGB888& col);
-		_H3API_ H3RGB565& operator=(const UINT16 col);
-		_H3API_ H3RGB565& operator=(const UINT32 col);
+		_H3API_ VOID operator=(const H3RGB565& col);
+		_H3API_ VOID operator=(const H3RGB888& col);
+		_H3API_ VOID operator=(const H3ARGB888& col);
+		_H3API_ VOID operator=(const UINT16 col);
+		_H3API_ VOID operator=(const UINT32 col);
 		_H3API_ BOOL operator==(const H3RGB565& col);
 		_H3API_ operator WORD () const;
 		_H3API_ WORD Value() const;
 		_H3API_ VOID SetBits(WORD color);
 		_H3API_ WORD PackRGB565(UINT8 r, UINT8 g, UINT8 b);
 		_H3API_ WORD Pack(H3RGB888& rgb);
-		_H3API_ static WORD Pack(UINT8 r, UINT8 g, UINT8 b);
+		_H3API_ static WORD  Pack(UINT8 r, UINT8 g, UINT8 b);
 		_H3API_ static DWORD Unpack(RGB565 rgb);
 		// darkens pixel's color by amount
 		_H3API_ VOID Darken(UINT8 amount);
 		_H3API_ VOID Lighten(UINT8 amount);
 		_H3API_ VOID GrayScale();
+		_H3API_ VOID LightShadow(); // darkens by 25% as performed by h3
+		_H3API_ VOID LightShadow(RGB565 mask50, RGB565 mask25); // darkens by 25% as performed by h3
+		_H3API_ VOID DarkShadow(); // darkens by 50% as performed by h3
+		_H3API_ VOID DarkShadow(RGB565 mask); // darkens by 50% as performed by h3
 
+		_H3API_ VOID Blend(const H3RGB565& col); // blend col into the current pixel
+		_H3API_ VOID Blend(const H3RGB565& col, RGB565 mask); // blend col into the current pixel
+#pragma region NamedColors
 		_H3API_ static RGB565 Regular();
 		_H3API_ static RGB565 Highlight();
 		_H3API_ static RGB565 H3Red();
@@ -508,7 +671,9 @@ namespace h3
 		_H3API_ static RGB565 WhiteSmoke();
 		_H3API_ static RGB565 Yellow();
 		_H3API_ static RGB565 YellowGreen();
+#pragma endregion
 	};
+	_H3API_ASSERT_SIZE_(H3RGB565, 2);
 
 	struct H3HSV
 	{
@@ -521,7 +686,7 @@ namespace h3
 		_H3API_ H3HSV(H3HSV& other);
 		_H3API_ H3HSV(const H3RGB888& rgb);
 		// * based on https://stackoverflow.com/a/14733008
-		_H3API_ H3HSV& ConvertFromRgb888(const H3RGB888& rgb);
+		_H3API_ H3HSV&   ConvertFromRgb888(const H3RGB888& rgb);
 		_H3API_ H3RGB888 ConvertToRgb888() const;
 		_H3API_ VOID AddSaturation(UINT8 saturation);
 		_H3API_ VOID RemoveSaturation(UINT8 saturation);
@@ -530,72 +695,29 @@ namespace h3
 		_H3API_ VOID RemoveValue(UINT8 value);
 	};
 
-	struct H3ResourceManagerNode // size 36
+	struct H3ResourceItemData
 	{
-		// * +0
-		H3ResourceManagerNode* leftNode;
-		// * +4
-		H3ResourceManagerNode* parent;
-		// * +8
-		H3ResourceManagerNode* rightNode;
-		// * +C
-		struct BinaryItemData
-		{
-			// * +C
-			CHAR name[12];
-			// * +18
-			UINT nameEnd; // always 0
-			// * +1C
-			H3ResourceItem* item;
-		}data;
-		// * +20
-		BOOL isBlackNode; // https://en.wikipedia.org/wiki/Red–black_tree
+		CHAR            m_name[12];
+		UINT            m_nameEnd;
+		H3ResourceItem* m_item;
 
-		_H3API_ H3ResourceItem* GetResourceItem() const;
-		_H3API_ H3ResourceItem* operator->();
-		_H3API_DEPRECATED_("Use GetResourceItem()") H3ResourceItem* GetBinaryItem() const { return nullptr; }
+		_H3API_ H3ResourceItemData(LPCSTR name);
+		_H3API_ BOOL8 operator<(const H3ResourceItemData& other) const;
 	};
 
 	// * a binary tree to hold game assets
-	struct H3ResourceManager
+	struct H3ResourceManager : H3Set<H3ResourceItemData, 0x69E604>
 	{
-		struct iterator
-		{
-		protected:
-			H3ResourceManagerNode* m_data;
-		public:
-			_H3API_ iterator(H3ResourceManagerNode* data);
-
-			_H3API_ H3ResourceManagerNode& operator*();
-			_H3API_ H3ResourceManagerNode* operator->();
-			_H3API_ BOOL operator==(const iterator& other);
-			_H3API_ BOOL operator!=(const iterator& other);
-			_H3API_ iterator& operator++();
-			_H3API_ iterator operator++(int);
-
-		};
-	protected:
-		h3unk _f0[4];
-	public:
-		// * +4
-		H3ResourceManagerNode* root;
-	protected:
-		h3unk _f8[4];
-	public:
-		INT32 numberNodes;
-
-		_H3API_ H3ResourceManagerNode* FindItem(LPCSTR name);
-		_H3API_ VOID AddItem(H3ResourceItem* item);
-		_H3API_ VOID RemoveItem(H3ResourceManagerNode* node);
-		_H3API_ VOID RemoveItem(LPCSTR name);
-
-		iterator begin();
-		iterator end();;
+		_H3API_ Node* FindItem(LPCSTR name);
+		_H3API_ VOID  AddItem(H3ResourceItem* item);
+		_H3API_ VOID  RemoveItem(Node* node);
+		_H3API_ VOID  RemoveItem(const iterator& iter);
+		_H3API_ VOID  RemoveItem(LPCSTR name);
 	};
 
 	struct H3ResourceItem
 	{
-		// constructor 0x558970, size 1C
+		// constructor 0x558970
 		friend H3ResourceManager;
 	protected:
 		struct ResourceItemVTable
@@ -617,9 +739,6 @@ namespace h3
 		// * +18
 		INT32 ref; // the number of times it is being used
 	public:
-		_H3API_DEPRECATED_("Use InitiateResource()") H3ResourceItem* InitiateBinary(LPCSTR name, INT type) { return this; }
-		_H3API_DEPRECATED_("Use AddToResourceManager()") VOID AddToBinaryTree() {}
-
 		_H3API_ H3ResourceItem* InitiateResource(LPCSTR name, INT type);
 		_H3API_ VOID Dereference();
 		_H3API_ VOID AddToResourceManager();
@@ -627,13 +746,13 @@ namespace h3
 		_H3API_ LPCSTR GetName() const;
 		_H3API_ ~H3ResourceItem();
 	};
+	_H3API_ASSERT_SIZE_(H3ResourceItem, 0x1C);
 
-	// * from breakpoint at constructor, the following items are all H3ResourceManagerNode subclasses
-	struct H3WavFile : public H3ResourceItem // size 0x34 from 0x55C67E
+	// * from breakpoint at constructor, the following items are all H3ResourceItem subclasses
+	struct H3WavFile : public H3ResourceItem
 	{
-	protected:
-		DWORD _f_1C;
-	public:
+		// * +1C
+		HANDLE hSample; // from SoundMgr
 		// * +20
 		PUINT8 buffer;
 		// * +24
@@ -650,6 +769,7 @@ namespace h3
 		_H3API_ H3WavFile(LPCSTR name);
 		_H3API_ H3WavFile(LPCSTR name, PUINT8 buffer, DWORD bufferSize);
 	};
+	_H3API_ASSERT_SIZE_(H3WavFile, 0x34);
 
 	// * text file with a single column of text
 	struct H3TextFile : public H3ResourceItem
@@ -662,15 +782,16 @@ namespace h3
 		// the buffer size is not stored for this format
 	public:
 		// * using the index from TxtEdit
-		_H3API_ LPCSTR GetText(UINT32 row) const;
-		_H3API_ LPCSTR GetText(UINT32 row);
-		_H3API_ static H3TextFile* Load(LPCSTR name);
-		_H3API_ VOID UnLoad();
+		_H3API_ LPCSTR  GetText(UINT32 row) const;
+		_H3API_ LPCSTR  GetText(UINT32 row);
+		_H3API_ VOID    UnLoad();
 		_H3API_ LPCSTR& operator[](UINT row);
-
 		_H3API_ LPCSTR* begin();
 		_H3API_ LPCSTR* end();
+
+		_H3API_ static H3TextFile* Load(LPCSTR name);
 	};
+	_H3API_ASSERT_SIZE_(H3TextFile, 0x30);
 
 	// * text file with several columns of text
 	struct H3TextTable : public H3ResourceItem
@@ -686,8 +807,8 @@ namespace h3
 			_H3API_ H3Vector<LPCSTR>& operator*();
 			_H3API_ H3Vector<LPCSTR>* operator->();
 			_H3API_ LPCSTR operator[](UINT column);
-			_H3API_ BOOL operator==(const iterator& other);
-			_H3API_ BOOL operator!=(const iterator& other);
+			_H3API_ BOOL   operator==(const iterator& other);
+			_H3API_ BOOL   operator!=(const iterator& other);
 		};
 
 	protected:
@@ -699,30 +820,45 @@ namespace h3
 		UINT bufferSize;
 	public:
 		_H3API_ H3Vector<H3Vector<LPCSTR>*>& GetText();
-		_H3API_ UINT32 CountRows() const;
-		_H3API_ static H3TextTable* Load(LPCSTR name);
-		_H3API_ VOID UnLoad();
 		_H3API_ H3Vector<LPCSTR>& operator[](UINT row);
+		_H3API_ UINT32   CountRows() const;
+		_H3API_ VOID     UnLoad();
 		_H3API_ iterator begin();
 		_H3API_ iterator end();
+		_H3API_ static H3TextTable* Load(LPCSTR name);
 	};
+	_H3API_ASSERT_SIZE_(H3TextTable, 0x34);
 
 	struct H3Palette565 : public H3ResourceItem
 	{
 		// * +1C
-		H3RGB565 color[256];
+		union {
+			struct {
+				H3RGB565 color[256];
+			};
+			struct {
+				H3RGB565   unusedColors[254];
+				H3Palette32* palette32;
+			};
+		};
 
 		_H3API_ VOID ColorToPlayer(INT id);
 		_H3API_ VOID RotateColors(INT min_index, INT max_index, INT count = -1);
 		_H3API_ H3Palette565* Initiate();
 		// * as of HDmod 5.0 RC 63, Palette565 now contains a buffer o ARGB888 colors[256] located at &color[254]
 		// * http://heroescommunity.com/viewthread.php3?TID=44581&PID=1503736#focus
-		_H3API_ H3ARGB888* Get32bitColors();
-		_H3API_ VOID CopyPalette(H3Palette565& source);
-		_H3API_ VOID CopyPalette(H3BasePalette565& source);
+		_H3API_ H3Palette32* Get32bitColors();
+		_H3API_ VOID CopyPalette(const H3Palette565& source);
+		_H3API_ VOID CopyPalette(const H3BasePalette565& source);
+
+		_H3API_ H3RGB565& operator[](UINT index);
+		_H3API_ H3RGB565 operator[](UINT index) const;
+
+		_H3API_ H3Palette32 Convert() const;
 
 		_H3API_ VOID Init(const H3BasePalette565& palette);
 	};
+	_H3API_ASSERT_SIZE_(H3Palette565, 540);
 
 	struct H3Palette888 : public H3ResourceItem
 	{
@@ -732,8 +868,13 @@ namespace h3
 		_H3API_ VOID ColorToPlayer(INT id);
 		_H3API_ H3Palette888* Initiate();
 
+		_H3API_ H3RGB888& operator[](UINT index);
+		_H3API_ const H3RGB888& operator[](UINT index) const;
 		_H3API_ VOID Init(const H3BasePalette888& palette);
+
+		_H3API_ H3Palette32 Convert() const;
 	};
+	_H3API_ASSERT_SIZE_(H3Palette888, 0x31C);
 
 	// * same functionality as H3Palette565 except it does not derive from H3ResourceItem
 	// * this type is used by H3LoadedPcx and H3Font
@@ -743,23 +884,41 @@ namespace h3
 		h3align _f_00[28];
 	public:
 		// * +1C
-		H3RGB565 color[256];
+		union
+		{
+			H3RGB565 color[256];
+			struct
+			{
+				H3RGB565 unusedColors[254];
+				H3ARGB888* palette32;
+			};
+		};
 
 		_H3API_ VOID ColorToPlayer(INT id);
 		_H3API_ VOID RotateColors(INT min_index, INT max_index, INT count = -1);
 		// * as of HDmod 5.0 RC 63, Palette565 now contains a buffer of ARGB888 colors[256] located at &color[254]
 		// * http://heroescommunity.com/viewthread.php3?TID=44581&PID=1503736#focus
-		_H3API_ H3ARGB888* Get32bitColors();
+		_H3API_ H3Palette32* Get32bitColors();
 		_H3API_ VOID CopyPalette(H3Palette565& source);
 		_H3API_ VOID CopyPalette(H3BasePalette565& source);
 
 		_H3API_ VOID InitiateFromPalette888(const H3BasePalette888& palette);
 
+		_H3API_ H3RGB565& operator[](UINT index);
+		_H3API_ H3RGB565 operator[](UINT index) const;
 		_H3API_ H3BasePalette565();
 		_H3API_ H3BasePalette565(const H3Palette888& palette);
 		_H3API_ H3BasePalette565(const H3BasePalette888& palette);
 		_H3API_ ~H3BasePalette565();
+
+		_H3API_ H3Palette32 Convert() const;
+
+#ifdef _H3API_CPLUSPLUS11_
+		_H3API_ H3BasePalette565(H3BasePalette565&& other);
+		_H3API_ H3BasePalette565& operator=(H3BasePalette565&& other);
+#endif
 	};
+	_H3API_ASSERT_SIZE_(H3BasePalette565, 540);
 
 	// * same functionality as H3Palette888 except it does not derive from H3ResourceItem
 	// * this type is used by H3LoadedPcx and H3Font
@@ -773,7 +932,18 @@ namespace h3
 
 		_H3API_ VOID ColorToPlayer(INT id);
 		_H3API_ ~H3BasePalette888();
+		_H3API_ H3BasePalette888();
+		_H3API_ H3RGB888& operator[](UINT index);
+		_H3API_ const H3RGB888& operator[](UINT index) const;
+
+		_H3API_ H3Palette32 Convert() const;
+
+#ifdef _H3API_CPLUSPLUS11_
+		_H3API_ H3BasePalette888(H3BasePalette888&& other);
+		_H3API_ H3BasePalette888& operator=(H3BasePalette888&& other);
+#endif
 	};
+	_H3API_ASSERT_SIZE_(H3BasePalette888, 0x31C);
 
 	struct H3Font : public H3ResourceItem
 	{
@@ -786,7 +956,12 @@ namespace h3
 		h3unk _f_22[26];
 	public:
 		// * +3C
-		UINT8 width[3072]; // used to calculate line width
+		struct FontSpacing
+		{
+			INT32 leftMargin;
+			INT32 span;
+			INT32 rightMargin;
+		}width[256]; // used to calculate line width
 		// * +C3C
 		UINT32 bufferOffsets[256]; // referenced at 0x4B4F1C
 		// * +103C
@@ -803,10 +978,11 @@ namespace h3
 
 		_H3API_ VOID TextDraw(H3LoadedPcx16* pcx, LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height,
 			NH3Dlg::TextColor::eTextColor colorIndex = NH3Dlg::TextColor::REGULAR,
-			NH3Dlg::TextAlignment::eTextAlignment alignment = NH3Dlg::TextAlignment::MiddleCenter);
+			NH3Dlg::TextAlignment::eTextAlignment alignment = NH3Dlg::TextAlignment::MIDDLE_CENTER);
 
 		_H3API_ static H3Font* Load(LPCSTR name);
 	};
+	_H3API_ASSERT_SIZE_(H3Font, 0x1260);
 
 	struct H3LoadedPcx : public H3ResourceItem // size 0x56C // vt 63BA14
 	{
@@ -831,8 +1007,6 @@ namespace h3
 		_H3API_ VOID DrawToPcx16(int srcX, int srcY, int dx, int dy, H3LoadedPcx16* dest, int destX, int destY, BOOL skip_transparent_colors);
 		_H3API_ VOID DrawToPcx16(H3LoadedPcx16* dest, int destX, int destY, BOOL skip_transparent_colors);
 		_H3API_ VOID DrawToPcx(int src_x, int src_y, int dx, int dy, H3LoadedPcx* pcx_dest, int dest_x = 0, int dest_y = 0, BOOL copy_palette = TRUE);
-		_H3API_ static H3LoadedPcx* Load(LPCSTR name);
-		_H3API_ static H3LoadedPcx* Create(LPCSTR name, INT width, INT height);
 		// * returns row start in buffer
 		_H3API_ PUINT8 GetRow(int row);
 		// * returns the color index of pixel (x, y) starting from top left
@@ -843,7 +1017,11 @@ namespace h3
 		_H3API_ H3LoadedPcx(LPCSTR name);
 		_H3API_ VOID Init(LPCSTR name);
 		_H3API_ VOID Init(LPCSTR name, INT w, INT h);
+
+		_H3API_ static H3LoadedPcx* Load(LPCSTR name);
+		_H3API_ static H3LoadedPcx* Create(LPCSTR name, INT width, INT height);
 	};
+	_H3API_ASSERT_SIZE_(H3LoadedPcx, 0x56C);
 
 	struct H3LoadedPcx16 : public H3ResourceItem // size 0x38 // vt 63B9C8
 	{
@@ -864,15 +1042,10 @@ namespace h3
 		// * in which case this is a H3ARGB888 buffer
 		PUINT8 buffer;
 		BOOL8 keepBuffer; // see 0x44DDE0
-	protected:
-		h3align _f_35[3];
-	public:
 
 		_H3API_ VOID CopyRegion(H3LoadedPcx16* source, INT x, INT y);
 		_H3API_ H3LoadedPcx16* Construct(LPCSTR name, INT width, INT height);
 		_H3API_ VOID DrawToPcx16(INT x, INT y, BOOL transparent, H3LoadedPcx16* dest, INT srcX = 0, INT srcY = 0);
-		_H3API_ static H3LoadedPcx16* Load(LPCSTR name);
-		_H3API_ static H3LoadedPcx16* Create(LPCSTR name, INT width, INT height);
 		_H3API_ VOID Destroy(BOOL destroy_buffer = TRUE);
 		// * darkens RGB by about 50%
 		_H3API_ VOID DrawShadow(INT x, INT y, INT dw, INT dh);
@@ -890,7 +1063,6 @@ namespace h3
 		// * <saturation> is also scaled between 0 ~ 1 and represents how colorful (0 being grayscale) the image appears
 		// * value is fixed
 		_H3API_ VOID AdjustHueSaturation(INT x, INT y, INT w, INT h, FLOAT hue, FLOAT saturation);
-		_H3API_DEPRECATED_("Use ::AdjustHueSaturation()") _H3API_ VOID DrawHue(INT x, INT y, INT w, INT h, FLOAT hue, FLOAT saturation);
 		_H3API_ BOOL BackgroundRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL is_blue);
 		_H3API_ BOOL SimpleFrameRegion(INT32 x, INT32 y, INT32 _width, INT32 _height);
 		_H3API_ BOOL FrameRegion(INT32 x, INT32 y, INT32 w, INT32 h, BOOL statusBar, INT32 colorIndex, BOOL is_blue);
@@ -903,7 +1075,10 @@ namespace h3
 		// * Draws text on the pcx
 		_H3API_ VOID TextDraw(H3Font* font, LPCSTR text, INT32 x, INT32 y, INT32 width, INT32 height,
 			NH3Dlg::TextColor::eTextColor colorIndex = NH3Dlg::TextColor::REGULAR,
-			NH3Dlg::TextAlignment::eTextAlignment alignment = NH3Dlg::TextAlignment::MiddleCenter);
+			NH3Dlg::TextAlignment::eTextAlignment alignment = NH3Dlg::TextAlignment::MIDDLE_CENTER);
+
+		_H3API_ static H3LoadedPcx16* Load(LPCSTR name);
+		_H3API_ static H3LoadedPcx16* Create(LPCSTR name, INT width, INT height);
 	protected:
 		// * returns row start in buffer
 		_H3API_ PUINT8 GetRow(int row);
@@ -915,6 +1090,7 @@ namespace h3
 		_H3API_ H3ARGB888* GetPixel888(int x, int y);
 		_H3API_ H3ARGB888 GetPixel(int x, int y);
 	};
+	_H3API_ASSERT_SIZE_(H3LoadedPcx16, 0x38);
 
 	struct H3LoadedPcx24 : public H3ResourceItem // size 0x30 // vt 63B9F4
 	{
@@ -939,12 +1115,14 @@ namespace h3
 		// * converts RGB888 to RGB565
 		// * if True mode, copies to ARGB888
 		_H3API_ VOID DrawToPcx16(INT dst_x, INT dst_y, H3LoadedPcx16* dest, INT srcX = 0, INT srcY = 0);
-		_H3API_ static H3LoadedPcx24* Load(LPCSTR name, INT width, INT height);
 		// * returns row start in buffer
 		_H3API_ PUINT8 GetRow(int row);
 		// * returns rgb888 pixel at coordinates (x, y) in buffer
 		_H3API_ H3RGB888* GetPixel(int x, int y);
+
+		_H3API_ static H3LoadedPcx24* Load(LPCSTR name, INT width, INT height);
 	};
+	_H3API_ASSERT_SIZE_(H3LoadedPcx24, 0x30);
 
 	struct H3DefFrame : public H3ResourceItem
 	{
@@ -978,17 +1156,21 @@ namespace h3
 		_H3API_ VOID DrawToPcx16(INT src_x, INT src_y, INT src_width, INT src_height, H3LoadedPcx16* pcx16, INT dst_x, INT dst_y,
 			H3Palette565* palette565, BOOL mirror = FALSE, BOOL do_not_use_special_colors = TRUE);
 	};
+	_H3API_ASSERT_SIZE_(H3DefFrame, 0x48);
 
 	// * Not a binary item but relevant to H3LoadedDef and H3DefFrame
 	struct H3DefGroup
 	{
 		// * +0
-		int count;
+		INT32 count;
 		// * +4
-		int spritesSize;
+		UINT32 spritesSize;
 		// * +8
 		H3DefFrame** frames;
+
+		_H3API_ H3DefFrame& operator[](UINT index);
 	};
+	_H3API_ASSERT_SIZE_(H3DefGroup, 0x0C);
 
 	struct H3LoadedDef : public H3ResourceItem
 	{
@@ -1034,7 +1216,6 @@ namespace h3
 			CG_STOP_MOVING           = 21
 		};
 
-		_H3API_ static H3LoadedDef* Load(LPCSTR name);
 		_H3API_ VOID AddFrameFromDef(LPCSTR source, INT32 index);
 		_H3API_ VOID ColorToPlayer(INT32 id);
 		_H3API_ H3DefFrame* GetGroupFrame(INT group, INT frame);
@@ -1047,7 +1228,12 @@ namespace h3
 		_H3API_ VOID AddDefGroup(UINT group_id, UINT frames_in_group);
 		_H3API_ VOID AddFrameToGroup(UINT group_id, H3DefFrame* frame);
 		_H3API_ VOID Init(LPCSTR name, UINT type, UINT width, UINT height);
+
+		_H3API_ H3DefGroup& operator[](UINT index);
+
+		_H3API_ static H3LoadedDef* Load(LPCSTR name);
 	};
+	_H3API_ASSERT_SIZE_(H3LoadedDef, 0x38);
 #pragma pack(pop)
 
 	// * a raii loader for h3 resources
@@ -1061,15 +1247,18 @@ namespace h3
 		inline H3BinaryLoader(T* binary_item);
 		inline ~H3BinaryLoader();
 		void Set(T* binary);
-		T* Get();
-		T* operator->();
-		T* operator*();
+		T*   Get();
+		T*   Release();
+		T*   operator->();
+		T*   operator*();
 		BOOL operator!();
+		operator BOOL();
 	};
 
 	class H3DefLoader : public H3BinaryLoader<H3LoadedDef>
 	{
 	public:
+		H3DefLoader(H3LoadedDef* def);
 		inline H3DefLoader(LPCSTR name);
 	};
 	class H3PcxLoader : public H3BinaryLoader<H3LoadedPcx>
@@ -1097,6 +1286,17 @@ namespace h3
 	public:
 		inline H3TextTableLoader(LPCSTR name);
 	};
+	class H3WavLoader : public H3BinaryLoader<H3WavFile>
+	{
+	public:
+		inline H3WavLoader(LPCSTR name);
+	};
+
+	namespace H3Internal
+	{
+		_H3API_ H3RGB565 _RGB565Mask50();
+		_H3API_ H3RGB565 _RGB565Mask25();
+	}
 }
 
 #endif /* #define _H3BINARYITEMS_HPP_ */

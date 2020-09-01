@@ -13,14 +13,10 @@
 
 #include "../H3_Base.hpp"
 #include "../H3_String.hpp"
+#include "../H3_Structures.hpp"
 
 namespace h3
 {
-	_H3API_DEPRECATED_("Use F_utf8_to_unicode, or F_ansi_to_unicode") _H3API_ LPCWSTR F_MultiByteToWideChar(LPCSTR text, INT textLength, WCHAR* buffer);
-
-	// * forward declaration
-	struct H3TileVision;
-
 	// * inserts a breakpoint for quick stop using debugger
 	_H3API_ VOID          F_Breakpoint();
 	// * Gets cursor coordinates within game window
@@ -38,7 +34,7 @@ namespace h3
 	// * GetCurrentDirectoryA using h3 assets
 	_H3API_ INT           F_GetCurrentDirectory(PCHAR buf, INT bufLen = MAX_PATH);
 	// * SetCurrentDirectoryA using h3 assets
-	_H3API_ BOOL           F_SetCurrentDirectory(LPCSTR dir);
+	_H3API_ BOOL          F_SetCurrentDirectory(LPCSTR dir);
 	// * GetCurrentDirectoryA using h3 assets
 	// * Assigned to path string and adds terminating '\' at request
 	_H3API_ BOOL          F_GetCurrentDirectory(H3String& path, BOOL add_backslash);
@@ -57,6 +53,10 @@ namespace h3
 	_H3API_ BOOL          F_CanViewTile(INT x, INT y, INT z);
 	// * Pointer to vision information of coordinates
 	_H3API_ H3TileVision* F_GetTileVision(INT x, INT y, INT z);
+
+	_H3API_ H3Map_TileVision     F_GetTileVisionMap();
+	_H3API_ H3FastMap_TileVision F_GetTileVisionFastMap();
+
 	// * reveals tile for current player at coordinates
 	_H3API_ VOID          F_ReveaTile(INT x, INT y, INT z);
 	// * timeGetTime using H3 assets
@@ -92,7 +92,7 @@ namespace h3
 
 
 	_H3API_ INT           F_MultiplayerRNG(INT min_value, INT max_value);
-	_H3API_ INT           F_GetLocalTime();
+	_H3API_ H3String      F_GetLocalTime();
 	_H3API_ FILE*         F_fopen(LPCSTR filename, LPCSTR mode);
 	_H3API_ INT           F_fclose(FILE* f);
 	_H3API_ DWORD         F_ftell(FILE* f);
@@ -119,10 +119,10 @@ namespace h3
 	// * used to get coordinates of map data that is stored as an array
 	// * e.g. H3MapItems, RMG_MapItems, H3TileVision
 	template<typename T>
-	H3Point F_ReverseCoordinates(T* current_point, T* base_point, INT map_size);
+	H3Point F_ReverseCoordinates(T* current_point, T* base_point, UINT map_size);
 
-	_H3API_ H3UniquePtr<WCHAR> F_utf8_to_unicode(LPCSTR utf8);
-	_H3API_ H3UniquePtr<WCHAR> F_ansi_to_unicode(LPCSTR ansi);
+	_H3API_ H3UniquePtr<WCHAR> F_utf8ToUnicode(LPCSTR utf8);
+	_H3API_ H3UniquePtr<WCHAR> F_AnsiToUnicode(LPCSTR ansi);
 }
 
 #endif /* #define _H3FUNCTIONS_HPP_ */

@@ -1,0 +1,15 @@
+{
+    "RMGDescription": {
+        "map_creation"     : "Map created by the Random Map Generator. Template was %s, Random seed was %i, size %i, levels %i, humans %i, computers %i, water %s, monsters %i",
+        "separator"        : ", ",
+        "original_map"     : "RoE map",
+        "first_expansion"  : "AB map",
+        "second_expansion" : "SoD map",
+        "third_expansion"  : "ERA map",
+        "water_none"       : "none",
+        "water_normal"     : "normal",
+        "water_islands"    : "islands",
+        "is_human"         : " is human",
+        "town_choice"      : " town choice is "
+    }
+}

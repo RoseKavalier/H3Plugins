@@ -14,6 +14,7 @@
     <ClInclude Include="lib\H3API.hpp" />
     <ClInclude Include="lib\h3api\H3Allocator\H3Allocator.hpp" />
     <ClInclude Include="lib\h3api\H3BinaryItems\H3BinaryItems.hpp" />
+    <ClInclude Include="lib\h3api\H3Bitmap\H3Bitmap.hpp" />
     <ClInclude Include="lib\h3api\H3Bitset\H3Bitset.hpp" />
     <ClInclude Include="lib\h3api\H3Defines\H3Defines.hpp" />
     <ClInclude Include="lib\h3api\H3Dialogs\H3Dialogs.hpp" />
@@ -30,7 +31,7 @@
     <ClInclude Include="lib\h3api\H3Plugins\Interface\H3ImageLoader.hpp" />
     <ClInclude Include="lib\h3api\H3Plugins\Interface\H3TextColor.hpp" />
     <ClInclude Include="lib\h3api\H3RMG\H3RMG.hpp" />
-    <ClInclude Include="lib\h3api\H3StreamBuf\H3StreamBuf.hpp" />
+    <ClInclude Include="lib\h3api\H3Set\H3Set.hpp" />
     <ClInclude Include="lib\h3api\H3Stream\H3Stream.hpp" />
     <ClInclude Include="lib\h3api\H3String\H3String.hpp" />
     <ClInclude Include="lib\h3api\H3Structures\H3Structures.hpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="lib\h3api\H3_Allocator.hpp" />
     <ClInclude Include="lib\h3api\H3_Base.hpp" />
     <ClInclude Include="lib\h3api\H3_BinaryItems.hpp" />
+    <ClInclude Include="lib\h3api\H3_Bitmap.hpp" />
     <ClInclude Include="lib\h3api\H3_Bitset.hpp" />
     <ClInclude Include="lib\h3api\H3_Config.hpp" />
     <ClInclude Include="lib\h3api\H3_Constants.hpp" />
@@ -56,6 +58,7 @@
     <ClInclude Include="lib\h3api\H3_Path.hpp" />
     <ClInclude Include="lib\h3api\H3_Plugins.hpp" />
     <ClInclude Include="lib\h3api\H3_RMG.hpp" />
+    <ClInclude Include="lib\h3api\H3_Set.hpp" />
     <ClInclude Include="lib\h3api\H3_Stream.hpp" />
     <ClInclude Include="lib\h3api\H3_StreamBuf.hpp" />
     <ClInclude Include="lib\h3api\H3_String.hpp" />
@@ -63,12 +66,14 @@
     <ClInclude Include="lib\h3api\H3_Tree.hpp" />
     <ClInclude Include="lib\h3api\H3_Vector.hpp" />
     <ClInclude Include="lib\h3api\H3_Version.hpp" />
+    <ClInclude Include="lib\H3Types.hpp" />
     <ClInclude Include="lib\patcher_x86.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="lib\h3api\H3Allocator\H3Allocator.cpp" />
     <ClCompile Include="lib\h3api\H3Base\H3Base.cpp" />
     <ClCompile Include="lib\h3api\H3BinaryItems\H3BinaryItems.cpp" />
+    <ClCompile Include="lib\h3api\H3Bitmap\H3Bitmap.cpp" />
     <ClCompile Include="lib\h3api\H3Bitset\H3Bitset.cpp" />
     <ClCompile Include="lib\h3api\H3Defines\H3Defines.cpp" />
     <ClCompile Include="lib\h3api\H3Dialogs\H3Dialogs.cpp" />
@@ -82,7 +87,7 @@
     <ClCompile Include="lib\h3api\H3Path\H3Path.cpp" />
     <ClCompile Include="lib\h3api\H3Plugins\H3Plugins.cpp" />
     <ClCompile Include="lib\h3api\H3RMG\H3RMG.cpp" />
-    <ClCompile Include="lib\h3api\H3StreamBuf\H3StreamBuf.cpp" />
+    <ClCompile Include="lib\h3api\H3Set\H3Set.cpp" />
     <ClCompile Include="lib\h3api\H3Stream\H3Stream.cpp" />
     <ClCompile Include="lib\h3api\H3String\H3String.cpp" />
     <ClCompile Include="lib\h3api\H3Structures\H3Structures.cpp" />
@@ -93,6 +98,7 @@
     <None Include="lib\h3api\H3Allocator\H3Allocator.inl" />
     <None Include="lib\h3api\H3Base\H3Base.inl" />
     <None Include="lib\h3api\H3BinaryItems\H3BinaryItems.inl" />
+    <None Include="lib\h3api\H3Bitmap\H3Bitmap.inl" />
     <None Include="lib\h3api\H3Bitset\H3Bitset.inl" />
     <None Include="lib\h3api\H3Defines\H3Defines.inl" />
     <None Include="lib\h3api\H3Dialogs\H3Dialogs.inl" />
@@ -106,12 +112,15 @@
     <None Include="lib\h3api\H3Path\H3Path.inl" />
     <None Include="lib\h3api\H3Plugins\H3Plugins.inl" />
     <None Include="lib\h3api\H3RMG\H3RMG.inl" />
-    <None Include="lib\h3api\H3StreamBuf\H3StreamBuf.inl" />
+    <None Include="lib\h3api\H3Set\H3Set.inl" />
     <None Include="lib\h3api\H3Stream\H3Stream.inl" />
     <None Include="lib\h3api\H3String\H3String.inl" />
     <None Include="lib\h3api\H3Structures\H3Structures.inl" />
     <None Include="lib\h3api\H3Tree\H3Tree.inl" />
     <None Include="lib\h3api\H3Vector\H3Vector.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="lib\H3API.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -162,7 +171,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_H3API_LIBRARY_;_H3API_PLUGINS_;_H3API_EXCEPTION_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_OPERATORS_;_H3API_EXCEPTION_;_H3API_DONT_USE_MACROS_;_H3API_PLUGINS_;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_H3API_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_PLUGINS_;_H3API_EXCEPTION_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_OPERATORS_;_H3API_EXCEPTION_;_H3API_DONT_USE_MACROS_;_H3API_PLUGINS_;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)src;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -183,7 +192,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_H3API_DONT_USE_MACROS_;_H3API_OPERATORS_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_EXCEPTION_;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_H3API_STD_CONVERSIONS_;_H3API_DONT_USE_MACROS_;_H3API_OPERATORS_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_EXCEPTION_;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>

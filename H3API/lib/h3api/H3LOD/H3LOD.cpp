@@ -23,7 +23,7 @@ namespace h3
 	}
 	_H3API_ BOOL H3Lod::Load(LPCSTR fileName)
 	{
-		return THISCALL_3(BOOL, 0x4FAF30, &filePosition, fileName, 1);
+		return THISCALL_3(BOOL, 0x4FAF30, &filePosition, fileName, 1); // 1 means read-only
 	}
 	_H3API_ BOOL8 H3Lod::FindFileInLod(LPCSTR file)
 	{

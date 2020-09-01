@@ -15,8 +15,6 @@
 
 namespace h3
 {
-
-
 	template<UINT size>
 	inline H3Bitset<size>::iterator::iterator(H3Bitset* bitset) :
 		m_bitset(bitset), m_position()
@@ -314,7 +312,7 @@ namespace h3
 	}
 
 	template<UINT size>
-	inline UINT H3Bitset<size>::Size()
+	inline UINT H3Bitset<size>::Size() const
 	{
 		return size;
 	}

@@ -17,18 +17,18 @@ namespace h3
 	_H3API_ H3Protect::H3Protect(UINT32 address, UINT32 size) :
 		m_address(address),
 		m_size(size),
-		m_old_protect()
+		m_oldProtect()
 	{
-		m_protect_edited = VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, PAGE_EXECUTE_WRITECOPY, &m_old_protect);
+		m_protectEdited = VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, PAGE_EXECUTE_WRITECOPY, &m_oldProtect);
 	}
 	_H3API_ H3Protect::~H3Protect()
 	{
-		if (m_protect_edited)
-			VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, m_old_protect, &m_old_protect);
+		if (m_protectEdited)
+			VirtualProtect(reinterpret_cast<LPVOID>(m_address), m_size, m_oldProtect, &m_oldProtect);
 	}
 	_H3API_ BOOL H3Protect::CanWrite()
 	{
-		return m_protect_edited;
+		return m_protectEdited;
 	}
 	_H3API_ PUCHAR H3Patcher::Memmem(PUCHAR haystack, size_t hlen, PUCHAR needle, size_t nlen)
 	{
@@ -61,26 +61,26 @@ namespace h3
 		return p;
 	}
 
-	_H3API_ VOID H3Patcher::NakedHook5(UINT32 whereTo, VOID* function)
+	_H3API_ VOID H3Patcher::NakedHook5(UINT32 address, VOID* function)
 	{
-		H3Protect protect(whereTo, 5);
+		H3Protect protect(address, 5);
 		if (protect.CanWrite())
 		{
-			ByteAt(whereTo)      = H3Patcher::jmp;
-			DwordAt(whereTo + 1) = reinterpret_cast<UINT32>(function) - whereTo - 5;
+			ByteAt(address)      = H3Patcher::JMP;
+			DwordAt(address + 1) = reinterpret_cast<UINT32>(function) - address - 5;
 		}
 	}
-	_H3API_ VOID H3Patcher::NakedHook(UINT32 whereTo, VOID * function, INT totalBytes)
+	_H3API_ VOID H3Patcher::NakedHook(UINT32 address, VOID * function, INT totalBytes)
 	{
 		if (totalBytes < 5)
 			return;
-		H3Protect protect(whereTo, totalBytes);
+		H3Protect protect(address, totalBytes);
 		if (protect.CanWrite())
 		{
-			ByteAt(whereTo)      = H3Patcher::jmp;
-			DwordAt(whereTo + 1) = reinterpret_cast<UINT32>(function) - whereTo - 5;
+			ByteAt(address)      = H3Patcher::JMP;
+			DwordAt(address + 1) = reinterpret_cast<UINT32>(function) - address - 5;
 			for (int i = 5; i < totalBytes; ++i)
-				ByteAt(whereTo + i) = H3Patcher::nop;
+				ByteAt(address + i) = H3Patcher::NOP;
 		}
 	}
 	_H3API_ H3DLL::H3DLL() :
@@ -104,13 +104,13 @@ namespace h3
 	{
 		GetDLLInfo(dll_name);
 	}
-	_H3API_ VOID H3DLL::NeedleNotFound(PUINT8 needle, INT32 needleSize, BOOL inCode) const
+	_H3API_ VOID H3DLL::needleNotFound(PUINT8 needle, INT32 needle_size, BOOL in_code) const
 	{
 		H3String needleBuffer, message;
-		for (int i = 0; i < needleSize; i++)
+		for (int i = 0; i < needle_size; i++)
 			needleBuffer.PrintfAppend("%02X ", needle[i]);
 
-		if (inCode)
+		if (in_code)
 			message.Printf("Could not find needle:\n\n%s\n\nIn module: \"%s\".\n\nCode start: 0x%08X\n\nDLL size: 0x%08X",
 				needleBuffer.String(), dllName, (UINT32)code, size);
 		else
@@ -118,24 +118,24 @@ namespace h3
 				needleBuffer.String(), dllName, (UINT32)rdata, rdataSize);
 		H3Error::ShowError(message.String(), "Needle not found!");
 	}
-	_H3API_ VOID H3DLL::NeedleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needleSize, PUINT8 expectedCode, INT32 expectedSize) const
+	_H3API_ VOID H3DLL::needleUnexpectedCode(UINT32 address, PUINT8 needle, INT32 needle_size, PUINT8 expected_code, INT32 expected_size) const
 	{
 		H3String message;
 		H3String needle_buffer, expected_buffer, found_buffer;
-		for (int i = 0; i < needleSize; i++)
+		for (int i = 0; i < needle_size; i++)
 			needle_buffer.PrintfAppend("%02X ", needle[i]);
 
 		PCHAR adr = reinterpret_cast<PCHAR>(address);
-		for (int i = 0; i < expectedSize; i++)
+		for (int i = 0; i < expected_size; i++)
 		{
-			expected_buffer.PrintfAppend("%02X ", expectedCode[i]);
+			expected_buffer.PrintfAppend("%02X ", expected_code[i]);
 			found_buffer.PrintfAppend("%02X ", adr[i]);
 		}
 		message.Printf("Found needle:\n\n%s\n\nIn Module \"%s\".\n\nHowever, expected code...\n\n%s\n\n...does not match existing code:\n\n%s",
 			needle_buffer.String(), dllName, expected_buffer.String(), found_buffer.String());
 		H3Error::ShowError(message.String(), "Needle not found!");
 	}
-	_H3API_ VOID H3DLL::DLLNotFound() const
+	_H3API_ VOID H3DLL::processNotFound() const
 	{
 		H3String message;
 		message.Printf("Module \"%s\" could not be found!", dllName);
@@ -148,7 +148,7 @@ namespace h3
 		if (!hm)
 		{
 #ifdef _H3DLL_DEBUG_
-			DLLNotFound();
+			processNotFound();
 #endif
 			return;
 		}
@@ -176,72 +176,71 @@ namespace h3
 			}
 		}
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearch(PUINT8 needle, INT32 needleSize, INT32 offset)
+	_H3API_ UINT32 H3DLL::NeedleSearch(PUINT8 needle, INT32 needle_size, INT32 offset)
 	{
-		UINT32 p = H3Patcher::FindByNeedle(code, size, needle, needleSize, offset);
+		UINT32 p = H3Patcher::FindByNeedle(code, size, needle, needle_size, offset);
 #ifdef _H3DLL_DEBUG_
 		if (!p)
-			NeedleNotFound(needle, needleSize);
+			needleNotFound(needle, needle_size);
 #endif
 		return p;
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearchAround(PUINT8 needle, INT32 needleSize, INT32 radius, PUINT8 needle2, INT32 needleSize2)
+	_H3API_ UINT32 H3DLL::NeedleSearchAround(PUINT8 needle, INT32 needle_size, INT32 radius, PUINT8 needle2, INT32 needle_size2)
 	{
-		UINT32 p = NeedleSearch(needle, needleSize, 0);
+		UINT32 p = NeedleSearch(needle, needle_size, 0);
 		if (p)
 		{
 			UINT32 low = std::max(reinterpret_cast<UINT32>(code), p - radius);
 			UINT32 searchLength = std::min(static_cast<UINT32>(2 * radius), size - (p - (UINT32)code));
-			p = H3Patcher::FindByNeedle(reinterpret_cast<PUINT8>(low), searchLength, needle2, needleSize2, 0);
+			p = H3Patcher::FindByNeedle(reinterpret_cast<PUINT8>(low), searchLength, needle2, needle_size2, 0);
 #ifdef _H3DLL_DEBUG_
 			if (!p)
-				NeedleNotFound(needle2, needleSize2);
+				needleNotFound(needle2, needle_size2);
 #endif
 		}
 		return p;
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearchAfter(UINT32 after, const PUINT8 needle, INT32 needleSize, INT32 offset) const
+	_H3API_ UINT32 H3DLL::NeedleSearchAfter(UINT32 after, const PUINT8 needle, INT32 needle_size, INT32 offset) const
 	{
-		UINT32 p = H3Patcher::FindByNeedle(reinterpret_cast<PUINT8>(after), size - (after - reinterpret_cast<UINT32>(code)), needle, needleSize, offset);
+		UINT32 p = H3Patcher::FindByNeedle(reinterpret_cast<PUINT8>(after), size - (after - reinterpret_cast<UINT32>(code)), needle, needle_size, offset);
 #ifdef _H3DLL_DEBUG_
 		if (!p)
-			NeedleNotFound(needle, needleSize);
+			needleNotFound(needle, needle_size);
 #endif
 		return p;
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearchConfirm(PUINT8 needle, INT32 needleSize, INT32 offset, PUINT8 expectedCode, INT32 expectedSize)
+	_H3API_ UINT32 H3DLL::NeedleSearchConfirm(PUINT8 needle, INT32 needle_size, INT32 offset, PUINT8 expected_code, INT32 expected_size)
 	{
-		UINT32 p = NeedleSearch(needle, needleSize, offset);
+		UINT32 p = NeedleSearch(needle, needle_size, offset);
 		if (p)
 		{
-			if (memcmp(reinterpret_cast<PVOID>(p), expectedCode, expectedSize) != 0) // is the code at the found address different from what we expect?
+			if (memcmp(reinterpret_cast<PVOID>(p), expected_code, expected_size) != 0) // is the code at the found address different from what we expect?
 			{
 #ifdef _H3DLL_DEBUG_
-				NeedleUnexpectedCode(p, needle, needleSize, expectedCode, expectedSize);
+				needleUnexpectedCode(p, needle, needle_size, expected_code, expected_size);
 #endif
 				p = 0;
 			}
 		}
 		return p;
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearchRData(PUINT8 needle, INT32 needleSize) const
+	_H3API_ UINT32 H3DLL::NeedleSearchRData(PUINT8 needle, INT32 needle_size) const
 	{
-		UINT32 p = H3Patcher::FindByNeedle(rdata, rdataSize, needle, needleSize, 0);
+		UINT32 p = H3Patcher::FindByNeedle(rdata, rdataSize, needle, needle_size, 0);
 #ifdef _H3DLL_DEBUG_
 		if (!p)
-			NeedleNotFound(needle, needleSize, FALSE);
+			needleNotFound(needle, needle_size, FALSE);
 #endif
 		return p;
 	}
-	_H3API_ UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needleSize) const
+	_H3API_ UINT32 H3DLL::NeedleSearchData(PUINT8 needle, INT32 needle_size) const
 	{
-		UINT32 p = H3Patcher::FindByNeedle(data, dataSize, needle, needleSize, 0);
+		UINT32 p = H3Patcher::FindByNeedle(data, dataSize, needle, needle_size, 0);
 #ifdef _H3DLL_DEBUG_
 		if (!p)
-			NeedleNotFound(needle, needleSize, FALSE);
+			needleNotFound(needle, needle_size, FALSE);
 #endif
 		return p;
 	}
-
 }
 
