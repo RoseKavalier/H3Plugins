@@ -319,6 +319,20 @@ namespace era
         return str;
     }
 
+    /**
+    * Returns translation for given complex key ('xxx.yyy.zzz') as is.
+    *
+    * @param  key    Key to get translation for.
+    * @return        Translation string.
+    */
+    inline std::string GetTranslation(const char* key)
+    {
+        char* buf = _tr(key, nullptr, -1);
+        std::string str(buf);
+        MemFree(buf);
+        return str;
+    }
+
     inline std::string IntToStr(int value)
     {
         char buf[64];
