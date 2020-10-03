@@ -1,0 +1,268 @@
+{
+    "general": {
+        "movement": "Bewegungskosten: {%d}",
+        "multiplayer_disabled": "{Multiplayer-Modus ist deaktiviert}\n\nUm den Multiplayer-Modus zu aktivieren, mьssen Sie {SoD_SP} aus Ihrer Liste der aktiven Modi {entfernen}.",
+        "new_version": "Eine {~H3Cyan}neue Version von SoD_SP} ist verfьgbar:\n{~H3Green}%s}Derzeit verwenden Sie die Version:\n\n{~H3Red}%s}\n\nMochten Sie die Downloadseite besuchen?",
+        "prison_fusion": "{Die Fusion von Helden} ist deaktiviert.\nBitte gehen Sie vom Gefдngnis los und versuchen Sie erneut.",
+        "save_confirmation": "Schnell gespeichert!",
+        "custom_save_abbreviation": "Schnell",
+        "custom_abbreviation_text": "Bitte geben Sie zwischen {1 and 15} Zeichen fьr Ihren benutzerdefinierten schnell gespeicherten Namen ein."
+    },
+    "color": {
+        "dialog_title": {
+            "text": "SoD_SP Farbwahl",
+            "description": "Wдhlen Sie Ihre Farbe"
+        },
+        "adventure_map_coordinates": {
+            "text": "Koordinaten der Abenteuerkarte",
+            "description": "{Koordinaten der Abenteuerkarte}\n\nDie Farbe, die zu den Koordinaten des Mauszeigers auf der Abenteuerkarte passt."
+        },
+        "creature_hit_points": {
+            "text": "Trefferpunkte von Kreatur beim Kampf",
+            "description": "{Trefferpunkte von Kreatur beim Kampf}\n\nDie Farbe der Trefferpunkte von Kreatur unter dem Mauszeiger beim Kampf."
+        },
+        "slay_all_creatures_hint_color": {
+            "text": "Maximale Anzahl",
+            "description": "{Maximale Anzahl}\n\nDie Farbe, die fьr die beschreibenden Zahlen, die zeigen, dass vollstдndige Vernichtung oder Wiederherstellung auftreten wird, benutzt ist."
+        },
+        "slay_partial_creatures_hint_color": {
+            "text": "Unvollstдndige Anzahl",
+            "description": "{Unvollstдndige Anzahl}\n\nDie Farbe, die fьr die beschreibenden Zahlen, die zeigen, dass nur eine unvollstдndige Vernichtung oder Wiederherstellung auftreten wird, benutzt ist."
+        },
+        "move_sequence_hint_color": {
+            "text": "Bewegungsreihenfolge",
+            "description": "{Bewegungsreihenfolge}\n\nDie Farbe, die in der Statuszeile des Schlachtfelds benutzt ist um die Bewegungsreihenfolge der Kreatur unter dem Mauszeiger zu zeigen."
+        },
+        "battle_coordinates_hint_color": {
+            "text": "Hexadezimale Kampf-Koordinaten",
+            "description": "{Hexadezimale Kampf-Koordinaten}\n\nDie Farbe, die zu den alphanumerischen Kampf-Koordinaten unter dem Mauszeiger wдhrend der Kampf passt."
+        },
+        "color_type_modified": "Die Option der Farbe\n{%s}wurde\nauf:\n{~%s}%s} erfolgreich eingestellt."
+    },
+    "combat": {
+        "kill_verb": "Es tцtet",
+        "damage_noun": "Schaden",
+        "resurrected_hit_points": "Lebenspunkte wiederhergestellt",
+        "resurrection_verb": "Es aufleben lдsst",
+        "hit_points": " Lebenspunkte",
+        "kill_range": "Bis zu",
+        "active_creature": "Aktiv",
+        "waiting_creature": "Es wartet",
+        "moved_creature": "Es hat sich schon bewegt",
+        "defending_creature": "Es verteidigt sich",
+        "creature_status": "Status",
+        "retaliations_count": "Vergeltungsschlдge",
+        "number_spell_charges": "Ьbriges Zaubern",
+        "battlequeue_top_turret": "Ober",
+        "battlequeue_mid_turret": "Haupt.",
+        "battlequeue_bot_turret": "Niedrig"
+    },
+    "quickspell": {
+        "target_creature": "Das Ziel des Schnellzauberspruchs {%d} wurde auf {%s} an {%c%d} festgesetzt.",
+        "target_hex": "Das Ziel des Schnellzauberspruchs {%d} wurde an {%c%d} festgesetzt.",
+        "no_spell": "Sie haben nicht den Zauberspruch {%s}.",
+        "new_creature": "Eine Kreatur ist von den Toten auferstanden...\nMцchten Sie sie als Ziel des Schnellzauberspruchs festsetzen {%d}?",
+        "set_quickspell": "Der Schnellzauberspruch {%d} wurde auf {%s} festgesetzt.\nMцchten Sie das Ziel des Schnellzauberspruchs {%d} behalten?",
+        "list_spells_title": "Quick Spells List",
+        "reset_hint": "Setzen Sie das Ziel des Schnellzauberspruches {''%d''} zurьck.",
+        "reset_target_text": "Klicken Sie mit der linken Maustaste um das Ziel des Schnellzauberspruches {''%d''} zurьckzusetzen.",
+        "reset_confirmation": "Sind Sie sicher, dass Sie das Ziel des Schnellzauberspruches {''%d''} zurьcksetzen wollen?",
+        "select_new_quickspell": "Klicken Sie mit der linken Maustaste um einen anderen Schnellzauberspruch auszuwдhlen."
+    },
+    "find_me": {
+        "search_in_shroud_text": "Wenn {EIN}geschaltet, wird FindMe (FindeMich) im Grabtuch versteckte Objekte finden und aufdecken.\nWenn {AUS}geschaltet, wird FindMe (FindeMich) nur schon sichtbare Objekte finden und aufdecken.",
+        "search_in_shroud_hint": "Schalten Sie diese Option ein um Objekte in unerforschtem Gebiet zu finden und aufzudecken.",
+        "item_general_hint": "Klicken Sie mit der linken Maustaste um dieses Objekt zu finden.",
+        "stop_display": "Die Anzeige von Objekten wurde angehalten.",
+        "toggle_event_display": "Klicken Sie um die Sichtbarkeit von Ereignissen auf der Abenteuerkarte umzuschalten.",
+        "found_items_text": "Gefunden %d %s"
+    },
+    "spells": {
+        "elementals": "\nEs ruft %d Elementals.",
+        "cure": "\nEs heilt %d Lebenspunkte.",
+        "hypnotize": "\nEs kontrolliert bis zum %d Lebenspunkte.",
+        "resurrection": "\nEs stellt %d Lebenspunkte wieder her.",
+        "visions": "\nRange: %d Fliesen",
+        "fly_waterWalk": "\nDie zurьckgelegte Strecke darf bis zum %d%% der normalen Bewegung sein.",
+        "increase": "\nEs wurde um: %d erhцht",
+        "reduce": "\nEs wurde um: %d verringert",
+        "reduce_by_percentage": "\nVerringerung vom: %d%%",
+        "dimension_door_town_portal": "\nBewegungspunktekosten: %d",
+        "sacrifice": "\nEs fьgt %d Lebenspunkte zu jeder geopferten Kreatur hinzu.",
+        "fire_shield": "\nEs gibt %d%% des Grundschadens zurьck."
+    },
+    "sod_sp": {
+        "dialog": {
+            "dialog_title": "Optionen",
+            "dialog_description": "Machen Sie Rechtsklick in die Kontrollkдstchen um mehr Informationen zu haben.",
+            "confirm_description": "Akzeptieren Sie alle Дnderungen und schlieЯen Sie das Dialogfenster.",
+            "save_description": "Speichern Sie die aktuellen Optionen in \"{SoD_SP.ini}\"",
+            "save_confirmation": "Sind Sie sicher, dass Sie alle Дnderungen speichern wollen?",
+            "save_failed": "{Achtung!}\n\nEtwas is schiefgegangen and Datei konnte nicht gespeichert worden.",
+            "save_success": "Alle Optionen wurden gespeichert!",
+            "disabled_option_text": "Diese Option ist\n{~H3Cyan}vom Hersteller der Karte}gesperrt worden und kann nicht geдndert worden."
+        },
+        "options": {
+            "month_of_the_plague": {
+                "text": "Seuche",
+                "description": "{Seuche}\n\nWenn {EIN}geschaltet, verhindert diese Option, dass der Monat der SEUCHE! geschieht."
+            },
+            "double_growth_month": {
+                "text": "Doppeltwachstum",
+                "description": "{Doppeltwachstum}\n\nWenn {EIN}geschaltet, verhindert diese Option die 12 Doppeltwachstumsmonate und die laichenden Monster auf der Karte.\n\n{ANMERKUNG}: Es streicht *NICHT* „den Monat des Imps“."
+            },
+            "weekly_5_growth": {
+                "text": "Wцchentlicher Wachstum",
+                "description": "{Wцchentlicher Wachstum}\n\nWenn {EIN}geschaltet, verhindert diese Option den zufдlligen wцchentlichen „+5 Wachstum“ von bestimmten Kreaturen."
+            },
+            "fix_armorer_turret_bug": {
+                "text": "Turm-Bug",
+                "description": "{Turm-Bug}\n\nWenn {EIN}geschaltet, garantiert diese Option, dass das Geschick „Armorer“ und der Zauberspruch „Air Shield“ den Schaden aus dem Burgtьrmchen verringern anstatt den zu erhцhen."
+            },
+            "prevent_creature_overflow": {
+                "text": "Ьberlaufen von Kreaturen",
+                "description": "{Ьberlaufen von Kreaturen}\n\nWenn {EIN}geschaltet, verhindert diese Option, dass die grцЯeren als 32.767 KreaturstцЯen plцtzlich negativ und unbrauchbar werden.\n\n{ANMERKUNG}: Nach HDmod 5.0 beta 9 ist das das Standardverhalten. Um das ursprьngliche Ьberlaufensrisiko wiederherzustellen, schalten Sie die Option {AUS}."
+            },
+            "prevent_resource_overflow": {
+                "text": "Ьberlaufen von Rohstoffquellen",
+                "description": "{Ьberlaufen von Rohstoffquellen}\n\nWenn {EIN}geschaltet, verhindert diese Option, dass Seine Rohstoffquellen an den 2.147.483.647 Stьcken ьberlaufen und negativ werden."
+            },
+            "prevent_primary_skill_overflow": {
+                "text": "Ьberlaufen von Primдren Fдhigkeiten",
+                "description": "{Ьberlaufen von Primдren Fдhigkeiten}\n\nWenn {EIN}geschaltet, verhindert diese Option, dass Seine Primдren Fдhigkeiten (primary skills) an der Nummer 127 ьberlaufen und negativ werden.\n\n{ANMERKUNG}: Diese Option wird absichtlich wдhrend der Spielerstellung nicht aktiviert, so kann man immer noch einen Held auf hoher Ebene mit niedrigen Attributen haben."
+            },
+            "restore_original_obstacles": {
+                "text": "Ursprьngliche Hindernisse",
+                "description": "{Ursprьngliche Hindernisse}\n\nWenn {EIN}geschaltet, stellt diese Option die ursprьngliche Platzierung von Hindernissen wдhrend der Kampf auch bei „{HD+}“ Funktionalitдt wieder her."
+            },
+            "restore_original_creature_split": {
+                "text": "Kreaturteilung",
+                "description": "{Kreaturteilung}\n\nWenn {EIN}geschaltet, stellt diese Option den ursprьnglichen Teilungsalgorithmus der irrenden Kreaturen auch bei „{HD+}“ Funktionalitдt wieder her."
+            },
+            "restore_original_random_number_generator": {
+                "text": "Ursprьnglicher Zufallszahlengenerator (RNG)",
+                "description": "{Ursprьnglicher Zufallszahlengenerator (RNG)}\n\nWenn {EIN}geschaltet, stellt diese Option die ursprьngliche Zufallszahlengeneratorfunktion (RNG) auch bei „{HD+}“ Funktionalitдt wieder her."
+            },
+            "restore_original_berserk_for_ai": {
+                "text": "Kьnstliche Intelligenz und Berserk",
+                "description": "{Kьnstliche Intelligenz und Berserk}\n\nWenn {EIN}geschaltet, stellt diese Option das ursprьngliche Verhalten von den Verbдnden der Kьnstlichen Intelligenz (AI) unter dem Zauberspruch „Berserk“ auch bei „{HD+}“ Funktionalitдt wieder her."
+            },
+            "comma_formatted_resources": {
+                "text": "Format von Rohstoffquellen",
+                "description": "{Format von Rohstoffquellen}\n\nWenn {EIN}geschaltet, zeigt diese Option Kommata ',' zwischen jeden 3 Ziffern um die Lesbarkeit zu verbessern.\n{ANMERKUNG}:\nIn einigen Fдllen, in denen der Raum begrenzt ist, sind die Buchstaben K und M benutzt um die Tausende und die Millionen darzustellen.\nZ.B. 123,456,789 wird als 123,456K dargestellt."
+            },
+            "combat_rmb_ok_button": {
+                "text": "Rechte Maustaste und Kampftext",
+                "description": "{Rechte Maustaste und Kampftext}\n\nWenn {EIN}geschaltet, macht diese Option es, dass, wenn man mit der rechten Maustaste auf einen Gegner wдhrend der Kampf klickt, die Textbox bei Loslassen der rechten Maustaste geцffnet bleibt."
+            },
+            "show_combat_coordinates_hint": {
+                "text": "Kampf-Koordinaten",
+                "description": "{Kampf-Koordinaten}\n\nWenn {EIN}geschaltet, zeigt diese Option die alphanumerischen Kampf-Koordinaten unter dem Mauszeiger im Info-Dialog der Kampf."
+            },
+            "show_creature_hit_points_hint": {
+                "text": "Lebenspunkte der Kreatur",
+                "description": "{Lebenspunkte der Kreatur}\n\nWenn {EIN}geschaltet, zeigt diese Option die ьbrigen Lebenspunkte der Kreatur unter dem Mauszeiger im Info-Dialog der Kampf."
+            },
+            "show_creature_move_sequence_hint": {
+                "text": "Bewegungsreihenfolge",
+                "description": "{Bewegungsreihenfolge}\n\nWenn {EIN}geschaltet, zeigt diese Option die Bewegungsreihenfolge der Kreatur unter dem Mauszeiger im Info-Dialog der Kampf."
+            },
+            "enable_turbo_speed": {
+                "text": "Turbo Geschwindigkeit",
+                "description": "{Turbo Geschwindigkeit}\n\nWenn {EIN}geschaltet, sind alle Kampfanimationen schneller."
+            },
+            "correct_some_ai_cheats": {
+                "text": "Betrьgereien der kьnstlichen Intelligenz",
+                "description": "{Betrьgereien der kьnstlichen Intelligenz}\n\nWenn {EIN}geschaltet, kцnnen die Spieler der kьnstlichen Intelligenz nicht mehr den Zauberspruch „Town Portal“ benutzen, wenn sie auf verfluchtem Erdboden stehen, und die kьnstliche Intelligenz ist gehindert den Zauberspruch „Fly“ zu benutzen, Wenn sie erstens keinen Zugang dazu hat."
+            },
+            "display_extra_spell_information": {
+                "text": "Zauberspruchsinformationen",
+                "description": "{Zauberspruchsinformationen}\n\nWenn {EIN}geschaltet, werden Sie zusдtzliche Informationen erhalten, wenn Sie einige Zaubersprьche in Ihrem Zauberbuch untersuchen."
+            },
+            "display_mouse_map_coordinates": {
+                "text": "Koordinaten der Karte",
+                "description": "{Koordinaten der Karte}\n\nWenn {EIN}geschaltet, werden die Koordinaten unter dem Mauszeiger (x,y,z) auf der Abenteuerkarte in der Statusanzeige am unteren Rand des Bildschirms gezeigt werden."
+            },
+            "hide_clone_and_elementals_casualties": {
+                "text": "Echte Opfer",
+                "description": "{Echte Opfer}\n\nWenn {EIN}geschaltet, werden gerufte Elementals und geklonte Kreaturen nicht als Schlachtfeldopfer erscheinen."
+            },
+            "show_quickspell_panel": {
+                "text": "Schnellzauberspruchstafel",
+                "description": "{Schnellzauberspruchstafel}\n\nWenn {EIN}geschaltet, wird die linke Seite des Kampf-Bildschirms eine interaktive Tafel mit Ihren festgesetzten Schnellzaubersprьchen anzeigen und Anpassung erlauben."
+            },
+            "show_battlequeue_panel": {
+                "text": "Kampf-Warteschlangetafel",
+                "description": "{Kampf-Warteschlangetafel}\n\nWenn {EIN}geschaltet, wird die rechte Seite des Kampf-Bildschirms die bevorstehende Bewegungsreihenfolge der Kreaturen auf dem Schlachtfeld anzeigen."
+            },
+            "battlequeue_position_count": {
+                "text": "Kampf-Schlange-Text",
+                "description": "{Kampf-Schlange-Text}\n\nWenn {EIN}geschaltet, zeigt die Kampf-Schlange die alphanumerische Lage des Stapels an.\nWenn {AUS}geschaltet, zeigt die Kampf-Schlange die Anzahl der Kreaturen im Stapel an."
+            },
+            "correct_admirals_hat_bug": {
+                "text": "Admiral's Hat Bug",
+                "description": "{Admiral's Hat Bug}\n\nWenn {EIN}geschaltet, entfernt diese Option die Mцglichkeit endlose Bewegung durch Benutzung von Admiral's Hat zu erzeugen."
+            },
+            "correct_some_movement_bugs": {
+                "text": "Bewegungs-Bugs",
+                "description": "{Bewegungs-Bugs}\n\nWenn {EIN}geschaltet, repariert diese Option einige Bewegungs-Bugs wie den Bug mit dem Rьckzug wдhrend auf dem Boot oder den Bug mit dem Leuchtturm der Castle-Stadt, der allen Spielern Bewegung hinzufьgt."
+            },
+            "enable_clone_bug": {
+                "text": "Klon-Bug",
+                "description": "{Klon-Bug}\n\nWenn {EIN}geschaltet, aktiviert diese Option wieder den Klon-Bug wдhrend der Benutzung der '{HD+}' Funktion. Obwohl das fьr sehr wenige Karten erforderlich ist, ist die empfohlene Einstellung „aus“, weil Spielabstьrzte wдhrend der Benutzung von diesem Bug eintreten kцnnen."
+            },
+            "correct_earthquake_bug": {
+                "text": "Erdbeben-Bug",
+                "description": "{Erdbeben-Bug}\n\nWenn {EIN}geschaltet, repariert diese Option den Erdbeben-Bug, der manchmal sich an Truppen angerichtet hat."
+            },
+            "correct_repeatable_event_bug": {
+                "text": "Wiederholbares Ereignis",
+                "description": "{Wiederholbares Ereignis}\n\nWenn {EIN}geschaltet, verhindert diese Option, dass Sie Ereignisse, die als „Entwerten Sie das Ereignis nach dem ersten Besuch“ auf dem Mapeditor markiert sind, wieder besuchen."
+            },
+            "show_ai_movement_on_minimap": {
+                "text": "AI Minikarte",
+                "description": "{AI Minikarte}\n\nWenn {EIN}geschaltet, werden Sie auf der Minikarte anstelle des Schutzes der kьnstlichen Intelligenz sehen, wohin die Spieler der kьnstlichen Intelligenz gehen."
+            },
+            "correct_vanishing_upgraded_stack": {
+                "text": "Verschwinden-Bug",
+                "description": "{Verschwinden-Bug}\n\nWenn {EIN}geschaltet, wird das zufдllige verbesserte Stapel von wandernden Monstern nicht mehr von der Gesamtzahl der Kreaturen abgezogen wird, wenn der Held sich zurьckzieht."
+            },
+            "fix_incorrect_obstacle_anchors": {
+                "text": "Anker-Bug",
+                "description": "{Anker-Bug}\n\nWenn {EIN}geschaltet, verhindern цrtliche Schlachtfeldhindernisse nicht, dass Firewall, Forcefield, Quicksand oder Land Mine auf einigen nahen Fliesen benutzt werden.\n{ANMERKUNG}: Diese Option kann nicht aus dem Schlachtfeld verдndert werden."
+            },
+            "enable_quick_combat_bugs": {
+                "text": "Schnellkampf",
+                "description": "{Schnellkampf}\n\nWenn {EIN}geschaltet, stellt diese Option einige Schnellkampf-Bugs wieder her, die von der '{HD+}' Funktion repariert worden sind."
+            },
+            "restore_naga_bank_sulfur": {
+                "text": "Naga Banks",
+                "description": "{Naga Banks}\n\nWenn {EIN}geschaltet, werden die Naga Banks Schwefel statt Edelsteins zur Verfьgung stellen, so dass die Дnderung von '{HD+}' zurьckgekehrt wird. {ANMERKUNG}: Sie werden die Wirkung dieser Option nur sehen, nachdem Sie ein neues Spiel beginnen."
+            },
+            "correct_hero_hireability": {
+                "text": "Helden der Taverne",
+                "description": "{Helden der Taverne}\n\nWenn {EIN}geschaltet, werden die Helden, die nicht als „Kann vom Spieler X eingestellt werden“ markiert sind, nicht mehr verfьgbar in der Taverne, wie der Hersteller der Karte beabsichtigte, durch Tod oder Entlassung sein.\n{ANMERKUNG}: Um die Wirkung zu sehen, muss diese Einstellung deaktiviert werden, wenn der Bug aktiviert ist."
+            },
+            "correct_quick_combat_power_overflow": {
+                "text": "Ьberlaufen bei Schnellkampf ",
+                "description": "{Ьberlaufen bei Schnellkampf}\n\nWenn {EIN}geschaltet, werden die gesamte Kraft und das verursachte Schaden bei Schnellkampf zwischen den Helden der kьnstlichen Intelligenz nicht erlaubt in negative Werte ьberzulaufen."
+            },
+            "ai_necromancy_fix": {
+                "text": "AI Necromancy",
+                "description": "{AI Necromancy}\n\nWenn {EIN}geschaltet, werden die Helden der kьnstlichen Intelligenz mit Necromancy die entsprechende Anzahl von Kreaturen anstatt einer einzelnen Kreatur auferstehen lassen."
+            },
+            "prevent_hero_fusion": {
+                "text": "Fusion von Helden",
+                "description": "{Fusion von Helden}\n\nWenn {EIN}geschaltet, werden die Helden nicht mehr erlaubt dieselbe Fliese der Karte zu besetzen und deshalb werden der Austausch zwischen ihnen und die Schaffung von Kopien der Gegenstдnde deaktiviert."
+            },
+            "ai_magic_mirror_fix": {
+                "text": "KI Magischer Spiegel",
+                "description": "{KI Magischer Spiegel}\n\nWenn {EIN}geschaltet, kfnnen die Angriffs-Zaubersprьche, die die feindlichen Helden wirken, auf ihren eigenen Truppen widergespiegelt werden, wenn das ursprьngliche Ziel unter dem Einfluss des Zauberspruches {Magischer Spiegel} ist."
+            },
+            "enchanters_spellcast_fix": {
+                "text": "Enchanters Cast Bug",
+                "description": "{Enchanters Cast Bug}\n\nWhen turned {ON}, Enchanters will correctly consider all valid targets instead of only the first stack on each side of the battlefield; this could result in enchanters not casting otherwise valid spells."
+            }
+        }
+    }
+}

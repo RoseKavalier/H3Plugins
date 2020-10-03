@@ -1,0 +1,268 @@
+{
+    "general": {
+        "movement": "Movement Cost: {%d}",
+        "multiplayer_disabled": "{Multiplayer is Disabled}\n\nTo enable Multiplayer you need to {~Cyan}remove SoD_SP} from your active mods list.",
+        "new_version": "A {~H3Cyan}new version of SoD_SP} is available:\n{~H3Green}%s}\nYou are currently using version :\n{~H3Red}%s}\n\nWould you like to go to the download page?",
+        "prison_fusion": "{Hero Fusion} is disabled.\nPlease move off the Prison and try again.",
+        "save_confirmation": "Quicksaved!",
+        "custom_save_abbreviation": "Quick",
+        "custom_abbreviation_text": "Please enter between {1 and 15} characters for your custom quicksave name."
+    },
+    "color": {
+        "dialog_title": {
+            "text": "SoD_SP Color Selection",
+            "description": "Choose your color"
+        },
+        "adventure_map_coordinates": {
+            "text": "Adventure map coordinates",
+            "description": "{Adventure map coordinates}\n\nThe color matching the coordinates of the mouse cursor on the Adventure Map."
+        },
+        "creature_hit_points": {
+            "text": "Battle creature hit points",
+            "description": "{Battle creature hit points}\n\nThe color of creature hit points under the mouse cursor during combat."
+        },
+        "slay_all_creatures_hint_color": {
+            "text": "Maximum count",
+            "description": "{Maximum count}\n\nThe color used for descriptive numbers indicating that complete annihilation or restoration will occur."
+        },
+        "slay_partial_creatures_hint_color": {
+            "text": "Partial count",
+            "description": "{Partial count}\n\nThe color used for descriptive numbers indicating that only a partial kill or restoration will occur."
+        },
+        "move_sequence_hint_color": {
+            "text": "Move sequence",
+            "description": "{Move sequence}\n\nThe color used in the battlefield status bar to indicate the move order of the creature under the mouse cursor."
+        },
+        "battle_coordinates_hint_color": {
+            "text": "Battle hex coordinates",
+            "description": "{Battle hex coordinates}\n\nThe color matching the battle alpha-numeric coordinates under the mouse cursor while in combat."
+        },
+        "color_type_modified": "Color option\n{%s}\nsuccessfully set to:\n{~%s}%s}"
+    },
+    "combat": {
+        "kill_verb": "kills",
+        "damage_noun": "damage",
+        "resurrected_hit_points": "hp restored",
+        "resurrection_verb": "raises",
+        "hit_points": "hp",
+        "kill_range": "to",
+        "active_creature": "Active",
+        "waiting_creature": "Waiting",
+        "moved_creature": "Already Moved",
+        "defending_creature": "Defending",
+        "creature_status": "Status",
+        "retaliations_count": "Retaliations",
+        "number_spell_charges": "Casts Left",
+        "battlequeue_top_turret": "Top",
+        "battlequeue_mid_turret": "Keep",
+        "battlequeue_bot_turret": "Bot"
+    },
+    "quickspell": {
+        "target_creature": "Quick Spell target {\"%d\"} set to {\"%s\"} at {\"%c%d\"}.",
+        "target_hex": "Quick Spell target {\"%d\"} set to {\"%c%d\"}.",
+        "no_spell": "You do not have the {\"%s\"} spell.",
+        "new_creature": "A creature has risen from the dead...\nWould you like to set it as Quick Spell target {\"%d\"}?",
+        "set_quickspell": "Quick Spell {\"%d\"} set to {\"%s\"}.\nKeep Quick Spell {\"%d\"} target?",
+        "list_spells_title": "Quick Spells List",
+        "reset_hint": "Reset Quick Spell {\"%d\"} target",
+        "reset_target_text": "Left-click to reset Quick Spell {\"%d\"} target.",
+        "reset_confirmation": "Are you sure you want to reset Quick Spell {\"%d\"} target?",
+        "select_new_quickspell": "Left-click to select another Quick Spell."
+    },
+    "find_me": {
+        "search_in_shroud_text": "When turned {ON}, FindMe will find and reveal items that are hidden in the shroud.\nWhen turned {OFF}, FindMe will only find and reveal items that you can already see.",
+        "search_in_shroud_hint": "Turn on to find and reveal items in Uncharted Territory.",
+        "item_general_hint": "Left-click to find this item.",
+        "stop_display": "Stopped displaying items.",
+        "toggle_event_display": "Click to toggle visibility of Events on the Adventure Map.",
+        "found_items_text": "Found %d %s(s)"
+    },
+    "spells": {
+        "elementals": "\nSummons %d Elementals.",
+        "cure": "\nHeals %d Hit Points.",
+        "hypnotize": "\nControl up to %d Hit Points.",
+        "resurrection": "\nRestore %d Hit Points.",
+        "visions": "\nRange: %d tiles",
+        "fly_waterWalk": "\nDistance traveled may be up to %d%% of normal movement.",
+        "increase": "\nIncreased by: %d",
+        "reduce": "\nReduced by: %d",
+        "reduce_by_percentage": "\nReduction of: %d%%",
+        "dimension_door_town_portal": "\nMovement points cost: %d",
+        "sacrifice": "\nAdds %d hit points to every sacrificed creature.",
+        "fire_shield": "\nReturns %d%% of base damage."
+    },
+    "sod_sp": {
+        "dialog": {
+            "dialog_title": "Options",
+            "dialog_description": "Right-click on checkboxes to have more information.",
+            "confirm_description": "Accept all changes and close dialog.",
+            "save_description": "Save the current options to {SoD_SP.ini}",
+            "save_confirmation": "Are you sure you want to save all changes?",
+            "save_failed": "{Warning!}\n\nSomething went wrong and data could not be saved.",
+            "save_success": "All options saved!",
+            "disabled_option_text": "This option has been\n{~H3Cyan}locked by the mapmaker}\nand cannot be modified."
+        },
+        "options": {
+            "month_of_the_plague": {
+                "text": "Plague",
+                "description": "{Plague}\n\nWhen turned {ON}, this option prevents Month of the PLAGUE! from occurring."
+            },
+            "double_growth_month": {
+                "text": "Double Growth",
+                "description": "{Double Growth}\n\nWhen turned {ON}, this option prevents the 12 double growth months and the spawning creatures on map.\n{NOTE}: does *NOT* remove 'Month of the Imp'."
+            },
+            "weekly_5_growth": {
+                "text": "Weekly Growth",
+                "description": "{Weekly Growth}\n\nWhen turned {ON}, this option prevents the random weekly '+5 growth' to specific creatures."
+            },
+            "fix_armorer_turret_bug": {
+                "text": "Turret Bug",
+                "description": "{Turret Bug}\n\nWhen turned {ON}, this option ensures that 'Armorer' skill and 'Air Shield' reduce damage from Turret Towers instead of increase it."
+            },
+            "prevent_creature_overflow": {
+                "text": "Creature Overflow",
+                "description": "{Creature Overflow}\n\nWhen turned {ON}, this option prevents creature stacks larger than 32,767 to suddenly become negative and become useless.\n{NOTE}: As of HDmod 5.0 beta 9, this is default behavior. To restore original overflow risk, turn the option {OFF}."
+            },
+            "prevent_resource_overflow": {
+                "text": "Resource Overflow",
+                "description": "{Resource Overflow}\n\nWhen turned {ON}, this option prevents your resources from overflowing at 2,147,483,647 and becoming negative."
+            },
+            "prevent_primary_skill_overflow": {
+                "text": "Primary Overflow",
+                "description": "{Primary Overflow}\n\nWhen turned {ON}, this option prevents your primary skills from overflowing at 127 and becoming negative.\n{NOTE}: purposely not active during game creation so you can still have a high level hero with small stats."
+            },
+            "restore_original_obstacles": {
+                "text": "Original Obstacles",
+                "description": "{Original Obstacles}\n\nWhen turned {ON}, this option restores the original placement of obstacles during combat even when using the '{HD+}' feature."
+            },
+            "restore_original_creature_split": {
+                "text": "Creature Split",
+                "description": "{Creature Split}\n\nWhen turned {ON}, this option restores the original split algorithm of wandering creatures even when using the '{HD+}' feature."
+            },
+            "restore_original_random_number_generator": {
+                "text": "Original RNG",
+                "description": "{Original RNG}\n\nWhen turned {ON}, this option restores the original RNG function even when using the '{HD+}' feature."
+            },
+            "restore_original_berserk_for_ai": {
+                "text": "AI Berserk",
+                "description": "{AI Berserk}\n\nWhen turned {ON}, this option restores the original behavior of AI units under the spell 'Berserk' even when using the '{HD+}' feature."
+            },
+            "comma_formatted_resources": {
+                "text": "Resources Format",
+                "description": "{Resources Format}\n\nWhen turned {ON}, this option shows commas ',' between every 3 digits to enhance readability.\n{NOTE}: In some occasions where there is limited space, the use of K, M is done to represent thousands and millions.\ne.g. 123,456,789 is shown as 123,456K."
+            },
+            "combat_rmb_ok_button": {
+                "text": "RMB Combat Text",
+                "description": "{RMB Combat Text}\n\nWhen turned {ON}, this option makes it so that when you right-click on an enemy in combat, the textbox remains open after releasing the right-mouse button."
+            },
+            "show_combat_coordinates_hint": {
+                "text": "Combat Coordinates",
+                "description": "{Combat Coordinates}\n\nWhen turned {ON}, this option shows the alpha-numeric combat coordinates under your mouse cursor in the combat tip dialog."
+            },
+            "show_creature_hit_points_hint": {
+                "text": "Creature HP",
+                "description": "{Creature HP}\n\nWhen turned {ON}, this option shows the remaining hit points of the creature under your mouse in the combat tip dialog."
+            },
+            "show_creature_move_sequence_hint": {
+                "text": "Move Sequence",
+                "description": "{Move Sequence}\n\nWhen turned {ON}, this option shows the move order of the creature under your mouse in the combat tip dialog."
+            },
+            "enable_turbo_speed": {
+                "text": "Turbo Speed",
+                "description": "{Turbo Speed}\n\nWhen turned {ON}, all combat animations are faster."
+            },
+            "correct_some_ai_cheats": {
+                "text": "AI Cheats",
+                "description": "{AI Cheats}\n\nWhen turned {ON}, the AI players can no longer cast 'Town Portal' while on Cursed Ground and the AI is blocked from casting 'Fly' if he does not have access to it in the first place."
+            },
+            "display_extra_spell_information": {
+                "text": "Spell Info",
+                "description": "{Spell Info}\n\nWhen turned {ON}, you will get additional information when inspecting some spells in your Spellbook."
+            },
+            "display_mouse_map_coordinates": {
+                "text": "Map Coordinates",
+                "description": "{Map Coordinates}\n\nWhen turned {ON}, the coordinates under the mouse cursor (x,y,z) in the Adventure Map will be shown in the status bar at the bottom of the screen."
+            },
+            "hide_clone_and_elementals_casualties": {
+                "text": "Real Casualties",
+                "description": "{Real Casualties}\n\nWhen turned {ON}, Summoned Elementals and Cloned Creatures will not be appear as Battlefield Casualties."
+            },
+            "show_quickspell_panel": {
+                "text": "Quick Spell Panel",
+                "description": "{Quick Spell Panel}\n\nWhen turned {ON}, the left hand side of the combat screen will display an interactive panel with your set quickspells and allows customization."
+            },
+            "show_battlequeue_panel": {
+                "text": "Battle Queue Panel",
+                "description": "{Battle Queue Panel}\n\nWhen turned {ON}, the right hand side of the combat screen will display the upcoming move order of creatures on the battlefield."
+            },
+            "battlequeue_position_count": {
+                "text": "Battle Queue Text",
+                "description": "{Battle Queue Text}\n\nWhen turned {ON}, the battlequeue displays the alpha-numeric position of the stack.\nWhen turned {OFF}, the battlequeue displays the number of creatures in the stack."
+            },
+            "correct_admirals_hat_bug": {
+                "text": "Admiral's Hat Bug",
+                "description": "{Admiral's Hat Bug}\n\nWhen turned {ON}, removes the possibility to generate endless movement using the Admiral's Hat."
+            },
+            "correct_some_movement_bugs": {
+                "text": "Movement Bugs",
+                "description": "{Movement Bugs}\n\nWhen turned {ON}, this option fixes some movement bugs such as retreating while on a boat, castle town's lighthouse adding movement to everyone."
+            },
+            "enable_clone_bug": {
+                "text": "Clone Bug",
+                "description": "{Clone Bug}\n\nWhen turned {ON}, this option re-enables the clone bug while using the '{HD+}' feature. While this is required for very few specific maps, recommended setting is off as crashes can occur while using this bug."
+            },
+            "correct_earthquake_bug": {
+                "text": "Earthquake Bug",
+                "description": "{Earthquake Bug}\n\nWhen turned {ON}, this option fixes the earthquake bug which sometimes targeted units."
+            },
+            "correct_repeatable_event_bug": {
+                "text": "Repeatable Event",
+                "description": "{Repeatable Event}\n\nWhen turned {ON}, this option prevents you from revisiting events which were flagged as 'Cancel event after first visit' in the mapeditor."
+            },
+            "show_ai_movement_on_minimap": {
+                "text": "AI Minimap",
+                "description": "{AI Minimap}\n\nWhen turned {ON}, you will see where AI heroes are moving on the minimap instead of the AI shield."
+            },
+            "correct_vanishing_upgraded_stack": {
+                "text": "Vanishing Bug",
+                "description": "{Vanishing Bug}\n\nWhen turned {ON}, the random upgraded stack of wandering monsters will no longer be deducted from total number of creatures if the hero retreats."
+            },
+            "fix_incorrect_obstacle_anchors": {
+                "text": "Anchor Bug",
+                "description": "{Anchor Bug}\n\nWhen turned {ON}, local battlefield obstacles do not prevent Firewall, Forcefield, Quicksand or Land Mine from being cast on some nearby tiles.\n{NOTE}: this option cannot be modified from within the battlefield."
+            },
+            "enable_quick_combat_bugs": {
+                "text": "Quick Combat",
+                "description": "{Quick Combat}\n\nWhen turned {ON}, restores some quick combat bugs that were fixed by the '{HD+}' feature."
+            },
+            "restore_naga_bank_sulfur": {
+                "text": "Naga Banks",
+                "description": "{Naga Banks}\n\nWhen turned {ON}, Naga banks will provide Sulfur instead of gems, reverting the '{HD+}' change.\n{NOTE}: you will only see the effects of this option after starting a new game."
+            },
+            "correct_hero_hireability": {
+                "text": "Tavern Heroes",
+                "description": "{Tavern Heroes}\n\nWhen turned {ON}, Heroes that are not marked as 'Can be hired by' Player X will no longer be available in the Tavern as intended by the mapmaker, upon death or dismissal.\n{NOTE}: in order to see the effects, this setting must be turned off when the bug is activated."
+            },
+            "correct_quick_combat_power_overflow": {
+                "text": "Quick Combat Overflow",
+                "description": "{Quick Combat Overflow}\n\nWhen turned {ON}, the total power and damage dealt in AI-AI quick combat will not be permitted to overflow into negative values."
+            },
+            "ai_necromancy_fix": {
+                "text": "AI Necromancy",
+                "description": "{AI Necromancy}\n\nWhen turned {ON}, AI heroes with Necromancy will raise the appropriate number of creatures instead of a single creature."
+            },
+            "prevent_hero_fusion": {
+                "text": "Hero Fusion",
+                "description": "{Hero Fusion}\n\nWhen turned {ON}, heroes are no longer allowed to occupy the same map tile - disabling trading between them and creating copies of items."
+            },
+            "ai_magic_mirror_fix": {
+                "text": "AI Magic Mirror",
+                "description": "{AI Magic Mirror}\n\nWhen turned {ON}, offensive spells cast by enemy heroes may be reflected at their own troops if the original target is under the effects of the {Magic Mirror} spell."
+            },
+            "enchanters_spellcast_fix": {
+                "text": "Enchanters Cast Bug",
+                "description": "{Enchanters Cast Bug}\n\nWhen turned {ON}, Enchanters will correctly consider all valid targets instead of only the first stack on each side of the battlefield; this could result in enchanters not casting otherwise valid spells."
+            }
+        }
+    }
+}
