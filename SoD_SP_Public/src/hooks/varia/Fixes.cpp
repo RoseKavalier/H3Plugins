@@ -5,7 +5,7 @@
 #include "HorizontalScrollbar.hpp"
 
 using namespace h3;
-using sodsp::ftr::FOptions;
+using ftr::FOptions;
 
 //////////////////////////////////////////////////////////////////////////
 // AI bugs
@@ -201,7 +201,7 @@ _LHF_(AI_DeathKnightsAmplifier)
 	LOG_LOHOOK;
 	if (!FOptions.ai_cheats) // not really a cheat but affects normal game behaviour
 		return EXEC_DEFAULT;
-	if (PH3Hero(c->eax)->hero_class == NH3Heroes::eH3HeroClasses::DEATH_KNIGHT)
+	if (PH3Hero(c->eax)->hero_class == NH3Heroes::eHeroClasses::DEATH_KNIGHT)
 		return NO_EXEC_DEFAULT;
 	return EXEC_DEFAULT;
 }
@@ -548,7 +548,7 @@ _LHF_(DefType1)
 _LHF_(FixDimensionDoorSpellCost)
 {
 	LOG_LOHOOK;
-	c->eax = P_Spell()(H3Spell::DIMENSION_DOOR)->mana_cost[c->Arg(1)];
+	c->eax = P_Spell()(H3Spell::eSpells::DIMENSION_DOOR)->mana_cost[c->Arg(1)];
 	c->return_address = 0x41D444;
 	return NO_EXEC_DEFAULT;
 }
@@ -559,7 +559,7 @@ _LHF_(FixTownPortalSpellCost)
 {
 	LOG_LOHOOK;
 	PH3Hero hero = PH3Hero(c->esi);
-	hero->RemoveSpellPointsAndRefresh(hero->CalculateAdventureMapSpellCost(H3Spell::TOWN_PORTAL));
+	hero->RemoveSpellPointsAndRefresh(hero->CalculateAdventureMapSpellCost(H3Spell::eSpells::TOWN_PORTAL));
 	return EXEC_DEFAULT;
 }
 
@@ -581,7 +581,7 @@ _LHF_(SkipOldTownPortalSpellCost)
 _LHF_(DamageOutputForgetfulness)
 {
 	LOG_LOHOOK;
-	if (PH3CombatMonster(c->esi)->activeSpellsDuration[H3Spell::FORGETFULNESS] > 0 && c->eax > 1)
+	if (PH3CombatMonster(c->esi)->activeSpellsDuration[H3Spell::eSpells::FORGETFULNESS] > 0 && c->eax > 1)
 		c->eax >>= 1; // reduce count by half
 	return EXEC_DEFAULT;
 }
@@ -768,91 +768,164 @@ _LHF_(ResetTextBufferForAdventureHint)
 	return EXEC_DEFAULT;
 }
 
+/*
+ *
+ * When creating RMG map description, player's town selection
+ * uses player's id instead of selected town to get its name.
+ *
+ */
+_LHF_(RMGPlayerTownSelection)
+{
+	c->eax = (*c->Local<INT8*>(4)) * 4;
+	return EXEC_DEFAULT;
+}
+
+/**
+ * @brief follows the logic from 0x479A5B that prevents summoning a clone
+ * if too many creatures are present
+ */
+BOOL MaximumCreaturesReached(H3CombatManager* cmb, INT side)
+{
+	INT i = 0;
+	H3CombatMonster* mon = cmb->stacks[side];
+	while (mon->type != NH3Creatures::eH3Creatures::UNDEFINED)
+	{
+		if (!mon->numberAlive && mon->info.flags.cannotMove && mon->info.flags.summon)
+			break;
+		++mon;
+		if (++i >= 20)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+/*
+ *
+ * If attempting to clone when there are already 20 creatures
+ * on your side, summon clone will fail and return a nullptr
+ * from which a nullptr exception is triggered, observed for AI only.
+ * This tells the AI that clone value is 0 in such cases.
+ *
+ */
+VOID __stdcall _HH_TooManyCreaturesToCastClone(HiHook* h, H3AiSpellCastInfo* This, H3AiSpellData* spl, int a3)
+{
+	if (spl->spellId == H3Spell::eSpells::CLONE && MaximumCreaturesReached(P_CombatMgr(), This->side))
+	{
+		F_MessageBox("Ai tried to summon clone but this would result in a crash!");
+		return;
+	}
+	return THISCALL_3(VOID, h->GetDefaultFunc(), This, spl, a3);
+}
+
+/*
+ *
+ * Scuttle boat action was not saved to replayed actions,
+ * resulting in ghost ship that would lead to crashes when embarking.
+ *
+ */
+_LHF_(ReplayScuttleBoat)
+{
+	auto main = reinterpret_cast<H3Main*>(c->edx);
+	auto hero = reinterpret_cast<H3Hero*>(c->esi);
+	auto boat = reinterpret_cast<H3Boat*>(c->edi);
+	THISCALL_4(VOID, 0x49C1D0, main, boat, 1, hero->id);
+	return EXEC_DEFAULT;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Hooks init
 //////////////////////////////////////////////////////////////////////////
 
-void fixes_init(PatcherInstance * pi)
+void SoD_SP_Plugin::Fixes()
 {
 	//////////////////////////////////////////////////
 	// AI bugs
 	//////////////////////////////////////////////////
-	pi->WriteLoHook(0x56B344, AiTpCursedCheck);	         // disallow casting Town Portal on cursed ground for AI
-	pi->WriteLoHook(0x43020E, AiWaterwalkFly);	         // disallow AI from casting Fly if they don't have it (v1)
-	pi->WriteLoHook(0x42DDA6, AiSplitDiv0);		         // if AI has tactics and shooters, but you have 0 creatures -> crash
-	pi->WriteLoHook(0x42437D, AI_combat_div0);	         // divides by speed which shouldn't be 0
-	pi->WriteLoHook(0x426FE4, AI_NecromancyFix);         // Army is deleted before Necromancy action, so skip army deletion and execute it in HH below
-	pi->WriteLoHook(0x42B146, AI_DeathKnightsAmplifier); // [1.19.0] {Ben80} AI ignores Death Knights when considering to build Necromancy Amplifier
-	pi->WriteHiHook(0x426EE0, SPLICE_, THISCALL_, _HH_AI_NecromancyFix);		   // this HiHook runs the skipped over code from @AI_NecromancyFix
-	pi->WriteHiHook(0x426390, SPLICE_, THISCALL_, _HH_AI_QB_GetDamage);			   // don't allow negative damage in QB
-	pi->WriteHiHook(0x42443B, CALL_,   THISCALL_, _HH_AI_QB_hugeArmy);			   // prevent loss to small army
-	pi->WriteHiHook(0x4274D4, CALL_,   THISCALL_, _HH_AI_PreventCreatureSpawning); // flag for below hook
-	pi->WriteHiHook(0x44A950, SPLICE_, THISCALL_, _HH_AI_GetArmyValue);			   // prevent endless turns for negative ai value
+	Hook(0x56B344, AiTpCursedCheck);	      // disallow casting Town Portal on cursed ground for AI
+	Hook(0x43020E, AiWaterwalkFly);	          // disallow AI from casting Fly if they don't have it (v1)
+	Hook(0x42DDA6, AiSplitDiv0);		      // if AI has tactics and shooters, but you have 0 creatures -> crash
+	Hook(0x42437D, AI_combat_div0);	          // divides by speed which shouldn't be 0
+	Hook(0x426FE4, AI_NecromancyFix);         // Army is deleted before Necromancy action, so skip army deletion and execute it in HH below
+	Hook(0x42B146, AI_DeathKnightsAmplifier); // [1.19.0] {Ben80} AI ignores Death Knights when considering to build Necromancy Amplifier
+	Hook(0x426EE0, Splice, Thiscall, _HH_AI_NecromancyFix);		    // this HiHook runs the skipped over code from @AI_NecromancyFix
+	Hook(0x426390, Splice, Thiscall, _HH_AI_QB_GetDamage);          // don't allow negative damage in QB
+	Hook(0x42443B, Call, Thiscall, _HH_AI_QB_hugeArmy);			    // prevent loss to small army
+	Hook(0x4274D4, Call, Thiscall, _HH_AI_PreventCreatureSpawning); // flag for below hook
+	Hook(0x44A950, Splice, Thiscall, _HH_AI_GetArmyValue);		    // prevent endless turns for negative ai value
 
 
 	//////////////////////////////////////////////////
 	// turret armorer bug
 	//////////////////////////////////////////////////
-	H3Patcher::NakedHook5(0x41E39E, TurretBug1);
-	H3Patcher::NakedHook5(0x41E4DA, TurretBug2);
-	H3Patcher::NakedHook5(0x46593E, turret_bug3);
+	Hook(0x41E39E, TurretBug1);
+	Hook(0x41E4DA, TurretBug2);
+	Hook(0x46593E, turret_bug3);
 
 	//////////////////////////////////////////////////
 	// GUI errors
 	//////////////////////////////////////////////////
-	pi->WriteLoHook(0x5F4C99, FaerieDialogRmb);   // right click on cast-spell icon didn't give correct text
-	pi->WriteLoHook(0x5F5320, FaerieDialogHover); // same as above, but for mouse hover
+	Hook(0x5F4C99, FaerieDialogRmb);   // right click on cast-spell icon didn't give correct text
+	Hook(0x5F5320, FaerieDialogHover); // same as above, but for mouse hover
 	GuiFixesByIgrik();                            // various DEFs and positions
-	horizontalScrollbar_init(pi);                 // horizontal scrollbar using arrows not correctly drawn
-	H3Patcher::BytePatch(0x49E4ED, 0x63);         // Repair Arena Cancel button
-	H3Patcher::BytePatch(0x41DBE8 + 1, 0x5C);     // if AI is teleporting and you had "Don't show enemy moves" on, it would still check if area is visible and show them
+	horizontalScrollbar_init(m_instance);                 // horizontal scrollbar using arrows not correctly drawn
+	BytePatch(0x49E4ED, 0x63);         // Repair Arena Cancel button
+	BytePatch(0x41DBE8 + 1, 0x5C);     // if AI is teleporting and you had "Don't show enemy moves" on, it would still check if area is visible and show them
 
 	//////////////////////////////////////////////////
 	// Misc errors
 	//////////////////////////////////////////////////
-	pi->WriteHiHook(0x476143, CALL_, THISCALL_, _HH_FirstAidTentTargetEnemy); // [1.18.0]
-	pi->WriteLoHook(0x5D52BF, ViewHeroScreenRapidly);                         // If you click fast enough in garrison exchange dialog, sourcePage is left as 0 and crash ensues
-	pi->WriteLoHook(0x4AC157, VisitBankBug);                                  // after viewing hero screen during creature reward of creature bank, potential crash
-	pi->WriteLoHook(0x465656, EarthquakeBug);                                 // do not kill the first creature stack while using earthquake
-	pi->WriteLoHook(0x4AC5F5, PreserveMonsterNumber);                         // prevents the loss of upgraded stack creatures from the total number of wandering monsters
-	pi->WriteLoHook(0x446BCD, WaitPhaseBug);                                  // do not use restore hit points ability a second time in wait phase bug function
-	pi->WriteLoHook(0x447DA5, EnchantersTargetting);                          // Targetting of Enchanters spells was strictly done on first stack of each side
-	pi->WriteJmp(0x464DF1, 0x464DFB);                                         // Wait Phase Bug part 1
-	H3Patcher::BytePatch(0x4FD495 + 1, 0xA);                                  // error check didn't correctly redirect Hero structure calculation
-	H3Patcher::WordPatch(0x4F8758, 0x63EB);                                   // disable F1 HELP button effects ~ glitched in modern OS
+	Hook(0x476143, Call, Thiscall, _HH_FirstAidTentTargetEnemy); // [1.18.0]
+	Hook(0x5D52BF, ViewHeroScreenRapidly);                         // If you click fast enough in garrison exchange dialog, sourcePage is left as 0 and crash ensues
+	Hook(0x4AC157, VisitBankBug);                                  // after viewing hero screen during creature reward of creature bank, potential crash
+	Hook(0x465656, EarthquakeBug);                                 // do not kill the first creature stack while using earthquake
+	Hook(0x4AC5F5, PreserveMonsterNumber);                         // prevents the loss of upgraded stack creatures from the total number of wandering monsters
+	Hook(0x446BCD, WaitPhaseBug);                                  // do not use restore hit points ability a second time in wait phase bug function
+	Hook(0x447DA5, EnchantersTargetting);                          // Targetting of Enchanters spells was strictly done on first stack of each side
+	WriteJmp(0x464DF1, 0x464DFB);                                         // Wait Phase Bug part 1
+	BytePatch(0x4FD495 + 1, 0xA);                                  // error check didn't correctly redirect Hero structure calculation
+	WordPatch(0x4F8758, 0x63EB);                                   // disable F1 HELP button effects ~ glitched in modern OS
 	static LPCSTR rogue_sound = "rogu";
-	H3Patcher::DwordPatch(0x67448C, DWORD(rogue_sound));                      // Rogue Sound instead of gremlin sound
-	pi->WriteLoHook(0x47CA04, DefType1);                                      // [1.19.0] {GrayFace} corrects parameter use for def-type1 on the adventure map (although unused)
-	pi->WriteLoHook(0x47D69F, DefType1);                                      // [1.19.0] {GrayFace}
-	H3Patcher::BytePatch(0x600530 + 1, 0);                                    // [1.19.0] {GrayFace} original instruction is an endless loop
-	H3Patcher::DwordPatch(0x4C5D09 + 2, 0);                                   // [1.19.0] {GrayFace} event message length is not capped at 65,535 chars
-	pi->WriteLoHook(0x41D433, FixDimensionDoorSpellCost);                     // [1.19.0] use the starting terrain for Dimension Door spell cost calculation
-	pi->WriteLoHook(0x41D9D4, FixTownPortalSpellCost);                        // [1.19.0] use the starting terrain for Town Portal spell cost calculation
+	DwordPatch(0x67448C, DWORD(rogue_sound));                      // Rogue Sound instead of gremlin sound
+	Hook(0x47CA04, DefType1);                                      // [1.19.0] {GrayFace} corrects parameter use for def-type1 on the adventure map (although unused)
+	Hook(0x47D69F, DefType1);                                      // [1.19.0] {GrayFace}
+	Hook(0x41D433, FixDimensionDoorSpellCost);                     // [1.19.0] use the starting terrain for Dimension Door spell cost calculation
+	Hook(0x41D9D4, FixTownPortalSpellCost);                        // [1.19.0] use the starting terrain for Town Portal spell cost calculation
+	BytePatch(0x600530 + 1, 0);                                    // [1.19.0] {GrayFace} original instruction is an endless loop
+	DwordPatch(0x4C5D09 + 2, 0);                                   // [1.19.0] {GrayFace} event message length is not capped at 65,535 chars
+	DwordPatch(0x41B43B, 0xC35DEC89);                              // [1.19.0.8][mov esp, ebp, pop ebp, retn] the tail of this bitset exception is missing from all major 3.2 exe
 	//todo written as lohook for now, pondering whether I should make this optional
 	// alternative is simply pi->WriteJmp(0x41DA12, 0x41DA2B);
-	pi->WriteLoHook(0x41DA12, SkipOldTownPortalSpellCost);                    // [1.19.0] skip the old Town Portal spell cost procedure
-	pi->WriteLoHook(0x492F78, DamageOutputForgetfulness);                     // [1.19.0.7] when showing damage output on mouse hover, forgetfulness was not considered for damage reduction
+	Hook(0x41DA12, SkipOldTownPortalSpellCost);                    // [1.19.0] skip the old Town Portal spell cost procedure
+	Hook(0x492F78, DamageOutputForgetfulness);                     // [1.19.0.7] when showing damage output on mouse hover, forgetfulness was not considered for damage reduction
+	Hook(0x54A4A2, RMGPlayerTownSelection);                        // [1.19.0.10] show actual town selection
+	Hook(0x43A2C0, Splice, Thiscall, _HH_TooManyCreaturesToCastClone); // [1.19.1.0] prevents AI from casting clone if it has too many creatures
+	static constexpr LPCSTR DwarvenTreasureName = "BoRDwf1T.pcx";
+	ObjectPatch(P_CmpBonusBuildings()[H3Town::eTown::RAMPART].names[H3Town::eBuildings::B_DWARVEN_TREASURY], DwarvenTreasureName); // [1.19.2.0] Dwarven Treasury bonus building name is missing
+	static constexpr LPCSTR LookoutTowerName = "BoTCastW.pcx";
+	ObjectPatch(P_CmpBonusBuildings()[H3Town::eTown::TOWER].names[H3Town::eBuildings::B_LOOKOUT_TOWER], LookoutTowerName); // [1.19.2.0] Lookout Tower bonus building name is mispelled
 
 	///////////////////////////////////////////
 	// Hero hireability
 	///////////////////////////////////////////
-	pi->WriteLoHook(0x4D7BF0, FixHireables); // swap in town, hire in town, etc.
-	pi->WriteLoHook(0x4A3D14, FixHireables); // prison
+	Hook(0x4D7BF0, FixHireables); // swap in town, hire in town, etc.
+	Hook(0x4A3D14, FixHireables); // prison
 
 	////////////////////////////////////////////////////////
 	// Movement updates that were missing or movement bugs
 	////////////////////////////////////////////////////////
-	pi->WriteLoHook(0x49E340, UpdateMaxLandMovement);                           // after landing, max movement was not always updated
-	pi->WriteLoHook(0x4AA76B, RecalculateMovementAfterVisitObject);             // only for human ~ useless for AI
-	pi->WriteLoHook(0x5BE69A, RecaculateMovementAfterExitingTown);              // only for human ~ useless for AI
-	pi->WriteLoHook(0x4A9173, UpdateSeaMvmtLighthouse);                         // when visiting a Lighthouse, all human heroes in boats should get their movement updated
-	pi->WriteLoHook(0x4E4D40, CastleLighthouseOwnerCheck);                      // castle's lighthouse only applies to its owner
-	pi->WriteHiHook(0x5BED30, SPLICE_, THISCALL_, _HH_AfterBuildingLighthouse); // when building Castle Lighthouse, update max water movement
-	pi->WriteHiHook(0x4A2470, SPLICE_, THISCALL_, _HH_HeroesMeeting);           // due to HDmod, you can directly switch to second hero, whose max movement is not updated
+	Hook(0x49E340, UpdateMaxLandMovement);                           // after landing, max movement was not always updated
+	Hook(0x4AA76B, RecalculateMovementAfterVisitObject);             // only for human ~ useless for AI
+	Hook(0x5BE69A, RecaculateMovementAfterExitingTown);              // only for human ~ useless for AI
+	Hook(0x4A9173, UpdateSeaMvmtLighthouse);                         // when visiting a Lighthouse, all human heroes in boats should get their movement updated
+	Hook(0x4E4D40, CastleLighthouseOwnerCheck);                      // castle's lighthouse only applies to its owner
+	Hook(0x5BED30, Splice, Thiscall, _HH_AfterBuildingLighthouse); // when building Castle Lighthouse, update max water movement
+	Hook(0x4A2470, Splice, Thiscall, _HH_HeroesMeeting);           // due to HDmod, you can directly switch to second hero, whose max movement is not updated
 
 	//////////////////////////////////////////////////
 	// Other
 	//////////////////////////////////////////////////
-	anchorbug_init(pi); // corrects anchor bug in combat
-	pi->WriteLoHook(0x40B0E2, ResetTextBufferForAdventureHint); // [1.19.0]
+	anchorbug_init(m_instance); // corrects anchor bug in combat
+	Hook(0x40B0E2, ResetTextBufferForAdventureHint); // [1.19.0]
+
+	Hook(0x41D093, ReplayScuttleBoat); // [1.19.1.0]
 }

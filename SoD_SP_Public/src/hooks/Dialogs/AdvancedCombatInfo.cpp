@@ -3,7 +3,7 @@
 
 using namespace h3;
 
-using sodsp::txt::TCombat;
+using txt::TCombat;
 using namespace NH3Dlg;
 /*
  *
@@ -39,7 +39,7 @@ void AdvancedCombatInfo(const int hex)
 			if (const int duration = mon->activeSpellsDuration[i])
 			{
 				spells_info[spell_count].spell = i;
-				if (i != int(H3Spell::eSpells::DISRUPTING_RAY) && i != int(H3Spell::eSpells::BIND) && i != int(H3Spell::eSpells::ACID_BREATH)) // infinite duration
+				if (i != H3Spell::eSpells::DISRUPTING_RAY && i != H3Spell::eSpells::ACID_BREATH) // infinite duration
 					spells_info[spell_count].length = duration;
 				else
 					spells_info[spell_count].length = 300; // store last
@@ -109,7 +109,7 @@ void AdvancedCombatInfo(const int hex)
 			_y = y_edge + x_spacing * (i / n_columns); // rows
 
 			def->DrawToPcx16(0, sd->spell + 1, pcx, _x, _y); // + 1 because first frame of spellint.def is blank
-			if (sd->spell != int(H3Spell::eSpells::DISRUPTING_RAY) && sd->spell != int(H3Spell::eSpells::BIND) && sd->spell != int(H3Spell::eSpells::ACID_BREATH)) // infinite duration
+			if (sd->spell != H3Spell::eSpells::DISRUPTING_RAY && sd->spell != H3Spell::eSpells::ACID_BREATH) // infinite duration
 			{
 				F_sprintf("{x}%d", sd->length);
 				// _y + 36 means below the spell DEF
