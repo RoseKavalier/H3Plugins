@@ -10,7 +10,6 @@
 
 #include "H3Structures.hpp"
 #include "H3Structures.inl"
-#include "../H3_Constants.hpp"
 #include "../H3_BinaryItems.hpp"
 
 namespace h3
@@ -33,7 +32,29 @@ namespace h3
 	}
 	_H3API_ BOOL H3ZStream::Load(PVOID data, UINT data_size)
 	{
-		return THISCALL_3(UINT, vTable->write, this, data, data_size) == data_size;
+		return THISCALL_3(UINT, vTable->read, this, data, data_size) == data_size;
+	}
+
+	_H3API_ BOOL H3ZStream::Read(H3String& string)
+	{
+		return FASTCALL_2(INT32, 0x4C5CD0, this, &string) >= 0;
+	}
+
+	_H3API_ BOOL H3ZStream::ReadString(H3String& string)
+	{
+		return FASTCALL_2(INT32, 0x4BB650, this, &string) >= 0;
+	}
+
+	_H3API_ BOOL H3ZStream::Write(const H3String& string)
+	{
+		if (!Write(string.Length()))
+			return FALSE;
+		return Save(PVOID(string.String()), string.Length());
+	}
+
+	_H3API_ BOOL H3ZStream::WriteString(const H3String& string)
+	{
+		return FASTCALL_2(INT32, 0x4BB820, this, &string) >= 0;
 	}
 
 	_H3API_ H3ZStream::H3ZStream(LPCSTR file_name, LPCSTR mode)
@@ -44,6 +65,16 @@ namespace h3
 	_H3API_ H3ZStream::~H3ZStream()
 	{
 		THISCALL_1(VOID, 0x4D6FC0, this);
+	}
+
+	_H3API_ H3Position::H3Position() :
+		pos()
+	{
+	}
+
+	_H3API_ H3Position::H3Position(INT16 x, INT16 y, INT8 z)
+	{
+		THISCALL_4(H3Position&, 0x419210, this, x, y, z);
 	}
 
 	_H3API_ H3Position::operator UINT() const
@@ -1225,12 +1256,12 @@ namespace h3
 		return coordinates;
 	}
 
-	H3Map_MapItem H3MainSetup::GetMap()
+	_H3API_ H3Map_MapItem H3MainSetup::GetMap()
 	{
 		return H3Map_MapItem(mapitems, static_cast<UINT>(mapSize), hasUnderground);
 	}
 
-	H3FastMap_MapItem H3MainSetup::GetFastMap()
+	_H3API_ H3FastMap_MapItem H3MainSetup::GetFastMap()
 	{
 		return H3FastMap_MapItem(mapitems, static_cast<UINT>(mapSize), hasUnderground);
 	}
@@ -1321,9 +1352,14 @@ namespace h3
 	{
 		return mainSetup.GetCoordinates(item);
 	}
-	_H3API_ BOOL8 H3Main::IsHuman(UINT8 player_id)
+	_H3API_ BOOL8 H3Main::IsHuman(INT32 player_id)
 	{
 		return THISCALL_2(BOOL8, 0x4CE600, this, player_id);
+	}
+
+	_H3API_ VOID H3Main::UpdateMapItemAppearance(H3MapItem* item)
+	{
+		THISCALL_2(VOID, 0x4C9650, this, item);
 	}
 
 	_H3API_ H3Map_MapItem H3Main::GetMap()
@@ -1401,6 +1437,11 @@ namespace h3
 		return resultItemID;
 	}
 
+	_H3API_ VOID H3WindowManager::SetClickedItemId(UINT32 id)
+	{
+		resultItemID = id;
+	}
+
 	_H3API_ BOOL H3WindowManager::ClickedOK() const
 	{
 		return resultItemID == int(H3WindowManager::eClickId::H3ID_OK);
@@ -1449,6 +1490,12 @@ namespace h3
 		PlaySound(*wav);
 		THISCALL_3(VOID, 0x59A7C0, milliseconds, *wav, wav->hSample);
 	}
+
+	_H3API_ VOID H3SoundManager::PlaySoundAsync(LPCSTR wav_name, INT32 duration /*= -1*/)
+	{
+		FASTCALL_3(VOID, 0x59A890, wav_name, duration, 3);
+	}
+
 #pragma pop_macro("PlaySound")
 
 	_H3API_ H3MapItem* H3AdventureManager::GetMapItem()
@@ -1546,6 +1593,11 @@ namespace h3
 		return map->GetCoordinates(item);
 	}
 
+	_H3API_ VOID H3AdventureManager::StopSound(H3WavFile* wav)
+	{
+		THISCALL_2(VOID, 0x59A180, this, wav->hSample);
+	}
+
 	_H3API_ H3Map_MapItem H3AdventureManager::GetMap()
 	{
 		return map->GetMap();
@@ -1616,9 +1668,9 @@ namespace h3
 		THISCALL_7(VOID, 0x5A0140, this, spell_id, hex_ix, cast_type_012, hex2_ix, skill_level, spell_power);
 	}
 
-	_H3API_ H3CombatMonster* H3CombatManager::GetResurrectionTarget(INT32 coordinate)
+	_H3API_ H3CombatMonster* H3CombatManager::GetResurrectionTarget(INT32 coordinate, INT32 caster_kind)
 	{
-		return THISCALL_4(H3CombatMonster*, 0x5A3FD0, this, currentActiveSide, coordinate, 0);
+		return THISCALL_4(H3CombatMonster*, 0x5A3FD0, this, currentActiveSide, coordinate, caster_kind);
 	}
 
 	_H3API_ H3CombatMonster* H3CombatManager::GetAnimateDeadTarget(INT32 coordinate)

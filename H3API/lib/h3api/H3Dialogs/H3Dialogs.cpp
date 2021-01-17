@@ -11,7 +11,6 @@
 #include "H3Dialogs.hpp"
 #include "H3Dialogs.inl"
 #include "../H3_Functions.hpp"
-#include "../H3_Structures.hpp"
 
 namespace h3
 {
@@ -121,6 +120,7 @@ namespace h3
 	_H3API_ H3Dlg::H3Dlg(int width, int height, int x, int y, BOOL statusBar, BOOL makeBackground, INT32 colorIndex) :
 		H3BaseDlg(x, y, width, height), endDialog(FALSE), background(nullptr), hintBar(nullptr)
 	{
+		STDCALL_0(VOID, 0x597AA0); // stop video animation
 		if (x == -1)
 			xDlg = (H3Internal::_gameWidth() - width) >> 1;
 		if (y == -1)
@@ -134,6 +134,7 @@ namespace h3
 	_H3API_ H3Dlg::~H3Dlg()
 	{
 		vDestroy();
+		STDCALL_0(VOID, 0x597B50); // resume video animation
 	}
 	_H3API_ VOID H3Dlg::PlaceAtMouse()
 	{
@@ -411,9 +412,7 @@ namespace h3
 	}
 
 	_H3API_ H3BaseDlg::H3BaseDlg(INT x, INT y, INT w, INT h) :
-		zOrder(-1), nextDialog(nullptr), lastDialog(nullptr), flags(0x12), state(0),
-		xDlg(x), yDlg(y), widthDlg(w), heightDlg(h), lastItem(nullptr), firstItem(nullptr),
-		focusedItemId(-1), pcx16(nullptr), deactivatesCount(0), lastHintShowed(-1),
+		H3BasicDlg(x, y, w, h), lastHintShowed(-1),
 		messageCommand(512), messageSubtype(10), messageItemId(30721), networkGame(FALSE)
 	{
 		struct unkNetwork
@@ -433,30 +432,33 @@ namespace h3
 		}
 	}
 
-	_H3API_ INT32 H3BaseDlg::GetWidth() const
+	_H3API_ INT32 H3BasicDlg::GetWidth() const
 	{
 		return widthDlg;
 	}
-	_H3API_ INT32 H3BaseDlg::GetHeight() const
+	_H3API_ INT32 H3BasicDlg::GetHeight() const
 	{
 		return heightDlg;
 	}
-	_H3API_ INT32 H3BaseDlg::GetX() const
+	_H3API_ INT32 H3BasicDlg::GetX() const
 	{
 		return xDlg;
 	}
-	_H3API_ INT32 H3BaseDlg::GetY() const
+	_H3API_ INT32 H3BasicDlg::GetY() const
 	{
 		return yDlg;
 	}
-	_H3API_ BOOL H3BaseDlg::IsTopDialog() const
+	_H3API_ BOOL H3BasicDlg::IsTopDialog() const
 	{
 		return nextDialog == nullptr;
 	}
-	_H3API_ H3DlgItem* H3BaseDlg::AddItem(H3DlgItem* item)
+	_H3API_ H3DlgItem* H3BasicDlg::AddItem(H3DlgItem* item, BOOL initiate /*= TRUE*/)
 	{
 		dlgItems += item;
-		return THISCALL_3(H3DlgItem*, 0x5FF270, this, item, -1); // LoadItem
+		if (initiate)
+			return THISCALL_3(H3DlgItem*, 0x5FF270, this, item, -1); // LoadItem
+		else
+			return item;
 	}
 
 	_H3API_ H3DlgDef* H3BaseDlg::GetDef(UINT16 id) const
@@ -1200,6 +1202,10 @@ namespace h3
 	{
 		return loadedDef;
 	}
+	_H3API_ VOID H3DlgDefButton::AddHotkey(INT32 key)
+	{
+		hotkeys.Add(key);
+	}
 	_H3API_ H3LoadedDef * H3DlgDef::GetDef()
 	{
 		return loadedDef;
@@ -1859,7 +1865,7 @@ namespace h3
 		}
 		return FALSE;
 	}
-	_H3API_ BOOL H3DlgHighlightable::HighlightItem(const H3Msg & msg) const
+	_H3API_ BOOL H3DlgHighlightable::HighlightItem(const H3Msg& msg) const
 	{
 		if (m_highlightableItems.IsEmpty())
 			return FALSE;
@@ -1876,12 +1882,35 @@ namespace h3
 		m_item(), m_highlight(), m_thickness()
 	{
 	}
-	_H3API_ H3DlgHighlightable::H3Highlighter::H3Highlighter(H3DlgItem * item, const H3ARGB888 & color, UINT thickness) :
+	_H3API_ H3DlgHighlightable::H3Highlighter::H3Highlighter(H3DlgItem* item, const H3ARGB888& color, UINT thickness) :
 		m_item(item), m_highlight(color), m_thickness(thickness)
 	{
 	}
-	_H3API_ H3DlgHighlightable::H3Highlighter::H3Highlighter(H3DlgItem * item, BYTE r, BYTE g, BYTE b, UINT thickness) :
+	_H3API_ H3DlgHighlightable::H3Highlighter::H3Highlighter(H3DlgItem* item, BYTE r, BYTE g, BYTE b, UINT thickness) :
 		m_item(item), m_highlight(r, g, b), m_thickness(thickness)
 	{
 	}
+
+	_H3API_ H3BasicDlg::H3BasicDlg(INT x, INT y, INT w, INT h) :
+		zOrder(-1), nextDialog(nullptr), lastDialog(nullptr), flags(0x12), state(0),
+		xDlg(x), yDlg(y), widthDlg(w), heightDlg(h), lastItem(nullptr), firstItem(nullptr),
+		focusedItemId(-1), pcx16(nullptr), deactivatesCount(0)
+	{
+	}
+
+	_H3API_ H3MapInformation& H3SelectScenarioDialog::CurrentMap()
+	{
+		return mapsInformation[selectedMapIndex];
+	}
+
+	_H3API_ VOID H3SelectScenarioDialog::UpdateForSelectedScenario(INT32 index, BOOL8 redraw)
+	{
+		THISCALL_3(VOID, 0x5857D0, this, index, redraw);
+	}
+
+	_H3API_ VOID H3SelectScenarioDialog::Redraw()
+	{
+		THISCALL_1(VOID, 0x584820, this);
+	}
+
 }

@@ -19,10 +19,16 @@
 
 namespace h3
 {
+	_H3API_DECLARE_(H3String);
+	_H3API_DECLARE_(H3WString);
+
 #pragma pack(push, 4)
-	// * a string following the H3 format
+	/**
+	 * @brief std::string in h3 format
+	*/
 	struct H3String
 	{
+		friend H3WString;
 	protected:
 		h3unk8 _allocator; // useless
 		PCHAR  m_string;
@@ -36,6 +42,11 @@ namespace h3
 		_H3API_ BOOL CompareChars(LPCSTR chars, UINT num_chars, UINT pos, BOOL is_true) const;
 		_H3API_ UINT CompareFirstOf(LPCSTR chars, UINT num_chars, BOOL is_true) const;
 		_H3API_ UINT CompareLastOf(LPCSTR chars, UINT num_chars, BOOL is_true) const;
+
+#ifdef _H3API_CPLUSPLUS11_
+		_H3API_ H3String& move(H3String&& other);
+#endif
+
 	public:
 		_H3API_ H3String();
 		_H3API_ H3String(LPCSTR msg);
@@ -87,6 +98,9 @@ namespace h3
 		_H3API_ H3String& Assign(CHAR ch);
 		_H3API_ H3String& Assign(const H3String &other);
 		_H3API_ H3String& Assign(INT32 number);
+#ifdef _H3API_CPLUSPLUS11_
+		_H3API_ H3String& Assign(H3String&& other);
+#endif /* _H3API_CPLUSPLUS11_ */
 
 		// * sets new capacity, 0x1F is default
 		_H3API_ BOOL Reserve(UINT new_size = 0x1E);
@@ -219,7 +233,7 @@ namespace h3
 		_H3API_ BOOL operator!=(LPCSTR str) const;
 
 		// * Returns char at offset
-		_H3API_ CHAR& operator[](UINT32 pos) const;
+		_H3API_ CHAR  operator[](UINT32 pos) const;
 		_H3API_ CHAR& operator[](UINT32 pos);
 
 		// * The number of times this string is referenced - avoids deletion from destructor in references
@@ -271,16 +285,32 @@ namespace h3
 		*
 		*/
 
-		// * Adds two H3String into one H3String
-		friend inline H3String operator+(H3String& lhs, H3String& rhs);
-		// * Adds H3String and char into one H3String
-		friend inline H3String operator+(H3String& lhs, CHAR rhs);
-		// * Adds one char and H3String into one H3String
-		friend inline H3String operator+(CHAR lhs, H3String& rhs);
-		// * Adds one H3String and char* into one H3String
-		friend inline H3String operator+(H3String& lhs, LPCSTR rhs);
-		// * Adds one char* and H3String into one H3String
-		friend inline H3String operator+(LPCSTR lhs, H3String& rhs);
+		// * H3Strings
+
+		friend inline H3String operator+(const H3String& lhs, const H3String& rhs);
+#ifdef _H3API_CPLUSPLUS11_
+		friend inline H3String operator+(const H3String& lhs, H3String&& rhs);
+		friend inline H3String operator+(H3String&& lhs, const H3String& rhs);
+		friend inline H3String operator+(H3String&& lhs, H3String&& rhs);
+#endif /* _H3API_CPLUSPLUS11_ */
+
+		// * const char*
+
+		friend inline H3String operator+(const H3String& lhs, LPCSTR rhs);
+		friend inline H3String operator+(LPCSTR lhs, const H3String& rhs);
+#ifdef _H3API_CPLUSPLUS11_
+		friend inline H3String operator+(H3String&& lhs, LPCSTR rhs);
+		friend inline H3String operator+(LPCSTR lhs, H3String&& rhs);
+#endif /* _H3API_CPLUSPLUS11_ */
+
+		// * char
+
+		friend inline H3String operator+(const H3String& lhs, CHAR rhs);
+		friend inline H3String operator+(CHAR lhs, const H3String& rhs);
+#ifdef _H3API_CPLUSPLUS11_
+		friend inline H3String operator+(H3String&& lhs, CHAR rhs);
+		friend inline H3String operator+(CHAR lhs, H3String&& rhs);
+#endif /* _H3API_CPLUSPLUS11_ */
 
 		// * these enum values follow std::string naming convention
 		enum eH3String : UINT
@@ -288,9 +318,152 @@ namespace h3
 			max_len     = static_cast<UINT>(-3),
 			npos        = static_cast<UINT>(-1),
 		};
+
+		_H3API_ H3WString ToH3WString(UINT code_page) const;
 	};
 	_H3API_ASSERT_SIZE_(H3String, 16);
+
+	/**
+	 * @brief std::wstring in h3 format
+	*/
+	struct H3WString
+	{
+		friend H3String;
+	protected:
+		h3unk8 _allocator; // useless
+		WCHAR* m_string;
+		UINT32 m_length;
+		UINT32 m_capacity;
+
+		_H3API_ VOID tidy(BOOL8 dereference=TRUE);
+		_H3API_ VOID deref();
+		_H3API_ BOOL8 grow(UINT32 size, BOOL8 trim=FALSE);
+		_H3API_ UINT8& references();
+		_H3API_ PVOID base();
+
+#ifdef _H3API_CPLUSPLUS11_
+		_H3API_ H3WString& move(H3WString&& other);
+#endif
+
+	public:
+		_H3API_ H3WString();
+		_H3API_ H3WString(const H3WString& other);
+		_H3API_ H3WString(LPCWSTR text, UINT32 length);
+		_H3API_ H3WString(LPCWSTR text);
+		_H3API_ H3WString(WCHAR character);
+		_H3API_ ~H3WString();
+		_H3API_ H3WString& Append(LPCWSTR text, UINT32 length);
+		_H3API_ H3WString& Append(LPCWSTR text);
+		_H3API_ H3WString& Append(WCHAR character);
+		_H3API_ H3WString& Append(const H3WString& other);
+		_H3API_ H3WString& Append(const H3WString& other, UINT32 start_position, UINT32 end_position);
+#ifdef _H3API_CPLUSPLUS11_
+		_H3API_ H3WString& Assign(H3WString&& other);
+#endif
+		_H3API_ H3WString& Assign(LPCWSTR text, UINT32 length);
+		_H3API_ H3WString& Assign(LPCWSTR text);
+		_H3API_ H3WString& Assign(const H3WString& other);
+		_H3API_ H3WString& Assign(WCHAR character);
+		_H3API_ H3WString& SoftCopy(const H3WString& other);
+		_H3API_ VOID Destroy();
+		_H3API_ UINT32 Size() const;
+		_H3API_ UINT32 Length() const;
+		_H3API_ BOOL32 IsEmpty() const;
+		_H3API_ LPCWSTR String() const;
+		_H3API_ VOID Insert(UINT32 start_position, UINT32 end_position, WCHAR character);
+		_H3API_ H3WString& Insert(UINT32 start_position, LPCWSTR text);
+		_H3API_ H3WString& Insert(UINT32 start_position, LPCWSTR text, UINT length);
+		_H3API_ H3WString& Insert(UINT32 start_position, WCHAR text);
+		_H3API_ H3WString& Insert(UINT32 start_position, const H3WString& other);
+
+		_H3API_ LPCWSTR begin();
+		_H3API_ LPCWSTR end();
+		_H3API_ LPCWSTR begin() const;
+		_H3API_ LPCWSTR end() const;
+
+		_H3API_ BOOL8 Reserve(UINT32 length);
+
+		_H3API_ UINT8 References() const;
+		_H3API_ VOID  IncreaseReferences();
+		_H3API_ VOID  DecreaseReferences();
+
+		_H3API_ H3WString& Erase(UINT32 start_position, UINT32 end_position);
+		_H3API_ H3WString& Erase();
+
+		_H3API_ INT32 Compare(LPCWSTR string, UINT32 length) const;
+		_H3API_ INT32 Compare(LPCWSTR string) const;
+		_H3API_ INT32 Compare(const H3WString& other) const;
+		_H3API_ INT32 Compare(WCHAR character) const;
+
+		_H3API_ BOOL Equals(LPCWSTR string, UINT32 length) const;
+		_H3API_ BOOL Equals(LPCWSTR string) const;
+		_H3API_ BOOL Equals(const H3WString& other) const;
+		_H3API_ BOOL Equals(WCHAR character) const;
+
+		_H3API_ WCHAR  operator[](UINT position) const;
+		_H3API_ WCHAR& operator[](UINT position);
+
+		_H3API_ H3WString& operator=(const H3WString& other);
+		_H3API_ H3WString& operator=(LPCWSTR msg);
+		_H3API_ H3WString& operator=(WCHAR ch);
+
+		_H3API_ H3WString& operator+=(const H3WString& other);
+		_H3API_ H3WString& operator+=(LPCWSTR msg);
+		_H3API_ H3WString& operator+=(WCHAR ch);
+
+		_H3API_ BOOL operator==(const H3WString& other);
+		_H3API_ BOOL operator==(LPCWSTR msg);
+		_H3API_ BOOL operator==(WCHAR ch);
+
+		/*
+		*
+		* Non-member functions
+		*
+		*/
+
+		// * H3WString
+
+		friend inline H3WString operator+(const H3WString& lhs, const H3WString& rhs);
+#ifdef _H3API_CPLUSPLUS11_
+		friend inline H3WString operator+(H3WString&& lhs, const H3WString& rhs);
+		friend inline H3WString operator+(const H3WString& lhs, H3WString&& rhs);
+		friend inline H3WString operator+(H3WString&& lhs, H3WString&& rhs);
+#endif
+		// * LPCWSTR
+
+		friend inline H3WString operator+(const H3WString& lhs, LPCWSTR rhs);
+		friend inline H3WString operator+(LPCWSTR lhs, const H3WString& rhs);
+#ifdef _H3API_CPLUSPLUS11_
+		friend inline H3WString operator+(H3WString&& lhs, LPCWSTR rhs);
+		friend inline H3WString operator+(LPCWSTR lhs, H3WString&& rhs);
+#endif
+		// * WCHAR
+
+		friend inline H3WString operator+(const H3WString& lhs, WCHAR rhs);
+		friend inline H3WString operator+(WCHAR lhs, const H3WString& rhs);
+#ifdef _H3API_CPLUSPLUS11_
+		friend inline H3WString operator+(H3WString&& lhs, WCHAR rhs);
+		friend inline H3WString operator+(WCHAR lhs, H3WString&& rhs);
+#endif
+
+
+		enum eH3WString : UINT
+		{
+			max_len           = static_cast<UINT>(0x7FFFFFFD),
+			npos              = static_cast<UINT>(-1),
+			frozen            = static_cast<UINT>(0xFF),
+		};
+
+		_H3API_ H3String ToH3String(UINT code_page = CP_ACP) const;
+	};
+	_H3API_ASSERT_SIZE_(H3WString, 16);
 #pragma pack(pop)
+	namespace H3Internal
+	{
+		_H3API_ UINT32 _wcslen(LPCWSTR text);
+		// * returns CSTR_LESS_THAN(1), CSTR_EQUAL(2) or CSTR_GREATER_THAN(3)
+		_H3API_ INT32 _CompareStringW(LCID locale, DWORD flags, LPCWSTR str1, INT32 str1_length, LPCWSTR str2, INT32 str2_length);
+	}
 }
 
 #endif /* #define _H3STRING_HPP_ */

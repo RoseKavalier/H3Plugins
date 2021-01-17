@@ -122,25 +122,15 @@
 #ifndef _H3API_HPP_
 #define _H3API_HPP_
 
-#include "h3api/H3_Allocator.hpp"
-#include "h3api/H3_Base.hpp"
-#include "h3api/H3_BinaryItems.hpp"
+#include "h3api/H3_Bitmap.hpp"
 #include "h3api/H3_Bitset.hpp"
-#include "h3api/H3_Constants.hpp"
 #include "h3api/H3_Defines.hpp"
-#include "h3api/H3_Dialogs.hpp"
 #include "h3api/H3_Functions.hpp"
 #include "h3api/H3_Ini.hpp"
 #include "h3api/H3_LOD.hpp"
-#include "h3api/H3_MapItems.hpp"
 #include "h3api/H3_Memory.hpp"
 #include "h3api/H3_Path.hpp"
 #include "h3api/H3_RMG.hpp"
-#include "h3api/H3_Stream.hpp"
-#include "h3api/H3_String.hpp"
-#include "h3api/H3_Structures.hpp"
-#include "h3api/H3_Tree.hpp"
-#include "h3api/H3_Vector.hpp"
 #include "h3api/H3_Version.hpp"
 
 #ifdef _H3API_EXCEPTION_

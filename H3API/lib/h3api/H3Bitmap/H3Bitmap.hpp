@@ -11,7 +11,6 @@
 #ifndef _H3BITMAP_HPP_
 #define _H3BITMAP_HPP_
 
-#include "../H3_Base.hpp"
 #include "../H3_BinaryItems.hpp"
 #include "../H3_Stream.hpp"
 

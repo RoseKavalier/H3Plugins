@@ -223,7 +223,7 @@ struct HookContext
 	}
 
 	// gives the nth local variable
-	// casted to specified type
+	// casted to specified type as **pointer**
 	// Should be >= 1
 	template<typename T>
 	T* LocalStack(_dword_ n)
@@ -296,6 +296,88 @@ struct HookContext
 	_word_& DI()
 	{
 		return *reinterpret_cast<_word_*>(&edi);
+	}
+
+	template<typename T>
+	T& Eax()
+	{
+		return *reinterpret_cast<T*>(&eax);
+	}
+	template<typename T>
+	T& Ebx()
+	{
+		return *reinterpret_cast<T*>(&ebx);
+	}
+	template<typename T>
+	T& Ecx()
+	{
+		return *reinterpret_cast<T*>(&ecx);
+	}
+	template<typename T>
+	T& Edx()
+	{
+		return *reinterpret_cast<T*>(&edx);
+	}
+	template<typename T>
+	T& Edi()
+	{
+		return *reinterpret_cast<T*>(&edi);
+	}
+	template<typename T>
+	T& Esi()
+	{
+		return *reinterpret_cast<T*>(&esi);
+	}
+	template<typename T>
+	T& Esp()
+	{
+		return *reinterpret_cast<T*>(&esp);
+	}
+	template<typename T>
+	T& Ebp()
+	{
+		return *reinterpret_cast<T*>(&ebp);
+	}
+
+	template<typename T>
+	void Eax(const T& data)
+	{
+		eax = int(data);
+	}
+	template<typename T>
+	void Ebx(const T& data)
+	{
+		ebx = int(data);
+	}
+	template<typename T>
+	void Ecx(const T& data)
+	{
+		ecx = int(data);
+	}
+	template<typename T>
+	void Edx(const T& data)
+	{
+		edx = int(data);
+	}
+	template<typename T>
+	void Esi(const T& data)
+	{
+		esi = int(data);
+	}
+	template<typename T>
+	void Edi(const T& data)
+	{
+		edi = int(data);
+	}
+	template<typename T>
+	void Esp(const T& data)
+	{
+		esp = int(data);
+	}
+	template<typename T>
+	void Ebp(const T& data)
+	{
+		ebp = int(data);
 	}
 };
 
@@ -655,7 +737,7 @@ public:
 	virtual Patch* __stdcall CreateJmpPatch(_ptr_ address, _ptr_ to) = 0;
 	virtual Patch* __stdcall CreateHexPatch(_ptr_ address, char* hex_str) = 0;
 	virtual Patch* __stdcall CreateCodePatchVA(_ptr_ address, char* format, _dword_* va_args) = 0;
-	virtual LoHook* __stdcall CreateLoHook(_ptr_ address, void* func) = 0;
+	virtual LoHook* __stdcall CreateLoHook(_ptr_ address, _LoHookFunc_ func) = 0;
 	virtual HiHook* __stdcall CreateHiHook(_ptr_ address, int hooktype, int subtype, int calltype, void* new_func) = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1191,8 +1273,12 @@ public:
 #pragma pack(pop)
 
 #define NOMINMAX
-#include <windows.h>
+#include <Windows.h>
+
 #undef NOMINMAX
+#ifdef VOID
+#undef VOID
+#endif
 
 //////////////////////////////////////////////////////////////////
 // function GetPatcher
@@ -1205,10 +1291,10 @@ inline Patcher* GetPatcher()
 {
 	typedef Patcher*(__stdcall* GetPatcher_t)();
 
-	static int calls_count = 0;
+	/*static int calls_count = 0;
 	if (calls_count > 0)
 		return NULL;
-	calls_count++;
+	calls_count++;*/
 	HMODULE pl = LoadLibraryA("patcher_x86.dll");
 	if (pl)
 	{
@@ -1221,7 +1307,14 @@ inline Patcher* GetPatcher()
 
 #ifndef _LHF_
 // * predefined macro for LoHook functions
-// * LoHook *h and HookContext *c are pre-defined
+// * LoHook* h and HookContext* c are pre-defined
 // * e.g. _LHF_(MyFunction) {}
 #define _LHF_(func) int __stdcall func(LoHook *h, HookContext *c)
+#endif
+
+#ifndef _LHREF_
+// * predefined macro for LoHook functions
+// * LoHook* h and HookContext& c are pre-defined
+// * e.g. _LHREF_(MyFunction) {}
+#define _LHREF_(func) int __stdcall func(LoHook* h, HookContext& c)
 #endif

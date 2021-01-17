@@ -3,6 +3,7 @@ add_subdirectory(H3Base)
 add_subdirectory(H3BinaryItems)
 add_subdirectory(H3Bitmap)
 add_subdirectory(H3Bitset)
+add_subdirectory(H3Campaign)
 add_subdirectory(H3Defines)
 add_subdirectory(H3Dialogs)
 add_subdirectory(H3Exception)
@@ -28,6 +29,7 @@ target_sources(H3API PUBLIC
 	"${CMAKE_CURRENT_SOURCE_DIR}/H3_BinaryItems.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Bitmap.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Bitset.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Campaign.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Config.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Constants.hpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/H3_Core.hpp"

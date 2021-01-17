@@ -162,8 +162,14 @@ namespace h3
 	}
 	_H3API_ UINT H3ARGB888::Value() const
 	{
-		return DwordAt(this);
+		return PtrAt(this);
 	}
+
+	_H3API_ UINT H3ARGB888::operator*() const
+	{
+		return Value();
+	}
+
 	_H3API_ H3ARGB888::operator DWORD() const
 	{
 		return Value();
@@ -412,13 +418,13 @@ namespace h3
 	{
 		bits = color;
 	}
-	_H3API_ WORD H3RGB565::PackRGB565(UINT8 r, UINT8 g, UINT8 b)
+	_H3API_ VOID H3RGB565::PackRGB565(UINT8 r, UINT8 g, UINT8 b)
 	{
-		return bits = Pack(r, g, b);
+		bits = Pack(r, g, b);
 	}
-	_H3API_ WORD H3RGB565::Pack(H3RGB888& rgb)
+	_H3API_ VOID H3RGB565::Pack(H3RGB888& rgb)
 	{
-		return bits = Pack(rgb.r, rgb.g, rgb.b);
+		bits = Pack(rgb.r, rgb.g, rgb.b);
 	}
 	_H3API_ WORD H3RGB565::Pack(UINT8 r, UINT8 g, UINT8 b)
 	{
@@ -829,6 +835,12 @@ namespace h3
 	{
 		return THISCALL_1(H3Font*, 0x55BD10, name);
 	}
+
+	_H3API_ PUINT8 H3Font::GetChar(UINT32 character_id)
+	{
+		return bitmapBuffer + bufferOffsets[character_id];
+	}
+
 	_H3API_ VOID H3LoadedPcx::DrawToPcx16(int srcX, int srcY, int dx, int dy, H3LoadedPcx16* dest, int destX, int destY, BOOL skip_transparent_colors)
 	{
 		THISCALL_9(VOID, 0x44FA80, this, srcX, srcY, dx, dy, dest, destX, destY, skip_transparent_colors);
@@ -3513,7 +3525,7 @@ namespace h3
 
 	_H3API_	H3RGB565& H3BasePalette565::operator[](UINT index)
 	{
-		return color[index];
+		return reinterpret_cast<H3RGB565*>(color)[index]; // required cast for VS2008
 	}
 	_H3API_ H3RGB565 H3BasePalette565::operator[](UINT index) const
 	{

@@ -10,7 +10,6 @@
 
 #include "H3Functions.hpp"
 #include "H3Functions.inl"
-#include "../H3_Structures.hpp"
 
 namespace h3
 {
@@ -70,13 +69,13 @@ namespace h3
 	{
 		F_MessageBoxRMB(text.String());
 	}
-	_H3API_ VOID F_MessageBox(LPCSTR text)
+	_H3API_ VOID F_MessageBox(LPCSTR text, INT32 picture_type, INT32 picture_frame)
 	{
-		FASTCALL_12(VOID, 0x4F6C00, text, 1, -1, -1, -1, 0, -1, 0, -1, 0, -1, 0);
+		FASTCALL_12(VOID, 0x4F6C00, text, 1, -1, -1, picture_type, picture_frame, -1, 0, -1, 0, -1, 0);
 	}
-	_H3API_ VOID F_MessageBox(const H3String & text)
+	_H3API_ VOID F_MessageBox(const H3String & text, INT32 picture_type, INT32 picture_frame)
 	{
-		F_MessageBox(text.String());
+		F_MessageBox(text.String(), picture_type, picture_frame);
 	}
 	_H3API_ BOOL F_MessageBoxChoice(LPCSTR text)
 	{
@@ -273,25 +272,31 @@ namespace h3
 		}
 		return fileSize;
 	}
-	_H3API_ BOOL F_ReadFile(HANDLE handle, PVOID data, DWORD bytesToRead)
+	_H3API_ BOOL F_ReadFile(HANDLE handle, PVOID data, DWORD bytes_to_read)
 	{
 		DWORD szRead;
 
-		if (!ReadFile(handle, data, bytesToRead, &szRead, NULL))
+		if (!ReadFile(handle, data, bytes_to_read, &szRead, NULL))
 			return FALSE;
-		return szRead == bytesToRead;
+		return szRead == bytes_to_read;
 	}
 	_H3API_ DWORD F_SetFilePointer(HANDLE handle, LONG position, DWORD source)
 	{
 		return SetFilePointer(handle, position, NULL, source);
 	}
-	_H3API_ BOOL F_WriteFile(HANDLE handle, PVOID buffer, DWORD bytesToWrite)
+	_H3API_ BOOL F_WriteFile(HANDLE handle, PVOID buffer, DWORD bytes_to_write)
 	{
 		DWORD szWritten;
-		if (!WriteFile(handle, buffer, bytesToWrite, &szWritten, NULL))
+		if (!WriteFile(handle, buffer, bytes_to_write, &szWritten, NULL))
 			return FALSE;
-		return szWritten == bytesToWrite;
+		return szWritten == bytes_to_write;
 	}
+
+	_H3API_ UINT32 F_wcslen(LPCWSTR string)
+	{
+		return H3Internal::_wcslen(string);
+	}
+
 	_H3API_ H3UniquePtr<WCHAR> F_utf8ToUnicode(LPCSTR utf8)
 	{
 		H3UniquePtr<WCHAR> ptr;
@@ -300,7 +305,7 @@ namespace h3
 		UINT len = strlen(utf8);
 		if (!len)
 			return ptr;
-
+		// MultibyteToWideChar
 		INT req_len = STDCALL_6(INT, PtrAt(0x63A1CC), CP_UTF8, 0, utf8, len, 0, 0);
 
 		ptr.Set(reinterpret_cast<WCHAR*>(F_calloc(req_len + 1, sizeof(WCHAR))));
@@ -317,7 +322,7 @@ namespace h3
 		UINT len = strlen(ansi);
 		if (!len)
 			return ptr;
-
+		// WideCharToMultiByte
 		INT req_len = STDCALL_6(INT, PtrAt(0x63A1CC), CP_ACP, 0, ansi, len, 0, 0);
 
 		ptr.Set(reinterpret_cast<WCHAR*>(F_calloc(req_len + 1, sizeof(WCHAR))));

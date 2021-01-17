@@ -244,7 +244,9 @@ namespace h3
 	template<UINT size>
 	inline VOID H3Bitset<size>::Set()
 	{
-		return VOID();
+		for (UINT i = 0; i < m_length - 1; ++i)
+			m_bits[i] = 0;
+		m_bits[m_length - 1] = endMask();
 	}
 
 	template<UINT size>
@@ -318,9 +320,27 @@ namespace h3
 	}
 
 	template<UINT size>
-	inline UINT H3Bitset<size>::Length()
+	inline UINT H3Bitset<size>::Length() const
 	{
 		return m_length;
+	}
+
+	template<UINT size>
+	inline BOOL H3Bitset<size>::Intersects(const H3Bitset<size>& other) const
+	{
+		for (UINT i = 0; i < m_length; ++i)
+			if (m_bits[i] & other.m_bits[i] != 0)
+				return TRUE;
+		return FALSE;
+	}
+
+	template<UINT size>
+	inline BOOL H3Bitset<size>::Contains(const H3Bitset<size>& other) const
+	{
+		for (UINT i = 0; i < m_length; ++i)
+			if ((other.m_bits[i] & ~m_bits[i]) != 0)
+				return FALSE;
+		return TRUE;
 	}
 
 	template<UINT size>

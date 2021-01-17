@@ -45,7 +45,11 @@ namespace h3
 
         Node* head() const;
 
+    #ifdef _H3API_CPLUSPLUS11_
         static constexpr Node** _Nil = reinterpret_cast<Node**>(NilNode);
+    #else
+        _H3API_FORCEINLINE_ static Node** _Nil();
+    #endif
     public:
 
         /**

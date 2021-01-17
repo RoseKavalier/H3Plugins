@@ -11,8 +11,6 @@
 #ifndef _H3EXCEPTION_HPP_
 #define _H3EXCEPTION_HPP_
 
-#include "../H3_Base.hpp"
-
 #ifdef _CPPUNWIND
 #include "../H3_String.hpp"
 #include <eh.h>
@@ -40,16 +38,16 @@ namespace h3
 		_H3API_ H3Exception(LPCSTR message);
 		_H3API_ H3Exception(const H3String& message);
 		// * creates an in-game dialog showing the error
-		_H3API_ VOID ShowInGame();
+		_H3API_ VOID ShowInGame() const;
 		// * creates an in-game dialog showing the error
-		_H3API_ BOOL ShowInGameLog();
+		_H3API_ BOOL ShowInGameLog() const;
 		// * creates a out-of-game messagebox showing the error
-		_H3API_ VOID ShowMessagebox();
+		_H3API_ VOID ShowMessagebox() const;
 		// * creates a out-of-game messagebox showing the error
-		_H3API_ BOOL ShowMessageboxLog();
+		_H3API_ BOOL ShowMessageboxLog() const;
 		// * logs error to specified path
-		_H3API_ VOID LogError(LPCSTR path);
-		_H3API_ VOID LogError(const H3String& path);
+		_H3API_ VOID LogError(LPCSTR path) const;
+		_H3API_ VOID LogError(const H3String& path) const;
 	};
 
 	// * create a H3SEHandler object on the stack where you want to use try{} catch{}

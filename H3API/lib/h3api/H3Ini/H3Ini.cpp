@@ -12,7 +12,9 @@
 #include "H3Ini.inl"
 #include "../H3_Functions.hpp"
 #include "../H3_Stream.hpp"
+#ifdef _H3API_EXCEPTION_
 #include "../H3_Exception.hpp"
+#endif
 
 namespace h3
 {
@@ -249,13 +251,10 @@ namespace h3
 		return TRUE;
 	}
 
-
 	_H3API_ H3IniSection::iterator::iterator(H3IniLine ** key) :
 		data(key)
 	{
 	}
-
-
 
 	_H3API_ H3IniLine & H3IniSection::iterator::operator*()
 	{
@@ -498,7 +497,11 @@ namespace h3
 	{
 		H3File f;
 		if (!f.Open(file) || (!f.ReadToBuffer()))
+#ifdef _H3API_EXCEPTION_
 			throw H3Exception("Unable to open ini file.");
+#else
+			return FALSE;
+#endif
 
 		H3Vector<H3String> lines = f.GetLines(TRUE);
 		// reserve parsed lines ahead of schedule
@@ -528,9 +531,13 @@ namespace h3
 				{
 					if (it.Last() != SECTION_END)
 					{
+#ifdef _H3API_EXCEPTION_
 						H3String error("Invalid section: ");
 						error += it;
 						throw H3Exception(error);
+#else
+						return FALSE;
+#endif
 					}
 					it.Erase(it.Length() - 1);
 					it.Erase(0);
@@ -556,16 +563,24 @@ namespace h3
 				{
 					if (currentSection == nullptr)
 					{
+#ifdef _H3API_EXCEPTION_
 						H3String error("Key line entry does not belong to a section: ");
 						error += it;
 						throw H3Exception(error);
+#else
+						return FALSE;
+#endif
 					}
 					H3String value;
 					if (!it.Split('=', value))
 					{
+#ifdef _H3API_EXCEPTION_
 						H3String error("Key line does not have matching value: ");
 						error += it;
 						throw H3Exception(error);
+#else
+						return FALSE;
+#endif
 					}
 					it.Trim();
 					value.Trim();

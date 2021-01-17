@@ -231,9 +231,9 @@
                 "text": "Anchor Bug",
                 "description": "{Anchor Bug}\n\nWhen turned {ON}, local battlefield obstacles do not prevent Firewall, Forcefield, Quicksand or Land Mine from being cast on some nearby tiles.\n{NOTE}: this option cannot be modified from within the battlefield."
             },
-            "enable_quick_combat_bugs": {
-                "text": "Quick Combat",
-                "description": "{Quick Combat}\n\nWhen turned {ON}, restores some quick combat bugs that were fixed by the '{HD+}' feature."
+            "ai_fast_battle_bug": {
+                "text": "AI Fast Battle Bugs",
+                "description": "{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."
             },
             "restore_naga_bank_sulfur": {
                 "text": "Naga Banks",

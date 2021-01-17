@@ -21,7 +21,7 @@ namespace h3
 		return Load(PVOID(&data), data_size);
 	}
 	template<typename T>
-	inline BOOL H3ZStream::Write(T & data, UINT data_size)
+	inline BOOL H3ZStream::Write(const T & data, UINT data_size)
 	{
 		return Save(PVOID(&data), data_size);
 	}

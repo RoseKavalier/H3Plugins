@@ -11,7 +11,6 @@
 #ifndef _H3BITSET_HPP_
 #define _H3BITSET_HPP_
 
-#include "../H3_Base.hpp"
 #include "../H3_String.hpp"
 
 namespace h3
@@ -242,7 +241,22 @@ namespace h3
 		 *
 		 * @return UINT raw size of the bitset divided by 4
 		 */
-		UINT Length();
+		UINT Length() const;
+		/**
+		 * @brief Checks if at least 1 bit matches in between the two bitsets.
+		 *
+		 * @param other The bitset to compare against.
+		 * @return Whether at least 1 bit matched.
+		 */
+		BOOL Intersects(const H3Bitset<size>& other) const;
+		/**
+		 * @brief Checks if all set bits contained in \p other also set in the current bitset
+		 *
+		 * @param other The bitset to compare against.
+		 * @return Whether the current bitset contains all set bits from \p other.
+		 */
+		BOOL Contains(const H3Bitset<size>& other) const;
+
 		H3Bitset& operator=(const H3Bitset<size>& other);
 		BOOL operator!=(const H3Bitset<size>& other);
 		BOOL operator==(const H3Bitset<size>& other);

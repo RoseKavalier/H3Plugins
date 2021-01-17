@@ -1,0 +1,28 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>H3Plugin.Template</Name>
+    <Description>Sets up DLL project files to create a HoMM III plugin using the H3API library.</Description>
+    <ProjectType>VC</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>H3Plugin.Template</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <Icon>__TemplateIcon.bmp</Icon>
+    <PreviewImage>__PreviewImage.png</PreviewImage>
+	<LanguageTag>c++</LanguageTag>
+	<PlatformTag>windows</PlatformTag>
+	<ProjectTypeTag>Heroes 3</ProjectTypeTag>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="PluginTemplate.vcxproj" File="PluginTemplate.vcxproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="$projectname$.vcxproj.filters">PluginTemplate.vcxproj.filters</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="dllmain.cpp">SRC\dllmain.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="source.cpp">SRC\source.cpp</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="framework.hpp">INCLUDE\framework.hpp</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

@@ -11,8 +11,6 @@
 #ifndef _H3FUNCTIONS_HPP_
 #define _H3FUNCTIONS_HPP_
 
-#include "../H3_Base.hpp"
-#include "../H3_String.hpp"
 #include "../H3_Structures.hpp"
 
 namespace h3
@@ -42,8 +40,8 @@ namespace h3
 	_H3API_ VOID          F_MessageBoxRMB(LPCSTR text = h3_TextBuffer);
 	_H3API_ VOID          F_MessageBoxRMB(const H3String& text);
 	// * message box with text shown (default h3_TextBuffer) with an 'OK' button
-	_H3API_ VOID          F_MessageBox(LPCSTR text = h3_TextBuffer);
-	_H3API_ VOID          F_MessageBox(const H3String& text);
+	_H3API_ VOID          F_MessageBox(LPCSTR text = h3_TextBuffer, INT32 picture_type = -1, INT32 picture_frame = 0);
+	_H3API_ VOID          F_MessageBox(const H3String& text, INT32 picture_type = -1, INT32 picture_frame = 0);
 	// * message box with 'OK' and 'Cancel' buttons
 	// * returns true if clicked 'OK'
 	_H3API_ BOOL          F_MessageBoxChoice(LPCSTR text = h3_TextBuffer);
@@ -112,9 +110,10 @@ namespace h3
 	_H3API_ BOOL          F_CloseHandle(HANDLE handle);
 	_H3API_ HANDLE        F_CreateFile(LPCSTR file, BOOL openExisting);
 	_H3API_ DWORD         F_GetFileSize(HANDLE handle);
-	_H3API_ BOOL          F_ReadFile(HANDLE handle, PVOID data, DWORD bytesToRead);
+	_H3API_ BOOL          F_ReadFile(HANDLE handle, PVOID data, DWORD bytes_to_read);
 	_H3API_ DWORD         F_SetFilePointer(HANDLE handle, LONG position, DWORD source);
-	_H3API_ BOOL          F_WriteFile(HANDLE handle, PVOID buffer, DWORD bytesToWrite);
+	_H3API_ BOOL          F_WriteFile(HANDLE handle, PVOID buffer, DWORD bytes_to_write);
+	_H3API_ UINT32        F_wcslen(LPCWSTR string);
 
 	// * used to get coordinates of map data that is stored as an array
 	// * e.g. H3MapItems, RMG_MapItems, H3TileVision

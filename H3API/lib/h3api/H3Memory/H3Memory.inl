@@ -16,50 +16,54 @@
 namespace h3
 {
 	template<typename T>
-	inline H3Patcher::WriteValue<T>::WriteValue(const UINT whereTo, const T value)
+	inline BOOL H3Patcher::WriteValue(ADDRESS address, const T value)
 	{
-		H3Protect protect(whereTo, sizeof(T));
-		if (protect.CanWrite())
-			*reinterpret_cast<T*>(whereTo) = value;
+		H3Protect protect(address, sizeof(T));
+		if (!protect.CanWrite())
+			return FALSE;
+		ValueAt<T>(address) = value;
+		return TRUE;
 	}
 
 	template<typename T, size_t size>
-	inline H3Patcher::WriteValues<T, size>::WriteValues(const UINT whereTo, const T(&value)[size])
+	BOOL H3Patcher::WriteValues(const UINT address, const T(&value)[size])
 	{
-		H3Protect protect(whereTo, sizeof(T) * size);
-		if (protect.CanWrite())
-			for (size_t i = 0; i < size; ++i)
-				reinterpret_cast<T*>(whereTo)[i] = value[i];
+		H3Protect protect(address, sizeof(T) * size);
+		if (!protect.CanWrite())
+			return FALSE;
+		for (size_t i = 0; i < size; ++i)
+			ValueAt<T>(address + i) = value[i];
+		return TRUE;
 	}
 
 	template<typename T>
-	VOID H3Patcher::AddressOfPatch(const UINT whereTo, const T & data)
+	BOOL H3Patcher::AddressOfPatch(const UINT address, const T & data)
 	{
-		DwordPatch(whereTo, reinterpret_cast<DWORD>(&data));
+		return DwordPatch(address, AddressOf(data));
 	}
 
-	// * writes pointer of data type (its address)
-	// * to the specified locations
-	// * data can be of any type
-	// * Address should be <int> or <long> derived
 	template<typename Address, typename Type, size_t size>
-	typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
-	H3Patcher::AddressOfPatch(const Address(&whereTo)[size], const Type & data)
+	typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4, BOOL>::type
+	H3Patcher::AddressOfPatch(const Address(&address)[size], const Type& data)
 	{
 		for (size_t i = 0; i < size; ++i)
-			DwordPatch(whereTo[i], reinterpret_cast<DWORD>(&data));
+			if (!DwordPatch(address[i], AddressOf(data)))
+				return FALSE;
+		return TRUE;
+
+		std::addressof(address);
 	}
 
 	template<typename T>
-	VOID H3Patcher::ObjectPatch(T & reference, T data)
+	BOOL H3Patcher::ObjectPatch(T & reference, T data)
 	{
-		WriteValue<T>(UINT(&reference), data);
+		return WriteValue<T>(AddressOf(reference), data);
 	}
 
 	template<size_t size>
-	inline VOID H3Patcher::HexPatch(const UINT whereTo, const BYTE(&value)[size])
+	inline BOOL H3Patcher::HexPatch(const UINT address, const BYTE(&value)[size])
 	{
-		WriteValues<BYTE, size>(whereTo, value);
+		return WriteValues<BYTE, size>(address, value);
 	}
 
 	template<INT32 sz>
@@ -93,7 +97,5 @@ namespace h3
 		return NeedleSearchData(PUINT8(needle), sz);
 	}
 }
-
-
 
 #endif /* #define _H3MEMORY_INL_ */

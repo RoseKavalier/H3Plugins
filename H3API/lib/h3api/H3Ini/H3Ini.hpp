@@ -11,10 +11,8 @@
 #ifndef _H3INI_HPP_
 #define _H3INI_HPP_
 
-#include "../H3_Base.hpp"
 #include "../H3_String.hpp"
 #include "../H3_Tree.hpp"
-#include "../H3_Vector.hpp"
 
 namespace h3
 {
@@ -24,7 +22,7 @@ namespace h3
 #pragma pack(push, 1)
 	/**
 	 * @brief HDmod's format for ini files entries/lines
-	 * 
+	 *
 	 */
 	struct HDIniEntry
 	{
@@ -46,7 +44,7 @@ namespace h3
 
 		/**
 		 * @brief Get the associated text
-		 * 
+		 *
 		 * @return LPCSTR text from data union
 		 */
 		_H3API_ LPCSTR GetText();
@@ -56,7 +54,7 @@ namespace h3
 #pragma pack(push, 4)
 	/**
 	 * @brief HDmod's format for ini files
-	 * 
+	 *
 	 */
 	struct HDIni
 	{
@@ -67,7 +65,7 @@ namespace h3
 
 		/**
 		 * @brief parses key entries of the ini
-		 * 
+		 *
 		 */
 		struct iterator
 		{
@@ -88,7 +86,7 @@ namespace h3
 		_H3API_ iterator end();
 		/**
 		 * @brief find the iterator (line) of the specified key
-		 * 
+		 *
 		 * @param key name of the option line for which settings exist
 		 * @return iterator of the line with matching key, end() iterator if not found
 		 */
@@ -97,7 +95,7 @@ namespace h3
 
 	/**
 	 * @brief H3IniLine represents a key + value, comment or empty line for the H3Ini class
-	 * 
+	 *
 	 */
 	class H3IniLine
 	{
@@ -128,14 +126,14 @@ namespace h3
 #ifdef _H3API_CPLUSPLUS11_
 		/**
 		 * @brief insert a new line in the ini at the current position
-		 * 
+		 *
 		 * @param type type of line to insert
 		 * @param content a copy of the line to be inserted
 		 */
 		_H3API_ H3IniLine(LineType type, H3String&& content);
 		/**
 		 * @brief Insert a KEY line in the ini at the current position
-		 * 
+		 *
 		 * @param content the name of the associated key
 		 * @param value value associated to this key
 		 */
@@ -143,14 +141,14 @@ namespace h3
 #else
 		/**
 		 * @brief insert a new line in the ini at the current position
-		 * 
+		 *
 		 * @param type type of line to insert
 		 * @param content a copy of the line to be inserted
 		 */
 		_H3API_ H3IniLine(LineType type, const H3String& content);
 		/**
 		 * @brief Insert a KEY line in the ini at the current position
-		 * 
+		 *
 		 * @param content the name of the associated key
 		 * @param value value associated to this key
 		 */
@@ -158,35 +156,35 @@ namespace h3
 #endif
 		/**
 		 * @brief Get an integer value for the current line
-		 * 
+		 *
 		 * @param default_value value to use in case the key is not found
-		 * @return atoi value of the current key, or default_value if the key does not exist 
+		 * @return atoi value of the current key, or default_value if the key does not exist
 		 */
 		_H3API_ INT      GetInteger(INT default_value);
 		/**
 		 * @brief Get a boolean value for the current line
-		 * 
+		 *
 		 * @param default_value value to use in case the key is not found
 		 * @return bool true on: 1, t..., on, yes (case insensitive) false on: 0, f..., off, no (case insensitive)
 		 */
 		_H3API_ bool     GetBool(bool default_value);
 		/**
 		 * @brief Get a float value for the current line
-		 * 
+		 *
 		 * @param default_value value to use in case the key is not found
-		 * @return atof value of the current key, or default_value if the key does not exist 
+		 * @return atof value of the current key, or default_value if the key does not exist
 		 */
 		_H3API_ FLOAT    GetFloat(FLOAT default_value);
 		/**
 		 * @brief Get a double value for the current line
-		 * 
+		 *
 		 * @param default_value value to use in case the key is not found
-		 * @return atof value of the current key, or default_value if the key does not exist 
+		 * @return atof value of the current key, or default_value if the key does not exist
 		 */
 		_H3API_ DOUBLE   GetDouble(DOUBLE default_value);
 		/**
 		 * @brief Get a string value for the current line
-		 * 
+		 *
 		 * @param default_value value to use in case the key is not found
 		 * @return returns the contents as is
 		 */
@@ -195,56 +193,56 @@ namespace h3
 		 * @brief Get an unsigned integer value for the current line which is written as an hexadecimal value
 		 * 0x and 0X prefixes are supported, but not essential
 		 * @param default_value value to use in case the key is not found
-		 * @return strtoul value of the current key, or default_value if the key does not exist 
+		 * @return strtoul value of the current key, or default_value if the key does not exist
 		 */
 		_H3API_ UINT     GetHex(UINT default_value);
 		/**
 		 * @brief Set the currentline's value as a boolean
-		 * 
+		 *
 		 * @param value true/false on/off etc.
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetBool(bool value);
 		/**
 		 * @brief Set the currentline's value as a signed integer
-		 * 
+		 *
 		 * @param value signed integer
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetInteger(INT value);
 		/**
 		 * @brief Set the currentline's value as a float
-		 * 
+		 *
 		 * @param value float
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetFloat(FLOAT value);
 		/**
 		 * @brief Set the currentline's value as a double
-		 * 
+		 *
 		 * @param value double
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetDouble(DOUBLE value);
 		/**
 		 * @brief Set the currentline's value as a string
-		 * 
+		 *
 		 * @param value string
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetString(const H3String& value);
 		/**
 		 * @brief Set the currentline's value as an unsigned integer in hexadecimal format
-		 * 
+		 *
 		 * @param value unsigned integer
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetHex(UINT value);
 	};
 
 	/**
 	 * @brief contains all keys existing under this [section]
-	 * 
+	 *
 	 */
 	class H3IniSection
 	{
@@ -253,7 +251,7 @@ namespace h3
 	public:
 		/**
 		 * @brief parse all keys/lines existing in this section
-		 * 
+		 *
 		 */
 		class iterator
 		{
@@ -277,14 +275,14 @@ namespace h3
 		_H3API_ iterator end();
 		/**
 		 * @brief find a line with the specified key.
-		 * 
+		 *
 		 * @param key line starting as key = value
 		 * @return iterator/line of the matching key, end() if not found
 		 */
 		_H3API_ iterator Get(LPCSTR key);
 		/**
 		 * @brief find a line with the specified key
-		 * 
+		 *
 		 * @param key line starting as key = value
 		 * @return iterator/line of the matching key, end() if not found
 		 */
@@ -294,7 +292,7 @@ namespace h3
 		 * Fails if the key is not found.
 		 * @param key line's starting value
 		 * @param value true/false on/off etc.
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetBool(LPCSTR key, bool value);
 		/**
@@ -302,7 +300,7 @@ namespace h3
 		 * Fails if the key is not found.
 		 * @param key line's starting value
 		 * @param value signed integer
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetInteger(LPCSTR key, INT value);
 		/**
@@ -310,7 +308,7 @@ namespace h3
 		 * Fails if the key is not found.
 		 * @param key line's starting value
 		 * @param value string
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetString(LPCSTR key, const H3String& value);
 		/**
@@ -318,7 +316,7 @@ namespace h3
 		 * Fails if the key is not found.
 		 * @param key line's starting value
 		 * @param value float
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetFloat(LPCSTR key, FLOAT value);
 		/**
@@ -326,7 +324,7 @@ namespace h3
 		 * Fails if the key is not found.
 		 * @param key line's starting value
 		 * @param value double
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetDouble(LPCSTR key, DOUBLE value);
 		/**
@@ -334,12 +332,12 @@ namespace h3
 		 * Fails if the key is not found.
 		 * @param key line's starting value
 		 * @param value unsigned integer
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetHex(LPCSTR key, UINT value);
 		/**
 		 * @brief Get the specified key's associated value as a boolean
-		 * 
+		 *
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return bool true on: 1, t..., on, yes (case insensitive) false on: 0, f..., off, no (case insensitive)
@@ -347,7 +345,7 @@ namespace h3
 		_H3API_ bool     GetBool(LPCSTR key, bool default_value);
 		/**
 		 * @brief Get the specified key's associated value as a signed integer
-		 * 
+		 *
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return INT atoi signed integer of the associated value
@@ -355,7 +353,7 @@ namespace h3
 		_H3API_ INT      GetInteger(LPCSTR key, INT default_value);
 		/**
 		 * @brief Get the specified key's associated value as a float
-		 * 
+		 *
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return FLOAT atof of the associated value
@@ -363,7 +361,7 @@ namespace h3
 		_H3API_ FLOAT    GetFloat(LPCSTR key, FLOAT default_value);
 		/**
 		 * @brief Get the specified key's associated value as a double
-		 * 
+		 *
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return DOUBLE atof of the associated value
@@ -371,7 +369,7 @@ namespace h3
 		_H3API_ DOUBLE   GetDouble(LPCSTR key, DOUBLE default_value);
 		/**
 		 * @brief Get the specified key's associated value
-		 * 
+		 *
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return H3String copy of the associated value
@@ -402,7 +400,7 @@ namespace h3
 		/**
 		 * @brief parses sections of the ini and their associated keys;
 		 * Using iterators(sections) is generally more efficient.
-		 * 
+		 *
 		 */
 		class iterator
 		{
@@ -427,22 +425,22 @@ namespace h3
 		_H3API_ BOOL8 Open(LPCSTR file);
 		/**
 		 * @brief save a modified ini to disk
-		 * 
+		 *
 		 * @param file path to the ini
 		 * @param utf8 whether to use utf8 bom header
-		 * @return BOOL8 whether the modified ini was successfully saved 
+		 * @return BOOL8 whether the modified ini was successfully saved
 		 */
 		_H3API_ BOOL8 Save(LPCSTR file, BOOL utf8);
 		/**
 		 * @brief Get a [section] iterator
-		 * 
+		 *
 		 * @param section name of the ini section to look for
 		 * @return iterator/section of the matching name, end() if not found
 		 */
 		_H3API_ iterator Get(LPCSTR section);
 		/**
 		 * @brief Get a [section] iterator
-		 * 
+		 *
 		 * @param section name of the ini section to look for
 		 * @return iterator/section of the matching name, end() if not found
 		 */
@@ -451,48 +449,48 @@ namespace h3
 		_H3API_ iterator end();
 		/**
 		 * @brief Get the specified [section][key] associated value as a boolean
-		 * 
+		 *
 		 * @param section name of the [section] in which the key resides
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return bool true on: 1, t..., on, yes (case insensitive) false on: 0, f..., off, no (case insensitive)
-		 */	
+		 */
 		_H3API_ bool     GetBool(LPCSTR section, LPCSTR key, bool default_value);
 		/**
 		 * @brief Get the specified [section][key] associated value as a signed integer
-		 * 
+		 *
 		 * @param section name of the [section] in which the key resides
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return INT atoi signed integer
-		 */	
+		 */
 		_H3API_ INT      GetInteger(LPCSTR section, LPCSTR key, INT default_value);
 		/**
 		 * @brief Get the specified [section][key] associated value as a float
-		 * 
+		 *
 		 * @param section name of the [section] in which the key resides
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return FLOAT atof
-		 */	
+		 */
 		_H3API_ FLOAT    GetFloat(LPCSTR section, LPCSTR key, FLOAT default_value);
 		/**
 		 * @brief Get the specified [section][key] associated value as a double
-		 * 
+		 *
 		 * @param section name of the [section] in which the key resides
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return DOUBLE atof
-		 */	
+		 */
 		_H3API_ DOUBLE   GetDouble(LPCSTR section, LPCSTR key, DOUBLE default_value);
 		/**
 		 * @brief Get the specified [section][key] associated value as a string
-		 * 
+		 *
 		 * @param section name of the [section] in which the key resides
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return H3String copy of the key's value
-		 */	
+		 */
 		_H3API_ H3String GetString(LPCSTR section, LPCSTR key, const H3String& default_value);
 		/**
 		 * @brief Get the specified [section][key] associated value as a hexadecimal unsigned integer
@@ -501,7 +499,7 @@ namespace h3
 		 * @param key line's starting value
 		 * @param default_value value to use in case the key is not found
 		 * @return UINT strtoul unsigned integer
-		 */	
+		 */
 		_H3API_ UINT     GetHex(LPCSTR section, LPCSTR key, UINT default_value);
 		/**
 		 * @brief modify an existing [section][key] value as an boolean.
@@ -509,7 +507,7 @@ namespace h3
 		 * @param section name of the section to seek
 		 * @param key line's starting value
 		 * @param value true/false on/off etc.
-		 * @return BOOL8 whether the operation was successful 
+		 * @return BOOL8 whether the operation was successful
 		 */
 		_H3API_ BOOL8 SetBool(LPCSTR section, LPCSTR key, bool value);
 		/**
@@ -518,7 +516,7 @@ namespace h3
 		 * @param section name of the section to seek
 		 * @param key line's starting value
 		 * @param value signed integer
-		 * @return BOOL8 whether the operation was successful 
+		 * @return BOOL8 whether the operation was successful
 		 */
 		_H3API_ BOOL8 SetInteger(LPCSTR section, LPCSTR key, INT value);
 		/**
@@ -527,7 +525,7 @@ namespace h3
 		 * @param section name of the section to seek
 		 * @param key line's starting value
 		 * @param value float
-		 * @return BOOL8 whether the operation was successful 
+		 * @return BOOL8 whether the operation was successful
 		 */
 		_H3API_ BOOL8 SetFloat(LPCSTR section, LPCSTR key, FLOAT value);
 		/**
@@ -536,7 +534,7 @@ namespace h3
 		 * @param section name of the section to seek
 		 * @param key line's starting value
 		 * @param value double
-		 * @return BOOL8 whether the operation was successful 
+		 * @return BOOL8 whether the operation was successful
 		 */
 		_H3API_ BOOL8 SetDouble(LPCSTR section, LPCSTR key, DOUBLE value);
 		/**
@@ -545,7 +543,7 @@ namespace h3
 		 * @param section name of the section to seek
 		 * @param key line's starting value
 		 * @param value string
-		 * @return BOOL8 whether the operation was successful 
+		 * @return BOOL8 whether the operation was successful
 		 */
 		_H3API_ BOOL8 SetString(LPCSTR section, LPCSTR key, const H3String& value);
 		/**
@@ -554,7 +552,7 @@ namespace h3
 		 * @param section name of the section to seek
 		 * @param key line's starting value
 		 * @param value unsigned integer
-		 * @return BOOL8 whether operation was successful 
+		 * @return BOOL8 whether operation was successful
 		 */
 		_H3API_ BOOL8 SetHex(LPCSTR section, LPCSTR key, UINT value);
 

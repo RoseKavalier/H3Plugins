@@ -162,27 +162,26 @@ namespace h3
 		 * @param address where to place hook
 		 * @param function _H3API_NAKED_FUNCTION_ hook
 		 */
-		_H3API_ VOID NakedHook5(UINT32 address, VOID* function);
+		_H3API_ BOOL NakedHook5(UINT32 address, H3NakedFunction function);
 		/**
 		 * @brief same as NakedHook5, but replaces bytes after the first 5 by NOP instructions
 		 *
 		 * @param address where to place hook
 		 * @param function _H3API_NAKED_FUNCTION_ hook
-		 * @param totalBytes how many bytes should be overwritten, minimum 5
+		 * @param total_bytes how many bytes should be overwritten, minimum 5
 		 */
-		_H3API_ VOID NakedHook(UINT32 address, VOID* function, INT totalBytes);
+		_H3API_ BOOL NakedHook(UINT32 address, H3NakedFunction function, UINT32 total_bytes);
 		/**
 		 * @brief write data at specific location
 		 *
 		 * @tparam T byte, word or dword, float, double...
 		 * @param address where to write data
 		 * @param value data to write
+		 * @return Whether the data was successfully written
 		 */
 		template<typename T>
-		struct WriteValue
-		{
-			WriteValue(const UINT address, const T value);
-		};
+		BOOL WriteValue(ADDRESS address, const T value);
+
 		/**
 		 * @brief write data at specific locations
 		 *
@@ -190,21 +189,21 @@ namespace h3
 		 * @tparam size how many locations will be written to
 		 * @param address where to write data
 		 * @param value data to write
+		 * @return Whether the data was successfully written
 		 */
 		template<typename T, size_t size>
-		struct WriteValues
-		{
-			WriteValues(const UINT address, const T(&value)[size]);
-		};
+		BOOL WriteValues(const UINT address, const T(&value)[size]);
+
 		/**
 		 * @brief writes pointer of data type (its address)
 		 *
 		 * @tparam T any data type
 		 * @param address address to write to
 		 * @param data a global or constexpr array, double or other value to be written as a pointer
+		 * @return Whether the data was successfully written
 		 */
 		template<typename T>
-		VOID AddressOfPatch(const UINT address, const T& data);
+		BOOL AddressOfPatch(const UINT address, const T& data);
 		/**
 		 * @brief writes pointer of data type (its address) to multiple locations
 		 *
@@ -216,7 +215,7 @@ namespace h3
 		 * @return H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
 		 */
 		template<typename Address, typename Type, size_t size>
-		typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4>::type
+		typename H3Internal::enable_if<std::numeric_limits<Address>::is_integer && sizeof(Address) == 4, BOOL>::type
 		AddressOfPatch(const Address(&address)[size], const Type& data);
 		/**
 		 * @brief writes data type to an object reference without having to dereference to obtain their address
@@ -226,7 +225,7 @@ namespace h3
 		 * @param data replacement value
 		 */
 		template<typename T>
-		VOID ObjectPatch(T& reference, T data);
+		BOOL ObjectPatch(T& reference, T data);
 		/**
 		 * @brief writes an array of bytes to the specified location
 		 *
@@ -235,16 +234,16 @@ namespace h3
 		 * @param value an array of bytes representing a patch
 		 */
 		template<size_t size>
-		VOID HexPatch(const UINT address, const BYTE(&value)[size]);
+		BOOL HexPatch(const UINT address, const BYTE(&value)[size]);
 
-		typedef WriteValue<BYTE>   BytePatch;
-		typedef WriteValue<INT8>   CharPatch;
-		typedef WriteValue<WORD>   WordPatch;
-		typedef WriteValue<INT16>  ShortPatch;
-		typedef WriteValue<DWORD>  DwordPatch;
-		typedef WriteValue<INT32>  IntPatch;
-		typedef WriteValue<FLOAT>  FloatPatch;
-		typedef WriteValue<DOUBLE> DoublePatch;
+		_H3API_ BOOL BytePatch(ADDRESS address, UINT8 value);
+		_H3API_ BOOL CharPatch(ADDRESS address, INT8 value);
+		_H3API_ BOOL WordPatch(ADDRESS address, UINT16 value);
+		_H3API_ BOOL ShortPatch(ADDRESS address, INT16 value);
+		_H3API_ BOOL DwordPatch(ADDRESS address, UINT32 value);
+		_H3API_ BOOL IntPatch(ADDRESS address, INT32 value);
+		_H3API_ BOOL FloatPatch(ADDRESS address, FLOAT value);
+		_H3API_ BOOL DoublePatch(ADDRESS address, DOUBLE value);
 	}
 
 	/**
@@ -278,8 +277,9 @@ namespace h3
 		 * @brief get process memory layout and size
 		 *
 		 * @param name name of the process
+		 * @return Whether the DLL was found and data analyzed.
 		 */
-		_H3API_ VOID GetDLLInfo(LPCSTR name);
+		_H3API_ BOOL GetDLLInfo(LPCSTR name);
 		/**
 		 * @brief find the first instance of needle
 		 *

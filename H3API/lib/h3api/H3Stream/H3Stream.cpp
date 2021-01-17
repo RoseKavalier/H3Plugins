@@ -18,12 +18,12 @@ namespace h3
 		m_file(nullptr),
 		m_size(0),
 		m_mode(read_write_mode),
-		m_write_hex(FALSE),
-		m_write_new_lines(FALSE),
+		m_writeHex(FALSE),
+		m_writeNewLines(FALSE),
 		m_status(StreamStatus::SS_NOT_LOADED),
 		m_buffer(nullptr),
-		m_buffer_size(0),
-		m_buffer_position(0)
+		m_bufferSize(0),
+		m_bufferPosition(0)
 	{
 		LPCSTR mode = getModeFormat();
 		if (mode)
@@ -41,12 +41,12 @@ namespace h3
 		m_file(nullptr),
 		m_size(0),
 		m_mode(StreamMode::SM_INVALID),
-		m_write_hex(FALSE),
-		m_write_new_lines(FALSE),
+		m_writeHex(FALSE),
+		m_writeNewLines(FALSE),
 		m_status(StreamStatus::SS_NOT_LOADED),
 		m_buffer(nullptr),
-		m_buffer_size(0),
-		m_buffer_position(0)
+		m_bufferSize(0),
+		m_bufferPosition(0)
 	{
 		if (read_write_mode)
 		{
@@ -140,22 +140,22 @@ namespace h3
 	}
 	_H3API_ H3Stream& H3Stream::hex()
 	{
-		m_write_hex = TRUE;
+		m_writeHex = TRUE;
 		return *this;
 	}
 	_H3API_ H3Stream& H3Stream::decimal()
 	{
-		m_write_hex = FALSE;
+		m_writeHex = FALSE;
 		return *this;
 	}
 	_H3API_ H3Stream& H3Stream::new_lines()
 	{
-		m_write_new_lines = TRUE;
+		m_writeNewLines = TRUE;
 		return *this;
 	}
 	_H3API_ H3Stream& H3Stream::no_new_lines()
 	{
-		m_write_new_lines = FALSE;
+		m_writeNewLines = FALSE;
 		return *this;
 	}
 	_H3API_ H3Stream& H3Stream::endl()
@@ -181,7 +181,7 @@ namespace h3
 		if (!(int(m_mode) & (MV_READ | MV_UPDATE)))
 			return FALSE;
 
-		if ((!m_buffer_size || !m_buffer) && !ReadFile(m_size))
+		if ((!m_bufferSize || !m_buffer) && !ReadFile(m_size))
 			return FALSE;
 
 		F_fread(m_buffer, 1, m_size, m_file);
@@ -201,7 +201,7 @@ namespace h3
 #ifndef _H3API_CPLUSPLUS11_
 	_H3API_	H3Stream& H3Stream::Write(LPCSTR format, ...)
 	{
-		if (IsReady() && CanWrite())
+		if (IsReady() && canWrite())
 		{
 			va_list args;
 			va_start(args, format);
@@ -217,7 +217,7 @@ namespace h3
 				operator<<(buffer);
 			}
 			va_end(args);
-			WriteNewLine();
+			writeNewLine();
 	}
 		return *this;
 	}
@@ -227,7 +227,7 @@ namespace h3
 	{
 		if (IsReady() && canWrite())
 		{
-			if (m_write_hex)
+			if (m_writeHex)
 				CDECL_3(int, 0x61A031, m_file, "0x%X", number);
 			else
 				CDECL_3(int, 0x61A031, m_file, "%d", number);
@@ -239,7 +239,7 @@ namespace h3
 	{
 		if (IsReady())
 		{
-			if (m_write_hex)
+			if (m_writeHex)
 				CDECL_3(int, 0x61A031, m_file, "0x%X", number);
 			else
 				CDECL_3(int, 0x61A031, m_file, "%u", number);
@@ -301,20 +301,20 @@ namespace h3
 	{
 		line.Truncate(0);
 
-		if (IsReady() && m_buffer && m_buffer_position < m_buffer_size)
+		if (IsReady() && m_buffer && m_bufferPosition < m_bufferSize)
 		{
-			if (m_buffer_position == 0 && m_buffer_size >= 3)
+			if (m_bufferPosition == 0 && m_bufferSize >= 3)
 			{
 				if (m_buffer[0] == 0xEF && m_buffer[1] == 0xBB && m_buffer[2] == 0xBF)
 				{
-					m_buffer_position += 3;
+					m_bufferPosition += 3;
 				}
 			}
 
 			int len = 0;
-			BYTE* start = m_buffer + m_buffer_position;
+			BYTE* start = m_buffer + m_bufferPosition;
 			BYTE* current = start;
-			while (m_buffer_position < m_buffer_size && *current)
+			while (m_bufferPosition < m_bufferSize && *current)
 			{
 				if (*current == '\n')
 				{
@@ -322,12 +322,12 @@ namespace h3
 					if (len && *(current - 1) == '\r')
 						len--;
 					// * skip this character for next time
-					++m_buffer_position;
+					++m_bufferPosition;
 					break;
 				}
 				++len;
 				++current;
-				++m_buffer_position;
+				++m_bufferPosition;
 			}
 			// * blank lines ("\n" or "\r\n") are not assigned
 			if (len)
@@ -337,11 +337,11 @@ namespace h3
 	}
 	_H3API_	H3Stream& H3Stream::operator>>(H3Vector<H3String>& lines)
 	{
-		if (!IsReady() || !m_buffer || m_buffer_position >= m_buffer_size)
+		if (!IsReady() || !m_buffer || m_bufferPosition >= m_bufferSize)
 			return *this;
 		lines.Deref();
 
-		while (m_buffer_position < m_buffer_size)
+		while (m_bufferPosition < m_bufferSize)
 		{
 			H3String line;
 			operator>>(line);
@@ -357,16 +357,16 @@ namespace h3
 
 		const DWORD sz = std::min(m_size, size_to_read);
 
-		if (m_buffer_size < sz)
+		if (m_bufferSize < sz)
 		{
 			F_delete(m_buffer);
-			m_buffer_size = sz;
-			m_buffer = static_cast<PBYTE>(F_calloc(m_buffer_size));
+			m_bufferSize = sz;
+			m_buffer = static_cast<PBYTE>(F_calloc(m_bufferSize));
 		}
 
-		m_buffer_position = 0;
+		m_bufferPosition = 0;
 
-		return F_fread(m_buffer, 1, m_buffer_size, m_file) == m_buffer_size;
+		return F_fread(m_buffer, 1, m_bufferSize, m_file) == m_bufferSize;
 	}
 	_H3API_	LPCSTR H3Stream::getModeFormat()
 	{
@@ -402,7 +402,7 @@ namespace h3
 	}
 	_H3API_	VOID H3Stream::writeNewLine()
 	{
-		if (m_write_new_lines)
+		if (m_writeNewLines)
 			endl();
 	}
 	_H3API_	BOOL H3Stream::canWrite()
@@ -472,6 +472,12 @@ namespace h3
 		getSize();
 		return TRUE;
 	}
+
+	_H3API_ BOOL H3File::Open(const H3String& file)
+	{
+		return Open(file.String());
+	}
+
 	_H3API_ BOOL H3File::Read(const PVOID buffer, DWORD sizeToRead)
 	{
 		return read(buffer, sizeToRead);
@@ -527,7 +533,15 @@ namespace h3
 	{
 		return m_buffer;
 	}
+	_H3API_ PBYTE H3File::begin() const
+	{
+		return m_buffer;
+	}
 	_H3API_ PBYTE H3File::end()
+	{
+		return m_buffer + m_fileSize;
+	}
+	_H3API_ PBYTE H3File::end() const
 	{
 		return m_buffer + m_fileSize;
 	}

@@ -55,24 +55,66 @@ namespace h3
 
 #pragma pack(push, 4)
 
+	/**
+	 * @brief 24bit rgb pixel stored as 3 contiguous bytes. Now only exists in H3LoadedPcx24
+	 *
+	 */
 	struct H3RGB888
 	{
 		UINT8 r;
 		UINT8 g;
 		UINT8 b;
 
-		// * approximate darkening, but faster than hsv
+		/**
+		 * @brief approximate darkening by 20%, but faster than hsv
+		 */
 		_H3API_ VOID Darken20();
-		// * approximate darkening, but faster than hsv
+		/**
+		 * @brief approximate darkening by 50%, but faster than hsv
+		 */
 		_H3API_ VOID Darken50();
+		/**
+		 * @brief applies grayscale effect by narrowing the gap between the rgb components
+		 */
 		_H3API_ VOID GrayScale();
-		// * darkens pixel's color through HSV by amount
+		/**
+		 * @brief darkens pixel's color through HSV by specified amount
+		 *
+		 * @param amount 0..255
+		 */
 		_H3API_ VOID Darken(const UINT8 amount);
-		// * lightens pixel's color through HSV by amount
+		/**
+		 * @brief lightens pixel's color through HSV by amount
+		 *
+		 * @param amount 0..255
+		 */
 		_H3API_ VOID Lighten(const UINT8 amount);
-		// * this assumes the source pixel has full alpha visibility
+		/**
+		 * @brief applies rgb mask of specified weight, assuming source pixel has full alpha visibility
+		 *
+		 * @param red 0..255
+		 * @param green 0..255
+		 * @param blue 0..255
+		 * @param alpha weight component  0..255
+		 */
 		_H3API_ VOID AlphaDraw(UINT8 red, UINT8 green, UINT8 blue, UINT8 alpha);
+		/**
+		 * @brief Get equivalent hue as normalized float
+		 *
+		 * @param red 0..255
+		 * @param green 0..255
+		 * @param blue 0..255
+		 * @return FLOAT 0.0f..1.0f
+		 */
 		_H3API_ static FLOAT GetHueAsNormalizedFloat(UINT8 red, UINT8 green, UINT8 blue);
+		/**
+		 * @brief Pack rgb components into a single dword with full alpha visibility
+		 *
+		 * @param red 0..255
+		 * @param green 0..255
+		 * @param blue 0..255
+		 * @return DWORD packed rgb
+		 */
 		_H3API_ static DWORD Pack(UINT8 red, UINT8 green, UINT8 blue);
 		_H3API_ H3RGB888();
 		_H3API_ H3RGB888(DWORD color);
@@ -247,7 +289,10 @@ namespace h3
 	};
 	_H3API_ASSERT_SIZE_(H3RGB888, 3);
 
-	// * argb pixel in HD mod
+	/**
+	 * @brief 32bit argb pixel in HD mod
+	 *
+	 */
 	struct H3ARGB888
 	{
 		UINT8 b;
@@ -255,14 +300,43 @@ namespace h3
 		UINT8 r;
 		UINT8 a;
 
+		/**
+		 * @brief pack the pixel components into a single dword
+		 *
+		 * @return UINT packed pixel value as dword
+		 */
 		_H3API_ UINT Value() const;
+		/**
+		 * @brief pack the pixel components into a single dword
+		 *
+		 * @return UINT packed pixel value as dword
+		 */
+		_H3API_ UINT operator*() const;
+		/**
+		 * @brief automatic cast as DWORD
+		 *
+		 * @return DWORD packed pixel value as dword
+		 */
 		_H3API_ operator DWORD () const;
-		// * darkens pixel's color through HSV by amount
+		/**
+		 * @brief darkens pixel's color through HSV by specified amount
+		 * note full transparency is not supported, so this only affects rgb components
+		 * @param amount 0..255
+		 */
 		_H3API_ VOID Darken(const UINT8 amount);
-		// * lightens pixel's color through HSV by amount
+		/**
+		 * @brief lightens pixel's color through HSV by specified amount
+		 * note full transparency is not supported, so this only affects rgb components
+		 * @param amount 0..255
+		 */
 		_H3API_ VOID Lighten(const UINT8 amount);
+		/**
+		 * @brief applies grayscale effect by narrowing the gap between the rgb components
+		 */
 		_H3API_ VOID GrayScale();
-		// * reorders pixels based on legacy drawing, pre - HDmod 5.0RC63
+		/**
+		 * @brief reorders argb components based on legacy drawing, pre - HDmod 5.0RC63
+		 */
 		_H3API_ VOID Legacy();
 		_H3API_ H3ARGB888();
 		_H3API_ H3ARGB888(DWORD col);
@@ -270,6 +344,11 @@ namespace h3
 		_H3API_ H3ARGB888(const H3RGB888& col);
 		_H3API_ H3ARGB888(const H3ARGB888& col);
 		_H3API_ H3ARGB888(UINT8 red, UINT8 blue, UINT8 green);
+		/**
+		 * @brief pack the pixel components into a single dword
+		 *
+		 * @return DWORD packed pixel value as dword
+		 */
 		_H3API_ DWORD GetColor() const;
 		_H3API_ VOID operator=(const H3RGB565& col);
 		_H3API_ VOID operator=(const H3RGB888& col);
@@ -277,10 +356,20 @@ namespace h3
 		_H3API_ VOID operator=(UINT16 col);
 		_H3API_ VOID operator=(UINT32 col);
 		_H3API_ BOOL operator==(const H3ARGB888& col);
-
-		_H3API_ VOID LightShadow(); // darkens by 25% as game does
-		_H3API_ VOID DarkShadow(); // darkens by 50% as game does
-		_H3API_ VOID Blend(const H3ARGB888& col); // blend col into the current pixel
+		/**
+		 * @brief approximate lightening by 25% following game logic
+		 */
+		_H3API_ VOID LightShadow();
+		/**
+		 * @brief approximate darkening by 50% following game logic
+		 */
+		_H3API_ VOID DarkShadow();
+		/**
+		 * @brief blend or superpose a specific mask over the current pixel
+		 *
+		 * @param col mask to apply
+		 */
+		_H3API_ VOID Blend(const H3ARGB888& col);
 #pragma region NamedColors
 		_H3API_ static H3ARGB888 Regular();
 		_H3API_ static H3ARGB888 Highlight();
@@ -446,15 +535,23 @@ namespace h3
 	};
 	_H3API_ASSERT_SIZE_(H3ARGB888, 4);
 
+	/**
+	 * @brief a 256 argb palette of colors for indexed images, introduced by HDmod
+	 *
+	 */
 	struct H3Palette32
 	{
 		H3ARGB888 colors[256];
 
 		_H3API_ H3ARGB888& operator[](UINT index);
-		_H3API_ H3ARGB888 operator[](UINT index) const;
+		_H3API_ H3ARGB888  operator[](UINT index) const;
 	};
 
-	struct H3RGB555 // https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
+	/**
+	 * @brief 15bits rgb packed in 2 bytes; apparently unused by h3 but the mechanics exist
+	 * https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
+	 */
+	struct H3RGB555
 	{
 	protected:
 		RGB555 bits;
@@ -470,18 +567,62 @@ namespace h3
 	};
 	_H3API_ASSERT_SIZE_(H3RGB555, 2);
 
-	struct H3RGB565 // https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
+	/**
+	 * @brief 16bits rgb packed in 2 bytes; most common type used without 32bit mode
+	 * https://docs.microsoft.com/en-us/windows/desktop/DirectShow/working-with-16-bit-rgb
+	 */
+	struct H3RGB565
 	{
 	protected:
 		RGB565 bits;
 	public:
+		/**
+		 * @brief retrieve the packed red component
+		 *
+		 * @return UINT8 0..31
+		 */
 		_H3API_ UINT8 GetRed() const;
+		/**
+		 * @brief retrieve the red component in 8bit format
+		 *
+		 * @return UINT8 0..255
+		 */
 		_H3API_ UINT8 GetRed8() const;
+		/**
+		 * @brief retrieve the packed green component
+		 *
+		 * @return UINT8 0..63
+		 */
 		_H3API_ UINT8 GetGreen() const;
+		/**
+		 * @brief retrieve the green component in 8bit format
+		 *
+		 * @return UINT8 0..255
+		 */
 		_H3API_ UINT8 GetGreen8() const;
+		/**
+		 * @brief retrieve the packed blue component
+		 *
+		 * @return UINT8 0..31
+		 */
 		_H3API_ UINT8 GetBlue() const;
+		/**
+		 * @brief retrieve the blue component in 8bit format
+		 *
+		 * @return UINT8 0..255
+		 */
 		_H3API_ UINT8 GetBlue8() const;
+		/**
+		 * @brief retrieves the rgb components in 24bit format
+		 *
+		 * @return DWORD 0x000000..0xFFFFFF
+		 */
 		_H3API_ DWORD GetRGB888() const;
+		/**
+		 * @brief Get a copy of the packed rgb components
+		 *
+		 * @return RGB565 color packed in 2 bytes
+		 */
 		_H3API_ RGB565 GetBits() const;
 		_H3API_ H3RGB565();
 		_H3API_ H3RGB565(RGB565 rgb);
@@ -495,24 +636,106 @@ namespace h3
 		_H3API_ VOID operator=(const UINT16 col);
 		_H3API_ VOID operator=(const UINT32 col);
 		_H3API_ BOOL operator==(const H3RGB565& col);
+		/**
+		 * @brief automatic cast as 2 bytes WORD
+		 *
+		 * @return WORD color packed in 2 bytes
+		 */
 		_H3API_ operator WORD () const;
+		/**
+		 * @brief Get a copy of the packed rgb components
+		 *
+		 * @return WORD color packed in 2 bytes
+		 */
 		_H3API_ WORD Value() const;
+		/**
+		 * @brief Set the packed color to the specified value
+		 *
+		 * @param color packed 16bit rgb
+		 */
 		_H3API_ VOID SetBits(WORD color);
-		_H3API_ WORD PackRGB565(UINT8 r, UINT8 g, UINT8 b);
-		_H3API_ WORD Pack(H3RGB888& rgb);
+		/**
+		 * @brief Set the pixel's components
+		 *
+		 * @param r red component 0..255
+		 * @param g green component 0..255
+		 * @param b blue component 0..255
+		 */
+		_H3API_ VOID PackRGB565(UINT8 r, UINT8 g, UINT8 b);
+		/**
+		 * @brief Set the pixel's components
+		 *
+		 * @param rgb color to use
+		 */
+		_H3API_ VOID Pack(H3RGB888& rgb);
+		/**
+		 * @brief transform any rgb components into a packed 16bit pixel
+		 *
+		 * @param r red component 0..255
+		 * @param g green component 0..255
+		 * @param b blue component 0..255
+		 * @return WORD packed 16bit color
+		 */
 		_H3API_ static WORD  Pack(UINT8 r, UINT8 g, UINT8 b);
+		/**
+		 * @brief transform a packed 16bit color into a 24bit pixel
+		 *
+		 * @param rgb 16bit color to unpack
+		 * @return DWORD color without alpha component 0x000000..0xFFFFFF
+		 */
 		_H3API_ static DWORD Unpack(RGB565 rgb);
-		// darkens pixel's color by amount
+		/**
+		 * @brief darkens pixel's color by specified amount
+		 *
+		 * @param amount 0..255
+		 */
 		_H3API_ VOID Darken(UINT8 amount);
+		/**
+		 * @brief lightens pixel's color by specified amount
+		 *
+		 * @param amount 0..255
+		 */
 		_H3API_ VOID Lighten(UINT8 amount);
+		/**
+		 * @brief applies grayscale effect by narrowing the gap between the rgb components
+		 */
 		_H3API_ VOID GrayScale();
-		_H3API_ VOID LightShadow(); // darkens by 25% as performed by h3
-		_H3API_ VOID LightShadow(RGB565 mask50, RGB565 mask25); // darkens by 25% as performed by h3
-		_H3API_ VOID DarkShadow(); // darkens by 50% as performed by h3
-		_H3API_ VOID DarkShadow(RGB565 mask); // darkens by 50% as performed by h3
-
-		_H3API_ VOID Blend(const H3RGB565& col); // blend col into the current pixel
-		_H3API_ VOID Blend(const H3RGB565& col, RGB565 mask); // blend col into the current pixel
+		/**
+		 * @brief darkens by 25% as performed by h3, using default masks
+		 * i.e. rgb components are reduced to 75% of their current value
+		 */
+		_H3API_ VOID LightShadow();
+		/**
+		 * @brief darkens by 25% as performed by h3, using specified masks
+		 * i.e. rgb components are reduced to 75% of their current value
+		 * @param mask50 a mask representing 50% rgb components
+		 * @param mask25 a mask representing 25% rgb components
+		 */
+		_H3API_ VOID LightShadow(RGB565 mask50, RGB565 mask25);
+		/**
+		 * @brief darkens by 50% as performed by h3, using default mask
+		 * i.e. rgb components are reduced to 50% of their current value
+		 */
+		_H3API_ VOID DarkShadow();
+		/**
+		 * @brief darkens by 50% as performed by h3, using specified mask
+		 * i.e. rgb components are reduced to 50% of their current value
+		 * @param mask a mask representing 50% rgb components
+		 */
+		_H3API_ VOID DarkShadow(RGB565 mask);
+		/**
+		 * @brief Blend 2 colors together to obtain a new one
+		 *
+		 * @param col the color to mix
+		 */
+		_H3API_ VOID Blend(const H3RGB565& col);
+		/**
+		 * @brief Blend 2 colors together to obtain a new one, with an upper cap specified by a mask
+		 *
+		 * @param col the color to mix
+		 * @param mask upper limit for blending of source and \p col
+		 */
+		_H3API_ VOID Blend(const H3RGB565& col, RGB565 mask);
 #pragma region NamedColors
 		_H3API_ static RGB565 Regular();
 		_H3API_ static RGB565 Highlight();
@@ -675,6 +898,10 @@ namespace h3
 	};
 	_H3API_ASSERT_SIZE_(H3RGB565, 2);
 
+	/**
+	 * @brief approximate HSV pixel without floats for smarter color manipulation
+	 *
+	 */
 	struct H3HSV
 	{
 	protected:
@@ -886,7 +1113,11 @@ namespace h3
 		// * +1C
 		union
 		{
+		#ifdef _H3API_CPLUSPLUS11_
 			H3RGB565 color[256];
+		#else // older VS have issues with unions and non-default constructors
+			RGB565 color[256];
+		#endif
 			struct
 			{
 				H3RGB565 unusedColors[254];
@@ -981,6 +1212,13 @@ namespace h3
 			NH3Dlg::TextAlignment::eTextAlignment alignment = NH3Dlg::TextAlignment::MIDDLE_CENTER);
 
 		_H3API_ static H3Font* Load(LPCSTR name);
+
+		/**
+		 * @brief Access font buffer at starting position of specified character
+		 * @param character_id Index of the ascii character 0..255
+		 * @return Buffer to specified location
+		 */
+		_H3API_ PUINT8 GetChar(UINT32 character_id);
 	};
 	_H3API_ASSERT_SIZE_(H3Font, 0x1260);
 

@@ -869,7 +869,6 @@ namespace h3
 
 	typedef H3Map<UINT16> H3Map_UINT16;
 	typedef H3FastMap<UINT16> H3FastMap_UINT16;
-
 } /* namespace h3 */
 
 namespace h3

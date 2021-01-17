@@ -61,28 +61,73 @@ namespace h3
 		return p;
 	}
 
-	_H3API_ VOID H3Patcher::NakedHook5(UINT32 address, VOID* function)
+	_H3API_ BOOL H3Patcher::NakedHook5(UINT32 address, H3NakedFunction function)
 	{
 		H3Protect protect(address, 5);
 		if (protect.CanWrite())
 		{
 			ByteAt(address)      = H3Patcher::JMP;
 			DwordAt(address + 1) = reinterpret_cast<UINT32>(function) - address - 5;
+			return TRUE;
 		}
+		return FALSE;
 	}
-	_H3API_ VOID H3Patcher::NakedHook(UINT32 address, VOID * function, INT totalBytes)
+	_H3API_ BOOL H3Patcher::NakedHook(UINT32 address, H3NakedFunction function, UINT32 total_bytes)
 	{
-		if (totalBytes < 5)
-			return;
-		H3Protect protect(address, totalBytes);
+		if (total_bytes < 5)
+			return FALSE;
+		H3Protect protect(address, total_bytes);
 		if (protect.CanWrite())
 		{
 			ByteAt(address)      = H3Patcher::JMP;
 			DwordAt(address + 1) = reinterpret_cast<UINT32>(function) - address - 5;
-			for (int i = 5; i < totalBytes; ++i)
+			for (UINT32 i = 5; i < total_bytes; ++i)
 				ByteAt(address + i) = H3Patcher::NOP;
+			return TRUE;
 		}
+		return FALSE;
 	}
+
+	_H3API_ BOOL H3Patcher::BytePatch(ADDRESS address, UINT8 value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::CharPatch(ADDRESS address, INT8 value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::WordPatch(ADDRESS address, UINT16 value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::ShortPatch(ADDRESS address, INT16 value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::DwordPatch(ADDRESS address, UINT32 value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::IntPatch(ADDRESS address, INT32 value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::FloatPatch(ADDRESS address, FLOAT value)
+	{
+		return WriteValue(address, value);
+	}
+
+	_H3API_ BOOL H3Patcher::DoublePatch(ADDRESS address, DOUBLE value)
+	{
+		return WriteValue(address, value);
+	}
+
 	_H3API_ H3DLL::H3DLL() :
 		code(),
 		size(),
@@ -141,7 +186,7 @@ namespace h3
 		message.Printf("Module \"%s\" could not be found!", dllName);
 		H3Error::ShowError(message.String(), "DLL not found!");
 	}
-	_H3API_ VOID H3DLL::GetDLLInfo(LPCSTR name)
+	_H3API_ BOOL H3DLL::GetDLLInfo(LPCSTR name)
 	{
 		dllName = name;
 		HMODULE hm = GetModuleHandleA(name);
@@ -150,7 +195,7 @@ namespace h3
 #ifdef _H3DLL_DEBUG_
 			processNotFound();
 #endif
-			return;
+			return FALSE;
 		}
 		IMAGE_DOS_HEADER* pDOSHeader = reinterpret_cast<IMAGE_DOS_HEADER*>(hm);
 		IMAGE_NT_HEADERS* pNTHeaders = reinterpret_cast<IMAGE_NT_HEADERS*>(reinterpret_cast<BYTE*>(pDOSHeader) + pDOSHeader->e_lfanew);
@@ -175,6 +220,7 @@ namespace h3
 				dataSize = pSectionHdr->Misc.VirtualSize;
 			}
 		}
+		return TRUE;
 	}
 	_H3API_ UINT32 H3DLL::NeedleSearch(PUINT8 needle, INT32 needle_size, INT32 offset)
 	{
@@ -214,7 +260,8 @@ namespace h3
 		UINT32 p = NeedleSearch(needle, needle_size, offset);
 		if (p)
 		{
-			if (memcmp(reinterpret_cast<PVOID>(p), expected_code, expected_size) != 0) // is the code at the found address different from what we expect?
+			// is the code at the found address different from what we expect?
+			if (memcmp(reinterpret_cast<PVOID>(p), expected_code, expected_size) != 0)
 			{
 #ifdef _H3DLL_DEBUG_
 				needleUnexpectedCode(p, needle, needle_size, expected_code, expected_size);

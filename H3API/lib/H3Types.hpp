@@ -23,6 +23,10 @@
  */
 typedef void(*naked_t)();
 /**
+ * Naked function type used for basic hook types.
+*/
+typedef void(*H3NakedFunction)();
+/**
  * generic typedef to indicate this is a h3 function
  */
 typedef unsigned long h3func;
@@ -88,6 +92,11 @@ typedef unsigned long    DWORD;
 typedef                  DWORD   *PDWORD;
 typedef const char*      LPCSTR;
 typedef void             VOID,   *PVOID;
+
+namespace h3
+{
+	typedef unsigned int ADDRESS;
+}
 
 /**
  * forward declaration for patcher_x86's Patcher class

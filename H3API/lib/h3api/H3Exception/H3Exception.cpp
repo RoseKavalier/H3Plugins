@@ -147,27 +147,27 @@ namespace h3
 	{
 	}
 
-	_H3API_ VOID H3Exception::ShowInGame()
+	_H3API_ VOID H3Exception::ShowInGame() const
 	{
 		F_MessageBox(what());
 	}
 
-	_H3API_ BOOL H3Exception::ShowInGameLog()
+	_H3API_ BOOL H3Exception::ShowInGameLog() const
 	{
 		return F_MessageBoxChoice(what());
 	}
 
-	_H3API_ VOID H3Exception::ShowMessagebox()
+	_H3API_ VOID H3Exception::ShowMessagebox() const
 	{
 		H3Error::ShowError(what());
 	}
 
-	_H3API_ BOOL H3Exception::ShowMessageboxLog()
+	_H3API_ BOOL H3Exception::ShowMessageboxLog() const
 	{
 		return H3Error::ShowErrorChoice(what());
 	}
 
-	_H3API_ VOID H3Exception::LogError(LPCSTR path)
+	_H3API_ VOID H3Exception::LogError(LPCSTR path) const
 	{
 		FILE* f = F_fopen(path, "wb+");
 		if (!f)
@@ -175,7 +175,7 @@ namespace h3
 		F_fwrite(what(), 1, strlen(what()) - sizeof(H3Internal::OfferToLog), f);
 		F_fclose(f);
 	}
-	_H3API_ VOID H3Exception::LogError(const H3String & path)
+	_H3API_ VOID H3Exception::LogError(const H3String & path) const
 	{
 		LogError(path.String());
 	}

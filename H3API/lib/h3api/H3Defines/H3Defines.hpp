@@ -12,10 +12,7 @@
 #ifndef _H3DEFINES_HPP_
 #define _H3DEFINES_HPP_
 
-#include "../H3_Base.hpp"
-#include "../H3_BinaryItems.hpp"
 #include "../H3_Dialogs.hpp"
-#include "../H3_String.hpp"
 #include "../H3_Structures.hpp"
 
 namespace h3
@@ -61,6 +58,8 @@ namespace h3
 		typedef H3DataArrayPointer<H3SecondarySkillInfo,    0x67DCF0,     true > H3SecondarySkillsInfo_ptr;
 		typedef H3DataArrayPointer<H3GlobalObjectSettings,  0x660428,     true > H3ObjectSettings_ptr;
 		typedef H3DataArrayPointer<H3Spell,                 0x687FA8,     true > H3Spell_ptr;
+		typedef H3DataArrayPointer<H3PuzzleCoordinates,     0x52CC09 + 3, true > H3PuzzleCoordinates_ptr;
+		typedef H3DataArrayPointer<H3PuzzlePiecesOrder,     0x52CBF2 + 4, true > H3PuzzlePiecesOrder_ptr;
 		typedef H3DataArrayPointer<H3CreatureBankSetup,     0x47A3C1 + 1, true > H3CreatureBankTable_ptr;
 		typedef H3DataArrayPointer<H3ValidCatapultTargets,  0x4929DD + 3, true > H3ValidCatapultTargets_ptr;
 		typedef H3DataArrayPointer<H3ArtifactSetup,         0x660B68,     true > H3Artifacts_ptr;
@@ -69,6 +68,7 @@ namespace h3
 		typedef H3DataArrayPointer<H3HeroInfo,              0x67DCE8,     true > H3HeroInfo_ptr;
 		typedef H3DataArrayPointer<H3HeroSpecialty,         0x4B8AF1 + 1, true > H3HeroSpecialty_ptr;
 		typedef H3DataArrayPointer<H3TownCreatureTypes,     0x47AB00 + 3, true > H3TownCreatureTypes_ptr;
+		typedef H3DataArrayPointer<H3CmpBonusBuildings,     0x48415F + 3, true > H3CmpBonusBuildings_ptr;
 
 		typedef H3PrimitivePointer<HWND,                    0x699650,     false> H3Hwnd_ptr;
 		typedef H3PrimitivePointer<HMODULE,                 0x699604,     false> H3Module_ptr;
@@ -186,6 +186,7 @@ namespace h3
 	typedef H3Internal::H3CalliFont_ptr                  P_CalliFont;
 	typedef H3Internal::H3ButtonWav_ptr                  P_ButtonWav;
 	typedef H3Internal::H3SpellbookText_ptr              P_SpellbookText;
+	typedef H3Internal::H3CmpBonusBuildings_ptr          P_CmpBonusBuildings;
 
 	typedef H3Internal::H3SecondarySkillLevel_ptr        P_SecondarySkillLevel;
 	typedef H3Internal::H3PrimarySkillName_ptr           P_PrimarySkillName;
@@ -206,6 +207,8 @@ namespace h3
 	typedef H3Internal::H3SecondarySkillsInfo_ptr        P_SecondarySkillsInfo;
 	typedef H3Internal::H3ObjectSettings_ptr             P_ObjectSettings;
 	typedef H3Internal::H3Spell_ptr                      P_Spell;
+	typedef H3Internal::H3PuzzleCoordinates_ptr          P_PuzzleCoordinates;
+	typedef H3Internal::H3PuzzlePiecesOrder_ptr          P_PuzzlePiecesOrder;
 	typedef H3Internal::H3CreatureBankTable_ptr          P_CreatureBankTable;
 	typedef H3Internal::H3ValidCatapultTargets_ptr       P_ValidCatapultTargets;
 	typedef H3Internal::H3Artifacts_ptr                  P_Artifacts;
@@ -282,6 +285,7 @@ namespace h3
 #define P_CalliFont                  h3::H3Internal::H3CalliFont_ptr()
 #define P_ButtonWav                  h3::H3Internal::H3ButtonWav_ptr()
 #define P_SpellbookText              h3::H3Internal::H3SpellbookText_ptr()
+#define P_CmpBonusBuildings          h3::H3Internal::H3CmpBonusBuildings_ptr()
 
 #define P_SecondarySkillLevel        h3::H3Internal::H3SecondarySkillLevel_ptr()
 #define P_PrimarySkillName           h3::H3Internal::H3PrimarySkillName_ptr()
@@ -302,6 +306,8 @@ namespace h3
 #define P_SecondarySkillsInfo        h3::H3Internal::H3SecondarySkillsInfo_ptr()
 #define P_ObjectSettings             h3::H3Internal::H3ObjectSettings_ptr()
 #define P_Spell                      h3::H3Internal::H3Spell_ptr()
+#define P_PuzzleCoordinates          h3::H3Internal::H3PuzzleCoordinates_ptr()
+#define P_PuzzlePiecesOrder          h3::H3Internal::H3PuzzlePiecesOrder_ptr()
 #define P_CreatureBankTable          h3::H3Internal::H3CreatureBankTable_ptr()
 #define P_ValidCatapultTargets       h3::H3Internal::H3ValidCatapultTargets_ptr()
 #define P_Artifacts                  h3::H3Internal::H3Artifacts_ptr()

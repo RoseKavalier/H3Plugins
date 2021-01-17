@@ -10,6 +10,7 @@
 
 #include "H3String.hpp"
 #include "H3String.inl"
+#include "../H3_Functions.hpp"
 
 namespace h3
 {
@@ -61,6 +62,20 @@ namespace h3
 				return i - 1;
 		return npos;
 	}
+
+#ifdef _H3API_CPLUSPLUS11_
+	_H3API_ H3String& H3String::move(H3String&& other)
+	{
+		if (this == &other)
+			return *this;
+		Dereference();
+		m_string = other.m_string;
+		m_length = other.m_length;
+		m_capacity = other.m_capacity;
+		other.Deref();
+		return *this;
+	}
+#endif
 
 	_H3API_ H3String::H3String() :
 		m_string(nullptr),
@@ -144,7 +159,7 @@ namespace h3
 
 	_H3API_ LPCSTR H3String::String() const
 	{
-		return m_string;
+		return m_string ? m_string : reinterpret_cast<LPCSTR>(&m_string);
 	}
 
 	_H3API_ CHAR* H3String::begin()
@@ -218,6 +233,12 @@ namespace h3
 		Assign(buffer, UINT(len));
 		return *this;
 	}
+#ifdef _H3API_CPLUSPLUS11_
+	_H3API_ H3String& H3String::Assign(H3String&& other)
+	{
+		return move(std::move(other));
+	}
+#endif
 
 	_H3API_ BOOL H3String::Reserve(UINT new_size)
 	{
@@ -541,7 +562,7 @@ namespace h3
 	_H3API_ BOOL H3String::Equals_i(LPCSTR msg) const
 	{
 		if (!msg)
-			return npos;
+			return FALSE;
 		return Equals_i(msg, strlen(msg));
 	}
 
@@ -695,6 +716,19 @@ namespace h3
 		return Append(number);
 	}
 
+	_H3API_ H3WString H3String::ToH3WString(UINT code_page) const
+	{
+		// MultiByteToWideChar
+		UINT req_len = STDCALL_6(UINT, PtrAt(0x63A1CC), code_page, 0, m_string, -1, 0, 0);
+		H3WString wstring;
+		wstring.Reserve(req_len);
+
+		// MultiByteToWideChar
+		STDCALL_6(UINT, PtrAt(0x63A1CC), code_page, 0, m_string, -1, wstring.String(), req_len);
+		wstring.m_length = req_len - 1; // wstring is null-terminated by MultiByteToWideChar
+		return wstring;
+	}
+
 	_H3API_ BOOL H3String::operator==(const H3String& h3str) const
 	{
 		return Compare(h3str.String()) == 0;
@@ -714,7 +748,7 @@ namespace h3
 		return Compare(str) != 0;
 	}
 
-	_H3API_ CHAR& H3String::operator[](UINT32 pos) const
+	_H3API_ CHAR H3String::operator[](UINT32 pos) const
 	{
 		return m_string[pos];
 	}
@@ -844,4 +878,402 @@ namespace h3
 		return std::string(String(), Length());
 	}
 #endif /* _H3API_STD_CONVERSIONS_ */
+
+	_H3API_ VOID H3WString::Destroy()
+	{
+		if (m_string)
+		{
+			F_delete(base());
+			deref();
+		}
+	}
+
+	_H3API_ VOID H3WString::tidy(BOOL8 dereference /*= TRUE*/)
+	{
+		THISCALL_2(VOID, 0x612988, this, dereference);
+	}
+
+	_H3API_ VOID H3WString::deref()
+	{
+		m_string = nullptr;
+		m_length = 0;
+		m_capacity = 0;
+	}
+
+	_H3API_ BOOL8 H3WString::grow(UINT32 size, BOOL8 trim /*= FALSE*/)
+	{
+		return THISCALL_3(BOOL8, 0x6128FF, this, size, trim);
+	}
+
+	_H3API_ UINT8& H3WString::references()
+	{
+		return *(reinterpret_cast<PUINT8>(m_string) - 1);
+	}
+
+	_H3API_ PVOID H3WString::base()
+	{
+		return m_string ? PVOID(PUINT8(m_string) - 2) : nullptr;
+	}
+#ifdef _H3API_CPLUSPLUS11_
+	_H3API_ H3WString& H3WString::move(H3WString&& other)
+	{
+		if (this == &other)
+			return *this;
+		tidy(TRUE);
+		m_string   = other.m_string;
+		m_length   = other.m_length;
+		m_capacity = other.m_capacity;
+		other.deref();
+		return *this;
+	}
+#endif
+
+	_H3API_ H3WString::H3WString() :
+		m_string(), m_length(), m_capacity()
+	{
+	}
+
+	_H3API_ H3WString::H3WString(const H3WString& other) :
+		m_string(), m_length(), m_capacity()
+	{
+		Assign(other);
+	}
+
+	_H3API_ H3WString::H3WString(LPCWSTR text) :
+		m_string(), m_length(), m_capacity()
+	{
+		Assign(text);
+	}
+
+	_H3API_ H3WString::H3WString(WCHAR character) :
+		m_string(), m_length(), m_capacity()
+	{
+		Assign(character);
+	}
+
+	_H3API_ H3WString::H3WString(LPCWSTR text, UINT32 length)
+	{
+		Assign(text, length);
+	}
+
+	_H3API_ H3WString::~H3WString()
+	{
+		tidy(TRUE);
+	}
+
+	_H3API_ H3WString& H3WString::Append(LPCWSTR text, UINT32 length)
+	{
+		if (length == 0)
+			return *this;
+		const UINT size = m_length + length;
+		if (size >= max_len)
+			STDCALL_0(VOID, 0x60B0FB); // string too long exception
+
+		if (size >= m_capacity && !grow(size))
+			return *this;
+
+		WCHAR* dst = m_string + m_length;
+		LPCWSTR src = text;
+		const UINT extra_length = length;
+		while (length > 0)
+		{
+			*dst++ = *src++;
+			--length;
+		}
+		*dst = 0;
+		m_length += extra_length;
+
+		return *this;
+	}
+
+	_H3API_ H3WString& H3WString::Append(LPCWSTR text)
+	{
+		return Append(text, H3Internal::_wcslen(text));
+	}
+
+	_H3API_ H3WString& H3WString::Append(WCHAR character)
+	{
+		return Append(&character, 1);
+	}
+
+	_H3API_ H3WString& H3WString::Append(const H3WString& other)
+	{
+		return Append(other, 0, other.Length());
+	}
+
+	_H3API_ H3WString& H3WString::Append(const H3WString& other, UINT32 start_position, UINT32 end_position)
+	{
+		return THISCALL_4(H3WString&, 0x612B0C, this, other, start_position, end_position);
+	}
+#ifdef _H3API_CPLUSPLUS11_
+	_H3API_ H3WString& H3WString::Assign(H3WString&& other)
+	{
+		return move(std::move(other));
+	}
+#endif
+
+	_H3API_ H3WString& H3WString::Assign(LPCWSTR text, UINT32 length)
+	{
+		return THISCALL_3(H3WString&, 0x6126F3, this, text, length);
+	}
+
+	_H3API_ H3WString& H3WString::Assign(LPCWSTR text)
+	{
+		return Assign(text, H3Internal::_wcslen(text));
+	}
+
+	_H3API_ H3WString& H3WString::Assign(const H3WString& other)
+	{
+		return Assign(other.String(), other.Length());
+	}
+
+	_H3API_ H3WString& H3WString::SoftCopy(const H3WString& other)
+	{
+		return THISCALL_4(H3WString&, 0x612615, this, &other, 0, other.Length());
+	}
+
+	_H3API_ H3WString& H3WString::Assign(WCHAR character)
+	{
+		return Assign(&character, 1);
+	}
+
+	_H3API_ UINT32 H3WString::Size() const
+	{
+		return m_length;
+	}
+
+	_H3API_ UINT32 H3WString::Length() const
+	{
+		return m_length;
+	}
+
+	_H3API_ BOOL32 H3WString::IsEmpty() const
+	{
+		return m_length == 0;
+	}
+
+	_H3API_ LPCWSTR H3WString::String() const
+	{
+		return m_string ? m_string : reinterpret_cast<LPCWSTR>(&m_string);
+	}
+
+	_H3API_ VOID H3WString::Insert(UINT32 start_position, UINT32 end_position, WCHAR character)
+	{
+		THISCALL_4(VOID, 0x61278D, this, start_position, end_position, character);
+	}
+
+	_H3API_ H3WString& H3WString::Insert(UINT32 start_position, LPCWSTR text)
+	{
+		return Insert(start_position, H3Internal::_wcslen(text));
+	}
+
+	_H3API_ H3WString& H3WString::Insert(UINT32 start_position, LPCWSTR text, UINT length)
+	{
+		if (length == 0 || text == nullptr)
+			return *this;
+		// * trying to insert at or after end
+		if (start_position >= Length())
+			return Append(text, length);
+
+		if (!Reserve(Length() + length))
+			return *this;
+
+		UINT copylen = Length() - start_position;
+		// * simpler than malloc + free
+		H3WString temp;
+		temp.Assign(m_string + start_position, copylen);
+		// * temporarily cut end out at starting position
+		m_string[start_position] = WCHAR(0);
+		m_length = start_position;
+		// * insert msg
+		Append(text, length);
+		// * insert original end
+		Append(temp);
+		return *this;
+	}
+	H3WString& H3WString::Insert(UINT32 start_position, WCHAR text)
+	{
+		return Insert(start_position, &text, 1);
+	}
+
+	_H3API_ H3WString& H3WString::Insert(UINT32 start_position, const H3WString& other)
+	{
+		return Insert(start_position, other.String(), other.Length());
+	}
+
+	_H3API_ LPCWSTR H3WString::begin()
+	{
+		return m_string;
+	}
+
+	_H3API_ LPCWSTR H3WString::begin() const
+	{
+		return m_string;
+	}
+
+	_H3API_ LPCWSTR H3WString::end()
+	{
+		return m_string + m_length;
+	}
+
+	_H3API_ LPCWSTR H3WString::end() const
+	{
+		return m_string + m_length;
+	}
+
+	_H3API_ BOOL8 H3WString::Reserve(UINT32 length)
+	{
+		return grow(length);
+	}
+
+	_H3API_ UINT8 H3WString::References() const
+	{
+		return *(reinterpret_cast<PUINT8>(m_string) - 1);
+	}
+
+	_H3API_ VOID H3WString::IncreaseReferences()
+	{
+		UINT8& ref = references();
+		if (ref != frozen)
+			++ref;
+	}
+
+	_H3API_ VOID H3WString::DecreaseReferences()
+	{
+		UINT8& ref = references();
+		if (ref && ref != frozen)
+			--ref;
+	}
+
+	_H3API_ H3WString& H3WString::Erase(UINT32 start_position, UINT32 end_position)
+	{
+		return THISCALL_3(H3WString&, 0x612867, this, start_position, end_position);
+	}
+
+	_H3API_ H3WString& H3WString::Erase()
+	{
+		return Erase(0, npos);
+	}
+
+	_H3API_ INT32 H3WString::Compare(LPCWSTR string, UINT32 length) const
+	{
+		// * normalize to usual -1, 0 or 1 result to indicate <, = or >
+		return H3Internal::_CompareStringW(LOCALE_NEUTRAL, 0, String(), Length(), string, length) - CSTR_EQUAL;
+	}
+
+	_H3API_ INT32 H3WString::Compare(LPCWSTR string) const
+	{
+		return Compare(string, H3Internal::_wcslen(string));
+	}
+
+	_H3API_ INT32 H3WString::Compare(const H3WString& other) const
+	{
+		return Compare(other.String(), other.Length());
+	}
+
+	_H3API_ INT32 H3WString::Compare(WCHAR character) const
+	{
+		return Compare(&character, 1);
+	}
+
+	_H3API_ BOOL H3WString::Equals(LPCWSTR string, UINT32 length) const
+	{
+		if (Length() != length)
+			return FALSE;
+		return Compare(string, length) == 0;
+	}
+
+	_H3API_ BOOL H3WString::Equals(LPCWSTR string) const
+	{
+		return Equals(string, H3Internal::_wcslen(string));
+	}
+
+	_H3API_ BOOL H3WString::Equals(const H3WString& other) const
+	{
+		return Equals(other.String(), other.Length());
+	}
+
+	_H3API_ BOOL H3WString::Equals(WCHAR character) const
+	{
+		return Equals(&character, 1);
+	}
+
+	_H3API_ WCHAR H3WString::operator[](UINT position) const
+	{
+		return m_string[position];
+	}
+
+	_H3API_ WCHAR& H3WString::operator[](UINT position)
+	{
+		return m_string[position];
+	}
+
+	_H3API_ BOOL H3WString::operator==(const H3WString& other)
+	{
+		return Equals(other);
+	}
+
+	_H3API_ BOOL H3WString::operator==(LPCWSTR msg)
+	{
+		return Equals(msg);
+	}
+
+	_H3API_ BOOL H3WString::operator==(WCHAR ch)
+	{
+		return Equals(ch);
+	}
+
+	_H3API_ H3WString& H3WString::operator+=(WCHAR ch)
+	{
+		return Append(ch);
+	}
+
+	_H3API_ H3WString& H3WString::operator+=(LPCWSTR msg)
+	{
+		return Append(msg);
+	}
+
+	_H3API_ H3WString& H3WString::operator+=(const H3WString& other)
+	{
+		return Append(other);
+	}
+
+	_H3API_ H3String H3WString::ToH3String(UINT code_page) const
+	{
+		// WideCharToMultiByte
+		UINT req_len = STDCALL_8(UINT, PtrAt(0x63A1C4), code_page, 0, m_string, -1, NULL, 0, NULL, NULL);
+		H3String string;
+		string.Reserve(req_len);
+
+		// WideCharToMultiByte
+		STDCALL_8(UINT, PtrAt(0x63A1C4), code_page, 0, m_string, -1, string.String(), req_len, NULL, NULL);
+		string.m_length = req_len - 1; // string is null-terminated by WideCharToMultiByte
+		return string;
+	}
+
+	_H3API_ H3WString& H3WString::operator=(WCHAR ch)
+	{
+		return Assign(ch);
+	}
+
+	_H3API_ H3WString& H3WString::operator=(LPCWSTR msg)
+	{
+		return Assign(msg);
+	}
+
+	_H3API_ H3WString& H3WString::operator=(const H3WString& other)
+	{
+		return Assign(other);
+	}
+
+	_H3API_ UINT32 H3Internal::_wcslen(LPCWSTR text)
+	{
+		return CDECL_1(UINT32, 0x61CCE0, text);
+	}
+
+	_H3API_ INT32 H3Internal::_CompareStringW(LCID locale, DWORD flags, LPCWSTR str1, INT32 str1_length, LPCWSTR str2, INT32 str2_length)
+	{
+		return STDCALL_6(INT32, PtrAt(0x63A214), locale, flags, str1, str1_length, str2, str2_length);
+	}
+
 }

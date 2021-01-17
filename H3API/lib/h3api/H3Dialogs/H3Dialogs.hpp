@@ -11,15 +11,13 @@
 #ifndef _H3DIALOGS_HPP_
 #define _H3DIALOGS_HPP_
 
-#include "../H3_Base.hpp"
-#include "../H3_String.hpp"
 #include "../H3_BinaryItems.hpp"
+#include "../H3_Structures.hpp"
 
 namespace h3
 {
 	// * forward declarations
 	_H3API_DECLARE_(H3Msg);
-	_H3API_DECLARE_(H3MsgCustom);
 	_H3API_DECLARE_(H3BaseDlg);
 	_H3API_DECLARE_(H3TownAlignmentDlg);
 	_H3API_DECLARE_(H3Dlg);
@@ -41,12 +39,14 @@ namespace h3
 	_H3API_DECLARE_(H3DlgHintBar);
 	_H3API_DECLARE_(H3DlgBasePanel);
 
-	typedef INT32(__fastcall* H3DlgButton_proc)(H3MsgCustom*);
+	typedef INT32(__fastcall* H3DlgButton_proc)(H3Msg*);
 	typedef VOID (__fastcall* H3DlgScrollbar_proc)(INT32, H3Dlg*);
 
 #pragma pack(push, 4)
 	struct H3Msg
 	{
+		typedef NH3VKey::eVirtualKeys eVirtualKeys;
+
 		INT32 command;
 		INT32 subtype;
 		INT32 item_id;
@@ -152,10 +152,10 @@ namespace h3
 	};
 
 	/**
-	 * @brief cannot be used except as a pointer or reference
+	 * @brief A minimal dialog class without proc, ctor 5FEFB0, vtable 643CD4
 	 *
 	 */
-	struct H3BaseDlg : H3Allocator
+	struct H3BasicDlg : H3Allocator
 	{
 	protected:
 		_H3API_ virtual H3BaseDlg* vDestroy() = 0;                                               /**< @ brief [v00]*/
@@ -167,15 +167,6 @@ namespace h3
 		_H3API_ virtual INT vShowAndRun(BOOL8 fadeIn) = 0;                                       /**< @ brief [v18]*/
 		_H3API_ virtual INT vInitiateItems() = 0;                                                /**< @ brief [v1C]*/
 		_H3API_ virtual INT vActivateItems(BOOL8 increase) = 0;                                  /**< @ brief [v20]*/
-		_H3API_ virtual INT vDialogProc(H3Msg& msg) = 0;                                         /**< @ brief [v24]*/
-		_H3API_ virtual BOOL8 vOnMouseMove(INT32 x, INT32 y) = 0;                                /**< @ brief [v28]*/
-		_H3API_ virtual BOOL8 vOnRightClick(INT32 id) = 0;                                       /**< @ brief [v2C]*/
-		/**
-		 * @brief [v30] if a status bar is provided, short tip text for H3DlgItem under cursor will be shown
-		*/
-		_H3API_ virtual BOOL8 vOnLeftClick(INT32 id, BOOL8& closeDialog) = 0;
-		_H3API_ virtual H3DlgTextPcx* vGetStatusBar() = 0;                                       /**< @ brief [v34]*/
-		_H3API_ virtual INT vEndDialogOnTimeExpired(H3Msg& msg) = 0;                             /**< @ brief [v38]*/
 
 		INT32                zOrder;           /**< @ brief [04]*/
 		H3Dlg*               nextDialog;       /**< @ brief [08]*/
@@ -192,6 +183,34 @@ namespace h3
 		INT32                focusedItemId;    /**< @ brief [40]*/
 		H3LoadedPcx16*       pcx16;            /**< @ brief [44]*/
 		INT32                deactivatesCount; /**< @ brief [48]*/
+	public:
+		_H3API_ H3BasicDlg(INT x, INT y, INT w, INT h);
+		_H3API_ INT32 GetWidth() const;
+		_H3API_ INT32 GetHeight() const;
+		_H3API_ INT32 GetX() const;
+		_H3API_ INT32 GetY() const;
+		_H3API_ BOOL  IsTopDialog() const;
+
+		_H3API_ H3DlgItem* AddItem(H3DlgItem* item, BOOL initiate = TRUE);
+	};
+
+	/**
+	 * @brief cannot be used except as a pointer or reference
+	 *
+	 */
+	struct H3BaseDlg : H3BasicDlg
+	{
+	protected:
+		_H3API_ virtual INT vDialogProc(H3Msg& msg) = 0;                                         /**< @ brief [v24]*/
+		_H3API_ virtual BOOL8 vOnMouseMove(INT32 x, INT32 y) = 0;                                /**< @ brief [v28]*/
+		_H3API_ virtual BOOL8 vOnRightClick(INT32 id) = 0;                                       /**< @ brief [v2C]*/
+		/**
+		 * @brief [v30] if a status bar is provided, short tip text for H3DlgItem under cursor will be shown
+		*/
+		_H3API_ virtual BOOL8 vOnLeftClick(INT32 id, BOOL8& closeDialog) = 0;
+		_H3API_ virtual H3DlgTextPcx* vGetStatusBar() = 0;                                       /**< @ brief [v34]*/
+		_H3API_ virtual INT vEndDialogOnTimeExpired(H3Msg& msg) = 0;                             /**< @ brief [v38]*/
+
 		INT32                lastHintShowed;   /**< @ brief [4C]*/
 		INT32                messageCommand;   /**< @ brief [50]*/
 		INT32                messageSubtype;   /**< @ brief [54]*/
@@ -204,12 +223,6 @@ namespace h3
 	public:
 
 		_H3API_ H3BaseDlg(INT x, INT y, INT w, INT h);
-
-		_H3API_ INT32 GetWidth() const;
-		_H3API_ INT32 GetHeight() const;
-		_H3API_ INT32 GetX() const;
-		_H3API_ INT32 GetY() const;
-		_H3API_ BOOL  IsTopDialog() const;
 
 		_H3API_ VOID  Redraw(INT32 x, INT32 y, INT32 dx, INT32 dy); // redraw part of dialog
 		_H3API_ VOID  Redraw(); // redraw whole dialog
@@ -231,7 +244,6 @@ namespace h3
 		_H3API_ VOID SendCommandToItem(INT32 command, UINT16 itemID, UINT32 parameter);
 		_H3API_ VOID SendCommandToAllItems(INT32 command, INT32 itemID, INT32 parameter);
 		_H3API_ VOID AdjustToPlayerColor(INT8 player, UINT16 itemId);
-		_H3API_ H3DlgItem* AddItem(H3DlgItem* item);
 
 		// * search and cast to ItemType
 		// * e.g. Get<H3DlgDef>(1234)
@@ -680,7 +692,7 @@ namespace h3
 		INT32           mirror;          /**< @brief [3C]*/
 		h3unk32         _f_40;           /**< @brief [40]*/
 		INT16           closeDialog;     /**< @brief [44]*/
-		H3Vector<INT32> hotkeys;         /**< @brief [48] ?*/
+		H3Vector<INT32> hotkeys;         /**< @brief [48] more than one hotkey can be associated*/
 		H3String        caption;         /**< @brief [58]*/
 
 	public:
@@ -688,6 +700,7 @@ namespace h3
 		_H3API_ static H3DlgDefButton* Create(INT32 x, INT32 y, INT32 id, LPCSTR defName, INT32 frame, INT32 clickFrame, BOOL closeDialog, INT32 hotkey);
 		_H3API_ static H3DlgDefButton* Create(INT32 x, INT32 y, LPCSTR defName, INT32 frame, INT32 clickFrame);
 
+		_H3API_ VOID  AddHotkey(INT32 key);
 		_H3API_ VOID  SetFrame(INT32 frame);
 		_H3API_ INT   ToggleFrame();
 		_H3API_ INT32 GetFrame() const;
@@ -857,7 +870,7 @@ namespace h3
 		// VIRTUAL TABLE ORIGINAL FUNCTIONS 0x642DF8
 		//=================================================
 
-		// * +44
+		// * +50
 		H3LoadedPcx* loadedPcx;
 	public:
 
@@ -993,6 +1006,42 @@ namespace h3
 		_H3API_ INT32 GetY() const;
 	};
 
+
+	/////////////////////////////////////////////
+	// Custom dialog functionality
+	/////////////////////////////////////////////
+
+	// * for any given dialog, you can add items that you would like to have
+	// * a temporary frame on their edge when the cursor hovers over them
+	class H3DlgHighlightable
+	{
+	protected:
+		struct H3Highlighter
+		{
+			H3DlgItem* m_item;
+			H3ARGB888  m_highlight;
+			UINT       m_thickness;
+			_H3API_ H3Highlighter();
+			_H3API_ H3Highlighter(H3DlgItem* item, const H3ARGB888& color, UINT thickness);
+			_H3API_ H3Highlighter(H3DlgItem* item, BYTE r, BYTE g, BYTE b, UINT thickness);
+		};
+
+		H3Vector<H3Highlighter> m_highlightableItems;
+		mutable H3DlgItem* m_currentHighlight;
+		_H3API_ BOOL unhighlightSelection() const;
+	public:
+		_H3API_ H3DlgHighlightable();
+		_H3API_ VOID AddItem(H3DlgItem* dlgItem, BYTE red, BYTE green, BYTE blue, UINT frameThickness);
+		_H3API_ VOID AddItem(H3DlgItem* dlgItem, const H3ARGB888& color, UINT frameThickness);
+		_H3API_ BOOL HighlightItem(H3DlgItem* dlgItem) const;
+		_H3API_ BOOL HighlightItem(const H3Msg& msg) const;
+		_H3API_ VOID Clear();
+	};
+
+	/////////////////////////////////////////////
+	// Specific dialogs from the game
+	/////////////////////////////////////////////
+
 	struct H3CombatBottomPanel : H3DlgBasePanel
 	{
 	protected:
@@ -1041,10 +1090,6 @@ namespace h3
 	};
 	_H3API_ASSERT_SIZE_(H3CombatMonsterPanel, 0x70);
 
-	/////////////////////////////////////////////
-	// Specific dialogs from the game
-	/////////////////////////////////////////////
-
 	struct H3CombatDlg : H3BaseDlg
 	{
 	protected:
@@ -1063,39 +1108,115 @@ namespace h3
 		_H3API_ H3Vector<H3String*>& GetCombatText();
 	};
 
-#pragma pack(pop)
-
-	/////////////////////////////////////////////
-	// Custom dialog functionality
-	/////////////////////////////////////////////
-
-	// * for any given dialog, you can add items that you would like to have
-	// * a temporary frame on their edge when the cursor hovers over them
-	class H3DlgHighlightable
+	struct H3MonsterInfoDlg : H3BaseDlg
 	{
-	protected:
-		struct H3Highlighter
-		{
-			H3DlgItem* m_item;
-			H3ARGB888  m_highlight;
-			UINT       m_thickness;
-			_H3API_ H3Highlighter();
-			_H3API_ H3Highlighter(H3DlgItem* item, const H3ARGB888& color, UINT thickness);
-			_H3API_ H3Highlighter(H3DlgItem* item, BYTE r, BYTE g, BYTE b, UINT thickness);
-		};
-
-		H3Vector<H3Highlighter> m_highlightableItems;
-		mutable H3DlgItem* m_currentHighlight;
-		_H3API_ BOOL unhighlightSelection() const;
-	public:
-		_H3API_ H3DlgHighlightable();
-		_H3API_ VOID AddItem(H3DlgItem* dlgItem, BYTE red, BYTE green, BYTE blue, UINT frameThickness);
-		_H3API_ VOID AddItem(H3DlgItem* dlgItem, const H3ARGB888& color, UINT frameThickness);
-		_H3API_ BOOL HighlightItem(H3DlgItem* dlgItem) const;
-		_H3API_ BOOL HighlightItem(const H3Msg& msg) const;
-		_H3API_ VOID Clear();
+		INT32         morale;          /**< @brief [68]*/
+		H3String      moraleModifiers; /**< @brief [6C]*/
+		INT32         luck;			   /**< @brief [7C]*/
+		H3String      luckModifiers;   /**< @brief [80]*/
+		h3unk8        _f_90[32];	   /**< @brief [90]*/
+		H3DlgTextPcx* varBackPcx;	   /**< @brief [B0]*/
+		H3DlgDef*     animation;	   /**< @brief [B4]*/
 	};
+	_H3API_ASSERT_SIZE_(H3MonsterInfoDlg, 0xB8);
 
+	struct H3TownDialog : H3BasicDlg
+	{
+		INT32      townIndex;            /**< @brief [4C]*/
+		RGB565*    drawBuffer;           /**< @brief [50]*/
+		H3DlgDef*  creaturePortraits[8]; /**< @brief [54] 8th slot for summoning portal creatures*/
+		H3DlgText* creaturesText[8];     /**< @brief [74] 8th slot for summoning portal creatures*/
+		INT32      creatureTypes[8];     /**< @brief [94] 8th slot for summoning portal creatures*/
+	};
+	_H3API_ASSERT_SIZE_(H3TownDialog, 0xB4);
+
+	struct H3SelectScenarioDialog : H3BaseDlg
+	{
+		h3unk32                    _f_68;						 /**< @brief [0068]*/
+		H3LoadedDef*               scselcDef;					 /**< @brief [006C]*/
+		H3LoadedDef*               scnrvictDef;					 /**< @brief [0070]*/
+		H3LoadedDef*               scnrlossDef;					 /**< @brief [0074]*/
+		H3LoadedDef*               itpaDef;						 /**< @brief [0078]*/
+		H3LoadedDef*               scnrstarDef;					 /**< @brief [007C]*/
+		H3LoadedDef*               un44Def;						 /**< @brief [0080]*/
+		h3unk32                    _f_84;						 /**< @brief [0084]*/
+		H3LoadedPcx*               playerFlagsPcx[8];			 /**< @brief [0088]*/
+		H3LoadedPcx*               playerInfoBarPcx[8];			 /**< @brief [00A8]*/
+		H3LoadedPcx*               heroSmallPortraitsPcx[163];	 /**< @brief [00C8]*/
+		H3LoadedPcx*               hpsrandPcx;					 /**< @brief [0354]*/
+		h3unk8                     _f_358[4];					 /**< @brief [0358]*/
+		H3LoadedPcx*               hpsrand0Pcx;					 /**< @brief [035C]*/
+		H3LoadedPcx*               hpsrand1Pcx;					 /**< @brief [0360]*/
+		h3unk32                    _f_364;						 /**< @brief [0364]*/
+		H3LoadedPcx*               hpsrand6Pcx;					 /**< @brief [0368]*/
+		h3unk8                     _f_36C;						 /**< @brief [036C]*/
+		UINT32                     mapListNumberTop;			 /**< @brief [0370]*/
+		UINT32                     selectedMapIndex;     		 /**< @brief [0374]*/
+		UINT32                     turnDuration;				 /**< @brief [0378]*/
+		BOOL8                      mapSelectShown;				 /**< @brief [037C]*/
+		BOOL8                      mapListShown;				 /**< @brief [037D]*/
+		BOOL8                      rmgSettingsShown;			 /**< @brief [037E]*/
+		h3unk8                     _f_37F;						 /**< @brief [037F]*/
+		H3DlgEdit*                 edit380;						 /**< @brief [0380]*/
+		h3unk32                    _f_384;						 /**< @brief [0384]*/
+		h3unk32                    _f_388;						 /**< @brief [0388]*/
+		H3MapInformation           mapInfo;						 /**< @brief [038C]*/
+		H3Vector<H3MapInformation> vector1030;					 /**< @brief [1030]*/
+		H3Vector<H3MapInformation> vector1040;					 /**< @brief [1040]*/
+		H3Vector<H3MapInformation> mapsInformation;				 /**< @brief [1050]*/
+		H3MapInformation*          mapsInfoPtr;					 /**< @brief [1060]*/
+		H3MapDlgPlayer             mapPlayersHuman[8];			 /**< @brief [1064]*/
+		H3MapDlgPlayer             mapPlayersComputer[8];		 /**< @brief [1444]*/
+		h3unk32                    _f_1824;						 /**< @brief [1824]*/
+		h3unk32                    _f_1828;						 /**< @brief [1828]*/
+		h3unk32                    _f_182C;						 /**< @brief [182C]*/
+		h3unk32                    _f_1830;						 /**< @brief [1830]*/
+		h3unk8                     _f_1834;						 /**< @brief [1834]*/
+		H3DlgScrollbar*            scrollBar1838;				 /**< @brief [1838]*/
+		H3DlgScrollbar*            scrollBar183C;				 /**< @brief [183C]*/
+		H3DlgScrollbar*            turnDurationScroll;			 /**< @brief [1840]*/
+		h3unk32                    _f_1844;						 /**< @brief [1844]*/
+		H3DlgText*                 text1848;					 /**< @brief [1848]*/
+		H3DlgText*                 text184C;					 /**< @brief [184C]*/
+		H3DlgText*                 text1850;					 /**< @brief [1850]*/
+		BOOL8                      newMapSelected;   			 /**< @brief [1854]*/
+		H3DlgEdit*                 edit1858;					 /**< @brief [1858]*/
+		h3unk32                    _f_185C;						 /**< @brief [185C]*/
+		h3unk32                    _f_1860;						 /**< @brief [1860]*/
+		h3unk8                     _f_1864;						 /**< @brief [1864]*/
+		h3unk8                     _f_1865;						 /**< @brief [1865]*/
+		H3DlgDefButton*            button1868;					 /**< @brief [1868]*/
+		h3unk8                     _f_186C;                      /**< @brief [186C]*/
+		H3LoadedPcx16*             extendedPcx;                  /**< @brief [1870] derived with an extra byte + 2 ints*/
+		CHAR                       gameVersionName[20];          /**< @brief [1874] read from VersionInfo*/
+		h3func*                    newGameCampaignVtable;		 /**< @brief [1888] start or another class*/
+		h3unk8                     _f_188C[8];					 /**< @brief [188C]*/
+		h3unk8                     _f_1894;  					 /**< @brief [1894]*/
+		INT32                      gameVersion;					 /**< @brief [1898]*/
+		h3unk32                    _f_189C;  					 /**< @brief [189C]*/
+		UINT32                     mapDimension;				 /**< @brief [18A0]*/
+		INT32                      numberLevels;				 /**< @brief [18A4]*/
+		INT32                      numberPlayersSelected;		 /**< @brief [18A8]*/
+		h3unk32                    _f_18AC;						 /**< @brief [18AC]*/
+		INT32                      computerPlayersOnlySelected;	 /**< @brief [18B0]*/
+		h3unk32                    _f_18B4;						 /**< @brief [18B4]*/
+		INT32                      waterContentSelected;		 /**< @brief [18B8]*/
+		INT32                      monsterStrengthSelected;		 /**< @brief [18BC]*/
+		H3DlgDefButton*            humanComputerButtons[9];      /**< @brief [18C0]*/
+		H3DlgDefButton*            humanComputerTeamsButtons[9]; /**< @brief [18E4]*/
+		H3DlgDefButton*            computerOnlyButtons[9];		 /**< @brief [1908]*/
+		H3DlgDefButton*            computerOnlyTeams[8];		 /**< @brief [192C]*/
+		H3DlgDefButton*            waterContentButtons[4];		 /**< @brief [194C]*/
+		H3DlgDefButton*            monsterStrengthButtons[4];	 /**< @brief [195C]*/
+		H3DlgScrollableText*       textScroll;				     /**< @brief [196C]*/
+
+		_H3API_ H3MapInformation& CurrentMap();
+		_H3API_ VOID UpdateForSelectedScenario(INT32 index, BOOL8 redraw);
+		_H3API_ VOID Redraw();
+	};
+	_H3API_ASSERT_SIZE_(H3SelectScenarioDialog, 0x1970);
+
+#pragma pack(pop)
 }
 
 #endif /* #define _H3DIALOGS_HPP_ */

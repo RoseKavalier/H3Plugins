@@ -16,6 +16,7 @@
     <ClInclude Include="lib\h3api\H3BinaryItems\H3BinaryItems.hpp" />
     <ClInclude Include="lib\h3api\H3Bitmap\H3Bitmap.hpp" />
     <ClInclude Include="lib\h3api\H3Bitset\H3Bitset.hpp" />
+    <ClInclude Include="lib\h3api\H3Campaign\H3Campaign.hpp" />
     <ClInclude Include="lib\h3api\H3Defines\H3Defines.hpp" />
     <ClInclude Include="lib\h3api\H3Dialogs\H3Dialogs.hpp" />
     <ClInclude Include="lib\h3api\H3Exception\H3Exception.hpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="lib\h3api\H3_BinaryItems.hpp" />
     <ClInclude Include="lib\h3api\H3_Bitmap.hpp" />
     <ClInclude Include="lib\h3api\H3_Bitset.hpp" />
+    <ClInclude Include="lib\h3api\H3_Campaign.hpp" />
     <ClInclude Include="lib\h3api\H3_Config.hpp" />
     <ClInclude Include="lib\h3api\H3_Constants.hpp" />
     <ClInclude Include="lib\h3api\H3_Core.hpp" />
@@ -66,6 +68,7 @@
     <ClInclude Include="lib\h3api\H3_Tree.hpp" />
     <ClInclude Include="lib\h3api\H3_Vector.hpp" />
     <ClInclude Include="lib\h3api\H3_Version.hpp" />
+    <ClInclude Include="lib\Plugin.hpp" />
     <ClInclude Include="lib\H3Types.hpp" />
     <ClInclude Include="lib\patcher_x86.hpp" />
   </ItemGroup>
@@ -75,6 +78,7 @@
     <ClCompile Include="lib\h3api\H3BinaryItems\H3BinaryItems.cpp" />
     <ClCompile Include="lib\h3api\H3Bitmap\H3Bitmap.cpp" />
     <ClCompile Include="lib\h3api\H3Bitset\H3Bitset.cpp" />
+    <ClCompile Include="lib\h3api\H3Campaign\H3Campaign.cpp" />
     <ClCompile Include="lib\h3api\H3Defines\H3Defines.cpp" />
     <ClCompile Include="lib\h3api\H3Dialogs\H3Dialogs.cpp" />
     <ClCompile Include="lib\h3api\H3Exception\H3Exception.cpp" />
@@ -93,6 +97,7 @@
     <ClCompile Include="lib\h3api\H3Structures\H3Structures.cpp" />
     <ClCompile Include="lib\h3api\H3Tree\H3Tree.cpp" />
     <ClCompile Include="lib\h3api\H3Vector\H3Vector.cpp" />
+    <ClCompile Include="lib\Plugin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\h3api\H3Allocator\H3Allocator.inl" />
@@ -100,6 +105,7 @@
     <None Include="lib\h3api\H3BinaryItems\H3BinaryItems.inl" />
     <None Include="lib\h3api\H3Bitmap\H3Bitmap.inl" />
     <None Include="lib\h3api\H3Bitset\H3Bitset.inl" />
+    <None Include="lib\h3api\H3Campaign\H3Campaign.inl" />
     <None Include="lib\h3api\H3Defines\H3Defines.inl" />
     <None Include="lib\h3api\H3Dialogs\H3Dialogs.inl" />
     <None Include="lib\h3api\H3Exception\H3Exception.inl" />
@@ -134,7 +140,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141_xp</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -157,13 +163,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\msvc $(VisualStudioVersion)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\msvc $(VisualStudioVersion)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Configuration)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\msvc $(VisualStudioVersion)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\msvc $(VisualStudioVersion)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Configuration)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -172,7 +178,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_H3API_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_PLUGINS_;_H3API_EXCEPTION_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_OPERATORS_;_H3API_EXCEPTION_;_H3API_DONT_USE_MACROS_;_H3API_PLUGINS_;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)src;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -183,6 +189,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -193,7 +200,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_H3API_STD_CONVERSIONS_;_H3API_DONT_USE_MACROS_;_H3API_OPERATORS_;_H3_STD_CONVERSIONS_;_H3API_LIBRARY_;_H3API_EXCEPTION_;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -207,6 +214,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -231,10 +231,10 @@
           "text": "Bug Ьгкхсбт",
           "description": "{Bug Ьгкхсбт}\n\nјфбн {ЕН}есгпрпйзиеЯ, фб фпрйкЬ емрьдйб фпх редЯпх мЬчзт ден емрпдЯжей нб чсзуймпрпйзипэн фб оьскйб Firewall, Forcefield, Quicksand Ю Land Mine уе кЬрпйб дйрлбнЬ фефсбгщнЬкйб.{УЗМЕЙЩУЗ}: бхфЮ з ерйлпгЮ ден мрпсеЯ нб фспрпрпйзиеЯ брь фп редЯп фзт мЬчзт."
         },
-        "enable_quick_combat_bugs": {
-          "text": "ГсЮгпсз мЬчз",
-          "description": "{ГсЮгпсз мЬчз}\n\nјфбн {ЕН}есгпрпйзиеЯ, ербнбцЭсей псйумЭнб bugs гсЮгпсзт мЬчзт фб прпЯб ерйдйпсиюизкбн брь фп чбсбкфзсйуфйкь '{HD+}'."
-        },
+        "ai_fast_battle_bug": {
+			"text": "AI Fast Battle Bugs",
+			"description": "{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."
+		},
         "restore_naga_bank_sulfur": {
           "text": "Naga Banks",
           "description": "{Naga Banks}\n\nјфбн {ЕН}есгпрпйзиеЯ, фб Naga banks иб рбсЭчпхн иейЬцй бнфЯ рплэфймщн лЯищн, бнфйуфсецьмензт фзт бллбгЮт рпх ерЭцесе фп '{HD+}'.\n{УЗМЕЙЩУЗ}: иб рбсбфзсЮуефе фзн ерЯдсбуз бхфЮт фзт ерйлпгЮт бцьфпх бсчЯуефе нЭп рбйчнЯдй."

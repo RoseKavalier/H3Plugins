@@ -231,9 +231,9 @@
                 "text": "Anker-Bug",
                 "description": "{Anker-Bug}\n\nWenn {EIN}geschaltet, verhindern цrtliche Schlachtfeldhindernisse nicht, dass Firewall, Forcefield, Quicksand oder Land Mine auf einigen nahen Fliesen benutzt werden.\n{ANMERKUNG}: Diese Option kann nicht aus dem Schlachtfeld verдndert werden."
             },
-            "enable_quick_combat_bugs": {
-                "text": "Schnellkampf",
-                "description": "{Schnellkampf}\n\nWenn {EIN}geschaltet, stellt diese Option einige Schnellkampf-Bugs wieder her, die von der '{HD+}' Funktion repariert worden sind."
+            "ai_fast_battle_bug": {
+                "text": "AI Fast Battle Bugs",
+                "description": "{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."
             },
             "restore_naga_bank_sulfur": {
                 "text": "Naga Banks",

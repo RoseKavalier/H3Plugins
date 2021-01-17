@@ -11,9 +11,6 @@
 #ifndef _H3RMG_HPP_
 #define _H3RMG_HPP_
 
-#include "../H3_Base.hpp"
-#include "../H3_String.hpp"
-#include "../H3_Vector.hpp"
 #include "../H3_Structures.hpp"
 
 namespace h3
@@ -172,7 +169,7 @@ namespace h3
 
 	struct RMG_ZoneGenerator
 	{
-		h3unk32          zoneInfo;         /**< @brief [00]*/
+		RMG_Zone*        zoneInfo;         /**< @brief [00]*/
 		INT32            townType;         /**< @brief [04]*/
 		INT32            townType2;        /**< @brief [08]*/
 		INT32            ground;           /**< @brief [0C]*/
@@ -270,7 +267,7 @@ namespace h3
 
 		_H3API_ h3func GetVTable() const;
 	};
-	_H3API_ASSERT_SIZE_(RMG_Template, 0x38);
+	_H3API_ASSERT_SIZE_(RMG_Object, 0x1C);
 
 	struct RMG_ObjectMonster : public RMG_Object
 	{
@@ -287,6 +284,17 @@ namespace h3
 		BOOL8 hasFort;    /**< @brief [24]*/
 	};
 	_H3API_ASSERT_SIZE_(RMG_ObjectTown, 0x28);
+
+	struct RMG_ObjectSeer : public RMG_Object
+	{
+		INT32 artifactId;           /**< @brief [1C]*/
+		INT32 experienceAmount;     /**< @brief [20]*/
+		INT32 resourceId;           /**< @brief [24]*/
+		INT32 resourceAmount;       /**< @brief [28]*/
+		INT32 creatureRewardType;   /**< @brief [2C]*/
+		INT32 creatureRewardNumber; /**< @brief [30]*/
+	};
+	_H3API_ASSERT_SIZE_(RMG_ObjectSeer, 0x34);
 
 	struct RMG_Map
 	{
@@ -305,6 +313,13 @@ namespace h3
 		_H3API_ H3FastMap_RMG_MapItem GetFastMap();
 	};
 	_H3API_ASSERT_SIZE_(RMG_Map, 0x18);
+
+	struct RMG_LocalMap : public RMG_Map
+	{
+		h3unk _f_18[16];
+		H3Vector<RMG_Object*> localObjects; /**< @brief [28]*/
+	};
+	_H3API_ASSERT_SIZE_(RMG_LocalMap, 0x38);
 
 	struct RMG_Parameters
 	{

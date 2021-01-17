@@ -22,6 +22,17 @@
       </ArrayItems>
     </Expand>
   </Type>
+  <Type Name="h3::H3WString">
+    <DisplayString>{m_string,na}</DisplayString>
+    <Expand>
+      <Item Name="[size]" ExcludeView="simple">m_length</Item>
+      <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+      <ArrayItems>
+        <Size>m_length</Size>
+        <ValuePointer>m_string</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
   <Type Name="h3::H3Set&lt;*,*,*&gt;">
     <DisplayString>{{ size={m_count} nilNode={$T2} head={m_root->parent->data}}}</DisplayString>
     <Expand>

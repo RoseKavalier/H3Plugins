@@ -35,3 +35,15 @@ H3.Plugin.Template/bin/Release/H3.Plugin.Template.vsix
 H3API/lib/h3api/Backups/
 H3API/lib/h3api/H3Development/
 H3API/lib/h3api/H3_Development.hpp
+*.nupkg
+*.p7s
+packages/Microsoft.VSSDK.VsixSignTool.16.2.29116.78/tools/vssdk/vsixsigntool.exe
+*.vstman
+H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/SRC/framework.cpp
+H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/SRC/dllmain.cpp
+H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/PluginTemplate.vcxproj.filters
+H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/PluginTemplate.vcxproj
+H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/MyTemplate.vstemplate
+H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/INCLUDE/framework.hpp
+H3.Plugin.Template/obj/Release/H3.Plugin.Template.csproj.VsixDeployedFileListAbsolute.txt
+H3.Plugin.Template/obj/Release/H3.Plugin.Template.csproj.FileListAbsolute.txt

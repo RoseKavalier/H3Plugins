@@ -23,6 +23,10 @@
 #undef NOMINMAX
 #endif
 
+#ifdef VOID
+#undef VOID
+#endif
+
 // * H3API uses std::min
 #ifdef min
 #undef min
@@ -139,11 +143,11 @@
 #endif
 #endif
 
-// * used to deprecate macros
 namespace h3
 {
 	namespace H3Internal
 	{
+		// * used to deprecate macros
 		_H3API_DEPRECATED_("See original definition to get its replacement.") inline void H3DeprecatedFunctionMessage(LPCSTR newFunction) {}
 	} // namespace H3Internal
 } // namespace h3
@@ -217,77 +221,6 @@ namespace h3
 #define Abs(num) (((num) >= 0) ? (num) : (-(num)))
 #endif
 
-#pragma region Access Macros
-#ifndef StrAt
-/**
- * @brief returns c-string at address
- */
-#define StrAt(address) (*(LPCSTR*)(address))
-#endif
-#ifndef PtrAt
-/**
- * @brief returns unsigned int at address
- */
-#define PtrAt(address) (*(UINT*)(address))
-#endif
-#ifndef DwordAt
-/**
- * @brief returns unsigned int at address
- */
-#define DwordAt(address) (*(UINT*)(address))
-#endif
-#ifndef IntAt
-/**
- * @brief returns signed int at address
- */
-#define IntAt(address) (*(INT32*)(address))
-#endif
-#ifndef WordAt
-/**
- * @brief returns unsigned short at address
- */
-#define WordAt(address) (*(UINT16*)(address))
-#endif
-#ifndef ShortAt
-/**
- * @brief returns signed short at address
- */
-#define ShortAt(address) (*(INT16*)(address))
-#endif
-#ifndef ByteAt
-/**
- * @brief returns unsigned char at address
- */
-#define ByteAt(address) (*(UINT8*)(address))
-#endif
-#ifndef CharAt
-/**
- * @brief returns igned char at address
- */
-#define CharAt(address) (*(INT8*)(address))
-#endif
-#ifndef FloatAt
-/**
- * @brief returns float at address
- */
-#define FloatAt(address) (*(FLOAT*)(address))
-#endif
-#ifndef FuncAt
-/**
- * @brief returns address of function at call
- * can also be used to get destination of JMP
- */
-#define FuncAt(address) (DwordAt((address) + 1) + (address) + 5)
-#endif
-#ifndef ValueAsDword
-/**
- * @brief used to get the hexadecimal value of a type T instead of getting a casted value
- * useful to convert a FLOAT to DWORD, e.g. 0.25f is returned as 0x3E800000h instead of 0h
- */
-#define ValueAsDword(value) (DwordAt(&(value)))
-#endif
-#pragma endregion Access Macros
-
 #ifndef _H3API_STR_EXPAND_
 /**
  * @brief inserts text representation of macro
@@ -304,6 +237,167 @@ namespace h3
 
 namespace h3
 {
+#ifdef _H3API_CPLUSPLUS11_
+	/**
+	 * @brief Literal operator to convert a value to 8 bits.
+	 * e.g. 123_byte
+	 * @param value Unsigned value to be converted.
+	 * @return Unsigned 8-bits value.
+	*/
+	constexpr inline UINT8 operator""_byte(UINT64 value)
+	{
+		return static_cast<UINT8>(value);
+	}
+
+	/**
+	 * @brief Literal operator to convert a value to 16 bites.
+	 * e.g. 123456_word
+	 * @param value Unsigned value to be converted.
+	 * @return Unsigned 16-bits value.
+	*/
+	constexpr inline UINT16 operator""_word(UINT64 value)
+	{
+		return static_cast<UINT16>(value);
+	}
+
+	/**
+	 * @brief Literal operator to convert a value to 32 bits.
+	 * e.g. 123_dword
+	 * @param value Unsigned value to be converted.
+	 * @return Unsigned 32-bits value.
+	*/
+	constexpr inline UINT32 operator""_dword(UINT64 value)
+	{
+		return static_cast<UINT32>(value);
+	}
+
+	/**
+	 * @brief Literal operator to convert a value to 32 bits.
+	 * This should be used to indicate the the value in question
+	 * belongs to the Heroes3 address space.
+	 *
+	 * @param value Unsigned value to be converted.
+	 * @return Unsigned 32-bits value.
+	*/
+	constexpr inline ADDRESS operator""_h3(UINT64 value)
+	{
+		return static_cast<ADDRESS>(value);
+	}
+#endif // _H3API_CPLUSPLUS11_
+
+	/**
+	 * @brief Get a reference of specific type at the specified address
+	 *
+	 * @tparam T Type of data to cast to.
+	 * @param address The location of the sought data.
+	 * @return A reference of the value at the specified location.
+	*/
+	template<typename T>
+	_H3API_FORCEINLINE_ T& ValueAt(ADDRESS address) { return *reinterpret_cast<T*>(address); }
+
+	/**
+	 * @brief Get a reference of const char* at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the string at the specified location.
+	 */
+	_H3API_FORCEINLINE_ LPCSTR& StrAt(ADDRESS address)    { return ValueAt<LPCSTR>(address); }
+	/**
+	 * @brief Get a reference of pointer for any data.
+	 *
+	 * @tparam T Type of data of the data.
+	 * @param address The location of the sought data.
+	 * @return A reference of the pointer at the specified location.
+	 */
+	template<typename T>
+	_H3API_FORCEINLINE_ UINT32& PtrAt(T data)    { return ValueAt<UINT32>(ADDRESS(data)); }
+	/**
+	 * @brief Get a reference of unsigned integer at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the unsigned integer at the specified location.
+	 */
+	_H3API_FORCEINLINE_ UINT32& DwordAt(ADDRESS address)  { return ValueAt<UINT32>(address); }
+	/**
+	 * @brief Get a reference of signed integer at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the signed integer at the specified location.
+	 */
+	_H3API_FORCEINLINE_ INT32&  IntAt(ADDRESS address)    { return ValueAt<INT32>(address); }
+	/**
+	 * @brief Get a reference of unsigned short at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the unsigned short at the specified location.
+	 */
+	_H3API_FORCEINLINE_ UINT16& WordAt(ADDRESS address)   { return ValueAt<UINT16>(address); }
+	/**
+	 * @brief Get a reference of signed short at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the signed short at the specified location.
+	 */
+	_H3API_FORCEINLINE_ INT16&  ShortAt(ADDRESS address)  { return ValueAt<INT16>(address); }
+	/**
+	 * @brief Get a reference of unsigned char at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the unsigned char at the specified location.
+	 */
+	_H3API_FORCEINLINE_ UINT8&  ByteAt(ADDRESS address)   { return ValueAt<UINT8>(address); }
+	/**
+	 * @brief Get a reference of signed char at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the signed char at the specified location.
+	 */
+	_H3API_FORCEINLINE_ INT8&   CharAt(ADDRESS address)   { return ValueAt<INT8>(address); }
+	/**
+	 * @brief Get a reference of float at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the float at the specified location.
+	 */
+	_H3API_FORCEINLINE_ FLOAT&  FloatAt(ADDRESS address)  { return ValueAt<FLOAT>(address); }
+	/**
+	 * @brief Get a reference of double at the specified address.
+	 *
+	 * @param address The location of the sought data.
+	 * @return A reference of the double at the specified location.
+	 */
+	_H3API_FORCEINLINE_ DOUBLE& DoubleAt(ADDRESS address) { return ValueAt<DOUBLE>(address); }
+
+	/**
+	 * @brief Get the value of the function called (or jump destination) at the specified address.
+	 *
+	 * @param address The location of the call/JMP instruction.
+	 * @return The address of the destination.
+	 */
+	_H3API_FORCEINLINE_ h3func  FuncAt(ADDRESS address)   { return ValueAt<h3func>(address + 1) + address + 5; }
+
+	/**
+	 * @brief Get the address of a specific object.
+	 *
+	 * @tparam T Type of the current object.
+	 * @param value The object itself.
+	 * @return The address of the provided object.
+	 */
+	template<typename T>
+	_H3API_FORCEINLINE_ ADDRESS AddressOf(const T& value) { return reinterpret_cast<ADDRESS>(&value); }
+
+	/**
+	 * @brief Used to get the hexadecimal value of a type T instead of getting a casted value.
+	 * Useful to convert a FLOAT to DWORD, e.g. 0.25f is returned as 0x3E800000h instead of 0h.
+	 *
+	 * @tparam T Type of data to convert
+	 * @param value Value of the data to convert.
+	 * @return Converted data as unsigned integer.
+	 */
+	template<typename T>
+	_H3API_FORCEINLINE_ UINT32 ValueAsDword(T value) { return DwordAt(AddressOf(value)); }
+
+
 	// * based on https://stackoverflow.com/a/1980156 by Gregory Pakosz
 #ifndef _H3API_STATIC_ASSERT_
 #ifdef _H3API_NO_VALIDATION_
@@ -354,7 +448,7 @@ namespace h3
  * @brief Performs sizeof() static_assert on the named structure to guarantee library integrity
  */
 #define _H3API_ASSERT_SIZE_(name, size) _H3API_STATIC_ASSERT_(sizeof(name) == size, #name " size is incorrect")
-#endif
+#endif /* _H3API_ASSERT_SIZE_ */
 
 #ifndef _H3API_ASSERT_OFFSET_
 
@@ -1132,8 +1226,13 @@ namespace h3
 	public:
 		H3Uncopyable() {}
 	private:
+#ifdef _H3API_CPLUSPLUS11_
+		H3Uncopyable(const H3Uncopyable&) = delete;
+		H3Uncopyable& operator=(const H3Uncopyable&) = delete;
+#else
 		H3Uncopyable(const H3Uncopyable&);
 		H3Uncopyable& operator=(const H3Uncopyable&);
+#endif /* _H3API_CPLUSPLUS11_ */
 	};
 	/**
 	 * @brief template model to access data structures within h3 memory
@@ -1552,6 +1651,37 @@ namespace h3
 			return address;
 		}
 	};
+
+	/**
+	 * @brief Lazy-C++11-man's range iterator
+	 */
+	template<typename Type>
+	class H3Range
+	{
+	public:
+		struct iterator
+		{
+			iterator(Type value) : m_value(value) {}
+			Type operator*() { return m_value; }
+			iterator& operator++() { m_value += static_cast<Type>(1); return *this; }
+			bool operator==(const iterator& it) { return m_value >= it.m_value; }
+			bool operator!=(const iterator& it) { return m_value < it.m_value; }
+		private:
+			Type m_value;
+		};
+
+		iterator begin() { return m_begin; }
+		iterator end() { return m_end; }
+
+		H3Range(Type end) : m_begin(static_cast<Type>(0)), m_end(end) {}
+		H3Range(Type begin, Type end) : m_begin(Type(begin)), m_end(end) {}
+	private:
+		iterator m_begin;
+		iterator m_end;
+	};
+
+	typedef H3Range<INT32>  Range;
+	typedef H3Range<UINT32> RangeU;
 
 } /* namespace h3 */
 

@@ -1,4 +1,39 @@
 #====================
+#   Version 1.5.0
+#====================
+[code]
+* Added H3Campaign submodule, starting with H3CmpBonusBuildings and defines.
+* Added H3SelectScenarioDialog and constant IDs 
+* Defined missing H3MainSetup fields
+* Added H3PuzzleCoordinates, H3PuzzlePiecesOrder and defines
+* Added H3VictoryCondition, H3LossCondition and their type enums, members of H3Main and map loading structures.
+* Added H3MapInformation, inheriting H3MapInfo, a member of H3Main
+* H3PlayerUnk renamed H3PlayerAttributes and is fully defined
+* H3Main better defined using previous structures
+* Fixed H3Main::IsHuman argument type
+* Replaced memory access macros by forced inline functions. 
+	PtrAt() may be used on any type of data, the others now all require an h3::ADDRESS (unsigned int)
+* H3Patcher methods are now functions returning success/failure
+* Added H3Range<> C++11-style range and default typedefs Range (int) and RangeU (unsigned int)
+* Added H3Biset::Intersects and H3Bitset::Contains
+* Added a number of register setting/access methods to patcher_x86's HookContext with automatic/custom casting
+
+[maintenance]
+* Renamed a few protected fields
+* Marked a few fields for deprecation
+
+#====================
+#   Version 1.4.0
+#====================
+[code]
+* struct enums are being shifted to NH3Constants and replaced by typedef. 
+	As such, they require strong typing or use through NH3Constants:
+	e.g. H3Spell::eSpells::LIGHTNING_BOLT or NH3Spells::LIGHTNING_BOLT
+
+[maintenance]
+* Removed a large number of deprecated items from 1.3.X
+
+#====================
 #   Version 1.3.0
 #====================
 [code]

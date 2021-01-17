@@ -11,7 +11,6 @@
 #ifndef _H3STREAM_HPP_
 #define _H3STREAM_HPP_
 
-#include "../H3_Base.hpp"
 #include "../H3_String.hpp"
 #include "../H3_Vector.hpp"
 
@@ -132,12 +131,12 @@ namespace h3
 		FILE*        m_file;
 		DWORD        m_size;
 		StreamMode   m_mode;
-		BOOL         m_write_hex;
-		BOOL         m_write_new_lines;
+		BOOL         m_writeHex;
+		BOOL         m_writeNewLines;
 		StreamStatus m_status;
 		BYTE*        m_buffer;
-		DWORD        m_buffer_size;
-		DWORD        m_buffer_position;
+		DWORD        m_bufferSize;
+		DWORD        m_bufferPosition;
 
 		_H3API_ LPCSTR getModeFormat();
 		template<typename T>
@@ -170,6 +169,7 @@ namespace h3
 
 		// * to read
 		_H3API_ BOOL Open(LPCSTR const file);
+		_H3API_ BOOL Open(const H3String& file);
 		_H3API_ BOOL Read(const PVOID buffer, DWORD sizeToRead);
 		_H3API_ BOOL ReadToBuffer(); // read whole file to memory
 		_H3API_ H3String GetLine();
@@ -183,7 +183,9 @@ namespace h3
 		_H3API_ const PBYTE Buffer() const;
 		_H3API_ PBYTE ReleaseBuffer();
 		_H3API_ PBYTE begin();
+		_H3API_ PBYTE begin() const;
 		_H3API_ PBYTE end();
+		_H3API_ PBYTE end() const;
 		_H3API_ UINT Size() const;
 
 		// * to write

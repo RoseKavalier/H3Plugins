@@ -11,7 +11,6 @@
 #ifndef _H3TREE_HPP_
 #define _H3TREE_HPP_
 
-#include "../H3_Base.hpp"
 #include "../H3_Vector.hpp"
 
 namespace h3

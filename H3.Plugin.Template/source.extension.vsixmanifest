@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="66baa734-67b6-4ec3-81b4-c97534944225" Version="1.0" Language="en-US" Publisher="RK" />
-        <DisplayName>H3.Plugin.Template</DisplayName>
-        <Description xml:space="preserve">Adds the H3.Plugin project template to Visual Studio, for easy creation of H3 DLL plugins.</Description>
-        <Icon>__TemplateIcon.bmp</Icon>
-        <PreviewImage>__PreviewImage.png</PreviewImage>
+        <Identity Id="66baa734-67b6-4ec3-81b4-c97534944225" Version="1.1" Language="en-US" Publisher="RK" />
+        <DisplayName>H3Plugin.Template</DisplayName>
+        <Description xml:space="preserve">Adds the H3Plugin project template to Visual Studio, for easy creation of H3 DLL plugins using H3API library.</Description>
+        <Icon>__PreviewIcon.png</Icon>
+        <PreviewImage>__TemplateIcon.png</PreviewImage>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[12.0, 17.0)" />
@@ -16,7 +16,7 @@
         <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
     </Dependencies>
     <Assets>
-        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" TargetVersion="[12.0,17.0)" d:TargetPath="ProjectTemplates\H3.Plugin.zip" />
+        <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" TargetVersion="[12.0, 17.0)" d:TargetPath="ProjectTemplates\H3Plugin.Template.zip" />
     </Assets>
     <Prerequisites>
         <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[12.0,17.0)" DisplayName="Visual Studio core editor" />

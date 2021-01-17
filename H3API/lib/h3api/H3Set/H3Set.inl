@@ -20,6 +20,15 @@ namespace h3
 	{
 		return m_root->parent;
 	}
+
+#ifndef _H3API_CPLUSPLUS11_
+	template<typename T, UINT NilNode>
+	inline typename _H3API_FORCEINLINE_ H3Set<T, NilNode>::Node** H3Set<T, NilNode>::_Nil()
+	{
+		return reinterpret_cast<Node**>(NilNode);
+	}
+#endif
+
 	template<typename T, UINT NilNode>
 	inline typename H3Set<T, NilNode>::NodePtr H3Set<T, NilNode>::Nil() const
 	{
