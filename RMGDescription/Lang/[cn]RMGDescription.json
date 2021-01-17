@@ -1,0 +1,15 @@
+{
+    "RMGDescription": {
+        "map_creation"     : "这是随机生成的地图。模板为%s，随机种子为%i，大小为%i，层数为%i，人类玩家数量为%i，电脑玩家数量为%i，水域面积%s，怪物等级%i",
+        "separator"        : "，",
+        "original_map"     : "RoE地图",
+        "first_expansion"  : "AB地图",
+        "second_expansion" : "SoD地图",
+        "third_expansion"  : "ERA地图",
+        "water_none"       : "无",
+        "water_normal"     : "普通",
+        "water_islands"    : "岛屿",
+        "is_human"         : "为人类玩家",
+        "town_choice"      : "的城镇为"
+    }
+}
