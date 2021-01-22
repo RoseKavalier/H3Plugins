@@ -116,7 +116,7 @@
             },
             "double_growth_month": {
                 "text": "Podwójny przyrost",
-                "description": "{Podwójny przyrost}\n\nOpcja ustawiona na {WŁ} wyłącza miesiące 12 stworzeń, które dublują swoja populacje i pojawiaja się na mapie.\n{UWAGA}: *NIE* usuwa \"Miesiąca Impa\"."
+                "description": "{Podwójny przyrost}\n\nOpcja ustawiona na {WŁ} wyłącza miesiące 12 stworzeń, które dublują swoja populacje i pojawiają się na mapie.\n{UWAGA}: *NIE* usuwa \"Miesiąca Impa\"."
             },
             "weekly_5_growth": {
                 "text": "Stworzenie tygodnia",
@@ -144,7 +144,7 @@
             },
             "restore_original_creature_split": {
                 "text": "Oryginalny podział jednostek",
-                "description": "{Oryginalny podział jednostek}\n\nOpcja ustawiona na {WŁ} przywraca pierwotne zasady podziału jednostek w walkach bez udzialu wrogiego bohatera - nawet gdy używane są opcje '{HD+}'."
+                "description": "{Oryginalny podział jednostek}\n\nOpcja ustawiona na {WŁ} przywraca pierwotne zasady podziału jednostek w walkach bez udziału wrogiego bohatera - nawet gdy używane są opcje '{HD+}'."
             },
             "restore_original_random_number_generator": {
                 "text": "Oryginalne RNG",
@@ -160,7 +160,7 @@
             },
             "combat_rmb_ok_button": {
                 "text": "PPM podczas bitwy",
-                "description": "{PPM podczas bitwy}\n\nOpcja ustawiona na {WŁ} powoduje, że w trakcie walki okna informacyjne po kliknieciu prawym przyciskiem myszki nie znikaja również dla bohatera i jednostek wroga."
+                "description": "{PPM podczas bitwy}\n\nOpcja ustawiona na {WŁ} powoduje, że w trakcie walki okna informacyjne po kliknięciu prawym przyciskiem myszki nie znikają również dla bohatera i jednostek wroga."
             },
             "show_combat_coordinates_hint": {
                 "text": "Współrzędne pola walki",
@@ -232,7 +232,7 @@
             },
             "correct_vanishing_upgraded_stack": {
                 "text": "Błąd Wędrujących Stworzeń",
-                "description": "{Błąd Wędrujących Stworzeń}\n\nOpcja ustawiona na {WŁ} powoduje, że losowy ulepszony oddział wędrujących stworzeń nie będzie już odejmowany od całkowitej liczby stworzeń, jeśli bohater ucięknie."
+                "description": "{Błąd Wędrujących Stworzeń}\n\nOpcja ustawiona na {WŁ} powoduje, że losowy ulepszony oddział wędrujących stworzeń nie będzie już odejmowany od całkowitej liczby stworzeń, jeśli bohater ucieknie."
             },
             "fix_incorrect_obstacle_anchors": {
                 "text": "Błąd Przeszkód",
@@ -244,7 +244,7 @@
             },
             "restore_naga_bank_sulfur": {
                 "text": "Gniazdo Nag",
-                "description": "{Gniazdo Nag}\n\nOpcja ustawiona na {WŁ} powoduje, że Gniazdo Nag dostarczy Siarkę zamiast Klejnotów, cofając zmiane '{HD+}'.\n{UWAGA}: Efekty tej opcji będą widoczne dopiero po rozpoczęciu nowej gry."
+                "description": "{Gniazdo Nag}\n\nOpcja ustawiona na {WŁ} powoduje, że Gniazdo Nag dostarczy Siarkę zamiast Klejnotów, cofając zmianę '{HD+}'.\n{UWAGA}: Efekty tej opcji będą widoczne dopiero po rozpoczęciu nowej gry."
             },
             "correct_hero_hireability": {
                 "text": "Bohaterowie Karczmy",
