@@ -77,19 +77,18 @@
         "toggle_event_display": "Kliknij, aby przełączyć widoczność Zdarzeń na Mapie Przygody.",
         "found_items_text": "Znaleziono obiekt %s w liczbie %d."
     },
-    "_comment": "Polish endings characters - possible bug",
     "spells": {
-        "elementals": "\nPrzywołuje %d Żywiołaków.",
+        "elementals": "\n\nPrzywołuje %d Żywiołaków.",
         "cure": "\nLeczy %d punktów życia.",
-        "hypnotize": "\nKontroluje do %d punktów życia.",
+        "hypnotize": "\n\nKontroluje do %d punktów życia.",
         "resurrection": "\nWskrzesza %d punktów życia.",
-        "visions": "\nZasięg: %d heksów",
-        "fly_waterWalk": "\nPrzybyta odleglość nawet do %d%% punktów normalnego ruchu.",
-        "increase": "\nWzrost o: %d",
-        "reduce": "\nZmniejszenie o: %d",
-        "reduce_by_percentage": "\nRedukcja o: %d%%",
-        "dimension_door_town_portal": "\nKoszt punktów ruchu: %d",
-        "sacrifice": "\nDodaje %d punktów życia dla każdego poświęconego stworzenia.",
+        "visions": "\n\nZasięg: %d.",
+        "fly_waterWalk": "\n\nPrzybyta odleglość nawet do %d%% punktów normalnego ruchu.",
+        "increase": "\nWzrasta o: %d.",
+        "reduce": "\nZmniejsza o: %d.",
+        "reduce_by_percentage": "\nRedukcja o: %d%%.",
+        "dimension_door_town_portal": "\nKoszt punktów ruchu: %d.",
+        "sacrifice": "\n\nDodaje %d punktów życia dla każdego poświęconego stworzenia.",
         "fire_shield": "\nZwraca %d%% bazowych obrażeń."
     },
     "sod_sp": {
