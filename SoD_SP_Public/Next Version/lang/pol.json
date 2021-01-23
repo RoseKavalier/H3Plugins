@@ -86,7 +86,7 @@
         "fly_waterWalk": "\n\nPrzybyta odleglość nawet do %d%% punktów normalnego ruchu.",
         "increase": "\nWzrasta o: %d.",
         "reduce": "\nZmniejsza o: %d.",
-        "reduce_by_percentage": "\nRedukcja o: %d%%.",
+        "reduce_by_percentage": "\nRedukuje o: %d%%.",
         "dimension_door_town_portal": "\nKoszt punktów ruchu: %d.",
         "sacrifice": "\n\nDodaje %d punktów życia dla każdego poświęconego stworzenia.",
         "fire_shield": "\nZwraca %d%% bazowych obrażeń."
