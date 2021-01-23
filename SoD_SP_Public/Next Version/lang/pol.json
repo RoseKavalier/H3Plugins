@@ -63,7 +63,7 @@
         "target_hex": "Cel Szybkiego Zaklęcia {%d} przypisany na {%c%d}.",
         "no_spell": "Nie posiadasz zaklęcia {%s}.",
         "new_creature": "Stworzenie zostało wskrzeszone...\nCzy chcesz przypisać je jako Cel Szybkiego Zaklęcia {%d}?",
-        "set_quickspell": "Szybkiego Zaklęcia zostało przypisane do {%d} dla {%s}.\nCzy chcesz utrzymać wybrany Cel Szybkiego Zaklęcia {%d}?",
+        "set_quickspell": "Szybkie Zaklęcie {%d} zostało przypisane do {%s}.\nCzy chcesz utrzymać wybrany Cel Szybkiego Zaklęcia {%d}?",
         "list_spells_title": "Lista Szybkich Zaklęć",
         "reset_hint": "Zresetuj konkretny cel {\"%d\"} dla Szybkiego Zaklęcia.",
         "reset_target_text": "Kliknij lewym przyciskiem myszy, aby zresetować konkretny cel {\"%d\"} dla Szybkiego Zaklęcia.",
