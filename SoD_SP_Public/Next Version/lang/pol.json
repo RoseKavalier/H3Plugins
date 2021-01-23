@@ -39,9 +39,8 @@
         },
         "color_type_modified": "Kolor dla opcji \n{%s}\nzostał pomyślnie ustawiony na:\n{~%s}%s}"
     },
-    "_comment": "delete two space and color font for kill_range (no corectly convention for all text, examples: 'kill - '0 | 'kill - 0-3)",
     "combat": {
-        "kill_verb": "zabija -",
+        "kill_verb": "zabici -",
         "damage_noun": "obrażenia",
         "resurrected_hit_points": "- wyleczone punkty życia",
         "resurrection_verb": "wskrzesza",
@@ -70,7 +69,6 @@
         "reset_confirmation": "Czy na pewno chcesz zresetować konkretny cel {\"%d\"} dla Szybkiego Zaklęcia?",
         "select_new_quickspell": "Kliknij lewym przyciskiem myszy, aby wybrać inne Szybkie Zaklęcie."
     },
-    "_comment": "found_items_text change position variables",
     "find_me": {
         "search_in_shroud_text": "Opcja 'Znajdź dla Mnie' ustawiona na {WŁ} powoduje, że znajdzie i pokaże obiekty, które zostały ukryte na Niezbadanym Terenie (użyj strzałek do poruszania się pomiędzy ukrytymi obiektami).\nZaś dla opcji {WYŁ}, znajdzie i pokaże tylko te elementy, które są już widoczne.",
         "search_in_shroud_hint": "Włącz, aby znaleźć i odkryć przedmioty na Niezbadanym Terenie.",
