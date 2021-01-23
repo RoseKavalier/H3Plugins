@@ -1,5 +1,4 @@
 {
-    "_comment": "prison_fusion no tested",
     "general": {
         "movement": "Koszt Ruchu: {%d}",
         "multiplayer_disabled": "{Tryb Wieloosobowy jest wyłączony}\n\nAby go włączyć musisz {~Cyan}usunąć SoD_SP} z listy aktywnych modyfikacji.",
@@ -40,7 +39,7 @@
         },
         "color_type_modified": "Kolor dla opcji \n{%s}\nzostał pomyślnie ustawiony na:\n{~%s}%s}"
     },
-    "_comment": "delete two space and color font for kill_range (no corectly convention for all text, examples: 'kill - '0 | 'kill - 0-3) | battlequeue_top_turret, battlequeue_mid_turret, battlequeue_bot_turret - short, but other resolution?",
+    "_comment": "delete two space and color font for kill_range (no corectly convention for all text, examples: 'kill - '0 | 'kill - 0-3)",
     "combat": {
         "kill_verb": "zabija -",
         "damage_noun": "obrażenia",
@@ -59,17 +58,16 @@
         "battlequeue_mid_turret": "Środkowa",
         "battlequeue_bot_turret": "Dolna"
     },
-    "_comment": "No tested all",
     "quickspell": {
         "target_creature": "Cel Szybkiego Zaklęcia {%d} przypisany do {%s} na {%c%d}.",
-        "target_hex": "Cel Szybkiego Zaklęcia {%d} przypisany do {%c%d}.",
+        "target_hex": "Cel Szybkiego Zaklęcia {%d} przypisany na {%c%d}.",
         "no_spell": "Nie posiadasz zaklęcia {%s}.",
         "new_creature": "Stworzenie zostało wskrzeszone...\nCzy chcesz przypisać je jako Cel Szybkiego Zaklęcia {%d}?",
-        "set_quickspell": "Cel Szybkiego Zaklęcia przypisany do {%d} dla {%s}.\nCzy chcesz utrzymać Cel Szybkiego Zaklęcia {%d}?",
+        "set_quickspell": "Szybkiego Zaklęcia zostało przypisane do {%d} dla {%s}.\nCzy chcesz utrzymać wybrany Cel Szybkiego Zaklęcia {%d}?",
         "list_spells_title": "Lista Szybkich Zaklęć",
-        "reset_hint": "Zresetuj cel {\"%d\"} dla Szybkiego Zaklęcia.",
-        "reset_target_text": "Kliknij lewym przyciskiem myszy, aby zresetować cel {\"%d\"} dla Szybkiego Zaklęcia.",
-        "reset_confirmation": "Czy na pewno chcesz zresetować cel {\"%d\"} dla Szybkiego Zaklęcia?",
+        "reset_hint": "Zresetuj konkretny cel {\"%d\"} dla Szybkiego Zaklęcia.",
+        "reset_target_text": "Kliknij lewym przyciskiem myszy, aby zresetować konkretny cel {\"%d\"} dla Szybkiego Zaklęcia.",
+        "reset_confirmation": "Czy na pewno chcesz zresetować konkretny cel {\"%d\"} dla Szybkiego Zaklęcia?",
         "select_new_quickspell": "Kliknij lewym przyciskiem myszy, aby wybrać inne Szybkie Zaklęcie."
     },
     "_comment": "found_items_text change position variables",
@@ -79,7 +77,7 @@
         "item_general_hint": "Kliknij lewym przyciskiem myszy, aby znaleźć ten obiekt.",
         "stop_display": "Zatrzymano wyświetlanie obiektów.",
         "toggle_event_display": "Kliknij, aby przełączyć widoczność Zdarzeń na Mapie Przygody.",
-        "found_items_text": "Znaleziono obiekt %d w liczbie %s."
+        "found_items_text": "Znaleziono obiekt %s w liczbie %d."
     },
     "_comment": "Polish endings characters - possible bug",
     "spells": {
@@ -97,9 +95,8 @@
         "fire_shield": "\nZwraca %d%% bazowych obrażeń."
     },
     "sod_sp": {
-        "_comment": "dialog_title",
         "dialog": {
-            "dialog_title": "\nOpcje SoD_SP",
+            "dialog_title": "Opcje SoD_SP",
             "dialog_description": "Kliknij PPM na polu, aby uzyskać więcej informacji.",
             "confirm_description": "Zaakceptuj zmiany i zamknij okno.",
             "save_description": "Zapisz bieżące opcje w {SoD_SP.ini}",
@@ -109,7 +106,6 @@
             "disabled_option_text": "Ta opcja została\n{~H3Cyan}zablokowana przez twórcę mapy}\ni nie można jej zmienić."
         },
         "options": {
-            "_comment": "jednostka/oddział/stworzenie",
             "month_of_the_plague": {
                 "text": "Plaga",
                 "description": "{Plaga}\n\nOpcja ustawiona na {WŁ} zapobiega wystąpienia miesiąca PLAGI!."
