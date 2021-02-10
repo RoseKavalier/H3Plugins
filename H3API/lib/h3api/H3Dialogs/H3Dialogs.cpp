@@ -1398,7 +1398,7 @@ namespace h3
 	}
 	_H3API_ BOOL H3DlgEdit::SetCaret(UINT pos)
 	{
-		if (pos < 0 || pos == caretPos || pos > text.Length())
+		if (pos == caretPos || pos > text.Length())
 			return FALSE;
 		caretPos = pos;
 		return TRUE;

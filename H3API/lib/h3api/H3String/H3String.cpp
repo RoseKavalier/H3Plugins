@@ -429,14 +429,14 @@ namespace h3
 
 	_H3API_ PCHAR H3String::At(UINT pos)
 	{
-		if (m_string && pos >= 0)
+		if (m_string)
 			return m_string + std::min(pos, Length());
 		return nullptr;
 	}
 
 	_H3API_ CHAR H3String::GetCharAt(UINT pos) const
 	{
-		if (m_string && pos >= 0 && Length())
+		if (m_string && Length())
 			return m_string[std::min(pos, Length())];
 		return 0;
 	}
