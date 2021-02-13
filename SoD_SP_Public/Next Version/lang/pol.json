@@ -1,4 +1,5 @@
 {
+	"code_page" : 1250,
     "general": {
         "movement": "Koszt Ruchu: {%d}",
         "multiplayer_disabled": "{Tryb Wieloosobowy jest wyłączony}\n\nAby go włączyć musisz {~Cyan}usunąć SoD_SP} z listy aktywnych modyfikacji.",
@@ -6,7 +7,9 @@
         "prison_fusion": "{Połączenie Bohaterów} jest wyłączone.\nOpuść Więzienie i spróbuj ponownie.",
         "save_confirmation": "{~Highlight}Zapisano przy pomocy Szybkiego Zapisu!}",
         "custom_save_abbreviation": "Szybki",
-        "custom_abbreviation_text": "Wprowadź własną nazwę w przedziale {od 1 do 15} znaków dla Szybkiego Zapisu."
+        "custom_abbreviation_text": "Wprowadź własną nazwę w przedziale {od 1 do 15} znaków dla Szybkiego Zapisu.",
+        "error_log_prompt": "{~#FF0000}Wystąpił błąd SoD_SP!}\nCzy chcesz zapisać go do pliku?",
+        "save_button_name": "iSAVE.def"
     },
     "color": {
         "dialog_title": {
@@ -71,24 +74,29 @@
     },
     "find_me": {
         "search_in_shroud_text": "Opcja 'Znajdź dla Mnie' ustawiona na {WŁ} powoduje, że znajdzie i pokaże obiekty, które zostały ukryte na Niezbadanym Terenie (użyj strzałek do poruszania się pomiędzy ukrytymi obiektami).\nZaś dla opcji {WYŁ}, znajdzie i pokaże tylko te elementy, które są już widoczne.",
-        "search_in_shroud_hint": "Włącz, aby znaleźć i odkryć przedmioty na Niezbadanym Terenie.",
+        "search_in_shroud_hint": "Włącz, aby znaleźć i odkryć obiekty na Niezbadanym Terenie.",
         "item_general_hint": "Kliknij lewym przyciskiem myszy, aby znaleźć ten obiekt.",
         "stop_display": "Zatrzymano wyświetlanie obiektów.",
         "toggle_event_display": "Kliknij, aby przełączyć widoczność Zdarzeń na Mapie Przygody.",
-        "found_items_text": "Znaleziono obiekt %s w liczbie %d."
+        "number_first" : false,
+        "found_items_text": "Znaleziono obiekt '%s' w liczbie %d.",
+        "report_none" : true,
+		"toggle_report_none_text" : "Opcja ustawiona na {WŁ} powoduje, że 'Znajdź dla Mnie' wyświetli ostrzeżenie, jeśli nie znaleziono żadnych obiektów.\nZaś dla opcji {WYŁ}, niepowodzenia nie będą zgłaszane wyświetleniem ostrzeżeniem o braku znalezienia obiektów.",
+		"toggle_report_none_hint" : "Kliknij, aby przełączyć opcje dotyczącą wyświetlenia ostrzeżenia, gdy nie zostaną znalezione żadne obiekty.",
+		"none_found" : "Nie znaleziono '%s'!"
     },
     "spells": {
         "elementals": "\n\nPrzywołuje %d Żywiołaków.",
-        "cure": "\nLeczy %d punktów życia.",
-        "hypnotize": "\n\nKontroluje do %d punktów życia.",
-        "resurrection": "\nWskrzesza %d punktów życia.",
+        "cure": "\nLeczy %d pkt. życia.",
+        "hypnotize": "\n\nKontroluje do %d pkt. życia.",
+        "resurrection": "\nWskrzesza %d pkt. życia.",
         "visions": "\n\nZasięg: %d.",
         "fly_waterWalk": "\n\nPrzybyta odleglość nawet do %d%% punktów normalnego ruchu.",
         "increase": "\nWzrasta o %d pkt.",
         "reduce": "\nZmniejsza o %d pkt.",
         "reduce_by_percentage": "\nRedukuje o: %d%%.",
         "dimension_door_town_portal": "\nKoszt punktów ruchu: %d.",
-        "sacrifice": "\n\nDodaje %d punktów życia dla każdego poświęconego stworzenia.",
+        "sacrifice": "\n\nDodaje %d pkt. życia dla każdego poświęconego stworzenia.",
         "fire_shield": "\nZwraca %d%% bazowych obrażeń."
     },
     "sod_sp": {
@@ -101,11 +109,11 @@
             "save_failed": "{Ostrzeżenie!}\n\nCoś poszło nie tak i dane nie mogły zostać zapisane.",
             "save_success": "Wszystkie opcje zostały zapisane!",
             "disabled_option_text": "Ta opcja została\n{~H3Cyan}zablokowana przez twórcę mapy}\ni nie można jej zmienić."
-        },
+            },
         "options": {
             "month_of_the_plague": {
                 "text": "Plaga",
-                "description": "{Plaga}\n\nOpcja ustawiona na {WŁ} zapobiega wystąpienia miesiąca PLAGI!."
+                "description": "{Plaga}\n\nOpcja ustawiona na {WŁ} zapobiega występowaniu miesiąca PLAGI!"
             },
             "double_growth_month": {
                 "text": "Podwójny przyrost",
