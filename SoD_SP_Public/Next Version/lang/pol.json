@@ -249,7 +249,7 @@
             },
             "correct_hero_hireability": {
                 "text": "Bohaterowie Karczmy",
-                "description": "{Bohaterowie Karczmy}\n\nOpcja ustawiona na {WŁ} powoduje, że Bohaterowie, którzy nie są oznaczeni jako 'Może go wynająć' Gracz X nie będą już dostępni w Karczmie zgodnie z zamysłem twórcy map, po opuszczeniu lub zwolnieniu.\n{UWAGA}: Aby zobaczyć efekty działania 'Bohaterów Karczmy', to ustawienie 'Może go wynająć' musi zostać odpowiednio wyłączone."
+                "description": "{Bohaterowie Karczmy}\n\nOpcja ustawiona na {WŁ} powoduje, że Bohaterowie, którzy nie są oznaczeni jako 'Może być wynajmowany przez' Gracz X nie będą już dostępni w Karczmie zgodnie z zamysłem twórcy map, po opuszczeniu lub zwolnieniu.\n{UWAGA}: Aby zobaczyć efekty działania 'Bohaterów Karczmy', to ustawienie 'Może być wynajmowany przez' musi zostać odpowiednio wyłączone."
             },
             "correct_quick_combat_power_overflow": {
                 "text": "Przekroczenie w Szybkiej Walce",
