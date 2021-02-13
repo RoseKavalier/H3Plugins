@@ -9,7 +9,7 @@
         "custom_save_abbreviation": "Szybki",
         "custom_abbreviation_text": "Wprowadź własną nazwę w przedziale {od 1 do 15} znaków dla Szybkiego Zapisu.",
         "error_log_prompt": "{~#FF0000}Wystąpił błąd SoD_SP!}\nCzy chcesz zapisać go do pliku?",
-        "save_button_name": "iSAVE.def"
+        "save_button_name": "iSAVEPol.def"
     },
     "color": {
         "dialog_title": {
