@@ -1,4 +1,5 @@
 {
+	"code_page" : 1250,
     "general": {
         "movement": "Koszt Ruchu: {%d}",
         "multiplayer_disabled": "{Tryb Wieloosobowy jest wyłączony}\n\nAby go włączyć musisz {~Cyan}usunąć SoD_SP} z listy aktywnych modyfikacji.",
@@ -6,7 +7,9 @@
         "prison_fusion": "{Połączenie Bohaterów} jest wyłączone.\nOpuść Więzienie i spróbuj ponownie.",
         "save_confirmation": "{~Highlight}Zapisano przy pomocy Szybkiego Zapisu!}",
         "custom_save_abbreviation": "Szybki",
-        "custom_abbreviation_text": "Wprowadź własną nazwę w przedziale {od 1 do 15} znaków dla Szybkiego Zapisu."
+        "custom_abbreviation_text": "Wprowadź własną nazwę w przedziale {od 1 do 15} znaków dla Szybkiego Zapisu.",
+        "error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
+        "save_button_name": "iSAVE.def"
     },
     "color": {
         "dialog_title": {
@@ -75,7 +78,12 @@
         "item_general_hint": "Kliknij lewym przyciskiem myszy, aby znaleźć ten obiekt.",
         "stop_display": "Zatrzymano wyświetlanie obiektów.",
         "toggle_event_display": "Kliknij, aby przełączyć widoczność Zdarzeń na Mapie Przygody.",
-        "found_items_text": "Znaleziono obiekt %s w liczbie %d."
+        "number_first" : false,
+        "found_items_text": "Znaleziono obiekt %s w liczbie %d.",
+        "report_none" : true,
+		"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
+		"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
+		"none_found" : "There was no %s found!"
     },
     "spells": {
         "elementals": "\n\nPrzywołuje %d Żywiołaków.",
@@ -101,7 +109,7 @@
             "save_failed": "{Ostrzeżenie!}\n\nCoś poszło nie tak i dane nie mogły zostać zapisane.",
             "save_success": "Wszystkie opcje zostały zapisane!",
             "disabled_option_text": "Ta opcja została\n{~H3Cyan}zablokowana przez twórcę mapy}\ni nie można jej zmienić."
-        },
+            },
         "options": {
             "month_of_the_plague": {
                 "text": "Plaga",

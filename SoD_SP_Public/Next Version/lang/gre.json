@@ -1,4 +1,5 @@
 {
+	"code_page" : 1253,
     "general": {
       "movement": "Кьуфпт кЯнзузт: {%d}",
       "multiplayer_disabled": "{Фп рбйчнЯдй ме рпллбрлпэт рбЯкфет (Multiplayer) еЯнбй бренесгпрпйзмЭнп}\n\nГйб нб енесгпрпйЮуефе фп рбйчнЯдй ме рпллбрлпэт рбЯкфет (Multiplayer) рсЭрей нб {бцбйсЭуефе фп SoD_SP} брь фпн кбфЬлпгп ме фб енесгЬ mods убт.",
@@ -6,7 +7,9 @@
       "prison_fusion": "{З ухгчюнехуз рбйкфюн} еЯнбй бренесгпрпйзмЭнз. Рбсбкблю брпмбксхниеЯфе брь фзн цхлбкЮ кбй дпкймЬуфе рЬлй.",
       "save_confirmation": "ёгйне гсЮгпсз брпиЮкехуз!",
       "custom_save_abbreviation": "ГсЮгпсп",
-      "custom_abbreviation_text": "Рбсбкблю нб ейуЬгефе бнЬмеуб уе {1 кбй 15} чбсбкфЮсет гйб фп бсчеЯп гсЮгпсзт брпиЮкехузт рпх дзмйпхсгеЯфе еуеЯт."
+      "custom_abbreviation_text": "Рбсбкблю нб ейуЬгефе бнЬмеуб уе {1 кбй 15} чбсбкфЮсет гйб фп бсчеЯп гсЮгпсзт брпиЮкехузт рпх дзмйпхсгеЯфе еуеЯт.",
+      "error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
+      "save_button_name": "iSAVE.def"
     },
     "color": {
       "dialog_title": {
@@ -45,7 +48,7 @@
       "resurrected_hit_points": "БрекбфеуфзмЭнпй рьнфпй жщЮт",
       "resurrection_verb": "БнбуфбЯней",
       "hit_points": "Рьнфпй жщЮт",
-      "kill_range": "МЭчсй",
+      "kill_range": " МЭчсй ",
       "active_creature": "Енесгь",
       "waiting_creature": "Уе бнбмпнЮ",
       "moved_creature": "КйнЮизке Юдз",
@@ -75,7 +78,12 @@
       "item_general_hint": "КЬнфе бсйуфесь клйк гйб нб всеЯфе фп бнфйкеЯменп бхфь.",
       "stop_display": "УфбмЬфзуе нб емцбнЯжей бнфйкеЯменб.",
       "toggle_event_display": "КЬнфе клйк гйб нб мефбвЬллефе фп бн иб еЯнбй псбфЬ Ю ьчй фб гегпньфб (Events) уфпн чЬсфз ресйрЭфейбт.",
-      "found_items_text": "ВсЭизке %d %s"
+      "number_first" : true,
+      "found_items_text": "ВсЭизке %d %s",
+      "report_none" : true,
+      "toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
+      "toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
+      "none_found" : "There was no %s found!"
     },
     "spells": {
       "elementals": "\nКблеЯ %d ЕлемЭнфбл.",
@@ -93,7 +101,7 @@
     },
     "sod_sp": {
       "dialog": {
-        "dialog_title": "ЕрйлпгЭт",
+        "dialog_title": "SoD_SP ЕрйлпгЭт",
         "dialog_description": "КЬнфе деоЯ клйк уфб рлбЯуйб елЭгчпх гйб ресйууьфесет рлзспцпсЯет.",
         "confirm_description": "БрпдечфеЯфе ьлет фйт бллбгЭт кбй клеЯуфе фп рбсЬихсп дйбльгпх.",
         "save_description": "Брпизкеэуфе фйт фсЭчпхует ерйлпгЭт уфп \"{SoD_SP.ini}\"",
@@ -233,7 +241,7 @@
         },
         "ai_fast_battle_bug": {
 			"text": "AI Fast Battle Bugs",
-			"description": "{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."
+			"description": "{AI Fast Battle Bugs}\n\nΌταν {ΕΝ}εργοποιηθεί, αυτή η επιλογή διορθώνει σφάλματα στη μάχη ανάμεσα σε ήρωες της Τεχνητής Νοημοσύνης"
 		},
         "restore_naga_bank_sulfur": {
           "text": "Naga Banks",

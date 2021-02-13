@@ -1,4 +1,5 @@
 {
+	"code_page" : 1251,
     "general": {
         "movement": "Потребуется {%d} ед.перемещения",
         "multiplayer_disabled": "{Внимание !!!}\n\nДля игры в многопользовательском режиме Вам необходимо отключить мод {SoD_SP} из списка активных плагинов HD-мода.",
@@ -6,7 +7,9 @@
         "prison_fusion": "{Слияние герев} запрещено.\nПожалуйста, отойдите от тюрьмы и попробуйте ещё раз.",
         "save_confirmation": "Быстрое сохранение выполнено успешно!",
         "custom_save_abbreviation": "QUICKSAVE",
-        "custom_abbreviation_text": "{Название быстрых сохранений}\n\nУкажите название быстрых сохранений\nв пределах от {1} до {15} символов."
+        "custom_abbreviation_text": "{Название быстрых сохранений}\n\nУкажите название быстрых сохранений\nв пределах от {1} до {15} символов.",
+        "error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
+        "save_button_name": "iSAVE.def"
     },
     "color": {
         "dialog_title": {
@@ -75,7 +78,12 @@
         "item_general_hint": "Сделайте левый клик мыши, чтобы найти данный объект.",
         "stop_display": "Остановить поиск объектов.",
         "toggle_event_display": "Нажмите, чтобы включить или отключить видимость локальных событий на Карте Приключений.",
-        "found_items_text": "Найдено %d %s"
+        "number_first" : true,
+        "found_items_text": "Найдено %d %s",
+        "report_none" : true,
+		"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
+		"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
+		"none_found" : "There was no %s found!"
     },
     "spells": {
         "elementals": "\n\nПризывает %d Элементалей.",
@@ -93,7 +101,7 @@
     },
     "sod_sp": {
         "dialog": {
-            "dialog_title": "Опции",
+            "dialog_title": "SoD_SP Опции",
             "dialog_description": "Клик правой кнопкой мыши для получения детальной информации.",
             "confirm_description": "{Применить}\n\nПрименить внесенные изменения и закрыть окно.",
             "save_description": "{Сохранить}\n\nСохранить настройки опций в '{SoD_SP.ini}'",
@@ -232,8 +240,8 @@
                 "description": "{Баг препятствий для каста заклинаний}\n\nНа поле боя препятствия теперь не мешают установке Огненной Стены, Силового Поля, Зыбучих Песков или Минного Поля на незанятые примыкающие к этим препятствиям гексы.\n\n{Примечание:} эта опция не может быть изменена во время боя."
             },
             "ai_fast_battle_bug": {
-				"text": "AI Fast Battle Bugs",
-				"description": "{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."
+				"text": "Баги быстрой битвы ИИ",
+				"description": "{Баги быстрой битвы ИИ}\n\nОпция исправляет ряд ошибок, которые происходят только в расчётной битве ИИ против ИИ."
 			},
             "restore_naga_bank_sulfur": {
                 "text": "Нага Банк",

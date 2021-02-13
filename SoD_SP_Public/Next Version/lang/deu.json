@@ -1,4 +1,5 @@
 {
+	"code_page" : 1250,
     "general": {
         "movement": "Bewegungskosten: {%d}",
         "multiplayer_disabled": "{Multiplayer-Modus ist deaktiviert}\n\nUm den Multiplayer-Modus zu aktivieren, mьssen Sie {SoD_SP} aus Ihrer Liste der aktiven Modi {entfernen}.",
@@ -6,7 +7,9 @@
         "prison_fusion": "{Die Fusion von Helden} ist deaktiviert.\nBitte gehen Sie vom Gefдngnis los und versuchen Sie erneut.",
         "save_confirmation": "Schnell gespeichert!",
         "custom_save_abbreviation": "Schnell",
-        "custom_abbreviation_text": "Bitte geben Sie zwischen {1 and 15} Zeichen fьr Ihren benutzerdefinierten schnell gespeicherten Namen ein."
+        "custom_abbreviation_text": "Bitte geben Sie zwischen {1 and 15} Zeichen fьr Ihren benutzerdefinierten schnell gespeicherten Namen ein.",
+        "error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
+        "save_button_name": "iSAVE.def"
     },
     "color": {
         "dialog_title": {
@@ -45,7 +48,7 @@
         "resurrected_hit_points": "Lebenspunkte wiederhergestellt",
         "resurrection_verb": "Es aufleben lдsst",
         "hit_points": " Lebenspunkte",
-        "kill_range": "Bis zu",
+        "kill_range": " Bis zu ",
         "active_creature": "Aktiv",
         "waiting_creature": "Es wartet",
         "moved_creature": "Es hat sich schon bewegt",
@@ -75,7 +78,12 @@
         "item_general_hint": "Klicken Sie mit der linken Maustaste um dieses Objekt zu finden.",
         "stop_display": "Die Anzeige von Objekten wurde angehalten.",
         "toggle_event_display": "Klicken Sie um die Sichtbarkeit von Ereignissen auf der Abenteuerkarte umzuschalten.",
-        "found_items_text": "Gefunden %d %s"
+        "number_first" : true,
+        "found_items_text": "Gefunden %d %s",
+        "report_none" : true,
+		"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
+		"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
+		"none_found" : "There was no %s found!"
     },
     "spells": {
         "elementals": "\nEs ruft %d Elementals.",
@@ -93,7 +101,7 @@
     },
     "sod_sp": {
         "dialog": {
-            "dialog_title": "Optionen",
+            "dialog_title": "SoD_SP Optionen",
             "dialog_description": "Machen Sie Rechtsklick in die Kontrollkдstchen um mehr Informationen zu haben.",
             "confirm_description": "Akzeptieren Sie alle Дnderungen und schlieЯen Sie das Dialogfenster.",
             "save_description": "Speichern Sie die aktuellen Optionen in \"{SoD_SP.ini}\"",
@@ -232,8 +240,8 @@
                 "description": "{Anker-Bug}\n\nWenn {EIN}geschaltet, verhindern цrtliche Schlachtfeldhindernisse nicht, dass Firewall, Forcefield, Quicksand oder Land Mine auf einigen nahen Fliesen benutzt werden.\n{ANMERKUNG}: Diese Option kann nicht aus dem Schlachtfeld verдndert werden."
             },
             "ai_fast_battle_bug": {
-                "text": "AI Fast Battle Bugs",
-                "description": "{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."
+                "text": "K.I. Schnellkampf-Bugs",
+                "description": "{K.I. Schnellkampf-Bugs}\n\nWann {EIN}geschaltet, korrigiert diese Option Fehler in der Schalcht zwischen Helden der künstlichen Intelligenz"
             },
             "restore_naga_bank_sulfur": {
                 "text": "Naga Banks",

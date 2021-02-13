@@ -1,0 +1,10 @@
+=============================================================================
+								1.19.2.0
+=============================================================================
+
+[ini description]
+# Fixes some AI vs AI battle bugs [replaces deprecated 'QuickCombat' option]
+
+[language file: title and description]
+"AI Fast Battle Bugs"
+"{AI Fast Battle Bugs}\n\nWhen turned {ON}, fixes errors in AI vs AI combat."

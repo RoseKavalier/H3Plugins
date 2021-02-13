@@ -1,0 +1,8 @@
+=============================================================================
+								1.19.3.0
+=============================================================================
+[language file: title and description]
+"error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
+"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
+"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
+"none_found" : "There was no %s found!"
