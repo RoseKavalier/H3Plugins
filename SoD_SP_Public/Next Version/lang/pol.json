@@ -81,9 +81,9 @@
         "number_first" : false,
         "found_items_text": "Znaleziono obiekt '%s' w liczbie %d.",
         "report_none" : true,
-		"toggle_report_none_text" : "Opcja ustawiona na {WŁ} powoduje, że 'Znajdź dla Mnie' wyświetli ostrzeżenie, jeśli nie znaleziono żadnych obiektów.\nZaś dla opcji {WYŁ}, niepowodzenia nie będą zgłaszane wyświetleniem ostrzeżenia o braku znalezienia obiektów.",
-		"toggle_report_none_hint" : "Kliknij, aby przełączyć opcje dotyczącą wyświetlenia ostrzeżenia.",
-		"none_found" : "Nie znaleziono '%s'!"
+		    "toggle_report_none_text" : "Opcja ustawiona na {WŁ} powoduje, że 'Znajdź dla Mnie' wyświetli ostrzeżenie, jeśli nie znaleziono żadnych obiektów.\nZaś dla opcji {WYŁ}, niepowodzenia nie będą zgłaszane wyświetleniem ostrzeżenia o braku znalezienia obiektów.",
+		    "toggle_report_none_hint" : "Kliknij, aby przełączyć opcje dotyczącą wyświetlenia ostrzeżenia.",
+		    "none_found" : "Nie znaleziono '%s'!"
     },
     "spells": {
         "elementals": "\n\nPrzywołuje %d Żywiołaków.",

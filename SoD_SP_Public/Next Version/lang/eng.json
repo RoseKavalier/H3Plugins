@@ -1,4 +1,5 @@
 {
+	"code_page" : 1252,
     "general": {
         "movement": "Movement Cost: {%d}",
         "multiplayer_disabled": "{Multiplayer is Disabled}\n\nTo enable Multiplayer you need to {~Cyan}remove SoD_SP} from your active mods list.",
@@ -6,7 +7,9 @@
         "prison_fusion": "{Hero Fusion} is disabled.\nPlease move off the Prison and try again.",
         "save_confirmation": "Quicksaved!",
         "custom_save_abbreviation": "Quick",
-        "custom_abbreviation_text": "Please enter between {1 and 15} characters for your custom quicksave name."
+        "custom_abbreviation_text": "Please enter between {1 and 15} characters for your custom quicksave name.",
+		"error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
+        "save_button_name": "iSAVE.def"
     },
     "color": {
         "dialog_title": {
@@ -45,7 +48,7 @@
         "resurrected_hit_points": "hp restored",
         "resurrection_verb": "raises",
         "hit_points": "hp",
-        "kill_range": "to",
+        "kill_range": " to ",
         "active_creature": "Active",
         "waiting_creature": "Waiting",
         "moved_creature": "Already Moved",
@@ -75,7 +78,12 @@
         "item_general_hint": "Left-click to find this item.",
         "stop_display": "Stopped displaying items.",
         "toggle_event_display": "Click to toggle visibility of Events on the Adventure Map.",
-        "found_items_text": "Found %d %s(s)"
+		"number_first" : true,
+        "found_items_text": "Found %d %s(s)",
+		"report_none" : true,
+		"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
+		"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
+		"none_found" : "There was no %s found!"
     },
     "spells": {
         "elementals": "\nSummons %d Elementals.",
@@ -93,7 +101,7 @@
     },
     "sod_sp": {
         "dialog": {
-            "dialog_title": "Options",
+            "dialog_title": "SoD_SP Options",
             "dialog_description": "Right-click on checkboxes to have more information.",
             "confirm_description": "Accept all changes and close dialog.",
             "save_description": "Save the current options to {SoD_SP.ini}",

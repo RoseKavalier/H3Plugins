@@ -96,7 +96,7 @@ _LHF_(UseFullMapDescription)
 	H3SEHandler seh;
 	try
 	{
-		auto& desc = c->Ebx<H3NewGameDialog*>()->CurrentMap().mapDescription;
+		auto& desc = c->Ebx<H3SelectScenarioDialog*>()->CurrentMap().mapDescription;
 		if (!desc.Empty()) // hdmod dir doesn't populate string
 			c->Esi<LPCSTR>() = desc.String();
 	}
