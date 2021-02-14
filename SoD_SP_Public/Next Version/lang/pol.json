@@ -8,8 +8,8 @@
         "save_confirmation": "{~Highlight}Zapisano przy pomocy Szybkiego Zapisu!}",
         "custom_save_abbreviation": "Szybki",
         "custom_abbreviation_text": "Wprowadź własną nazwę w przedziale {od 1 do 15} znaków dla Szybkiego Zapisu.",
-        "error_log_prompt": "{~#FF0000}An error was caught by SoD_SP!}\nWould you like to save it to file?",
-        "save_button_name": "iSAVE.def"
+        "error_log_prompt": "{~#FF0000}Wystąpił błąd SoD_SP!}\nCzy chcesz zapisać go do pliku?",
+        "save_button_name": "iSAVEPol.def"
     },
     "color": {
         "dialog_title": {
@@ -74,29 +74,29 @@
     },
     "find_me": {
         "search_in_shroud_text": "Opcja 'Znajdź dla Mnie' ustawiona na {WŁ} powoduje, że znajdzie i pokaże obiekty, które zostały ukryte na Niezbadanym Terenie (użyj strzałek do poruszania się pomiędzy ukrytymi obiektami).\nZaś dla opcji {WYŁ}, znajdzie i pokaże tylko te elementy, które są już widoczne.",
-        "search_in_shroud_hint": "Włącz, aby znaleźć i odkryć przedmioty na Niezbadanym Terenie.",
+        "search_in_shroud_hint": "Włącz, aby znaleźć i odkryć obiekty na Niezbadanym Terenie.",
         "item_general_hint": "Kliknij lewym przyciskiem myszy, aby znaleźć ten obiekt.",
         "stop_display": "Zatrzymano wyświetlanie obiektów.",
         "toggle_event_display": "Kliknij, aby przełączyć widoczność Zdarzeń na Mapie Przygody.",
         "number_first" : false,
-        "found_items_text": "Znaleziono obiekt %s w liczbie %d.",
+        "found_items_text": "Znaleziono obiekt '%s' w liczbie %d.",
         "report_none" : true,
-		"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
-		"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
-		"none_found" : "There was no %s found!"
+		    "toggle_report_none_text" : "Opcja ustawiona na {WŁ} powoduje, że 'Znajdź dla Mnie' wyświetli ostrzeżenie, jeśli nie znaleziono żadnych obiektów.\nZaś dla opcji {WYŁ}, niepowodzenia nie będą zgłaszane wyświetleniem ostrzeżenia o braku znalezienia obiektów.",
+		    "toggle_report_none_hint" : "Kliknij, aby przełączyć opcje dotyczącą wyświetlenia ostrzeżenia.",
+		    "none_found" : "Nie znaleziono '%s'!"
     },
     "spells": {
         "elementals": "\n\nPrzywołuje %d Żywiołaków.",
-        "cure": "\nLeczy %d punktów życia.",
-        "hypnotize": "\n\nKontroluje do %d punktów życia.",
-        "resurrection": "\nWskrzesza %d punktów życia.",
+        "cure": "\nLeczy %d pkt. życia.",
+        "hypnotize": "\n\nKontroluje do %d pkt. życia.",
+        "resurrection": "\nWskrzesza %d pkt. życia.",
         "visions": "\n\nZasięg: %d.",
         "fly_waterWalk": "\n\nPrzybyta odleglość nawet do %d%% punktów normalnego ruchu.",
         "increase": "\nWzrasta o %d pkt.",
         "reduce": "\nZmniejsza o %d pkt.",
         "reduce_by_percentage": "\nRedukuje o: %d%%.",
         "dimension_door_town_portal": "\nKoszt punktów ruchu: %d.",
-        "sacrifice": "\n\nDodaje %d punktów życia dla każdego poświęconego stworzenia.",
+        "sacrifice": "\n\nDodaje %d pkt. życia dla każdego poświęconego stworzenia.",
         "fire_shield": "\nZwraca %d%% bazowych obrażeń."
     },
     "sod_sp": {
@@ -113,7 +113,7 @@
         "options": {
             "month_of_the_plague": {
                 "text": "Plaga",
-                "description": "{Plaga}\n\nOpcja ustawiona na {WŁ} zapobiega wystąpienia miesiąca PLAGI!."
+                "description": "{Plaga}\n\nOpcja ustawiona na {WŁ} zapobiega występowaniu miesiąca PLAGI!"
             },
             "double_growth_month": {
                 "text": "Podwójny przyrost",
@@ -249,7 +249,7 @@
             },
             "correct_hero_hireability": {
                 "text": "Bohaterowie Karczmy",
-                "description": "{Bohaterowie Karczmy}\n\nOpcja ustawiona na {WŁ} powoduje, że Bohaterowie, którzy nie są oznaczeni jako 'Może go wynająć' Gracz X nie będą już dostępni w Karczmie zgodnie z zamysłem twórcy map, po opuszczeniu lub zwolnieniu.\n{UWAGA}: Aby zobaczyć efekty działania 'Bohaterów Karczmy', to ustawienie 'Może go wynająć' musi zostać odpowiednio wyłączone."
+                "description": "{Bohaterowie Karczmy}\n\nOpcja ustawiona na {WŁ} powoduje, że Bohaterowie, którzy nie są oznaczeni jako 'Może być wynajmowany przez' Gracz X nie będą już dostępni w Karczmie zgodnie z zamysłem twórcy map, po opuszczeniu lub zwolnieniu.\n{UWAGA}: Aby zobaczyć efekty działania 'Bohaterów Karczmy', to ustawienie 'Może być wynajmowany przez' musi zostać odpowiednio wyłączone."
             },
             "correct_quick_combat_power_overflow": {
                 "text": "Przekroczenie w Szybkiej Walce",
