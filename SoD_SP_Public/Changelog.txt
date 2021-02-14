@@ -1,0 +1,482 @@
+!! DOCUMENTATION !! 
+https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8/edit#heading=h.mre1fr5o3135
+
+Version 1.19.3.1
+[+] FindMe's event reveal state is now saved on a game-by-game basis and restored
+[+] FindMe's event reveal now has three states: hidden, translucent and fully revealed (thanks anonymous)
+[-] Fixed a text formatting issue in H3API that crashed the game (thanks leertaste1, aydjay, Benkrik, anonymous)
+
+[*] Polish translation up to date (thanks VIP)
+
+Version 1.19.3.0
+[+] Added {json}[code_page] entry to language files, do not modify unless you know what you're doing!
+[+] Added {json}[find_me][number_first] boolean to indicate that the number of items comes first when reporting found objects (thanks VIP)
+	i.e. "Found 10 object(s)!" vs "Found object 10 times!"
+[+] Added {json}[find_me][report_none] boolean to report that no objects were found when using FindMe (thanks VIP, anonymous)
+	Matching text is found under {json}[find_me][none_found]
+	The option can be turned on/off in FindMe dialog next to the Uncharted Territory option
+[+] Improved FindMe object name report
+[+] Added {json}[general][error_log_prompt] for localized error logging message prompt (thanks VIP)
+[+] Added {json}[general][save_button_name] for localized 'SAVE' button (thanks VIP, FirePaladin)
+[+] High Score dialog Campaign tab now shows both score and number of days (thanks VIP)
+[+] Fixed a crash bug in Artifacts Merchant when no artifacts were selected (anonymous)
+[+] Advanced Dialogs for Pyramids and Abandoned Mines now show proper creature splits (thanks Rolex)
+[+] Advanced Dialog for Heroes and Prisons now let you inspect all of the hero's statistics and belongings (anonymous)
+[+] Fixed hero water to land movement conversion when running from / losing a sea battle (thanks Inner_Abysm)
+[+] Fixed View Air/Earth/World icons drawn out of bounds
+[+] Sped up battlequeue calculation
+[-] Added logging of errors in a few places where the option was presented but wouldn't occur (anonymous)
+[-] Cursor position was not reset when replaying quick battle, resulting in oddities combined with quick spells (thanks Machberet)
+[-] Enchanters bug was missing a check for second battlefield side (thanks Machberet)
+[-] Fixed a bug that caused the quickspell panel to be redrawn without cause
+[-] FindMe hidden events reveal has been completely redone, resolving lingering issues (thanks scars of reality)
+	Note: the 1.13 requirement of starting the game with SoD_SP is no longer needed to reveal events
+
+[*] Complete translation of SoD_SP texts in Polish! (thanks VIP for the contribution!)
+[*] SoD_SP.ini translation to French (thanks Nikos ('s sister))
+[*] {json}[combat][kill_range] now regulates spacing, it is no longer controlled codeside (thanks VIP)
+
+Version 1.19.2.0
+[+] Fixed Scenario Selection bug where players would not update after returning from Random Map panel
+[+] Quickspells and targets are now saved and loaded for each game you play
+[+] Fixed an AI fast battle bug where a defeated hero would not be removed (anonymous)
+	Option: 'FastBattleBugs'
+[+] Fixed Campaign starting bonus bug when selecting Dwarven Treasury and Lookout Tower (thanks VIP, zmudziak22)
+[+] Updated H3.TextColor to latest version: now supports #RRGGBB tags and Wogcn plugin (thanks chao zhang)
+[-] Display of Bind spell duration now reflects its 255 turns maximum (thanks chao zhang)
+[-] Fixed incorrect AI check argument size for whirlpool bug (anonymous)
+[-] Un-broke Mapmaker features... that's what you get for making code prettier (thanks sanyassh)
+
+[*] The 'QuickCombat' option has been removed and replaced by 'FastBattleBugs'
+	I deeply regret ever implementing this option because it relies on an incomplete
+	feature that existed uniquely in HDmod a long time ago - not in the spirit of SoD_SP.
+	If you wish to keep using the old option, use an earlier version.
+
+Version 1.19.1.2
+[-] Fixed text translation from utf8 to ansi (thanks Jesus_Milan)
+
+Version 1.19.1.1
+[-] Fixed a potential crash bug of Advanced Dialog for Adventure Map taverns (thanks VIP)
+
+Version 1.19.1.0
+[+] Changed all language files to utf8-json
+	Note: SoD_SP.ini option [Language][SoD_SPLanguage] is now the name of the localized json file you wish to use
+	utf8-ANSI translation relies on your computer's code page and is not currently customizable
+[+] Fixed town name selection in random map description (thanks Archer30)
+[+] Fixed a crash-bug where AI would clone a creature with already 20 stacks present (thanks Marlo Stanfield)
+[+] Hero Fusion: a hero standing on a Shipyard's exit tile can no longer buy another boat (thanks wenwell)
+[+] Movement Bugs: Fixed an endless loop issue where AI would try to summon a boat on top of an event (thanks wenwell)
+[+] Advanced Dialog now shows prison hero's spells, if any (thanks wenwell)
+[+] Abandoned Mines owned by enemy heroes now report the resource type (anonymous)
+[+] Monster information dialogs luck and morale now respond to left-click (anonymous)
+[+] Fixed AI calculation of Seer Hut's luck reward which would use bogus data (anonymous)
+[+] Fixed visibility replay actions bug on maps larger than 180x180 (thanks Archer30)
+[+] Video animations are stopped before showing dialogs, resumed afterwards (thanks VIP)
+[-] FindMe dialog option buttons would not display mouseover hint message (anonymous)
+[-] Hero Advanced Dialog access updated for HDmod (anonymous)
+[-] Fixed a bug with Advanced Dialog creature generators with overlaid hero (anonymous)
+[-] Fixed a bug with Hero Fusion that resulted in hidden heroes (anonymous)
+[-] Whirlpool underflow fix from 1.19.0.1 would only consider presence of Admiral's Hat instead of considering Sea Captain's Hat (anonymous)
+[-] Deleting a hero no longer causes the next hero viewed by Advanced Dialog to be dismissed (thanks scars of reality)
+[-] Finished incomplete FindMe fix from 1.19.0.4 (thanks Obi)
+[-] Human Magic Mirror no longer reflects creature abilities (thanks Machberet)
+
+[*] Russian Text corrections and improvements (thanks igrik)
+
+Version 1.19.0.9
+[-] Added check on hero visibility for hero vision which would sometimes prevent trading with Hero Fusion fix (thanks Rince)
+[-] English localization of Advanced Find has been updated (thanks Barbuta)
+[-] Advanced Find's button for searching in shroud now updates correctly (thanks Barbuta)
+[-] Advanced Find's Abandoned Mine and Gold Mine graphics were swapped around (thanks Barbuta)
+[-] Advanced Find's Event visibility button displays by default the current visibility state
+
+Version 1.19.0.8
+[-] Repaired one-click upgrade of units to consider all units in a stack (thanks Xyphistor)
+[-] Pandora boxes Advanced dialogs and events would not show spells when there were precisely 15 (thanks Xyphistor)
+
+Version 1.19.0.7
+[+] Added a missing original RNG restoration on certain battle starts (e.g. Events) (thanks scars of reality, Dirty_Player, wenwell)
+[+] Regular/Basic Forgetfulness are now considered when previewing damage output (thanks Barbuta)
+[-] Advanced Dialog now shows Events again (thanks wenwell)
+[-] Fixed unsafe function declaration (thanks Ben80)
+
+Version 1.19.0.6
+[-] Fixed remaining colorization issue
+[-] Fixed width of Town Advanced Dialog (thanks Barbuta)
+
+Version 1.19.0.5
+[-] Fixed colorization error (thanks Lunareon, Barbuta)
+
+Version 1.19.0.4
+[-] Fixed incorrect move order of Arrow Towers (thanks daemon_n)
+[-] Fixed a rare bug with FindMe that could alter the adventure map
+
+Version 1.19.0.3
+[-] Updated internal version which to stop report of new version
+
+Version 1.19.0.2
+[-] Fixed H3.TextColor for real this time
+
+Version 1.19.0.1
+[+] Fixed a rare index underflow causing creature "overflow" when using Whirlpools [option: Creature Overflow]
+[-] Fixed drawing to screen in GDI-32bit mode (thanks Nikos)
+[-] Fixed incorrect loop conditions in H3String that could result in crash during combat (thanks Nikos)
+	Updated H3.TextColor which used the same piece of code
+
+Version 1.19.0.0
+[+] BattleQueue now highlights the creature under the mouse cursor, if any
+[+] BattleQueue now supports the setting of Quickspell targets
+[+] Implemented 10 different battle speeds (adapted from igrik)
+	Note: Turbo Speed option remains in use for spell animations
+[+] Imported some bug fixes and improvements from WoG 3.59 source
+	Correction of Def type 1 parameters
+	Correction of a possible endless loop
+	Event message length no longer capped at 65,535
+[+] H3's text buffer is reset to prevent gibberish from being shown if hovering over an object with removed entrances
+	Also prevents buffer overflow with Adventure map coordinates
+[+] Quickspell panel can now remove assigned spells (ALT + Left-click)
+[ ] New versioning format; added timeout on version check
+[-] Fixed issue with BattleQueue that prevented First Aid Tent from being displayed
+[-] Fixed width calculation of Advanced Dialog for a few scenarios
+[-] Advanced Dialog is no longer shown from objects with removed entrances (thanks wenwell)
+[-] Fixed improper determination of diplomacy factor in Advanced Dialogs (thanks wenwell)
+[-] Quickspells no longer ignore Magic Mirror (thanks Machberet)
+[-] H3.LodTable updated to fix handle leak
+[-] Several code enhancements and small bug fixes
+
+Version 1.18.9
+[ ] HD.BattleQueue can be used with SoD_SP if the latter's is disabled
+[-] Fixed issue recently introduced with dialog checkboxes
+
+Version 1.18.8
+[ ] Fast upgrade in town now allows upgrading of skeletons if you try to upgrade them directly
+[-] Fixed a bug with BattleQueue that would stop the current round from being shown
+[-] Added a safety flag reset of Heroes in H3.CombatAnimation
+
+Version 1.18.7
+[-] Fixed a typo that would prevent SoD_SP's BattleQueue from being fully disabled
+
+Version 1.18.6
+[+] The BattleQueue Panel option will now toggle between SoD_SP's and HDmod's if the latter is active
+	Note: the Quickspell and BattleQueue panels are now created programatically
+[ ] Updated H3.TextColor to latest version
+[-] Fixed the appearance of some Advanced Dialogs (thanks wenwell)
+
+Version 1.18.5
+[-] Fixed an issue with the increased number of uniquely customized wandering monsters (thanks Obi)
+
+Version 1.18.4
+[-] Fixed an issue with 'SoD_SP.ini' reader that would fail to read the last line (thanks Machberet)
+[-] Moved the update after introduction video is completed (thanks Machberet)
+
+Version 1.18.3
+[+] Added dialog to view any hero's biography by holding CTRL when right-clicking on the adventure map. (CTRL+RMB)
+	Note: if the biography has over 13 lines or is too lengthy, a regular messagebox is used.
+[-] Corrected pixel imperfection in Anchor Bug fix
+[-] Fixed a bug with AI implementation of Magic Mirror (thanks Xyphistor)
+
+Version 1.18.2
+[-] Fixed a bug that could prevent loading of more than 256 signposts
+
+[*] Updated Greek language (thanks Nikos!)
+
+Version 1.18.1
+[+] Added support for up to 256 (was 128) signposts and ocean bottles
+[+] SoD_SP+ now supports any number of signposts and ocean bottles
+[+] Option to fix developer bug that prevents Enchanters from casting
+[-] SoD_SP+ fixed a bug with saving number of garrisons, mines and lighthouses
+
+Version 1.18.0
+[+] Added Advanced Dialogs to map adventure (ALT + RMB)
+	Players can still use normal RMB dialogs if ALT is not pressed.
+	Note: this can be disabled by mapmakers	using Unleashed mapeditor
+[+] AI cast spells may now consider Magic Mirror effects
+[+] Fixed First Aid Tent crash bug when manually targeting an adjacent enemy
+[+] Increased number of uniquely customized wandering monsters from 256 to 4096
+[+] When the Catapult is active, you can now view your own army's information dialog
+[ ] Updated H3.TextColor for HDmod 5.0RC63
+[ ] Updated and improved spells turbo mode for HDmod 5.0RC63
+[-] Fixed incorrect Treasure Chest values using the Unleashed Editor features
+[-] Fixed incorrect disabled appearance of options within SoD_SP dialog
+[-] Fixed a crash bug with display of Heroes' movement cost
+
+Version 1.17.9
+[+] Optimized SoD_SP.lod archive to below 30% of its previous size
+[+] Hero movement cost is now displayed instantly when pressing Alt (thanks as239)
+[ ] Updated code to remove HDmod 5.0RC61's multiplayer chat icon
+
+Version 1.17.8
+[+] SoD_SP logging now adds the date to all crash log files
+    SoD_SP logging no longer logs consecutive duplicate hook data
+[ ] H3.TextColor now accepts spaces within color names
+[-] Fixed H3.TextColor color value of DarkGreen
+[-] Fixed a bug in H3.CombatAnimation that would sometimes crash the game
+
+Version 1.17.7
+[+] SoD_SP options dialog now clearly displays which options are locked by the mapmaker (if any)
+[+] H3API::H3Dlg background drawing efficiency has been greatly improved by drawing to a common canvas, following H3 logic
+[+] H3.TextColor rewritten using Binary tree for improved performance
+	H3.TextColor now reads colors from H3.TextColor.ini, you can modify this file as you see fit
+	H3.TextColor now allows you to add colors once the plugin is already loaded
+	H3.TextColor variables are now obtained via H3Plugin::TextColor::GetTextColor() call.
+[+] Dependencies have been further reduced, relying more on H3 Assets. DLL size has been reduced.
+[-] The SoD_SP [other] options were not being read due to a typo in version 1.17.6
+[-] Increased quicksave name dialog width to display full editable text
+
+Version 1.17.6
+[+] Added H3Exception to H3API to handle SEH exceptions
+[ ] Re-introducing UNICODE support to installer, windows xp compatible
+[ ] New ini parser, fully compatible with windows xp
+[-] Fixed a few incorrect save color dialog hotkeys (Ctrl + F12)
+
+[*] From now on built with VS2017 v141_xp to use modern C++ features
+
+Version 1.17.5
+[-] SoD_SP is now again compatible with windows xp
+[-] The installer is now again compatible with windows xp, but loses language and UNICODE support
+[-] Fixed an inacurracy in H3API resulting in wrongly colored custom dialogs
+
+Version 1.17.4
+[+] Added plugin H3.CombatAnimation that cycles through standing stance of combat monsters
+[ ] Improved H3API function H3Hero::SkillsLeftToLearn to take into consideration prohibited hero class skills
+[-] Corrected game start flag for overflow protection during level-up
+[-] Battlequeue round was being incorrectly shown for every creature after the first round, it is now only showing up for the first creature of a new round
+
+Version 1.17.3
+[-] Fixed berserk bug introduced by 1.16.8, AI now behaves as it should
+[-] More objects patch typo fix
+
+Version 1.17.2
+[-] Corrected creature's Luck numeric display text id
+
+Version 1.17.1
+[ ] Updated H3.TextColor to latest version
+[ ] Quicksave prefix can now be up to 32 characters and accepts '{', '~' and '}' as input
+[-] Incorrect field was being used in H3LoadedDef::AddFrameToDef, resulting in partial frame copies
+[-] Added missing code related to extra mines, garrisons or mapmaker features
+
+Version 1.17.0
+[-] Added missing code to allow vision of minimap during AI turn
+
+Version 1.16.9
+[-] Fixed H3API bug with H3Position
+
+Version 1.16.8
+[-] Improved H3API, eliminating some bugs that could lead to crashes
+[-] Modified berserk restoration option, preventing lost turn on human side
+
+Version 1.16.7
+[-] Custom quicksave now correctly uses custom name
+[-] Shift+split of creatures now works correctly
+
+Version 1.16.6
+[-] Fixed forcefield shadow drawing conditions when defending
+[-] FindMe now works again
+[-] Single-click upgrade of creatures in town was swapped around
+[-] Corrected some H3CombatManager fields in H3API preventing quickcast in creature banks and sometimes leading to crashes
+[-] H3Spell structure in H3API had two fields swapped resulting in improper damage display when mouse hovering creatures with spells
+
+Version 1.16.5
+[-] Fixed ini file path to save SoD_SP options
+
+Version 1.16.4
+[-] Fixed a typo in H3API resulting in crash when using spells on the battlefield
+
+Version 1.16.3
+[ ] Improved SoD_SP debug logging to show more information
+[-] Fixed a few bugs in H3API headers leading to crashes
+[-] Fixed a bug in H3TextColor resulting in out-of-bound text being shown
+
+Version 1.16.2
+[-] Fixed function stack sometimes leading to crash when attacking enemy hero
+
+Version 1.16.1
+[-] Fixed a resource overflow issue
+[-] The mouse cursor shadow now correctly draws in the battlefield
+[-] Corrected one-time-only condition for Version check
+
+Version 1.16.0
+[+] Option for AI to gain the correct amount of skeletons from Necromancy
+[+] Fixed a bug where heroes and map items could be cloned
+[+] Corrected movement bug when using Angel Wings
+[+] Maps may now have more than 255 Garrisons and Mines
+ NOTE: such maps will be forced to use SoD_SP 1.16.0 or more recent
+[+] Mapmaker options and features are now available through Unleashed mapeditor
+ NOTE: for more information, refer to Unleashed mapeditor documentation
+[ ] SoD_SP assets are now loaded through LOD using H3.LodTable.dll
+ NOTE: for more information, refer to H3.LodTable documentation
+[ ] Text color is now handled by H3.TextColor.dll
+ NOTE: for more information, refer to H3.TextColor documentation
+[ ] RMB battle dialog option now only works on opposing creatures
+[ ] Improved battle move order move prediction
+[ ] Corrected and improved code to be future-proofed against HDmod updates
+[ ] FindMe events are now drawn directly on the adventure map using SoD_SP assets
+
+[*] Rewritten using H3API headers
+[*] Version check option during launch
+[*] Auto-installer now done with Inno Setup, also provides uninstaller
+[*] Russian Text completely updated (thanks igrik)
+[*] German and Greek Text completely updated (thanks Nikos)
+
+Version 1.15d
+[+]  Fixed a bug with HDmod Costumes where hero path would not reflect new artifacts
+[ ]  Hero movement through Numpad is restored with Numlock (HW plugin change)
+[ ]  Multiplayer icon in main menu is back, but multiplayer is still disabled as long as SoD_SP is active
+[-]  Fixed a memory leak in Advanced Combat Information dialog
+[-]  Added missing hook for Anchor Bug fix on some special terrains
+[-]  Repaired several broken components due to HDmod updates
+
+[*] Updated Russian text (thanks daemon_n)
+
+Version 1.15c
+[ ] Lobby chat icon is no longer drawn
+[-] Added ini entry for unhireable heroes
+[-] Repaired SoD_SP Save functionality
+
+Version 1.15b
+[ ] Unhireable heroes fix is now optional
+[-] Fix a bug when recalculating hero movement after encounter if the owner of the hero was defeated (thanks Lunareon)
+
+[*] German and Greek language corrections (thanks Nikos)
+
+Version 1.15a
+[ ] Fixed a bug when rapidly clicking on hero icon in garrison dialog which could lead to game crash
+[ ] Option for Naga Banks to revert HD+ modification of Sulfur to Gems (requires New Game) (thanks Ben80)
+[-] Non-repeatable events option was not properly working
+[-] Fixed a bug with HDmod shortcuts of non-positive creatures (thanks daemon_n)
+
+[*] German and Greek language updated to v1.15! (thanks Nikos)
+
+Version 1.15
+[+] Added interactive sidepanel displaying battle move order
+ NOTE: game resolution must be at minimum 1074x660
+[+] Introduced fix to prevent movement generation with Admiral's Hat (thanks Ben80)
+[+] Dismissed/lost heroes can no longer gain movement on the same turn (thanks Ben80)
+[+] Wandering Monster combat retreat no longer reduces the number of creature if an upgraded stack is present (thanks Ben80)
+[+] Anchor bug fix option available (thanks Kazmer) 
+ Note: cannot be modified within battlefield
+[+] SoD_SP text colors can now be modified in-game (hotkey: Ctrl+F12)
+[+] SoD_SP options and colors can now be saved to 'SoD_SP.ini' from their respective dialog
+[+] Added hint for movement cost for hero when holding ALT key (hotkey: hold ALT + move mouse to destination)
+[+] Hero maximum movement recalculated in several instances where it previously was not
+[+] Heroes can no longer gain movement after being dismissed/lost on a given player's turn
+[+] Heroes movement updated after retreating/surrendering while in a boat
+[+] Castle Lighthouse now only adds movement points to its owner
+[+] Earthquake bug has been fixed
+[+] The minimap can now follow enemy players' movement
+[+] Fixed a drawing issue of horizontal scrollbars when used with hotkeys
+[+] AI movement through teleporters and Dimension Door is no longer shown when "Don't show enemy moves" options is enabled
+[+] Added some optional debug log storing information about the last SoD_SP code executed before crash
+[+]  Events that were set as 'Cancel event after first visit' by the mapmaker are now correctly removed
+[ ] Fixed RMB dialog hint of Faerie Dragon spell cast (thanks Ben80)
+[ ] Unhireable heroes freed from prison (and a few other instances) remain unhireable (thanks Rince)
+[ ] Non-positive creatures can no longer be split using HDmod shortcuts (thanks wenwell)
+[ ] SoD_SP options dialog completely rewritten to allow more options in less space
+[ ] Options dialog now available from other menus
+[ ] Option to place SoD_SP DEFs in \Data\ folder reintroduced. 
+ Note: See 'SoD_SP.ini' if you have issues.
+[ ] Quick load now sends you to campaign saves if you were playing a campaign map
+[ ] Quick spell and move order panels may be disabled [effective from next combat start]
+[ ] Primary Skill overflow protection is turned off at Events and Pandora's Boxes IF AND ONLY IF the gain is +127
+[ ] Having more than 48 Seer Huts no longer crashes the game
+[ ] Hovering over quickspell panel now displays all of the battlefield hexes that can be affected by the spell
+[ ] Removed Multiplayer icons from main menu and load menu
+[ ] Restored some optional Quick Combat bugs
+[ ] Restored optional Clone Bug
+[ ] Added text hint for Cure spell while selecting battlefield target
+[ ] Added some missing options with turbo spells when using special color modes
+[-] Resurrection/Animate Dead text hints were incorrectly considering creature resistance (thanks Marlo_Stanfield)
+[-] Fixed potential endless loop with previous Waterwalk~Fly bug fix (thanks Marmot)
+[-] Removed a bug with quickspell panel that could show hints about non-existent creatures on the battlefield
+[-] Fixed shadow of battle window with stretchable modes for Quick Spell
+[-] Fixed an issue introduced by the fix of potential AI endless loop after using resurrection
+
+[*] Russian Text completely updated (thanks igrik)
+[*] HotA is no longer supported due in part to lack of plugin support by HDmod.
+[*] C++ conversion complete!
+
+Version 1.14b
+[+] Added custom in-game quicksave name (Ctrl+F9)
+[ ] Russian language updated to 1.14 (thanks igrik)
+[-] Fixed a graphical bug with 'reveal/hide Events'
+[-] Fixed a bug with Carnivorous Plant (thanks turboagent)
+[-] Included correct Quick Spell panel DEF (thanks igrik)
+
+Version 1.14
+[+] Option to remove Summoned Elementals and Cloned Creatures from Battlefield Casualties screen
+[+] Battlefield Casualties over 9999 are now shown per thousands (e.g. 200,000 is now 200k)
+[ ] Multiplayer mode (including SoD Lobby) is no longer accessible when SoD_SP is active
+[ ] Quick Spell panel reworked to remove clutter (right-click now resets target)
+[-] Fixed a bug from version 1.13 that unintentionally changed AI behaviour
+
+Version 1.13b
+[ ] Greek and German languages updated (thanks Nikos)
+[-] Fixed bug with Combat Quick Load (Shift+F9)
+[-] Workaround for SoD_SP DEFs to prevent some crashes (thanks 4ltair)
+[-] Fixed bug preventing purchase of Spellbook from Mage Guild (thanks Sewa)
+
+Version 1.13
+[+] Added FindMe dialog (hotkey: Ctrl+F)
+[+] Added ability to reveal/hide Events within FindMe dialog 
+ NOTE: requires new game with version 1.13 or higher
+[+] Added interactive sidepanel for Quick Spells while in combat 
+ NOTE: game resolution must be at minimum 1074x660
+[+] Bug fix: AI with large army could freeze game
+ Bug fix: AI with large army could lose to very weak opposition
+[+] Added compatibility for extra Monoliths subtypes made with WoG mapeditor 
+ NOTE: SoD only
+[+] Fixed rare division by 0 bug during combat setup
+[+] Can view Spells in Mage Guild even with hero lacking spellbook
+[ ] Added gold color to custom color options (same effect as "{ your text here }")
+[ ] Trees of Knowledge no longer provide experience above level 100
+[ ] Primary Skill overflow protection and few other options disabled in HotA due to implementation in 1.5.0+
+[ ] Disabled 'F1' launching Windows Help (SoD only)
+
+[*] Hotkey list documentation created (online)
+
+Version 1.12
+[+] Trees of Knowledge can no longer give negative experience
+[+] Fast leveling to levels 868+ (provided you have the correct experience amount)
+
+[-] Fixed incompatibility with HDmod 5.0 beta 19
+
+Version 1.11
+[+] Turbo: option to allow faster animations in combat
+[+] You can set your own color (see SoD_SP.ini for options and color codes)
+[+] Mouse cursor coordinates (x,y,z) in Map Adventure
+[+] Option to disable extra spell information available in the Spellbook
+[+] List of Quick Spells and Targets available in combat: 'ALT' + 'right-click' Spellbook icon
+[+] Bug fix: AI no longer casts 'Town Portal' on Cursed Ground
+ Bug fix: AI no longer casts 'Fly' if he does not have it (Waterwalk~Fly bug)
+
+Version 1.10b_beta
+[+] Quickly access "Load game" now works during battle (hotkey: Shift+F9)
+[-] Fixed a few bugs
+
+Version 1.10a_beta
+[-] Removed an internal testing function that could lead to crashes
+
+Version 1.10beta
+[+] Available in 5* languages. (unsure if there exists Greek fonts)
+ NOTE: if you do not have the necessary game fonts, it will not show correctly
+[+] Now compatible with HotA (some options are disabled, some features implemented differently)
+[+] Quickly access "Load game" with hotkey Shift+F9 (not yet available during combat)
+[+] Primary overflow checks for special Town buildings (Warlord's Monument, Carnivorous Plant, ...)
+[+] Monoliths and Subterranean Gates icons now correctly shown in 'View World' and 'View Air'
+
+[*] 90% rewritten for C++
+[*] Now uses patcher_x86.dll (smaller plugin size)
+
+Version 1.01
+[-] Fixed a bug with Quick Spell and Titan's Lightning Bolt
+[-] Fixed a bug with Primary Skill Overflow protection
+
+Version 1.00
+
+[+] When you hold the (left) 'ALT' key and right click on a creature while in combat, you will receive extended information about its various statuses.
+ You can still see the normal creature dialog if you don't press 'ALT'.
+
+[*] Code optimization still ongoing.
+[*] Introducing versions of the plugin. 
+From this point on, the previous versions will be available in a folder with the format "SoD_SP_YYYY_MM_DD". 
+Old versions are now only periodically uploaded to my GDrive, see documentation if you're interested in looking at them.
