@@ -38,11 +38,11 @@ namespace h3
 	}
 	template<typename T>
 	inline H3NetworkDataExtra<T>::H3NetworkDataExtra(int recipient_id, int msg_id, int data, const T& extra_data) :
-		recipient_id(recipient_id),
-		msg_id(msg_id),
+		recipientId(recipient_id),
+		msgId(msg_id),
 		bufferSize(sizeof(H3NetworkData) + sizeof(T)),
 		shortData(data),
-		extra_data(extra_data)
+		extraData(extra_data)
 	{
 	}
 }

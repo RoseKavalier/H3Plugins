@@ -476,7 +476,7 @@ BOOL Plugin::Write(_ptr_ address, T value)
 }
 
 template<size_t _Size>
-BOOL Plugin::HexPatch(_ptr_ address, const _byte_(&values)[_Size])
+BOOL Plugin::HexPatch(_ptr_ address, const UINT8(&values)[_Size])
 {
 	return h3::H3Patcher::WriteValues(address, values);
 }
@@ -484,7 +484,7 @@ BOOL Plugin::HexPatch(_ptr_ address, const _byte_(&values)[_Size])
 template<typename T>
 Variable* Plugin::VarInit(LPCSTR name, T value)
 {
-	return m_patcher->VarInit(name, _dword_(value));
+	return m_patcher->VarInit(name, UINT32(value));
 }
 
 template<typename T>
