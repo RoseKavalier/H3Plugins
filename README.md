@@ -31,6 +31,9 @@ This repository will also be used to distribute the **SoD_SP** plugin which is c
 **H3.LodTable**
 >Modifies the LOD tables to provide room for additional LOD or PAC archives. By default, all folders of active HDmod plugins are browsed to add **.pac** or **.lod** game archives. You may also add archives from your own folders by using the HDmod variables created by the plugin. Included with SoD_SP.
 
+**H3.QwertzLayout**
+>Changes InputManager's keyboard layout to QWERTZ instead of QWERTY.
+
 **H3.RMGDescription**
 >Allows customization/locatization of randomly created map's scenario information.
 

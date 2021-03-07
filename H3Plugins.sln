@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextColor", "GUI\TextColor\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LodTable", "Utilities\LodTable\LodTable.vcxproj", "{279EE626-9A1C-4CA1-AB07-1ED30CBE4FC4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QwertzLayout", "Utilities\QwertzLayout\QwertzLayout.vcxproj", "{98933DF7-8ABB-497B-BCE4-AD5570597845}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,14 @@ Global
 		{279EE626-9A1C-4CA1-AB07-1ED30CBE4FC4}.Release|Win32.ActiveCfg = Release|Win32
 		{279EE626-9A1C-4CA1-AB07-1ED30CBE4FC4}.Release|Win32.Build.0 = Release|Win32
 		{279EE626-9A1C-4CA1-AB07-1ED30CBE4FC4}.Release|x64.ActiveCfg = Release|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Debug|Win32.ActiveCfg = Debug|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Debug|Win32.Build.0 = Debug|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Debug|x64.ActiveCfg = Debug|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Release|Any CPU.ActiveCfg = Release|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Release|Win32.ActiveCfg = Release|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Release|Win32.Build.0 = Release|Win32
+		{98933DF7-8ABB-497B-BCE4-AD5570597845}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +191,7 @@ Global
 		{EBAA9181-F764-4700-9547-2817054A3DF6} = {15EEC099-0181-40CF-84B5-B1839F0F61CF}
 		{CCACF407-C197-47D4-B3B3-1CFDF7151C91} = {15EEC099-0181-40CF-84B5-B1839F0F61CF}
 		{279EE626-9A1C-4CA1-AB07-1ED30CBE4FC4} = {7F6D38A7-36FE-4317-99ED-52826CFFBF0B}
+		{98933DF7-8ABB-497B-BCE4-AD5570597845} = {7F6D38A7-36FE-4317-99ED-52826CFFBF0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {08B9FA2A-9B86-4E98-A0B4-CC521F69CD8D}
