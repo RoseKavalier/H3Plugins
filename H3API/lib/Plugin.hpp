@@ -19,11 +19,11 @@ public:
 		/**
 		 * @brief Original function *begins* at the specified address.
 		 */
-		 Splice = 1,
-		 /**
-		  * @brief Original function is provided as a pointer (e.g. virtual table, argument).
-		  */
-		  Pointer = 2,
+		Splice = 1,
+		/**
+		 * @brief Original function is provided as a pointer (e.g. virtual table, argument).
+		 */
+		Pointer = 2,
 	};
 	/**
 	 * @brief How the function trampoline will be created.
@@ -42,12 +42,12 @@ public:
 		 * function which should be of __stdcall calling convention.
 		 * Consider this your default subtype unless you have specific needs.
 		 */
-		 Extended = 1,
-		 /**
-		  * @brief The same as Extended, however all registers are safely restored
-		  * to their initial values in the bridge.
-		  */
-		  Safe = 2,
+		Extended = 1,
+		/**
+		 * @brief The same as Extended, however all registers are safely restored
+		 * to their initial values in the bridge.
+		 */
+		Safe = 2,
 	};
 	/**
 	 * @brief The calling convention of the function being replaced.
@@ -63,23 +63,23 @@ public:
 		 * If using a Direct subtype, you can declare a __fastcall(this, unused_parameter, arg1, ...)
 		 * function which will allow you to simulate a __thiscall calling convention.
 		 */
-		 Thiscall = 1,
-		 /**
-		  * @brief Original function uses __fastcall calling convention.
-		  */
-		  Fastcall = 2,
-		  /**
-		   * @brief Original function uses __cdecl calling convention.
-		   */
-		   Cdecl = 3,
+		Thiscall = 1,
+		/**
+		 * @brief Original function uses __fastcall calling convention.
+		 */
+		Fastcall = 2,
+		/**
+		 * @brief Original function uses __cdecl calling convention.
+		 */
+		Cdecl = 3,
 	};
 	enum Status
 	{
 		AlreadyInitiated = -1,
-		Success = 0,
-		NoPatcher = 1,
-		InstanceExists = 2,
-		InstanceFailed = 3,
+		Success          = 0,
+		NoPatcher        = 1,
+		InstanceExists   = 2,
+		InstanceFailed   = 3,
 	};
 
 	Plugin();
