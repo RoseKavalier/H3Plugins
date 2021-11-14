@@ -58,7 +58,9 @@
         "number_spell_charges": "Pozostało zaklęć",
         "battlequeue_top_turret": "Górna",
         "battlequeue_mid_turret": "Środkowa",
-        "battlequeue_bot_turret": "Dolna"
+        "battlequeue_bot_turret": "Dolna",
+        "faerie_dragons_singular": "%s przygotowuje zaklęcie: %s (wciśnij F by wybrać cel)",
+        "faerie_dragons_plural": "%s przygotowują zaklęcie: %s (wciśnij F by wybrać cel)"
     },
     "quickspell": {
         "target_creature": "Cel Szybkiego Zaklęcia {%d} przypisany do {%s} na {%c%d}.",
@@ -81,9 +83,11 @@
         "number_first" : false,
         "found_items_text": "Znaleziono obiekt '%s' w liczbie %d.",
         "report_none" : true,
-		    "toggle_report_none_text" : "Opcja ustawiona na {WŁ} powoduje, że 'Znajdź dla Mnie' wyświetli ostrzeżenie, jeśli nie znaleziono żadnych obiektów.\nZaś dla opcji {WYŁ}, niepowodzenia nie będą zgłaszane wyświetleniem ostrzeżenia o braku znalezienia obiektów.",
-		    "toggle_report_none_hint" : "Kliknij, aby przełączyć opcje dotyczącą wyświetlenia ostrzeżenia.",
-		    "none_found" : "Nie znaleziono '%s'!"
+        "toggle_report_none_text" : "Opcja ustawiona na {WŁ} powoduje, że 'Znajdź dla Mnie' wyświetli ostrzeżenie, jeśli nie znaleziono żadnych obiektów.\nZaś dla opcji {WYŁ}, niepowodzenia nie będą zgłaszane wyświetleniem ostrzeżenia o braku znalezienia obiektów.",
+        "toggle_report_none_hint" : "Kliknij, aby przełączyć opcje dotyczącą wyświetlenia ostrzeżenia.",
+        "none_found" : "Nie znaleziono '%s'!",
+        "event_pcx_name" : "FEventPL.pcx",
+        "objects_sprite_name" : "FindMePL.def"
     },
     "spells": {
         "elementals": "\n\nPrzywołuje %d Żywiołaków.",

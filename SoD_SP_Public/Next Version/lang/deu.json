@@ -58,7 +58,9 @@
         "number_spell_charges": "Ьbriges Zaubern",
         "battlequeue_top_turret": "Ober",
         "battlequeue_mid_turret": "Haupt.",
-        "battlequeue_bot_turret": "Niedrig"
+        "battlequeue_bot_turret": "Niedrig",
+        "faerie_dragons_singular": "The %s readies %s (press F to cast)",
+        "faerie_dragons_plural": "The %s ready %s (press F to cast)"
     },
     "quickspell": {
         "target_creature": "Das Ziel des Schnellzauberspruchs {%d} wurde auf {%s} an {%c%d} festgesetzt.",
@@ -83,7 +85,9 @@
         "report_none" : true,
 		"toggle_report_none_text" : "When turned {ON}, FindMe will give you a warning message if no objects were found.\nWhen turned {OFF}, FindMe fails silently without reporting that no objects were found.",
 		"toggle_report_none_hint" : "Click to toggle warning message when no objects are found.",
-		"none_found" : "There was no %s found!"
+		"none_found" : "There was no %s found!",
+        "event_pcx_name" : "FMEvent.pcx",
+        "objects_sprite_name" : "FindMe.def"
     },
     "spells": {
         "elementals": "\nEs ruft %d Elementals.",
