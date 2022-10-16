@@ -140,6 +140,7 @@ public:
 	int TrueStretchModeDrawCharColor(HookContext&);
 	int ParseText(HookContext&);
 	int MainHook(LoHook&, HookContext&);
+	void DrawCharacter(h3::H3Font* this_, int character, h3::H3LoadedPcx16* pcx16, int x, int y, int color);
 
 private:
 	//======================================================================================
@@ -147,12 +148,17 @@ private:
 	// Data or methods can be added here which can only be accessed from within the plugin.
 	//
 	//======================================================================================
+
+
 	h3::H3String m_colorTextFile;
 	h3::H3String m_textParser;
 	UINT m_currentPosition;
 	h3::H3Vector<INT32> m_charColors;
 	h3::H3Tree<TextColorNode> m_colorsTree;
 	h3::H3Vector<h3::H3String> m_colorNames;
+
+	using draw_char_t = void(__fastcall*)(h3::H3Font*, int, h3::H3LoadedPcx16*, int, int, int);
+	draw_char_t m_drawFunction;
 
 	void CheckWogCnPlugin();
 	void DirectDrawHook_5000281();
@@ -168,5 +174,6 @@ private:
 
 	// HDMOD version as of latest update
 	static constexpr DWORD HDMOD_VERSION = 5000281;
+	static constexpr DWORD HDMOD_DRAW_CHARACTER_VERSION = 5004307;
 	static constexpr DWORD HDMOD_ERA = 4208204;
 };
