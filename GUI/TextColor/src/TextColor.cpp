@@ -148,6 +148,10 @@ void TextColorPlugin::CheckWogCnPlugin()
 		Hook(addr, ::WogcnPosition);
 }
 
+void __fastcall DrawCharacterFunc(h3::H3Font* this_, int, int character, h3::H3LoadedPcx16* pcx16, int x, int y, int color) {
+	TextColor.DrawCharacter(this_, character, pcx16, x, y, color);
+}
+
 // * handles all 32-bit color drawing as of HD 5.0 RC81
 void TextColorPlugin::DirectDrawHook_5000281()
 {
@@ -439,7 +443,17 @@ int TextColorPlugin::MainHook(LoHook& h, HookContext& c)
 	if (text_color.mode == text_color.CM_888)
 	{
 		DWORD hdmodVersion = VarGetValue("HD.Version.Dword", 0u);
-		if (hdmodVersion >= HDMOD_VERSION)
+		if (hdmodVersion >= HDMOD_DRAW_CHARACTER_VERSION)
+		{
+			m_drawFunction = m_patcher->VarGetValue<draw_char_t>("HD.Fnt.DrawCharacter", nullptr);
+			if (m_drawFunction)
+			{
+				// hdmod has a custom check for '{' and '}' which increment the color index
+				auto hk = Create(0x4B4F00, Splice, Direct, Fastcall, DrawCharacterFunc);
+				hk->ApplyInsert(1);
+			}
+		}
+		else if (hdmodVersion >= HDMOD_VERSION)
 		{
 			DirectDrawHook_5000281(); // covers all 32-bit drawing modes
 		}
@@ -465,6 +479,15 @@ int TextColorPlugin::MainHook(LoHook& h, HookContext& c)
 	h.Undo();
 
 	return EXEC_DEFAULT;
+}
+
+void TextColorPlugin::DrawCharacter(h3::H3Font* this_, int character, h3::H3LoadedPcx16* pcx16, int x, int y, int color) {
+	const auto col = CurrentColor();
+	if (NO_COLOR != col)
+		color = col;
+	else
+		color = this_->palette.palette32[color];
+	m_drawFunction(this_, character, pcx16, x, y, color);
 }
 
 /**
