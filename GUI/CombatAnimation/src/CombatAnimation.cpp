@@ -15,6 +15,16 @@ CombatAnimationPlugin& CombatAnimationPlugin::GetPlugin()
 //
 //===================================================================================
 
+// don't advance rng, mimicks 0x50B3C0 when playing a network game
+int __fastcall safe_rng(int low, int high)
+{
+    if (high == low)
+        return high;
+    if (high > low)
+        return low + (STDCALL_0(int, 0x4F8970) % (high - low + 1));
+    return low;
+}
+
 
 //===================================================================================
 //
@@ -77,7 +87,7 @@ int __stdcall _HH_CycleCombatScreen(HiHook* h, H3CombatManager* combat)
             ++mon->animationFrame %= standing->count;
             // add a bit of randomness for the next animation time reference
             // helps to prevent syncing of similar creature stacks
-            last_animation = time + F_MultiplayerRNG(0, 10);
+            last_animation = time + safe_rng(0, 10);
         }
     }
     // draw and refresh creature animations
