@@ -48,3 +48,4 @@ H3.Plugin.Template/obj/Release/ProjectTemplates/H3Plugin.Template/INCLUDE/framew
 H3.Plugin.Template/obj/Release/H3.Plugin.Template.csproj.VsixDeployedFileListAbsolute.txt
 H3.Plugin.Template/obj/Release/H3.Plugin.Template.csproj.FileListAbsolute.txt
 bin
+/.vs
