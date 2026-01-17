@@ -239,16 +239,16 @@ _LHF_(ShowPortalsGates)
  */
 _LHF_(TextboxNumbersFormat)
 {
-	LOG_LOHOOK;
-	INT32 number = IntAt(c->esp + 8);
-	if (FOptions.number_format && !F_Multiplayer() && number >= 1000)
-	{
-		H3String *text = (H3String*)IntAt(c->esp);
-		text->Dereference();
-		text->FormattedNumber(number);
-		return NO_EXEC_DEFAULT;
-	}
-	return EXEC_DEFAULT;
+    LOG_LOHOOK;
+    INT32 number = IntAt(c->esp + 8);
+    if (FOptions.number_format && !H3Network::Multiplayer() && number >= 1'000)
+    {
+        H3String* text = StructAt<H3String>(c->esp);
+        text->Init();
+        text->FormattedNumber(number);
+        return NO_EXEC_DEFAULT;
+    }
+    return EXEC_DEFAULT;
 }
 
 /*
