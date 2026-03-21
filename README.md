@@ -66,6 +66,8 @@ All necessary files for building using _Visual Studio_ are available in the repo
 
 ![](https://github.com/RoseKavalier/H3Plugins/blob/master/Images/SODSP.png)
 
+[DOCUMENTATION can be found here via Google Drive.](https://docs.google.com/document/d/1JlQ6TC97d_Bb1g_sDRpxTvkKHtyXgZ3qORG5LJS8tp8)
+
 In the spirit of transparency and contributing to the Heroes 3 modding community, I am releasing portions of the SoD_SP source code. You will not be able to build it with the released files and you will most likely see missing files, definitions and functions when inspecting them.
 
 ### Customization
