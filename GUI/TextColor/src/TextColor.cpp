@@ -446,8 +446,7 @@ int TextColorPlugin::MainHook(LoHook& h, HookContext& c)
 
 	if (text_color.mode == text_color.CM_888)
 	{
-		DWORD hdmodVersion = VarGetValue("HD.Version.Dword", 0u);
-		DWORD hdmodDrawMode = VarGetValue("HD.", 0u);
+		DWORD hdmodVersion = VarGetValue("HD.Version.Dword", 0u);		
 		if (hdmodVersion >= HDMOD_DRAW_CHARACTER_VERSION2) {
 			m_drawFunction2 = m_patcher->VarGetValue<draw_char2_t>("HD.Fnt.DrawCharacter", nullptr);
 
