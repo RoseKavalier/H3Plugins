@@ -141,6 +141,7 @@ public:
 	int ParseText(HookContext&);
 	int MainHook(LoHook&, HookContext&);
 	void DrawCharacter(h3::H3Font* this_, int character, h3::H3LoadedPcx16* pcx16, int x, int y, int color);
+	void DrawCharacter2(h3::H3Font* this_, int character, h3::H3LoadedPcx16* pcx16, int x, int y, int color);
 
 private:
 	//======================================================================================
@@ -159,6 +160,9 @@ private:
 
 	using draw_char_t = void(__fastcall*)(h3::H3Font*, int, h3::H3LoadedPcx16*, int, int, int);
 	draw_char_t m_drawFunction;
+	using draw_char2_t = void(__stdcall*)(h3::H3Font*, int, h3::H3LoadedPcx16*, int, int, int);
+	draw_char2_t m_drawFunction2;
+
 
 	void CheckWogCnPlugin();
 	void DirectDrawHook_5000281();
@@ -175,5 +179,6 @@ private:
 	// HDMOD version as of latest update
 	static constexpr DWORD HDMOD_VERSION = 5000281;
 	static constexpr DWORD HDMOD_DRAW_CHARACTER_VERSION = 5004307;
+	static constexpr DWORD HDMOD_DRAW_CHARACTER_VERSION2 = 5008309;
 	static constexpr DWORD HDMOD_ERA = 4208204;
 };
